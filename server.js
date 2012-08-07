@@ -41,9 +41,13 @@ app.get('/', function(req,res){
     res.render('template.ejs', locals);
 });
 
+
+// TODO: move these to mongodb
 app.tokens = [];
 app.accessTokens = [];
 
+
+// TODO: move these to separate routes/controllers
 app.get('/dropbox', function(req,res){
 
 
@@ -59,7 +63,7 @@ app.get('/dropbox', function(req,res){
 
 });
 
-
+// TODO: move these to separate dropbox class
 var downloadThumbnail = function(path, uid, callback){
 	var access_token = loadToken(uid);
 	var client = dropbox.client(access_token);
@@ -71,7 +75,7 @@ var downloadThumbnail = function(path, uid, callback){
 		return;
 
 
-	client.thumbnails(path, function(status, thumbnail, metadata){
+	client.thumbnails(path, {size: 'l'},function(status, thumbnail, metadata){
 
 		if (status != 200){
 			console.log('error', status, thumbnail);
@@ -104,6 +108,8 @@ app.get('/img/thumbnails/:uid/*:path', function(req,res){
 
 app.get('/photos', function(req, res){
 
+
+	// TODO: load from database and move these to import class instead
 	var access_token = loadToken(req.query.uid);
 
 	var client = dropbox.client(access_token);
@@ -122,6 +128,7 @@ app.get('/photos', function(req, res){
 
 });
 
+// TODO: move to separate dropbox controller / route
 app.get('/dropbox-connect', function(req, res){
 	// app.session.dropboxUid = req.body.uid;
 	var token = (req.query || req.body).oauth_token;
