@@ -1,11 +1,13 @@
 var express = require('express');
 var app = express.createServer();
+var expressLayouts = require('express-ejs-layouts');
 
 exports.init = function(port) {
 
     app.configure(function(){
     	app.set('views', __dirname + '/views');
     	app.set('view engine', 'ejs');
+        app.use(expressLayouts);
     	app.use(express.bodyParser());
     	app.use(express.methodOverride());
     	app.use(express.static(__dirname + '/static'));

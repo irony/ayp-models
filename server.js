@@ -71,9 +71,10 @@ var downloadThumbnail = function(path, uid, callback){
 	var fs = require('fs');
 	var p = require('path');
 
-	if (p.existsSync(path))
+	if (p.existsSync(filename))
 		return;
 
+	console.log('downloading thumbnail', path);
 
 	client.thumbnails(path, {size: 'l'},function(status, thumbnail, metadata){
 
