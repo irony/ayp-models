@@ -2,6 +2,7 @@ var app = require('./app').init(process.env.PORT || 3000);
 var dbox  = require("dbox");
 var config = { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'};
 var dropbox   = dbox.app(config);
+var dropboxConnector = require('./connectors/dropbox')(app);
 
 var locals = {
         title: 		 'All My Photos',
@@ -10,28 +11,6 @@ var locals = {
     };
 
 app.tokens = [];
-
-var loadToken = function(uid){
-
-	if (app.tokens[uid])
-	{
-		return app.tokens[uid];
-	}
-
-	var path = __dirname + '/tokens/' + uid;
-	if (!require('path').existsSync(path))
-		return null;
-
-	var token = require('fs').readFileSync(path);
-	app.tokens[token.uid] = token; // cache the results
-	return token;
-
-};
-
-var saveToken = function(token){
-	app.tokens[token.uid] = token; // cache the results
-	require('fs').writeFileSync(__dirname + '/tokens/' + token.uid, JSON.stringify(token));
-};
 
 		
 app.get('/', function(req,res){
@@ -63,46 +42,9 @@ app.get('/dropbox', function(req,res){
 
 });
 
-// TODO: move these to separate dropbox class
-var downloadThumbnail = function(path, uid, callback){
-	var access_token = loadToken(uid);
-	var client = dropbox.client(access_token);
-	var filename = __dirname + '/static/img/thumbnails/' + uid + path; // strange bug in routing clips last char from path
-	var fs = require('fs');
-	var p = require('path');
-
-	if (p.existsSync(filename))
-		return;
-
-	console.log('downloading thumbnail', path);
-
-	client.thumbnails(path, {size: 'l'},function(status, thumbnail, metadata){
-
-		if (status != 200){
-			console.log('error', status, thumbnail);
-			return;
-		}
-		var mkdirp = require('mkdirp');
-
-		var pathArray = filename.split('/');
-		pathArray.pop(); // remove file part
-
-		mkdirp(pathArray.join('/'), function (err) {
-			if (err && callback)
-				callback(err);
-
-			fs.writeFile(filename, thumbnail, function(err){
-				if (callback)
-					callback(err, thumbnail);
-			});
-
-		});
-	});
-};
-
 app.get('/img/thumbnails/:uid/*:path', function(req,res){
 	var path = req.url.split(req.params.uid)[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
-	downloadThumbnail(path, req.params.uid, function(err, thumbnail){
+	dropboxConnector.downloadThumbnail(path, req.params.uid, function(err, thumbnail){
 		res.end(thumbnail);
 	});
 });
@@ -119,9 +61,10 @@ app.get('/photos', function(req, res){
 		model.photos = Array.prototype.slice.call(reply);
 		model.uid = req.query.uid;
 
+		var access_token = loadToken(model.uid);
 
 		model.photos.forEach(function(photo){
-			downloadThumbnail(photo.path, model.uid);
+			dropboxConnector.downloadThumbnail(photo.path, access_token);
 		});
 
 		res.render('photos.ejs', model);
@@ -140,7 +83,7 @@ app.get('/dropbox-connect', function(req, res){
 		console.log('access', status, access_token);
 		if (status == 200)
 		{
-			saveToken(access_token);
+			dropboxConnector.saveToken(access_token);
 			res.redirect('/photos?uid=' + access_token.uid);
 		}
 		else{

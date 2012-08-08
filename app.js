@@ -1,16 +1,44 @@
+var mongoose = require('mongoose'),
+    UserSchema = require('./models/user.js'),
+    mongooseAuth = require('mongoose-auth');
+
+    mongoose.model('User', UserSchema);
+
+mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
+
+var    User = mongoose.model('User');
+
+
+
+
 var express = require('express');
-var app = express.createServer();
+var app = express.createServer(
+    express.bodyParser()
+  , express.static(__dirname + "/static")
+  , express.cookieParser()
+  , express.session({ secret: 'esoognom'})
+
+    // STEP 2: Add in the Routing
+  , mongooseAuth.middleware()
+
+    // IMPORTANT!!!!!!! Do not add app.router, to your middleware chain 
+    // explicitly, or you will run into problems accessing `req.user`
+    // i.e., do not use app.use(app.router). Let express do this for you
+    // automatically for you upon your first app.get or app.post.
+);
+
 
 exports.init = function(port) {
 
+
+    debugger;
+
     app.configure(function(){
-    	app.set('views', __dirname + '/views');
-    	app.set('view engine', 'ejs');
-    	app.use(express.bodyParser());
-    	app.use(express.methodOverride());
-    	app.use(express.static(__dirname + '/static'));
-    	app.use(app.router);
-    	app.enable("jsonp callback");
+        app.set('views', __dirname + '/views');
+        app.set('view engine', 'ejs');
+        app.use(express.methodOverride());
+        //app.use(app.router);
+        app.enable("jsonp callback");
     });
 
     app.configure('development', function(){
