@@ -32,16 +32,11 @@
   </div>
 
 
-<%- contentFor('scripts') %>
-
 <script src="/js/jquery.masonry.min.js"></script>
 
 <script>
-  var $container = $('.thumbnails');
-  $container.imagesLoaded(function(){
-    $container.masonry({
-      itemSelector : 'li',
-      columnWidth : 240
-    });
-  });
+  
+  setTimeout(function(){
+      $('.thumbnails').masonry();
+  }, 2000);
 </script>

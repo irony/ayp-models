@@ -8,6 +8,5 @@
     , "dbox": "*"
     , "ejs" : "*"
     , "mkdirp": "*"
-    , "express-ejs-layouts" : "*"
   }
 }
