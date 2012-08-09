@@ -7,27 +7,22 @@ mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'
 
 var    User = mongoose.model('User');
 
-
+var MongoStore = require('express-session-mongo');
 
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
   , InstagramStrategy = require('passport-instagram').Strategy;
 
-var INSTAGRAM_CLIENT_ID = "18a1750a97dd4ecda61a49b08296639e"
-var INSTAGRAM_CLIENT_SECRET = "b5801a956aa24e308a00f3e985dfe1e8";
+var conf = require('./conf.js');
 
 
-// Passport session setup.
-// serialize user on login
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
-// deserialize user on logout
 passport.deserializeUser(function(id, done) {
-  debugger;
-  User.findById(id, function (err, user) {
+  User.findOne(id, function (err, user) {
     done(err, user);
   });
 });
@@ -38,8 +33,8 @@ passport.deserializeUser(function(id, done) {
 //   credentials (in this case, an accessToken, refreshToken, and Instagram
 //   profile), and invoke a callback with a user object.
 passport.use(new InstagramStrategy({
-    clientID: INSTAGRAM_CLIENT_ID,
-    clientSecret: INSTAGRAM_CLIENT_SECRET,
+    clientID: conf.instagram.clientId,
+    clientSecret: conf.instagram.clientSecret,
     callbackURL: "http://localhost:3000/auth/instagram/callback"
   },
   function(accessToken, refreshToken, profile, done) {
@@ -82,7 +77,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat' }));
+      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore()}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());

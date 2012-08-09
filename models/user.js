@@ -6,7 +6,6 @@ var mongoose = require('mongoose'),
 var UserSchema = new mongoose.Schema({
   firstName  :  { type: String},
   lastName :  { type: String},
-  id   :  { type: String, unique: true },
   dropboxDetails : {type: {}}
 });
 
