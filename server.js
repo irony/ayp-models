@@ -2,6 +2,9 @@ var app = require('./app').init(process.env.PORT || 3000);
 var dropboxConnector = require('./connectors/dropbox')(app);
 var instagramConnector = require('./connectors/instagram')(app);
 var passport = require('passport');
+var dropbox = require('dbox');
+var Photo = require('./models/photo');
+var async = require('async');
 
 var locals = {
         title: 		 'All My Photos',
@@ -12,6 +15,9 @@ var locals = {
 app.get('/', function(req,res){
 
     locals.date = new Date().toLocaleDateString();
+    locals.user = req.user;
+    locals.title = req.session.passport.user ? req.session.passport.user.displayName + "'s photos" : locals.title;
+console.log('session', req.session);
 
     res.render('template.ejs', locals);
 });
@@ -21,33 +27,42 @@ app.get('/', function(req,res){
 app.tokens = [];
 app.accessTokens = [];
 
-
-
-
 app.get('/photos', function(req, res){
 
-
-	// TODO: load from database and move these to import class instead
-	var access_token = loadToken(req.query.uid);
-
-	var client = dropbox.client(access_token);
-	client.search("/Photos", "jpg", function(status, reply){
+	if (!req.user){
 		var model = locals;
-		model.photos = Array.prototype.slice.call(reply);
-		model.uid = req.query.uid;
+		model.error = 'You have to login first';
+		model.user = req.user;
+		return res.render('500.ejs', model);
+	}
 
-		var access_token = loadToken(model.uid);
+	if (req.user.accounts.dropbox){
 
-		model.photos.forEach(function(photo){
-			dropboxConnector.downloadThumbnail(photo.path, access_token);
+		dropboxConnector.downloadAllPhotos(req.user, function(err, photos){
+			if (err)
+				return res.render('500.ejs', err);
+
+			async.map(photos, function(photo, next){
+				console.log('photo:', photo);
+
+				Photo.findOne({'source' : photo.source, 'fileName': photo.fileName, 'date' : photo.date}, function(err, dbPhoto){
+					if (!dbPhoto)
+						dbPhoto = new Photo(photo);
+
+					dbPhoto.update(photo);
+					dbPhoto.save();
+					next(dbPhoto);
+				});
+			}, function(err, photos){
+				res.render('photos.ejs', {photos: photos});
+			});
 		});
+	} else{
+		throw "No compatible accounts are connected to this user"
+	}
 
-		res.render('photos.ejs', model);
-	});
 
 });
-
-
 
 /* The 404 Route (ALWAYS Keep this as the last route) */
 app.get('/*', function(req, res){

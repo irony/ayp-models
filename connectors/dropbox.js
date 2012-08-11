@@ -2,11 +2,45 @@ var dbox  = require("dbox");
 var config = { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'};
 var dbox  = require("dbox");
 var dropbox   = dbox.app(config);
+var passport = require('passport');
 
 module.exports = function (app) {
 
 	var self = this;
 
+		// GET /auth/dropbox
+	//   Use passport.authenticate() as route middleware to authenticate the
+	//   request.  The first step in Dropbox authentication will involve redirecting
+	//   the user to dropbox.com.  After authorization, Dropbox will redirect the user
+	//   back to this application at /auth/dropbox/callback
+	app.get('/auth/dropbox',
+		passport.authenticate('dropbox'),
+		function(req, res){
+		// The request will be redirected to Dropbox for authentication, so this
+		// function will not be called.s
+	});
+
+	// GET /auth/dropbox/callback
+	//   Use passport.authenticate() as route middleware to authenticate the
+	//   request.  If authentication fails, the user will be redirected back to the
+	//   login page.  Otherwise, the primary route function function will be called,
+	//   which, in this example, will redirect the user to the home page.
+	app.get('/auth/dropbox/callback',
+		passport.authenticate('dropbox', { failureRedirect: '/login' }),
+		function(req, res) {
+			res.redirect('/');
+		});
+
+
+
+	app.get('/img/thumbnails/:uid/*:path', function(req,res){
+		var path = req.url.split(req.params.uid)[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
+		this.downloadThumbnail(path, req.user, function(err, thumbnail){
+			res.end(thumbnail);
+		});
+	});
+
+	/*
 	// TODO: move these to separate routes/controllers
 	app.get('/auth/dropbox', function(req,res){
 
@@ -23,12 +57,6 @@ module.exports = function (app) {
 
 	});
 
-	app.get('/img/thumbnails/:uid/*:path', function(req,res){
-		var path = req.url.split(req.params.uid)[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
-		this.downloadThumbnail(path, req.params.uid, function(err, thumbnail){
-			res.end(thumbnail);
-		});
-	});
 
 
 
@@ -51,33 +79,15 @@ module.exports = function (app) {
 				res.render("500.ejs", locals);
 			}
 		});
-	});
+	});*/
 
-	this.loadToken = function(uid){
+	this.downloadThumbnail = function(path, client, user, done){
 
-		if (app.tokens[uid])
-		{
-			return app.tokens[uid];
-		}
+		if (!user || !user.accounts.dropbox)
+			return done('Not a dropbox user', null);
 
-		var path = __dirname + '/../../tokens/' + uid;
-		if (!require('path').existsSync(path))
-			return null;
 
-		var token = require('fs').readFileSync(path);
-		app.tokens[token.uid] = token; // cache the results
-		return token;
-
-	};
-
-	this.saveToken = function(token){
-		app.tokens[token.uid] = token; // cache the results
-		require('fs').writeFileSync(__dirname + '/../../tokens/' + token.uid, JSON.stringify(token));
-	};
-
-	this.downloadThumbnail = function(path, access_token, callback){
-		var client = dropbox.client(access_token);
-		var filename = __dirname + '/static/img/thumbnails/' + uid + path;
+		var filename = __dirname + '/static/img/thumbnails/dropbox/' + user.accounts.dropbox.id + path;
 		var fs = require('fs');
 		var p = require('path');
 
@@ -99,15 +109,43 @@ module.exports = function (app) {
 
 			mkdirp(pathArray.join('/'), function (err) {
 				if (err && callback)
-					callback(err);
+					return done(err);
 
 				fs.writeFile(filename, thumbnail, function(err){
-					if (callback)
-						callback(err, thumbnail);
+					return done(err, thumbnail);
 				});
 
 			});
 		});
+	};
+
+	this.downloadAllPhotos = function(user, done)
+	{
+		if (!user || !user.accounts.dropbox)
+			return done('Not dropbox folder', null);
+
+		// TODO: load from database and move these to import class instead
+		var access_token = {
+			"oauth_token_secret"	:  user.accounts.dropbox.tokenSecret,
+			"oauth_token"			:  user.accounts.dropbox.token
+		};
+
+		var client = dropbox.client(access_token);
+		client.search("/Photos", "jpg", function(status, reply){
+			
+			if (status != 200)
+				return done(status, null);
+
+			var photos = Array.prototype.slice.call(reply);
+
+			photos.forEach(function(photo){
+				self.downloadThumbnail(photo.path, client);
+				photo.source = 'dropbox';
+			});
+
+			return done(null, photos);
+		});
+
 	};
 
 	return this;

@@ -1,24 +1,23 @@
 var mongoose = require('mongoose'),
     UserSchema = require('./models/user.js');
-
     mongoose.model('User', UserSchema);
 
 mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
 
-var    User = mongoose.model('User');
-
+var User = mongoose.model('User');
 var MongoStore = require('express-session-mongo');
 
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
-  , InstagramStrategy = require('passport-instagram').Strategy;
+  , InstagramStrategy = require('passport-instagram').Strategy
+  , DropboxStrategy = require('passport-dropbox').Strategy;
 
 var conf = require('./conf.js');
 
 
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
@@ -28,6 +27,50 @@ passport.deserializeUser(function(id, done) {
 });
 
 
+function updateProfile(user, profile, done){
+
+  user.accounts = (user.accounts || {});
+  user.emails = (user.emails || []);
+
+  user.displayName = profile.displayName;
+  user.accounts[profile.provider] = profile;
+
+  if (profile.emails)
+  {
+    profile.emails.forEach(function(e){
+      if (user.emails.indexOf(e) < 0)
+      {
+        console.log('added email', e);
+        user.emails.push(e); // add new emails to the main object
+      }
+    });
+  }
+
+  user.save(function(err, user){
+    return done(err, user);
+  });
+}
+
+function findOrCreateAndUpdateUser(user, profile, done)
+{
+
+  if (user)
+    return updateProfile(user, profile, done);
+
+  // we will use many providers but still want's to connect them to the same account,
+  // therefore we will search for this user according to it's id for this particular provider,
+  // if no one is found we will create it. If found we will update the accounts.
+
+  User.findOne({ '$where' : 'this.accounts.' + profile.provider + '.id == ' + profile.id }, function (err, user) {
+
+
+      if (!user) user = new User();
+
+      return updateProfile(user, profile, done);
+
+  });
+}
+
 // Use the InstagramStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Instagram
@@ -35,18 +78,34 @@ passport.deserializeUser(function(id, done) {
 passport.use(new InstagramStrategy({
     clientID: conf.instagram.clientId,
     clientSecret: conf.instagram.clientSecret,
-    callbackURL: "http://localhost:3000/auth/instagram/callback"
+    callbackURL: "http://localhost:3000/auth/instagram/callback",
+    passReqToCallback: true
   },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // To keep the example simple, the user's Instagram profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Instagram account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
+  function(req, accessToken, refreshToken, profile, done) {
+
+    profile.accessToken = accessToken;
+    profile.refreshToken = refreshToken;
+    
+    return findOrCreateAndUpdateUser(req.user, profile, done);
+  }
+));
+
+// Use the DropboxStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Dropbox profile), and
+//   invoke a callback with a user object.
+passport.use(new DropboxStrategy({
+    consumerKey: conf.dropbox.consumerKey,
+    consumerSecret: conf.dropbox.consumerSecret,
+    callbackURL: "http://localhost:3000/auth/dropbox/callback",
+    passReqToCallback: true
+  },
+  function(req, token, tokenSecret, profile, done) {
+
+    profile.token = token;
+    profile.tokenSecret = tokenSecret;
+
+    return findOrCreateAndUpdateUser(req.user, profile, done);
   }
 ));
 
@@ -66,6 +125,11 @@ exports.init = function(port) {
 
 
 
+    var dbConfig = {
+        db: 'allmyphotos',
+        host: 'localhost',
+        collection: 'usersessions' // optional, default: sessions
+      };
 
     var app = express.createServer();
 
@@ -77,7 +141,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore()}));
+      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore(dbConfig)}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());
