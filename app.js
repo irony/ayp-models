@@ -6,6 +6,7 @@ mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'
 
 var User = mongoose.model('User');
 var MongoStore = require('express-session-mongo');
+var callbackBaseUrl = process.env.HEROKU_URL || "http://localhost:3000";
 
 var express = require('express')
   , passport = require('passport')
@@ -78,7 +79,7 @@ function findOrCreateAndUpdateUser(user, profile, done)
 passport.use(new InstagramStrategy({
     clientID: conf.instagram.clientId,
     clientSecret: conf.instagram.clientSecret,
-    callbackURL: "http://localhost:3000/auth/instagram/callback",
+    callbackURL: callbackBaseUrl + "/auth/instagram/callback",
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
@@ -97,7 +98,7 @@ passport.use(new InstagramStrategy({
 passport.use(new DropboxStrategy({
     consumerKey: conf.dropbox.consumerKey,
     consumerSecret: conf.dropbox.consumerSecret,
-    callbackURL: "http://localhost:3000/auth/dropbox/callback",
+    callbackURL: callbackBaseUrl + "/auth/dropbox/callback",
     passReqToCallback: true
   },
   function(req, token, tokenSecret, profile, done) {
