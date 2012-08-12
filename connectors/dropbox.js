@@ -139,7 +139,7 @@ module.exports = function (app) {
 			var photos = Array.prototype.slice.call(reply);
 
 			photos.forEach(function(photo){
-				self.downloadThumbnail(photo.path, client);
+				self.downloadThumbnail(photo.path, client, user, done);
 				photo.source = 'dropbox';
 			});
 

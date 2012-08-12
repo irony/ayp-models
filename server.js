@@ -16,9 +16,10 @@ app.get('/', function(req,res){
 
     locals.date = new Date().toLocaleDateString();
     locals.user = req.user;
-    locals.title = req.session.passport.user ? req.session.passport.user.displayName + "'s photos" : locals.title;
-console.log('session', req.session);
+    locals.title = req.user ? req.user.displayName + "'s photos" : locals.title;
 
+    debugger;
+    
     res.render('template.ejs', locals);
 });
 
@@ -36,11 +37,15 @@ app.get('/photos', function(req, res){
 		return res.render('500.ejs', model);
 	}
 
-	if (req.user.accounts.dropbox){
+	console.log('user:', req.session.passport.user);
+
+	if (req.user.accounts && req.user.accounts.dropbox){
 
 		dropboxConnector.downloadAllPhotos(req.user, function(err, photos){
-			if (err)
+			if (err || !photos)
 				return res.render('500.ejs', err);
+
+			Array.prototype.slice.call(photos);
 
 			async.map(photos, function(photo, next){
 				console.log('photo:', photo);
@@ -54,11 +59,11 @@ app.get('/photos', function(req, res){
 					next(dbPhoto);
 				});
 			}, function(err, photos){
-				res.render('photos.ejs', {photos: photos});
+				res.render('photos.ejs', {photos: photos, user : req.user});
 			});
 		});
 	} else{
-		throw "No compatible accounts are connected to this user"
+		throw "No compatible accounts are connected to this user";
 	}
 
 

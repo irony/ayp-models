@@ -21,7 +21,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  User.findOne(id, function (err, user) {
+  User.findOne({_id : id.toString()}, function (err, user) {
     done(err, user);
   });
 });
@@ -124,12 +124,8 @@ function ensureAuthenticated(req, res, next) {
 exports.init = function(port) {
 
 
+    console.log('mongoose', mongoose.connections[0]);
 
-    var dbConfig = {
-        db: 'allmyphotos',
-        host: 'localhost',
-        collection: 'usersessions' // optional, default: sessions
-      };
 
     var app = express.createServer();
 
@@ -141,7 +137,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore(dbConfig)}));
+      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore(mongoose.connections[0].db.serverConfig)}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());

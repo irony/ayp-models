@@ -2,11 +2,11 @@
   <!-- Main hero unit for a primary marketing message or call to action -->
   <div class="hero-unit">
     <img src="img/RedChairDesign-icon.png" class="pull-left">
-    <h1>One place, all your photos</h1>
-    <p>Combine all your photos from Dropbox, iCloud, Instagram, Google Drive, Time Machine, Flickr and Facebook and let us help you organize them into nice organized folders with easy access to share and sync them with your friends and family.</p>
+    <h1>One app, all photos</h1>
+    <p>Combine all your photos from Dropbox, iCloud, Instagram, Google Drive, Flickr and Facebook and let us help you organize them into nicely organized folders with smart ways to sync them with your friends.</p>
     <p>
-      <a class="btn btn-primary btn-large" href="auth/dropbox" target="_blank">Dropbox</a>
-      <a class="btn btn-primary btn-large " href="auth/instagram" target="_blank">Instagram</a>
+      <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank">Dropbox</a>
+      <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank">Instagram</a>
     </p>
   </div>
 

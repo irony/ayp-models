@@ -3,15 +3,16 @@
 
 <ul class="thumbnails">
 
-<% for(var i=0; i<photos.length; i++) {
-    var photo = photos[i];
+<% if (photos && photos.forEach(function(photo){
+
+  console.log('photo.ejs:', photos);
   %>
   <li class="span3">
     <a href="#" class="thumbnail">
-      <img src="/img/thumbnails/<%=uid%><%=photo.path%>" alt="">
+      <img src="/img/thumbnails/<%=user.id%><%=photo.path%>" alt="">
     </a>
   </li>
-<% } %>
+<% })); %>
 </ul>
 
 
