@@ -124,8 +124,15 @@ function ensureAuthenticated(req, res, next) {
 exports.init = function(port) {
 
 
-    console.log('mongoose', mongoose.connections[0]);
+    console.log('mongoose', mongoose.connections[0].db.serverConfig);
 
+    var mongooseConfig = mongoose.connections[0].db.serverConfig;
+
+    var dbConfig = {
+        db: mongooseConfig.db,
+        host: mongooseConfig.host,
+        collection: mongooseConfig.collection // optional, default: sessions
+      };
 
     var app = express.createServer();
 
@@ -137,7 +144,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore(mongoose.connections[0].db.serverConfig)}));
+      app.use(express.session({ secret: 'keyboard cat' , store : new MongoStore(dbConfig)}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());
