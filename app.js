@@ -6,7 +6,7 @@ mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'
 
 var User = mongoose.model('User');
 var MongoStore = require('express-session-mongo');
-var callbackBaseUrl = "http://" + (process.env.host || "localhost:3000");
+var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000");
 
 var express = require('express')
   , passport = require('passport')
