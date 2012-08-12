@@ -6,7 +6,7 @@ mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'
 
 var User = mongoose.model('User');
 var MongoStore = require('express-session-mongo');
-var callbackBaseUrl = "http://" + process.env.host || "localhost:3000";
+var callbackBaseUrl = "http://" + (process.env.host || "localhost:3000");
 
 var express = require('express')
   , passport = require('passport')
@@ -125,7 +125,7 @@ function ensureAuthenticated(req, res, next) {
 exports.init = function(port) {
 
 
-    console.log('mongoose', mongoose.connections[0].db.serverConfig);
+    console.log('env', process.env);
 
     var mongooseConfig = mongoose.connections[0].db.serverConfig;
 
