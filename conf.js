@@ -26,5 +26,9 @@ module.exports = {
   , dropbox: {
       consumerKey : '430zvvgwfjxnj4v',
       consumerSecret : 'un2e5d75rkfdeml'
+  },
+  flickr: {
+    consumerKey : '246152862e1891230c664f9ef1c7e5f6',
+    consumerSecret : 'b970658338c81152'
   }
 };

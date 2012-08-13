@@ -12,6 +12,7 @@ var express = require('express')
   , passport = require('passport')
   , util = require('util')
   , InstagramStrategy = require('passport-instagram').Strategy
+  , FlickrStrategy = require('passport-flickr').Strategy
   , DropboxStrategy = require('passport-dropbox').Strategy;
 
 var conf = require('./conf.js');
@@ -35,6 +36,7 @@ function updateProfile(user, profile, done){
 
   user.displayName = profile.displayName;
   user.accounts[profile.provider] = profile;
+  user.updated = new Date();
 
   if (profile.emails)
   {
@@ -47,29 +49,33 @@ function updateProfile(user, profile, done){
     });
   }
 
-  user.save(function(err, user){
-    return done(err, user);
+  user.save(function(err, savedUser){
+    return done(err, savedUser);
   });
 }
 
 function findOrCreateAndUpdateUser(user, profile, done)
 {
 
-  if (user)
-    return updateProfile(user, profile, done);
-
-  // we will use many providers but still want's to connect them to the same account,
-  // therefore we will search for this user according to it's id for this particular provider,
-  // if no one is found we will create it. If found we will update the accounts.
-
-  User.findOne({ '$where' : 'this.accounts.' + profile.provider + '.id == ' + profile.id }, function (err, user) {
-
-
-      if (!user) user = new User();
-
+  // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
+  if (user){
+    return User.findOne(user._id, function(err, user){
       return updateProfile(user, profile, done);
+    });
+  } else {
+    // we will use many providers but still want's to connect them to the same account,
+    // therefore we will search for this user according to it's id for this particular provider,
+    // if no one is found we will create it. If found we will update the accounts.
 
-  });
+    return User.findOne({ '$where' : 'this.accounts.' + profile.provider + '.id == ' + profile.id }, function (err, user) {
+
+
+        if (!user) user = new User();
+
+        return updateProfile(user, profile, done);
+
+    });
+  }
 }
 
 // Use the InstagramStrategy within Passport.
@@ -110,6 +116,18 @@ passport.use(new DropboxStrategy({
   }
 ));
 
+passport.use(new FlickrStrategy({
+    consumerKey: conf.flickr.consumerKey,
+    consumerSecret: conf.flickr.consumerSecret,
+    callbackURL: callbackBaseUrl + "/auth/flickr/callback",
+    passReqToCallback: true
+  },
+  function(req, token, tokenSecret, profile, done) {
+
+    return findOrCreateAndUpdateUser(req.user, profile, done);
+
+  }
+));
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If

@@ -1,6 +1,7 @@
 var app = require('./app').init(process.env.PORT || 3000);
 var dropboxConnector = require('./connectors/dropbox')(app);
 var instagramConnector = require('./connectors/instagram')(app);
+var flickrConnector = require('./connectors/flickr')(app);
 var passport = require('passport');
 var dropbox = require('dbox');
 var Photo = require('./models/photo');
@@ -19,7 +20,7 @@ app.get('/', function(req,res){
     locals.title = req.user ? req.user.displayName + "'s photos" : locals.title;
 
     debugger;
-    
+
     res.render('template.ejs', locals);
 });
 
@@ -56,10 +57,10 @@ app.get('/photos', function(req, res){
 
 					dbPhoto.update(photo);
 					dbPhoto.save();
-					next(dbPhoto);
+					return next(null, [dbPhoto]);
 				});
 			}, function(err, photos){
-				res.render('photos.ejs', {photos: photos, user : req.user});
+				res.render('photos.ejs', {title: 'Photos', date : newDate(), photos: photos, user : req.user});
 			});
 		});
 	} else{
@@ -73,3 +74,5 @@ app.get('/photos', function(req, res){
 app.get('/*', function(req, res){
     res.render('404.ejs', locals);
 });
+
+
