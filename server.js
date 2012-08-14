@@ -51,16 +51,19 @@ app.get('/photos', function(req, res){
 			async.map(photos, function(photo, next){
 				console.log('photo:', photo);
 
-				Photo.findOne({'source' : photo.source, 'fileName': photo.fileName, 'date' : photo.date}, function(err, dbPhoto){
+				Photo.findOne({'source' : photo.source, 'path': photo.path, 'modified' : photo.modified}, function(err, dbPhoto){
+
+					debugger;					
+
 					if (!dbPhoto)
-						dbPhoto = new Photo(photo);
+						dbPhoto = new Photo();
 
 					dbPhoto.update(photo);
 					dbPhoto.save();
 					return next(null, [dbPhoto]);
 				});
 			}, function(err, photos){
-				res.render('photos.ejs', {title: 'Photos', date : newDate(), photos: photos, user : req.user});
+				res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
 			});
 		});
 	} else{

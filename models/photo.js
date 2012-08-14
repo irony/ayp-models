@@ -6,8 +6,8 @@ var mongoose = require('mongoose'),
 
 var PhotoSchema = new mongoose.Schema({
   id  :  { type: Schema.ObjectId},
-  fileName : { type: String},
-  date : { type: Date},
+  path : { type: String},
+  modified : { type: Date},
   source : { type: String},
   thumbnails : {type: {}},
   original : { type: String},
