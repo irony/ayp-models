@@ -9,7 +9,7 @@ describe("app", function(){
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test', id : id};
 	var user = null;
     app.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	err.should.be.null();
+    	should.ok(!err);
 		savedUser.should.have.property('accounts');
 		done();
     });
@@ -19,7 +19,7 @@ describe("app", function(){
 	var profile = {displayName : 'Christian Landgren', emails : ['cln@iteam.se'], provider : 'test', id : id};
 	var user = null;
     app.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	err.should.be.null();
+    	should.ok(!err);
 		savedUser.emails.should.have.length(2);
 		done();
     });
@@ -29,9 +29,9 @@ describe("app", function(){
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test2', id : id};
 	var user = null;
     app.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	err.should.be.null();
+    	should.ok(!err);
 		savedUser.should.have.property('accounts');
-		savedUser.accounts.should.have.length(2);
+		savedUser.accounts.should.have.property(profile.provider);
 		done();
     });
   });

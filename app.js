@@ -28,23 +28,29 @@ passport.deserializeUser(function(id, done) {
 
 function updateProfile(user, profile, done){
 
-  user.set('accounts', (user.accounts || {}));
-  user.set('emails', (user.emails || []));
+  if (!user)
+    throw new Error("User must have a value");
 
-  user.displayName = profile.displayName;
-  user.set('accounts.' + profile.provider, profile);
+  var accounts = (user.accounts || {});
+  var emails = (user.emails || []);
+
+  accounts[profile.provider] = profile;
+
   user.updated = new Date();
 
   if (profile.emails)
   {
     profile.emails.forEach(function(e){
-      if (user.emails.indexOf(e) < 0)
+      if (emails.indexOf(e) < 0)
       {
-        console.log('added email', e);
-        user.emails.push(e); // add new emails to the main object
+        emails.push(e); // add new emails to the main object
       }
     });
   }
+
+  user.displayName = profile.displayName;
+  user.set('emails', emails);
+  user.set('accounts', accounts);
 
   return user.save(function(err, savedUser){
     done(err, savedUser);
@@ -56,7 +62,6 @@ function findOrCreateAndUpdateUser(user, profile, done)
 
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
   if (user && user._id){
-      console.log('updating existing user', foundUser);
       return updateProfile(user, profile, done);
   }
 
@@ -64,17 +69,18 @@ function findOrCreateAndUpdateUser(user, profile, done)
   // therefore we will search for this user according to it's id for this particular provider,
   // if no one is found we will create it. If found we will update the accounts.
 
-  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"].id == ' + profile.id }, function (err, foundUser) {
+  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"] && this.accounts["' + profile.provider + '"].id == ' + profile.id }, function (err, foundUser) {
 
       if (err){
-        console.log('error occurred', err);
         return done(err, null);
       }
 
       if (!foundUser) {
         user = new User();
-        console.log('no user found, creating new', user);
+      } else {
+        user = foundUser;
       }
+
 
       return updateProfile(user, profile, done);
 

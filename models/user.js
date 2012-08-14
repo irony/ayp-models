@@ -20,7 +20,6 @@ module.exports = function (conn){
 	});
 		
 	UserSchema.pre('save', function(next){
-		console.log('save', this.acounts);
 		next();
 	})
 	
