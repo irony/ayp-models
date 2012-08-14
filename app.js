@@ -1,11 +1,8 @@
-var mongoose = require('mongoose'),
-    UserSchema = require('./models/user.js');
-    mongoose.model('User', UserSchema);
+var mongoose = require('mongoose');
 
-mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
+var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
 
-var User = mongoose.model('User');
-var MongoStore = require('express-session-mongo');
+var User = require('./models/user')(conn);
 var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000");
 
 var express = require('express')
@@ -31,11 +28,11 @@ passport.deserializeUser(function(id, done) {
 
 function updateProfile(user, profile, done){
 
-  user.accounts = (user.accounts || {});
-  user.emails = (user.emails || []);
+  user.set('accounts', (user.accounts || {}));
+  user.set('emails', (user.emails || []));
 
   user.displayName = profile.displayName;
-  user.accounts[profile.provider] = profile;
+  user.set('accounts.' + profile.provider, profile);
   user.updated = new Date();
 
   if (profile.emails)
@@ -49,8 +46,8 @@ function updateProfile(user, profile, done){
     });
   }
 
-  user.save(function(err, savedUser){
-    return done(err, savedUser);
+  return user.save(function(err, savedUser){
+    done(err, savedUser);
   });
 }
 
@@ -58,24 +55,30 @@ function findOrCreateAndUpdateUser(user, profile, done)
 {
 
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
-  if (user){
-    return User.findOne(user._id, function(err, user){
+  if (user && user._id){
+      console.log('updating existing user', foundUser);
       return updateProfile(user, profile, done);
-    });
-  } else {
-    // we will use many providers but still want's to connect them to the same account,
-    // therefore we will search for this user according to it's id for this particular provider,
-    // if no one is found we will create it. If found we will update the accounts.
-
-    return User.findOne({ '$where' : 'this.accounts.' + profile.provider + '.id == ' + profile.id }, function (err, user) {
-
-
-        if (!user) user = new User();
-
-        return updateProfile(user, profile, done);
-
-    });
   }
+
+  // we will use many providers but still want's to connect them to the same account,
+  // therefore we will search for this user according to it's id for this particular provider,
+  // if no one is found we will create it. If found we will update the accounts.
+
+  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"].id == ' + profile.id }, function (err, foundUser) {
+
+      if (err){
+        console.log('error occurred', err);
+        return done(err, null);
+      }
+
+      if (!foundUser) {
+        user = new User();
+        console.log('no user found, creating new', user);
+      }
+
+      return updateProfile(user, profile, done);
+
+  });
 }
 
 // Use the InstagramStrategy within Passport.
@@ -140,18 +143,12 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
+exports.findOrCreateAndUpdateUser = findOrCreateAndUpdateUser;
+
 exports.init = function(port) {
 
 
     console.log('env', process.env);
-
-    var mongooseConfig = mongoose.connections[0].db.serverConfig;
-
-    var dbConfig = {
-        db: mongooseConfig.db,
-        host: mongooseConfig.host,
-        collection: mongooseConfig.collection // optional, default: sessions
-      };
 
     var app = express.createServer();
 

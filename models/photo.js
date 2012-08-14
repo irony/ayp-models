@@ -1,7 +1,7 @@
 
 
 var mongoose = require('mongoose'),
-	User = require('./user'),
+	User = require('./user')(mongoose),
     Schema = mongoose.Schema;
 
 var PhotoSchema = new mongoose.Schema({
@@ -12,10 +12,10 @@ var PhotoSchema = new mongoose.Schema({
   thumbnails : {type: {}},
   original : { type: String},
   tags : { type: []},
-  metadata : { type: {}},
+  metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
   sharedTo : { type: [Schema.Types.ObjectId]},
   owners : [User]
 });
 	
-module.exports = mongoose.model('User', User.Schema);
+module.exports = mongoose.model('Photo', PhotoSchema);
