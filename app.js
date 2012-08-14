@@ -16,13 +16,11 @@ var conf = require('./conf.js');
 
 
 passport.serializeUser(function(user, done) {
-  done(null, user._id);
+  done(null, user.toJSON());
 });
 
-passport.deserializeUser(function(id, done) {
-  User.findOne({_id : id.toString()}, function (err, user) {
-    done(err, user);
-  });
+passport.deserializeUser(function(user, done) {
+    done(null, user);
 });
 
 
@@ -62,7 +60,11 @@ function findOrCreateAndUpdateUser(user, profile, done)
 
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
   if (user && user._id){
+    return User.findOne(user._id, function(err, user){
+      
       return updateProfile(user, profile, done);
+
+    });
   }
 
   // we will use many providers but still want's to connect them to the same account,
