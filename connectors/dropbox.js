@@ -35,7 +35,9 @@ module.exports = function (app) {
 
 	app.get('/img/thumbnails/:uid/*:path', function(req,res){
 		var path = req.url.split(req.params.uid)[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
-		this.downloadThumbnail(path, req.user, function(err, thumbnail){
+		var client = this.getClient(req.user);
+		
+		this.downloadThumbnail(path, client, req.user, function(err, thumbnail){
 			res.end(thumbnail);
 		});
 	});
@@ -83,11 +85,13 @@ module.exports = function (app) {
 
 	this.downloadThumbnail = function(path, client, user, done){
 
-		if (!user || !user.accounts.dropbox)
+		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done('Not a dropbox user', null);
 
 
-		var filename = __dirname + '/static/img/thumbnails/dropbox/' + user.accounts.dropbox.id + path;
+
+
+		var filename = __dirname + '/static/img/thumbnails/dropbox/' + user._id + path;
 		var fs = require('fs');
 		var p = require('path');
 
@@ -119,10 +123,7 @@ module.exports = function (app) {
 		});
 	};
 
-	this.downloadAllPhotos = function(user, done)
-	{
-		if (!user || !user.accounts.dropbox)
-			return done('Not dropbox folder', null);
+	this.getClient = function(user){
 
 		// TODO: load from database and move these to import class instead
 		var access_token = {
@@ -131,6 +132,17 @@ module.exports = function (app) {
 		};
 
 		var client = dropbox.client(access_token);
+		return client;
+	};
+
+	this.downloadAllPhotos = function(user, done)
+	{
+		if (!user || !user.accounts.dropbox)
+			return done('Not dropbox folder', null);
+
+
+		var client = this.getClient(user);
+
 		client.search("/Photos", "jpg", function(status, reply){
 			
 			if (status != 200)

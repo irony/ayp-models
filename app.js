@@ -12,6 +12,7 @@ var express = require('express')
   , FlickrStrategy = require('passport-flickr').Strategy
   , DropboxStrategy = require('passport-dropbox').Strategy;
 
+var MongoStore = require('connect-mongo')(express);
 var conf = require('./conf.js');
 
 
@@ -63,7 +64,7 @@ function findOrCreateAndUpdateUser(user, profile, done)
     return User.findOne(user._id, function(err, user){
       
       return updateProfile(user, profile, done);
-
+  
     });
   }
 
@@ -156,8 +157,6 @@ exports.findOrCreateAndUpdateUser = findOrCreateAndUpdateUser;
 exports.init = function(port) {
 
 
-    console.log('env', process.env);
-
     var app = express.createServer();
 
     // configure Express
@@ -168,7 +167,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat' }));
+      app.use(express.session({ secret: 'keyboard cat', store: new MongoStore({url: process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'}) }));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());

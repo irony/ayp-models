@@ -38,33 +38,42 @@ app.get('/photos', function(req, res){
 		return res.render('500.ejs', model);
 	}
 
-	console.log('user:', req.session.passport.user);
-
 	if (req.user.accounts && req.user.accounts.dropbox){
 
 		dropboxConnector.downloadAllPhotos(req.user, function(err, photos){
 			if (err || !photos)
-				return res.render('500.ejs', err);
+				throw err;
 
 			Array.prototype.slice.call(photos);
 
 			async.map(photos, function(photo, next){
-				console.log('photo:', photo);
 
 				Photo.findOne({'source' : photo.source, 'path': photo.path, 'modified' : photo.modified}, function(err, dbPhoto){
 
 					debugger;					
 
-					if (!dbPhoto)
+					if (!dbPhoto){
 						dbPhoto = new Photo();
+						dbPhoto.owners.push(req.user);
+					}
 
-					dbPhoto.update(photo);
-					dbPhoto.save();
-					return next(null, [dbPhoto]);
+					dbPhoto.source = photo.source;
+					dbPhoto.path = photo.path;
+					dbPhoto.modified = photo.modified;
+					dbPhoto.taken = photo.client_mtime;
+					dbPhoto.metadata = photo;
+					dbPhoto.bytes = photo.bytes;
+					dbPhoto.mimeType = photo.mime_type;
+
+					dbPhoto.save(function(err, savedPhoto){
+						return next(err, savedPhoto);
+					});
 				});
 			}, function(err, photos){
 				res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
 			});
+
+
 		});
 	} else{
 		throw "No compatible accounts are connected to this user";
