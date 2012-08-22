@@ -38,6 +38,33 @@ app.get('/photos', function(req, res){
 		return res.render('500.ejs', model);
 	}
 
+	Photo.find({'owners' : req.user}, function(err, photos){
+	
+		res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
+
+	});
+});
+
+
+app.get('/markers', function(req,res){
+
+    locals.date = new Date().toLocaleDateString();
+    locals.user = req.user;
+    locals.title = req.user ? req.user.displayName + "'s photos" : locals.title;
+
+    res.render('markers.ejs', locals);
+});
+
+
+app.get('/import', function(req, res){
+
+	if (!req.user){
+		var model = locals;
+		model.error = 'You have to login first';
+		model.user = req.user;
+		return res.render('500.ejs', model);
+	}
+
 	if (req.user.accounts && req.user.accounts.dropbox){
 
 		dropboxConnector.downloadAllPhotos(req.user, function(err, photos){
@@ -54,7 +81,7 @@ app.get('/photos', function(req, res){
 
 					if (!dbPhoto){
 						dbPhoto = new Photo();
-						dbPhoto.owners.push(req.user);
+						dbPhoto.owners = [req.user];
 					}
 
 					dbPhoto.source = photo.source;
@@ -65,12 +92,13 @@ app.get('/photos', function(req, res){
 					dbPhoto.bytes = photo.bytes;
 					dbPhoto.mimeType = photo.mime_type;
 
-					dbPhoto.save(function(err, savedPhoto){
+					return dbPhoto.save(function(err, savedPhoto){
 						return next(err, savedPhoto);
 					});
 				});
 			}, function(err, photos){
-				res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
+				if (!err)
+					res.redirect('/photos');
 			});
 
 

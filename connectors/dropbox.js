@@ -143,7 +143,7 @@ module.exports = function (app) {
 
 		var client = this.getClient(user);
 
-		client.search("/Photos", "jpg", function(status, reply){
+		client.search("/", "jpg", function(status, reply){
 			
 			if (status != 200)
 				return done(status, null);

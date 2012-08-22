@@ -1,0 +1,66 @@
+
+
+
+
+
+
+<style>
+
+#canvas{
+ -webkit-perspective: 250px;
+ -webkit-perspective-origin: 50% 80%;
+ 
+	position: relative;
+	width: 1000px;
+	height: 10000px;
+}  
+
+#canvas li
+{
+	-webkit-transform-origin: 50% 50% 50%;
+-webkit-transform: perspective(0)
+ translate3d(50px, 40px, 80px)
+ scale3d(1, 2, 0)
+ rotate3d(0, 1, 0, 45deg);
+-webkit-transform-style: preserve-3d;
+
+}
+
+#canvas li.star1
+{
+	translate3d(5,1,6)	
+}
+
+
+#canvas li.star2
+{
+	translate3d(4,2,7)	
+}
+#canvas li.star3
+{
+	translate3d(3,3,8)	
+}
+#canvas li.star4
+{
+	translate3d(2,4,9)	
+}
+#canvas li.star5
+{
+	translate3d(1,5,10)	
+}
+
+</style>
+
+
+<ul id="canvas">
+	
+
+	<li id="star1">	
+	<li id="star2">	
+	<li id="star3">	
+	<li id="star4">	
+	<li id="star5">	
+
+
+
+</ul>
