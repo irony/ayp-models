@@ -44,7 +44,16 @@ app.get('/photos', function(req, res){
   .sort('-taken')
   .exec(function(err, photos){
 	
-		res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
+    var model = {
+      date : new Date().toLocaleDateString(),
+      user : req.user,
+      description: 'Lots of photos',
+      author : req.user.displayName,
+      title : req.user ? req.user.displayName + "'s photos" : locals.title,
+      photos : photos
+    };
+
+		res.render('photos.ejs', model);
 
 	});
 });
