@@ -39,7 +39,10 @@ app.get('/photos', function(req, res){
 		return res.render('500.ejs', model);
 	}
 
-	Photo.find({}, function(err, photos){
+	Photo.find({'owners': req.user})
+  .limit(50)
+  .sort('-taken')
+  .exec(function(err, photos){
 	
 		res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
 
