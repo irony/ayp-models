@@ -44,46 +44,6 @@ module.exports = function (app) {
 		});
 	});
 
-	/*
-	// TODO: move these to separate routes/controllers
-	app.get('/auth/dropbox', function(req,res){
-
-
-		dropbox.requesttoken(function(status, request_token){
-			console.log('token', request_token);
-			console.log('request', req);
-
-			app.tokens[request_token.oauth_token] = request_token;
-
-			res.redirect(request_token.authorize_url + "&oauth_callback=http://" + req.headers.host + "/auth/dropbox/callback");
-
-		});
-
-	});
-
-
-
-
-	// TODO: move to separate dropbox controller / route
-	app.get('/auth/dropbox/callback', function(req, res){
-		// app.session.dropboxUid = req.body.uid;
-		var token = (req.query || req.body).oauth_token;
-		var request_token = app.tokens[token];
-		
-		console.log(request_token);
-		dropbox.accesstoken(request_token, function(status, access_token){
-			console.log('access', status, access_token);
-			if (status == 200)
-			{
-				self.saveToken(access_token);
-				res.redirect('/photos?uid=' + access_token.uid);
-			}
-			else{
-				locals.error = status + ", error when connecting with DropBox";
-				res.render("500.ejs", locals);
-			}
-		});
-	});*/
 
 	this.downloadThumbnail = function(path, client, user, done){
 
@@ -91,13 +51,9 @@ module.exports = function (app) {
 			return done('Not a dropbox user', null);
 
 
-
-
 		var filename = __dirname + '/../static/img/thumbnails/' + user._id + '/dropbox' + path;
 		var fs = require('fs');
 		var p = require('path');
-
-console.log(filename);
 
 		if (p.existsSync(filename))
 			return;
@@ -120,6 +76,7 @@ console.log(filename);
 					return done(err);
 
 				fs.writeFile(filename, thumbnail, function(err){
+					console.log('thumbnail written OK', filename);
 					return done(err, thumbnail);
 				});
 
