@@ -52,20 +52,26 @@ app.get('/photos', function(req, res){
 
 app.get('/markers', function(req,res){
 
-    locals.date = new Date().toLocaleDateString();
-    locals.user = req.user;
-    locals.title = req.user ? req.user.displayName + "'s photos" : locals.title;
+    var model = {
+      date : new Date().toLocaleDateString(),
+      user : req.user,
+      title : req.user ? req.user.displayName + "'s photos" : locals.title
+    };
 
-    res.render('markers.ejs', locals);
+    res.render('markers.ejs', model);
 });
 
 
 app.get('/import', function(req, res){
 
 	if (!req.user){
-		var model = locals;
-		model.error = 'You have to login first';
-		model.user = req.user;
+		var model = {
+      date : locals.date,
+      title : locals.title,
+      error : 'You have to login first',
+		  user : req.user
+    };
+
 		return res.render('500.ejs', model);
 	}
 
