@@ -28,7 +28,7 @@ module.exports = function (app) {
 	app.get('/auth/dropbox/callback',
 		passport.authenticate('dropbox', { failureRedirect: '/login' }),
 		function(req, res) {
-			res.redirect('/');
+			res.redirect('/import');
 		});
 
 
