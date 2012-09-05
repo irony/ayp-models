@@ -1,4 +1,6 @@
-
+.thumbnail img {
+  min-height: 130px;
+}
 
 .thumbnail:hover img
 {

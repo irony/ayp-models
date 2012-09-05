@@ -24,5 +24,5 @@ module.exports = function (conn){
 	})
 	
 
-	return conn.model('User', UserSchema);
+	return UserSchema;
 };

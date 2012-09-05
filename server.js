@@ -5,6 +5,7 @@ var flickrConnector = require('./connectors/flickr')(app);
 var passport = require('passport');
 var dropbox = require('dbox');
 var Photo = require('./models/photo');
+var User = require('./models/user');
 var async = require('async');
 
 var locals = {
@@ -38,7 +39,7 @@ app.get('/photos', function(req, res){
 		return res.render('500.ejs', model);
 	}
 
-	Photo.find({'owners' : req.user}, function(err, photos){
+	Photo.find({}, function(err, photos){
 	
 		res.render('photos.ejs', {title: 'Photos', author: req.user.displayName, date : new Date(), description: 'Lots of photos', photos: photos, user : req.user});
 
@@ -75,14 +76,14 @@ app.get('/import', function(req, res){
 
 			async.map(photos, function(photo, next){
 
-				Photo.findOne({'source' : photo.source, 'path': photo.path, 'modified' : photo.modified}, function(err, dbPhoto){
-
-					debugger;					
+				Photo.findOne({'source' : photo.source, 'taken' : photo.client_mtime}, function(err, dbPhoto){
 
 					if (!dbPhoto){
 						dbPhoto = new Photo();
-						dbPhoto.owners = [req.user];
 					}
+
+
+          dbPhoto.owners = [req.user]; // TODO: push instead of replace
 
 					dbPhoto.source = photo.source;
 					dbPhoto.path = photo.path;
@@ -92,13 +93,18 @@ app.get('/import', function(req, res){
 					dbPhoto.bytes = photo.bytes;
 					dbPhoto.mimeType = photo.mime_type;
 
+          console.log('saving photo', dbPhoto);
+
 					return dbPhoto.save(function(err, savedPhoto){
-						return next(err, savedPhoto);
+            console.log('saved photo', err);
+						return next(null, savedPhoto);
 					});
 				});
 			}, function(err, photos){
-				if (!err)
-					res.redirect('/photos');
+        if (err)
+          throw err;
+
+				res.redirect('/photos');
 			});
 
 

@@ -11,13 +11,13 @@ var PhotoSchema = new mongoose.Schema({
   modified : { type: Date},
   source : { type: String},
   mimeType : { type: String},
-  thumbnails : {type: {}},
+  thumbnails : {type: Schema.Types.Mixed},
   original : { type: String},
   tags : { type: []},
   metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
   sharedTo : { type: [User]},
-  owners : [User]
+  owners : {type: [User]}
 });
 	
 module.exports = mongoose.model('Photo', PhotoSchema);
