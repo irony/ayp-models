@@ -6,9 +6,9 @@
 
 <form method="post" action="?">
   <label>Email to share to</label>
-  <input type="text" id="email"><br>
+  <input type="text" required="required" id="email"><br>
   <label>Date to share</label>
-  <input type="date" name="daterange" placeholder="Enter date" value="<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ''%>">
+  <input type="text" name="daterange" placeholder="Enter date" value="<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ''%>">
   <input type="submit" class="btn btn-action" value="Share">
   
 </form>
@@ -21,17 +21,19 @@
 <link rel="stylesheet" type="text/css" href="/js/bootstrap-daterangepicker/daterangepicker.css" />
 
 <script type="text/javascript">
-  var emails = [];
   $(document).ready(function() {
     $('input[name="daterange"]').daterangepicker();
 
     $('input#email').typeahead({
       source: function (query, process) {
           $.get('/users', { query: query }, function (data) {
-            emails = [];
-            $.each(data, function(item){
-              emails = emails.concat(item.emails);
-            });
+            var emails = [];
+            if (data){
+              emails = JSON.parse(data).map(function(item){
+                return item.emails ? item.emails[0] : null;
+              });
+            }
+            console.log(emails); 
             process(emails);
           });
       }

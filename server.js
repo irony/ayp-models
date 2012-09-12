@@ -81,6 +81,8 @@ app.post('/share', function(req, res){
 //     if (!user) throw new Error("User could not be found ", req.body.email);
 
     span.members = [req.user, user];
+    span.startDate = new Date(req.body.daterange.split(' - ')[0].trim());
+    span.stopDate = new Date(req.body.daterange.split(' - ')[1].trim());
 
     span.save(function(err, savedSpan){
       res.redirect('/spans');
@@ -101,7 +103,7 @@ app.get('/spans', function(req, res){
 
 app.get('/users', function(req,res){
   User.find({'$or' : [{displayName : new RegExp(req.query.query + ".*")}, {emails : new RegExp(req.query.query + ".*")}]}, function(err, users){
-    users = users.map(function(user){return {_id : user._id, displayName : user.displayName}});
+    users = users.map(function(user){return {_id : user._id, emails : user.emails, displayName : user.displayName}});
     res.end(JSON.stringify(users));
   });
 });
