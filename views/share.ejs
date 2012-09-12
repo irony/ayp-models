@@ -1,0 +1,42 @@
+
+
+
+<h1>Share all your photos for a time period</h1>
+
+
+<form method="post" action="?">
+  <label>Email to share to</label>
+  <input type="text" id="email"><br>
+  <label>Date to share</label>
+  <input type="date" name="daterange" placeholder="Enter date" value="<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ''%>">
+  <input type="submit" class="btn btn-action" value="Share">
+  
+</form>
+
+
+
+
+<script type="text/javascript" src="/js/bootstrap-daterangepicker/date.js"></script>
+<script type="text/javascript" src="/js/bootstrap-daterangepicker/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/bootstrap-daterangepicker/daterangepicker.css" />
+
+<script type="text/javascript">
+  var emails = [];
+  $(document).ready(function() {
+    $('input[name="daterange"]').daterangepicker();
+
+    $('input#email').typeahead({
+      source: function (query, process) {
+          $.get('/users', { query: query }, function (data) {
+            emails = [];
+            $.each(data, function(item){
+              emails = emails.concat(item.emails);
+            });
+            process(emails);
+          });
+      }
+
+  });
+});
+
+</script>
