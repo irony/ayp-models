@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
 
-var User = require('./models/user')(conn);
+var User = require('./models/user');
 var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000");
 
 var express = require('express')

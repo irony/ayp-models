@@ -7,9 +7,17 @@ Found  <%=photos.length%> photos
    var photo = photos[i];
   %>
   <li class="span3">
-    <a href="#" class="thumbnail">
+    <div class="btn-group">
+
+    <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown"> 
       <img src="/img/thumbnails/<%=user._id%>/<%=photo.source%>/<%=photo._id%>" alt="">
     </a>
+      <ul class="dropdown-menu">
+        <!-- dropdown menu links -->
+        <a href="share">Share this photo</a>
+        <a href="share?date=<%=new Date(photo.taken).toISOString()%>">Share all photos this day</a>
+      </ul>
+    </div>
   </li>
 <% }%>
 </ul>

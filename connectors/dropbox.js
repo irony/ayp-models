@@ -122,7 +122,7 @@ module.exports = function (app) {
 
 			photos.forEach(function(photo){
 				photo.source = 'dropbox';
-				self.downloadThumbnail(photo, client, user, done);
+				// self.downloadThumbnail(photo, client, user, done);
 			});
 
 			return done(null, photos);

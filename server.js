@@ -6,6 +6,7 @@ var passport = require('passport');
 var dropbox = require('dbox');
 var Photo = require('./models/photo');
 var User = require('./models/user');
+var ShareSpan = require('./models/sharespan');
 var async = require('async');
 
 var locals = {
@@ -59,17 +60,51 @@ app.get('/photos', function(req, res){
 });
 
 
-app.get('/markers', function(req,res){
+app.get('/share', function(req,res){
 
     var model = {
-      date : new Date().toLocaleDateString(),
+      date : req.query.date,
       user : req.user,
+      description: 'Share photos',
+      author : req.user.displayName,
       title : req.user ? req.user.displayName + "'s photos" : locals.title
     };
 
-    res.render('markers.ejs', model);
+    res.render('share.ejs', model);
 });
 
+app.post('/share', function(req, res){
+  var span = new ShareSpan(req.body);
+
+  User.findOne({'emails' : req.body.email}, function(err, user){
+
+//     if (!user) throw new Error("User could not be found ", req.body.email);
+
+    span.members = [req.user, user];
+
+    span.save(function(err, savedSpan){
+      res.redirect('/spans');
+    });
+
+  });
+});
+
+app.get('/spans', function(req, res){
+  ShareSpan.find({'members': req.user}, function(err, spans){
+    var model = JSON.parse(JSON.stringify(locals));
+    model.user = req.user;
+    model.spans = spans;
+    res.render('spans.ejs', model);
+  });
+});
+
+
+app.get('/users', function(req,res){
+  User.find({'$or' : [{displayName : new RegExp(req.query.query + ".*")}, {emails : new RegExp(req.query.query + ".*")}]}, function(err, users){
+    users = users.map(function(user){return {_id : user._id, displayName : user.displayName}});
+    res.end(JSON.stringify(users));
+  });
+});
 
 app.get('/import', function(req, res){
 
