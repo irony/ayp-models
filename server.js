@@ -60,6 +60,42 @@ app.get('/photos', function(req, res){
 });
 
 
+app.post('/photoRange', function(req, res){
+
+  console.log('photorange');
+
+  if (!req.user){
+    var model = locals;
+    model.error = 'You have to login first';
+    model.user = req.user;
+    return res.render('500.ejs', model);
+  }
+
+  console.log('photorange user', req.body);
+  
+  if (!req.body.dateRange){
+    return res.end();
+  }
+
+  var startDate = req.body.dateRange.split(' - ')[0];
+  var stopDate = req.body.dateRange.split(' - ')[1];
+
+  console.log('startdate', startDate);
+  console.log('stopdate', stopDate);
+
+  Photo.find({'owners': req.user})
+  .limit(50)
+  .where('taken').gte(startDate).lte(stopDate)
+  .sort('-taken')
+  .exec(function(err, photos){
+    photos = photos.map(function(photo){
+      return '/img/thumbnails/' + req.user._id + '/' + photo._id;
+    });
+    res.end(JSON.stringify(photos));
+  });
+});
+
+
 app.get('/share', function(req,res){
 
     var model = {
@@ -163,7 +199,7 @@ app.get('/import', function(req, res){
 			});
 
 
-		});
+		}); 
 	} else{
 		throw "No compatible accounts are connected to this user";
 	}

@@ -1,21 +1,33 @@
 
 
-
-<h1>Share all your photos for a time period</h1>
-
-
-<form method="post" action="?">
-  <label>Email to share to</label>
-  <input type="text" required="required" id="email"><br>
-  <label>Date to share</label>
-  <input type="text" name="daterange" placeholder="Enter date" value="<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ''%>">
-  <input type="submit" class="btn btn-action" value="Share">
-  
-</form>
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Share photo timeframe</h1>
+    <p class="lead">Instead of sharing photos one by one, you can share all photos within a timeframe</p>
+  </div>
+</header>
 
 
+<div ng-controller="ShareController" class="row">
+  <form method="post" action="?" class="span8">
+    <label>Email to share to</label>
+    <input type="text" required="required" id="email" ng-change="refreshPhotos()" ng-model="email"><br>
+    <label>Date to share</label>
+    <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ""%>'">
+    <input type="submit" class="btn btn-action" value="Share">
+    
+  </form>
+
+  <ul class="thumbnails pull-right span4">
+    <li ng-repeat="photo in photos" >
+      <img ng-src="{{photo}}">
+    </li>
+  </ul>
+
+</div>
 
 
+<script type="text/javascript" src="/js/share.js"></script>
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/date.js"></script>
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="/js/bootstrap-daterangepicker/daterangepicker.css" />
@@ -23,7 +35,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('input[name="daterange"]').daterangepicker();
-
+/*
     $('input#email').typeahead({
       source: function (query, process) {
           $.get('/users', { query: query }, function (data) {
@@ -33,12 +45,11 @@
                 return item.emails ? item.emails[0] : null;
               });
             }
-            console.log(emails); 
             process(emails);
           });
       }
 
-  });
+  });*/
 });
 
 </script>
