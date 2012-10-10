@@ -7,6 +7,11 @@
 	opacity: 0.9;
 }
 
+.thumbnails.preview img
+{
+  width: 64px;
+}
+
 /* Jumbotrons
 -------------------------------------------------- */
 

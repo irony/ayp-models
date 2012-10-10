@@ -9,20 +9,24 @@
 
 
 <div ng-controller="ShareController" class="row">
-  <form method="post" action="?" class="span8">
+  <form method="post" action="?" class="span3">
+    <h2>Enter timespan</h2>
     <label>Email to share to</label>
     <input type="text" required="required" id="email" ng-change="refreshPhotos()" ng-model="email"><br>
     <label>Date to share</label>
-    <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] : ""%>'">
+    <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + (new Date(date)).toISOString().split('T')[0] : ""%>'">
     <input type="submit" class="btn btn-action" value="Share">
     
   </form>
-
-  <ul class="thumbnails pull-right span4">
-    <li ng-repeat="photo in photos" >
-      <img ng-src="{{photo}}">
-    </li>
-  </ul>
+  <div class="span9">
+    <h2>{{photos.length}} photos selected<small ng-show="{{photos.length}}">You can not deselect photos right now</small></h2>
+    <ul class="thumbnails preview pull-right">
+      <li ng-repeat="photo in photos" class="thumbnail span1">
+        <img ng-src="{{photo}}">
+      </li>
+    </ul>
+  
+  </div>
 
 </div>
 
@@ -35,21 +39,31 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('input[name="daterange"]').daterangepicker();
-/*
+
     $('input#email').typeahead({
       source: function (query, process) {
           $.get('/users', { query: query }, function (data) {
             var emails = [];
             if (data){
-              emails = JSON.parse(data).map(function(item){
-                return item.emails ? item.emails[0] : null;
+              emails = JSON.parse(data)
+              emails = emails.map(function(item){
+                var email = item.emails ? item.emails[0] : null;
+
+                // only allow non duplicates
+                if (email && !emails.some(function(existing){ return existing == email})) {
+                  return email;
+                } else {
+                  return null;
+                }
+
               });
+              console.log(emails);
+              process(emails);
             }
-            process(emails);
           });
       }
 
-  });*/
+  });
 });
 
 </script>
