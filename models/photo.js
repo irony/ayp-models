@@ -32,7 +32,6 @@ PhotoSchema.pre('save', function (next) {
     members : { $in: photo.owners }
   }, function(err, spans){
     
-    console.log('Found share spans:', spans);
     spans.forEach(function(span){
       console.log('Add members to photo');
       photo.set('owners', _.union(photo.owners, span.members));

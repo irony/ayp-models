@@ -61,9 +61,12 @@ function findOrCreateAndUpdateUser(user, profile, done)
 
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
   if (user && user._id){
-    return User.findOne(user._id, function(err, user){
-      
-      return updateProfile(user, profile, done);
+    return User.findOne(user._id, function(err, foundUser){
+
+      if (!foundUser)
+        foundUser = new User(user);
+
+      return updateProfile(foundUser, profile, done);
   
     });
   }

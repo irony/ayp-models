@@ -10,7 +10,7 @@ var ShareSpan = require('./models/sharespan');
 var async = require('async');
 
 var locals = {
-        title: 		 'All My Photos',
+        title: 		 'All Your Photos',
         description: 'One place to rule them all',
         author: 	 'Christian Landgren'
     };
@@ -89,7 +89,7 @@ app.post('/photoRange', function(req, res){
   .sort('-taken')
   .exec(function(err, photos){
     photos = photos.map(function(photo){
-      return '/img/thumbnails/' + req.user._id + '/' + photo._id;
+      return '/img/thumbnails/' + req.user._id + '/' + photo.source + '/' + photo._id;
     });
     res.end(JSON.stringify(photos));
   });
@@ -129,7 +129,11 @@ app.post('/share', function(req, res){
 
 app.get('/spans', function(req, res){
   ShareSpan.find({'members': req.user}, function(err, spans){
-    var model = JSON.parse(JSON.stringify(locals));
+
+    if (err)
+      throw err;
+
+    var model = JSON.parse(JSON.stringify(locals)); // clone
     model.user = req.user;
     model.spans = spans;
     res.render('spans.ejs', model);

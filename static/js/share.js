@@ -13,5 +13,4 @@ function ShareController($scope, $http){
       $scope.photos = data;
     });
   });
-
 }
