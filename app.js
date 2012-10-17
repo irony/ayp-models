@@ -9,7 +9,7 @@ var express = require('express')
   , util = require('util');
 
 var MongoStore = require('connect-mongo')(express);
-var passport = require('./passport');
+var passport = require('./auth/passport');
 
 
 

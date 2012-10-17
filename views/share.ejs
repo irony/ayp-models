@@ -7,29 +7,30 @@
   </div>
 </header>
 
+<div class="container">
 
-<div ng-controller="ShareController" class="row">
-  <form method="post" action="?" class="span3 well">
-    <h2>Enter timespan</h2>
-    <label>Email to share to</label>
-    <input type="text" required="required" id="email" name="email" ng-change="refreshPhotos()" ng-model="email"><br>
-    <label>Dates to share</label>
-    <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
-    <input type="submit" class="btn btn-action" value="Share">
+  <div ng-controller="ShareController" class="row">
+    <form method="post" action="?" class="span3 well">
+      <h2>Enter timespan</h2>
+      <label>Email to share to</label>
+      <input type="text" required="required" id="email" name="email" ng-change="refreshPhotos()" ng-model="email"><br>
+      <label>Dates to share</label>
+      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
+      <input type="submit" class="btn btn-action" value="Share">
+      
+    </form>
+    <div class="span8">
+      <h2>{{photos.length}} photos selected <small ng-show="photos.length">All these will be shared </small></h2>
+      <ul class="thumbnails preview pull-right">
+        <li ng-repeat="photo in photos" class="thumbnail span1">
+          <img ng-src="{{photo}}">
+        </li>
+      </ul>
     
-  </form>
-  <div class="span8">
-    <h2>{{photos.length}} photos selected <small ng-show="photos.length">All these will be shared </small></h2>
-    <ul class="thumbnails preview pull-right">
-      <li ng-repeat="photo in photos" class="thumbnail span1">
-        <img ng-src="{{photo}}">
-      </li>
-    </ul>
-  
+    </div>
+
   </div>
-
 </div>
-
 
 <script type="text/javascript" src="/js/share.js"></script>
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/date.js"></script>

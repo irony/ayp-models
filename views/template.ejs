@@ -1,17 +1,19 @@
 
   <!-- Main hero unit for a primary marketing message or call to action -->
   <div class="hero-unit">
-    <img src="img/RedChairDesign-icon.png" class="pull-left">
-    <h1>One app, all photos</h1>
-    <p>Combine all your photos from Dropbox, iCloud, Instagram, Google Drive, Flickr and Facebook and let us help you organize them into nicely organized folders with smart ways to sync them with your friends.</p>
-    <p>
-      <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank">Dropbox</a>
-      <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank">Instagram</a>
-      <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr" target="_blank">Flickr</a>
-    </p>
-  </div>
+    <div class="container">
 
-  <!-- Example row of columns -->
+      <img src="img/RedChairDesign-icon.png" class="pull-left">
+      <h1>One app, all photos</h1>
+      <p>Combine all your photos from Dropbox, iCloud, Instagram, Google Drive, Flickr and Facebook and let us help you organize them into nicely organized folders with smart ways to sync them with your friends.</p>
+      <p>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+      </p>
+    </div>
+  </div>
+<div class="container">
   <div class="row">
     <div class="span6">
       <h2>Share and collaborate</h2>
@@ -25,5 +27,5 @@
       <p><a class="btn" href="#">View details &raquo;</a></p>
     </div>
   </div>
-
+</div>
   

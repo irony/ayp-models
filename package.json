@@ -1,6 +1,6 @@
 {
-    "name": "AllMyPhotos"
-  , "version": "0.0.1"
+    "name": "AllYourPhotos"
+  , "version": "0.0.2"
   , "private": true
   , "dependencies": {
       "express": "2.5.0"
