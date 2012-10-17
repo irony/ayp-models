@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 
+var _ = require('underscore');
+
 var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
 
 var User = require('./models/user');
@@ -37,18 +39,10 @@ function updateProfile(user, profile, done){
 
   user.updated = new Date();
 
-  if (profile.emails)
-  {
-    profile.emails.forEach(function(e){
-      if (emails.indexOf(e) < 0)
-      {
-        emails.push(e); // add new emails to the main object
-      }
-    });
-  }
+  user.set('emails', _.union(emails, profile.emails.map(function(item){return item.value;})));
 
   user.displayName = profile.displayName;
-  user.set('emails', emails);
+//   user.set('emails', emails);
   user.set('accounts', accounts);
 
   return user.save(function(err, savedUser){

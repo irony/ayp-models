@@ -2,6 +2,10 @@
  * GET home page.
  */
 
+
+ //TODO: move all routes here..
+
+ 
 exports.index = function(req, res){
 
 	var dbox  = require("dbox");

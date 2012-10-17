@@ -35,8 +35,8 @@ module.exports = function (app) {
 
 
 
-	app.get('/img/thumbnails/:uid/dropbox/*:id', function(req,res){
-		var id = req.url.split(req.params.uid + "/dropbox/")[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
+	app.get('/img/thumbnails/dropbox/*:id', function(req,res){
+		var id = req.url.split("/dropbox/")[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
 		var client = this.getClient(req.user);
 		
 		console.log('Downloading thumbnail', id);
@@ -58,7 +58,7 @@ module.exports = function (app) {
 			return done('Not a dropbox user', null);
 
 
-		var filename = __dirname + '/../static/img/thumbnails/' + user._id + '/' + photo._id;
+		var filename = __dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id;
 		var fs = require('fs');
 		var p = require('path');
 

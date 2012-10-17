@@ -10,31 +10,30 @@ var ShareSpan = require('./models/sharespan');
 var async = require('async');
 
 var locals = {
-        title: 		 'All Your Photos',
-        description: 'One place to rule them all',
-        author: 	 'Christian Landgren'
-    };
+    title: 'All Your Photos',
+    description: 'One place to rule them all',
+    author: 'Christian Landgren'
+};
+
+var Model = function(){
+  // clone default values and create a new model
+  return JSON.parse(JSON.stringify(locals));
+};
 
 app.get('/', function(req,res){
 
-    locals.date = new Date().toLocaleDateString();
-    locals.user = req.user;
-    locals.title = req.user ? req.user.displayName + "'s photos" : locals.title;
+    var model = new Model();
+    model.date = new Date().toLocaleDateString();
+    model.user = req.user;
+    model.title = req.user ? req.user.displayName + "'s photos" : locals.title;
 
-    debugger;
-
-    res.render('template.ejs', locals);
+    res.render('template.ejs', model);
 });
-
-
-// TODO: move these to mongodb
-app.tokens = [];
-app.accessTokens = [];
 
 app.get('/photos', function(req, res){
 
 	if (!req.user){
-		var model = locals;
+		var model = new Model();
 		model.error = 'You have to login first';
 		model.user = req.user;
 		return res.render('500.ejs', model);
@@ -65,7 +64,7 @@ app.post('/photoRange', function(req, res){
   console.log('photorange');
 
   if (!req.user){
-    var model = locals;
+    var model = new Model();
     model.error = 'You have to login first';
     model.user = req.user;
     return res.render('500.ejs', model);
@@ -89,7 +88,7 @@ app.post('/photoRange', function(req, res){
   .sort('-taken')
   .exec(function(err, photos){
     photos = photos.map(function(photo){
-      return '/img/thumbnails/' + req.user._id + '/' + photo.source + '/' + photo._id;
+      return '/img/thumbnails/' + photo.source + '/' + photo._id;
     });
     res.end(JSON.stringify(photos));
   });
@@ -114,7 +113,7 @@ app.post('/share', function(req, res){
 
   User.findOne({'emails' : req.body.email}, function(err, user){
 
-//     if (!user) throw new Error("User could not be found ", req.body.email);
+    if (!user) throw new Error("User could not be found ", req.body.email);
 
     span.members = [req.user, user];
     span.startDate = new Date(req.body.daterange.split(' - ')[0].trim());
@@ -133,8 +132,7 @@ app.get('/spans', function(req, res){
     if (err)
       throw err;
 
-    var model = JSON.parse(JSON.stringify(locals)); // clone
-    model.user = req.user;
+    var model = new Model();
     model.spans = spans;
     res.render('spans.ejs', model);
   });
