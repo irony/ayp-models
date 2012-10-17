@@ -4,139 +4,14 @@ var _ = require('underscore');
 
 var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
 
-var User = require('./models/user');
-var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000");
 
 var express = require('express')
-  , passport = require('passport')
-  , util = require('util')
-  , InstagramStrategy = require('passport-instagram').Strategy
-  , FlickrStrategy = require('passport-flickr').Strategy
-  , DropboxStrategy = require('passport-dropbox').Strategy;
+  , util = require('util');
 
 var MongoStore = require('connect-mongo')(express);
-var conf = require('./conf.js');
+var passport = require('./passport');
 
 
-passport.serializeUser(function(user, done) {
-  done(null, user.toJSON());
-});
-
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
-
-
-function updateProfile(user, profile, done){
-
-  if (!user)
-    throw new Error("User must have a value");
-
-  var accounts = (user.accounts || {});
-  var emails = (user.emails || []);
-
-  accounts[profile.provider] = profile;
-
-  user.updated = new Date();
-
-  user.set('emails', _.union(emails, profile.emails.map(function(item){return item.value;})));
-
-  user.displayName = profile.displayName;
-//   user.set('emails', emails);
-  user.set('accounts', accounts);
-
-  return user.save(function(err, savedUser){
-    done(err, savedUser);
-  });
-}
-
-function findOrCreateAndUpdateUser(user, profile, done)
-{
-
-  // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
-  if (user && user._id){
-    return User.findOne(user._id, function(err, foundUser){
-
-      if (!foundUser)
-        foundUser = new User(user);
-
-      return updateProfile(foundUser, profile, done);
-  
-    });
-  }
-
-  // we will use many providers but still want's to connect them to the same account,
-  // therefore we will search for this user according to it's id for this particular provider,
-  // if no one is found we will create it. If found we will update the accounts.
-
-  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"] && this.accounts["' + profile.provider + '"].id == ' + profile.id }, function (err, foundUser) {
-
-      if (err){
-        return done(err, null);
-      }
-
-      if (!foundUser) {
-        user = new User();
-      } else {
-        user = foundUser;
-      }
-
-
-      return updateProfile(user, profile, done);
-
-  });
-}
-
-// Use the InstagramStrategy within Passport.
-//   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, an accessToken, refreshToken, and Instagram
-//   profile), and invoke a callback with a user object.
-passport.use(new InstagramStrategy({
-    clientID: conf.instagram.clientId,
-    clientSecret: conf.instagram.clientSecret,
-    callbackURL: callbackBaseUrl + "/auth/instagram/callback",
-    passReqToCallback: true
-  },
-  function(req, accessToken, refreshToken, profile, done) {
-
-    profile.accessToken = accessToken;
-    profile.refreshToken = refreshToken;
-    
-    return findOrCreateAndUpdateUser(req.user, profile, done);
-  }
-));
-
-// Use the DropboxStrategy within Passport.
-//   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a token, tokenSecret, and Dropbox profile), and
-//   invoke a callback with a user object.
-passport.use(new DropboxStrategy({
-    consumerKey: conf.dropbox.consumerKey,
-    consumerSecret: conf.dropbox.consumerSecret,
-    callbackURL: callbackBaseUrl + "/auth/dropbox/callback",
-    passReqToCallback: true
-  },
-  function(req, token, tokenSecret, profile, done) {
-
-    profile.token = token;
-    profile.tokenSecret = tokenSecret;
-
-    return findOrCreateAndUpdateUser(req.user, profile, done);
-  }
-));
-
-passport.use(new FlickrStrategy({
-    consumerKey: conf.flickr.consumerKey,
-    consumerSecret: conf.flickr.consumerSecret,
-    callbackURL: callbackBaseUrl + "/auth/flickr/callback",
-    passReqToCallback: true
-  },
-  function(req, token, tokenSecret, profile, done) {
-
-    return findOrCreateAndUpdateUser(req.user, profile, done);
-
-  }
-));
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -148,8 +23,6 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login')
 }
 
-
-exports.findOrCreateAndUpdateUser = findOrCreateAndUpdateUser;
 
 exports.init = function(port) {
 

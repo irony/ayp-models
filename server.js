@@ -1,9 +1,4 @@
 var app = require('./app').init(process.env.PORT || 3000);
-var User = require('./models/user');
-var _ = require('underscore');
-
-var ViewModel = require('./routes/viewModel');
-
 
 require('./routes/share')(app);
 require('./routes/photos')(app);
