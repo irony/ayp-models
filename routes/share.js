@@ -52,7 +52,7 @@ module.exports = function(app){
 
 console.log('finding spans for user', req.user)
 
-    ShareSpan.find({members: req.user})
+    ShareSpan.find({'members._id': req.user._id})
     .exec(function(err, spans){
 
       if (err) {
