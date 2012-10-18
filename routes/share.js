@@ -1,6 +1,8 @@
 var ViewModel = require('./viewModel');
 var ShareSpan = require('../models/sharespan');
 var User = require('../models/user');
+var ObjectId = require('mongoose').Types.ObjectId; 
+var timeago = require('timeago');
 
 module.exports = function(app){
 
@@ -29,7 +31,10 @@ module.exports = function(app){
     User.findOne({'emails' : req.body.email}, function(err, user){
 
       if (!user) {
-        throw new Error("User could not be found ", req.body.email);
+        var model = new ViewModel(req.user);
+        model.error = "User could not be found " + req.body.email;
+        res.render('500.ejs', model);
+        return;
       }
 
       span.members = [req.user, user];
@@ -44,12 +49,20 @@ module.exports = function(app){
   });
 
   app.get('/spans', function(req, res){
-    ShareSpan.find({'members': req.user})
+
+console.log('finding spans for user', req.user)
+
+    ShareSpan.find({members: req.user})
     .exec(function(err, spans){
 
       if (err) {
         throw err;
       }
+
+      spans = spans.map(function(span){
+        span.prettyDates = timeago(span.startDate) + "-" + timeago(span.stopDate);
+        return span;
+      });
 
       var model = new ViewModel(req.user);
       model.spans = spans;

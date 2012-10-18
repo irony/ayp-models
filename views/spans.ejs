@@ -1,19 +1,21 @@
-<ul class="thumbnails">
-Found  <%=spans.length%> share spans
-<% for(var i=0; i<spans.length; i++){
-   var span = spans[i];
-  %>
-  <li class="span3">
-    <div class="btn-group">
+<div class="container">
 
-    <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown"> 
-      <h5><%=span.startDate%> - <%=span.stopDate%></h5>
-    </a>
-      <ul class="dropdown-menu">
-        <!-- dropdown menu links -->
-        <a href="span/remove/<%=span._id%>">Remove this share span</a>
-      </ul>
-    </div>
-  </li>
-<% }%>
-</ul>
+  Found  <%=spans.length%> share spans
+  <table class="table-hover">
+  <% for(var i=0; i<spans.length; i++){
+     var span = spans[i];
+    %>
+    <tr>
+      <td>
+        <h5><%=span.prettyDates%></h5>
+      </td>
+      <td>
+        <h5><%=span.members%></h5>
+      </td>
+      <td>
+          <a href="/span/remove/<%=span._id%>" class="btn btn-danger">Remove</a>
+      </td>
+    </tr>
+  <% }%>
+  </table>
+</div>

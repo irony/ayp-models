@@ -40,10 +40,7 @@ PhotoSchema.pre('save', function (next) {
 
     });
     next();
-
   });
-
-
 });
 
 

@@ -1,7 +1,7 @@
 
 
 var mongoose = require('mongoose'),
-  User = require('./user')(mongoose).Schema,
+    User = require('./user')(mongoose).Schema,
     Schema = mongoose.Schema;
 
 var ShareSpanSchema = new mongoose.Schema({
