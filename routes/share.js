@@ -1,7 +1,7 @@
 var ViewModel = require('./viewModel');
 var ShareSpan = require('../models/sharespan');
 var User = require('../models/user');
-var ObjectId = require('mongoose').Types.ObjectId; 
+var ObjectId = require('mongoose').Types.ObjectId;
 var timeago = require('timeago');
 
 module.exports = function(app){
@@ -49,8 +49,6 @@ module.exports = function(app){
   });
 
   app.get('/spans', function(req, res){
-
-console.log('finding spans for user', req.user)
 
     ShareSpan.find({'members._id': req.user._id})
     .exec(function(err, spans){

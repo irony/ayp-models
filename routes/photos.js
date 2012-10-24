@@ -1,5 +1,6 @@
 var ViewModel = require('./viewModel');
 var Photo = require('../models/photo');
+var ObjectId = require('mongoose').Schema.ObjectId;
 
 module.exports = function(app){
 
@@ -17,7 +18,8 @@ module.exports = function(app){
     .sort('-taken')
     .exec(function(err, photos){
     
-      model.photos = photos;
+      console.log('photos, err', err);
+      model.photos = photos || [];
 
       res.render('photos.ejs', model);
 

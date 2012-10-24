@@ -4,6 +4,7 @@ var dbox  = require("dbox");
 var dropbox   = dbox.app(config);
 var passport = require('passport');
 var Photo = require('../models/photo');
+var _ = require('underscore');
 
 
 module.exports = function (app) {
@@ -107,20 +108,22 @@ module.exports = function (app) {
 
 	this.downloadAllPhotos = function(user, done)
 	{
-		if (!user || !user.accounts.dropbox)
+		if (!user || !user.accounts.dropbox){
 			return done('Not dropbox folder', null);
-
+		}
 
 		var client = this.getClient(user);
 
 		client.search("/", "jpg", function(status, reply){
 			
-			if (status != 200)
+			if (status !== 200){
 				return done(status, null);
+			}
+
 
 			var photos = Array.prototype.slice.call(reply);
 
-			photos.forEach(function(photo){
+			_.forEach(photos, function(photo){
 				photo.source = 'dropbox';
 				// self.downloadThumbnail(photo, client, user, done);
 			});
