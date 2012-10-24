@@ -19,7 +19,7 @@ var PhotoSchema = new mongoose.Schema({
   metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
   sharedTo : { type: [User]},
-  owners : {type: [User]}
+  owners : [Schema.ObjectId]
 });
 
 PhotoSchema.pre('save', function (next) {
@@ -29,12 +29,12 @@ PhotoSchema.pre('save', function (next) {
   ShareSpan.find({
     startDate: { $lte : photo.taken },
     stopDate: { $gte : photo.taken },
-    members : { $in: photo.owners }
+    members : { $in : photo.owners }
   }, function(err, spans){
-    
+    console.log('found spans:', spans);
     spans.forEach(function(span){
       console.log('Add members to photo');
-      photo.set('owners', _.union(photo.owners, span.members));
+      photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
       
       console.log('Photo should have all owners', JSON.stringify(photo.owners));
 

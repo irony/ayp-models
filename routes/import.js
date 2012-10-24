@@ -36,7 +36,7 @@ module.exports = function(app){
             }
 
 
-            dbPhoto.set('owners', _.union([req.user], dbPhoto.owners));
+            dbPhoto.owners = [req.user]; //_.uniq(_.union([req.user._id], dbPhoto.owners)));
 
             dbPhoto.source = photo.source;
             dbPhoto.path = photo.path;
@@ -46,11 +46,8 @@ module.exports = function(app){
             dbPhoto.bytes = photo.bytes;
             dbPhoto.mimeType = photo.mime_type;
 
-            console.log('saving photo', dbPhoto);
-
-            return dbPhoto.save(function(err, savedPhoto){
-              console.log('saved photo', err);
-              return next(null, savedPhoto);
+            dbPhoto.save(function(err, savedPhoto){
+              return next(err, savedPhoto);
             });
           });
         }, function(err, photos){

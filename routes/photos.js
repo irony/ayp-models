@@ -12,7 +12,7 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    Photo.find({'owners': req.user})
+    Photo.find({owners: req.user._id})
     .limit(50)
     .sort('-taken')
     .exec(function(err, photos){
