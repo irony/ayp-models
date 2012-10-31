@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
-    ShareSpan = require('./sharespan'),
     _ = require('underscore'),
     Schema = mongoose.Schema;
 
@@ -23,25 +22,22 @@ var PhotoSchema = new mongoose.Schema({
 });
 
 PhotoSchema.pre('save', function (next) {
-  
-  var photo = this;
+  var photo = this,
+      ShareSpan = require('./sharespan');
 
   ShareSpan.find({
     startDate: { $lte : photo.taken },
     stopDate: { $gte : photo.taken },
     members : { $in : photo.owners }
   }, function(err, spans){
-
-    console.log('found spans:', spans);
     (spans || []).forEach(function(span){
-      console.log('Add members to photo');
+      console.log('trigger photo update')
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      
-      console.log('Photo should have all owners', JSON.stringify(photo.owners));
-
+      photo.save();
     });
     next();
   });
+
 });
 
 

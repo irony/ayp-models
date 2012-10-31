@@ -50,7 +50,7 @@ module.exports = function(app){
 
   app.get('/spans', function(req, res){
 
-    ShareSpan.find({'members._id': req.user._id})
+    ShareSpan.find({'members': req.user._id})
     .exec(function(err, spans){
 
       if (err) {
@@ -58,7 +58,7 @@ module.exports = function(app){
       }
 
       spans = spans.map(function(span){
-        span.prettyDates = timeago(span.startDate) + "-" + timeago(span.stopDate);
+        span.prettyDates = span.startDate + "-" + span.stopDate;
         return span;
       });
 

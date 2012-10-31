@@ -31,12 +31,16 @@ module.exports = function(app){
 
           Photo.findOne({'source' : photo.source, 'taken' : photo.client_mtime}, function(err, dbPhoto){
 
+            if (err) {
+              throw err;
+            }
+
             if (!dbPhoto){
               dbPhoto = new Photo();
             }
 
 
-            dbPhoto.set('owners', [req.user._id]); //_.uniq(_.union([req.user._id], dbPhoto.owners)));
+            dbPhoto.set('owners', _.uniq(_.union([req.user._id], dbPhoto.owners)));
 
             dbPhoto.source = photo.source;
             dbPhoto.path = photo.path;
@@ -46,7 +50,7 @@ module.exports = function(app){
             dbPhoto.bytes = photo.bytes;
             dbPhoto.mimeType = photo.mime_type;
 
-console.log('save', dbPhoto)
+console.log('save', dbPhoto, photo);
 
             dbPhoto.save(function(err, savedPhoto){
               return next(err, savedPhoto);

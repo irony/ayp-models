@@ -3,6 +3,7 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
+    User = require('../models/user.js'),
     auth = require('./auth.js'),
     conf = require('../conf.js');
 
@@ -12,7 +13,7 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
   });
 
   passport.deserializeUser(function(user, done) {
-      done(null, user);
+      User.findById(user._id, done);
   });
 
   // Use the InstagramStrategy within Passport.

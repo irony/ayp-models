@@ -1,6 +1,5 @@
 var ViewModel = require('./viewModel');
 var Photo = require('../models/photo');
-var ObjectId = require('mongoose').Schema.ObjectId;
 
 module.exports = function(app){
 
@@ -33,26 +32,21 @@ module.exports = function(app){
     stopDate = req.body.dateRange.split(' - ')[1],
     model = new ViewModel(req.user);
 
-    console.log('photorange');
-
     if (!req.user){
       model.error = 'You have to login first';
       return res.render('500.ejs', model);
     }
 
-    console.log('photorange user', req.body);
-    
     if (!req.body.dateRange){
       return res.end();
     }
 
-
-    Photo.find({'owners': req.user})
+    Photo.find({'owners': req.user._id})
     .limit(50)
     .where('taken').gte(startDate).lte(stopDate)
     .sort('-taken')
     .exec(function(err, photos){
-      photos = photos.map(function(photo){
+      photos = (photos||[]).map(function(photo){
         return '/img/thumbnails/' + photo.source + '/' + photo._id;
       });
       res.end(JSON.stringify(photos));

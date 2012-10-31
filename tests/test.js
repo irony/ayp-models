@@ -68,7 +68,6 @@ describe("app", function(){
             stopDate: { $gt : new Date() },
             members : { $in : [userA, userB]}
           }, function(err, spans){
-            console.log('spans',spans);
             should.exist(spans, 'no share spans found');
             done();
           });
@@ -101,13 +100,15 @@ describe("app", function(){
 
         shareSpan.save(function(err, span){
 
-            console.log('Saved sharespan', shareSpan);
             var photo = new Photo({
               taken : new Date(),
               owners : [userA] // only one user
             });
 
             photo.save(function(err, photo){
+
+console.log('photo saved, err', err)
+        debugger;
 
               photo.owners.should.include(userA._id, "UserA does not exist");
 
