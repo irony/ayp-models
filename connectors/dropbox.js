@@ -59,6 +59,11 @@ module.exports = function (app) {
 			return done('Not a dropbox user', null);
 
 
+		if (!photo) {
+			return null;
+		}
+
+
 		var filename = __dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id;
 		var fs = require('fs');
 		var p = require('path');

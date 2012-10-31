@@ -23,7 +23,8 @@ var PhotoSchema = new mongoose.Schema({
 
 PhotoSchema.pre('save', function (next) {
   var photo = this,
-      ShareSpan = require('./sharespan');
+      _ = require('underscore'),
+      ShareSpan = require('./sharespan'); //this needs to be in local scope
 
   ShareSpan.find({
     startDate: { $lte : photo.taken },
@@ -31,9 +32,8 @@ PhotoSchema.pre('save', function (next) {
     members : { $in : photo.owners }
   }, function(err, spans){
     (spans || []).forEach(function(span){
-      console.log('trigger photo update')
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      photo.save();
+      //photo.save();
     });
     next();
   });

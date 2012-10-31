@@ -3,7 +3,6 @@
 var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
     Photo = require('./photo'),
-    _ = require('underscore'),
     Schema = mongoose.Schema;
 
 var ShareSpanSchema = new mongoose.Schema({
@@ -16,9 +15,12 @@ var ShareSpanSchema = new mongoose.Schema({
 
 
 
-ShareSpanSchema.pre('save', function (next, done) {
+ShareSpanSchema.pre('save', function (next) {
   
-  var span = this;
+  var span = this,
+    _ = require('underscore'),
+    Photo = require('./photo');
+
 
   Photo.find()
   .where('owners').in(span.members)
@@ -28,6 +30,7 @@ ShareSpanSchema.pre('save', function (next, done) {
     console.log('sharespan save');
     (photos || []).forEach(function(photo){
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
+      photo.save();
     });
     next();
   });

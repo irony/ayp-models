@@ -67,4 +67,21 @@ module.exports = function(app){
       res.render('spans.ejs', model);
     });
   });
+
+
+  app.get('/span/remove/:id', function(req, res){
+
+    ShareSpan.findById(req.params.id)
+    .exec(function(err, span){
+
+      if (err) {
+        throw err;
+      }
+
+      span.remove(function(){
+        res.redirect('/spans');
+      });
+    });
+  });
+
 };
