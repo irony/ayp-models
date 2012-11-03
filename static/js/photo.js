@@ -25,6 +25,7 @@ function PhotoController($scope, $http){
 }
 
 angular.module('scroll', []).directive('whenScrolled', function() {
+  console.log('scroll', elm);
     return function(scope, elm, attr) {
         var raw = elm[0];
         

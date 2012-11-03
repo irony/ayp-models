@@ -1,6 +1,6 @@
 
 
-<ul class="thumbnails" ng-controller="PhotoController"  when-scrolled="loadMore()" style="overflow: auto; height: 1000px" >
+<ul class="thumbnails" ng-controller="PhotoController" when-scrolled="loadMore()" style="overflow: auto; height: 1000px" >
 
 <h2>{{photos.length}} photos found</h2>
 
@@ -18,13 +18,14 @@
    </li>
 </ul>
 
-<script type="text/javascript" src="/js/photo.js"></script>
+    <script type="text/javascript" src="/js/photo.js"></script>
+    <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
+    <script src="//raw.github.com/hakimel/Kort/master/js/kort.js"></script>
 
-<script src="/js/jquery.masonry.min.js"></script>
+    <script>
+      document.querySelector( '.thumbnails' ).addEventListener( 'click', function( event ) {
+        event.preventDefault();
+        zoom.to({ element: event.target });
+      } );
+    </script>
 
-<script>
-  
-  setTimeout(function(){
-      
-  }, 2000);
-</script>
