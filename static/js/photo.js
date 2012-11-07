@@ -30,7 +30,7 @@ function PhotoController($scope, $http){
     var groupName = photo.taken.split('T')[0],
         group = $scope.groups[groupName] = $scope.groups[groupName] || [];
     
-    // split the groups if they are too big
+    // split the groups if they are too big (based on interestingness)
     while(group.length > 20) {
       groupName = groupName + "_2";
       group = $scope.groups[groupName] = $scope.groups[groupName] || [];
