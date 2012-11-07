@@ -9,7 +9,7 @@
         </div>
 
         <div id="wall" class="thumbnails">
-          <div ng-repeat="group in groups | orderBy:reverse" class="row">
+          <div ng-repeat="group in groups | orderBy:reverse" class="row group">
                 <h3>{{group.name}}</h3>
                <img ng-repeat="photo in group.photos" class="{{photo.class}}" ng-src="{{photo.src}}">
           </div>
@@ -22,9 +22,9 @@
     <script src="//vanilla-masonry.desandro.com/masonry.min.js"></script>
 
     <script>
-      document.querySelector( '.thumbnails a' ).addEventListener( 'click', function( event ) {
-        // zoom.to({ element: event.target });
-        console.log('click', this)
+      document.querySelector( '.thumbnails' ).addEventListener( 'click', function( event ) {
+        zoom.to({ element: event.target });
+        // console.log('click', this)
       } );
 
     </script>

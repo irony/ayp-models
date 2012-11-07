@@ -68,6 +68,12 @@
 
 }
 
+.group{
+  max-height: 933px;
+  max-height: 293px;
+  clear: both;
+}
+
 .thumbnails img
 {
   margin-bottom: 20px;

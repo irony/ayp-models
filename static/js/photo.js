@@ -39,9 +39,13 @@ function PhotoController($scope, $http){
         angular.forEach(groups, function(group){
           console.log(group);
           group.photos.sort(function(photoA, photoB){
-            return photoA.interesting > photoB.interesting;
+            return photoA.interesting < photoB.interesting;
           })
-          .slice(0,Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
+          .map(function(photo){
+            photo.class = "span3";
+            return photo;
+          })
+          .slice(0, Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
           .forEach(function(photo){
             console.log(photo);
             photo.class = "span9";
@@ -51,7 +55,7 @@ function PhotoController($scope, $http){
       $scope.groups = groups;
 
       setTimeout(function(){
-        var wall = new Masonry( document.getElementById('wall'), {
+        var wall = new Masonry( document.getElementsByClassName('.group'), {
             isAnimated: true
         });
       }, 400);
