@@ -19,7 +19,7 @@ function PhotoController($scope, $http){
       (data||[]).forEach(function(photo){
         photo.src='/img/thumbnails/' + photo.source + '/' + photo._id;
         photo.interesting = Math.random() * 100; // dummy value now. TODO: change to real one
-        photo.class = "i" + Math.round(photo.interesting / 20);
+        photo.class = "span3";
       });
 
       $scope.photos.push.apply($scope.photos, data);
@@ -33,10 +33,26 @@ function PhotoController($scope, $http){
       if (photos.length > 0){
         (photos||[]).forEach(function(photo){
           var group = getGroup(groups, photo);
-          group.push(photo);
+          group.photos.push(photo);
+        });
+        
+        angular.forEach(groups, function(group){
+          console.log(group);
+          group.photos.sort(function(photoA, photoB){
+            return photoA.interesting > photoB.interesting;
+          })
+          .slice(0,Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
+          .forEach(function(photo){
+            console.log(photo);
+            photo.class = "span6";
+          });
         });
       }
       $scope.groups = groups;
+
+      setTimeout(function(){
+        var wall = new Masonry( document.getElementById('wall'));
+      }, 400);
   };
 
   $scope.$watch('zoomLevel', function(value){
@@ -53,14 +69,16 @@ function PhotoController($scope, $http){
   var getGroup = function(groups, photo){
     // group on date per default, TODO: add switch and control for this
     var groupName = photo.taken.split('T')[0],
-        group = groups[groupName] = groups[groupName] || [];
+        group = groups[groupName] = groups[groupName] || {};
     
     // split the groups if they are too big (based on interestingness)
     while(group.length > 20) {
       groupName = groupName + "_2";
-      group = groups[groupName] = groups[groupName] || [];
+      group = groups[groupName] = groups[groupName] || {};
     }
 
+    group.name = photo.taken.split('T')[0];
+    group.photos = group.photos || [];
     return group;
   };
 

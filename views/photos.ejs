@@ -1,30 +1,26 @@
 
 
-<ul class="thumbnails" style="padding-left: 100px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
-<input type="range" ng-model="zoomLevel">
-<h2 ng-cloak>{{photos.length}} photos found</h2>
-
-  <li ng-repeat="group in groups | orderBy:reverse" class="span6">
-    <div class="btn-group kort">
-      <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown"> 
-        <img ng-repeat="photo in group" class="{{photo.class}}" ng-src="{{photo.src}}">
-      </a>
-      <ul class="dropdown-menu">
-        <!-- dropdown menu links -->
-        <a href="share">Share this photo</a>
-        <a href="share?date={{photo.taken}}">Share all photos this day</a>
-      </ul>
+<div style="padding-left: 100px;" id="wall" class="thumbnails" ng-controller="PhotoController" when-scrolled="loadMore()" >
+  <div class="row">
+    <div class="span12">
+      <h2 ng-cloak>{{photos.length}} photos found</h2>
+      <input type="range" ng-model="zoomLevel">
     </div>
-   </li>
-</ul>
+  </div>
+
+  <div ng-repeat="group in groups | orderBy:reverse" class="row">
+        <h3>{{group.name}}</h3>
+        <img ng-repeat="photo in group.photos" class="{{photo.class}}" ng-src="{{photo.src}}">
+   </div>
 
     <script type="text/javascript" src="/js/photo.js"></script>
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
+    <script src="//vanilla-masonry.desandro.com/masonry.min.js"></script>
 
     <script>
-      document.querySelector( '.thumbnails img' ).addEventListener( 'click', function( event ) {
-        event.preventDefault();
-        zoom.to({ element: event.target });
+      document.querySelector( '.thumbnails a' ).addEventListener( 'click', function( event ) {
+        // zoom.to({ element: event.target });
+        console.log('click', this)
       } );
 
     </script>
