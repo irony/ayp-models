@@ -1,17 +1,21 @@
 
 
-<div style="padding-left: 100px;" id="wall" class="thumbnails" ng-controller="PhotoController" when-scrolled="loadMore()" >
-  <div class="row">
-    <div class="span12">
-      <h2 ng-cloak>{{photos.length}} photos found</h2>
-      <input type="range" ng-model="zoomLevel">
-    </div>
-  </div>
+    <div style="padding-left: 100px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
+        <div class="row">
+          <div class="span12">
+            <h2 ng-cloak>{{photos.length}} photos found</h2>
+            <input type="range" ng-model="zoomLevel">
+          </div>
+        </div>
 
-  <div ng-repeat="group in groups | orderBy:reverse" class="row">
-        <h3>{{group.name}}</h3>
-        <img ng-repeat="photo in group.photos" class="{{photo.class}}" ng-src="{{photo.src}}">
-   </div>
+        <div id="wall" class="thumbnails">
+          <div ng-repeat="group in groups | orderBy:reverse" class="row">
+                <h3>{{group.name}}</h3>
+               <img ng-repeat="photo in group.photos" class="{{photo.class}}" ng-src="{{photo.src}}">
+          </div>
+        <div>
+    </div>
+
 
     <script type="text/javascript" src="/js/photo.js"></script>
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>

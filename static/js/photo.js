@@ -44,14 +44,16 @@ function PhotoController($scope, $http){
           .slice(0,Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
           .forEach(function(photo){
             console.log(photo);
-            photo.class = "span6";
+            photo.class = "span9";
           });
         });
       }
       $scope.groups = groups;
 
       setTimeout(function(){
-        var wall = new Masonry( document.getElementById('wall'));
+        var wall = new Masonry( document.getElementById('wall'), {
+            isAnimated: true
+        });
       }, 400);
   };
 
