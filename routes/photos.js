@@ -14,7 +14,7 @@ module.exports = function(app){
 
     Photo.find({owners: req.user._id})
     .skip(Math.min(req.query.skip || 0))
-    .limit(Math.min(req.query.limit || 500))
+    .limit(Math.min(req.query.limit || 50))
     .sort('-taken')
     .exec(function(err, photos){
     
@@ -38,7 +38,7 @@ module.exports = function(app){
 
     Photo.find({'owners': req.user._id})
     .skip(req.query.skip || 0)
-    .limit(req.query.limit || 500)
+    .limit(req.query.limit || 50)
     .sort('-taken')
     .exec(function(err, photos){
       res.end(JSON.stringify(photos));

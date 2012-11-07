@@ -64,12 +64,6 @@
 
 .kort {
 
-  max-height: 400px;
   overflow: auto;
 
-}
-
-.kort:hover{
-  width: 200%;
-  z-index: 100;
 }

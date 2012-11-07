@@ -1,13 +1,18 @@
 function PhotoController($scope, $http){
+  
+  var zoomTimeout = null;
+
   $scope.photos = [];
   $scope.groups = {};
   $scope.dateRange = new Date();
+
+  $scope.zoomLevel = 50;
 
   var counter = 0;
   $scope.loadMore = function() {
       console.log('loadMore', counter);
 
-    var query = {skip : counter, limit: 400};
+    var query = {skip : counter, limit: 50};
     $http.get('/photoFeed', query)
     .success(function(data){
 
@@ -15,25 +20,45 @@ function PhotoController($scope, $http){
         photo.src='/img/thumbnails/' + photo.source + '/' + photo._id;
         photo.interesting = Math.random() * 100; // dummy value now. TODO: change to real one
         photo.class = "i" + Math.round(photo.interesting / 20);
-        var group = $scope.getGroup(photo);
-        group.push(photo);
       });
 
-      console.log($scope.groups);
       $scope.photos.push.apply($scope.photos, data);
       counter += data.length;
+      $scope.recalulateGroups($scope.photos);
     });
   };
 
-  $scope.getGroup = function(photo){
+  $scope.recalulateGroups = function(photos){
+      var groups = {};
+      if (photos.length > 0){
+        (photos||[]).forEach(function(photo){
+          var group = getGroup(groups, photo);
+          group.push(photo);
+        });
+      }
+      $scope.groups = groups;
+  };
+
+  $scope.$watch('zoomLevel', function(value){
+    
+    var filteredPhotos = $scope.photos.filter(function(photo){
+
+      return photo.interesting < $scope.zoomLevel;
+    });
+
+    $scope.recalulateGroups(filteredPhotos);
+
+  });
+
+  var getGroup = function(groups, photo){
     // group on date per default, TODO: add switch and control for this
     var groupName = photo.taken.split('T')[0],
-        group = $scope.groups[groupName] = $scope.groups[groupName] || [];
+        group = groups[groupName] = groups[groupName] || [];
     
     // split the groups if they are too big (based on interestingness)
     while(group.length > 20) {
       groupName = groupName + "_2";
-      group = $scope.groups[groupName] = $scope.groups[groupName] || [];
+      group = groups[groupName] = groups[groupName] || [];
     }
 
     return group;

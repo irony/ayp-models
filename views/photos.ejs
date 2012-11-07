@@ -1,10 +1,10 @@
 
 
-<ul class="thumbnails" ng-controller="PhotoController" when-scrolled="loadMore()" >
-
+<ul class="thumbnails" style="padding-left: 100px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
+<input type="range" ng-model="zoomLevel">
 <h2 ng-cloak>{{photos.length}} photos found</h2>
 
-  <li ng-repeat="group in groups" class="span3">
+  <li ng-repeat="group in groups | orderBy:reverse" class="span6">
     <div class="btn-group kort">
       <a href="#" class="dropdown-toggle thumbnail" data-toggle="dropdown"> 
         <img ng-repeat="photo in group" class="{{photo.class}}" ng-src="{{photo.src}}">
@@ -22,7 +22,7 @@
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
 
     <script>
-      document.querySelector( '.thumbnails' ).addEventListener( 'click', function( event ) {
+      document.querySelector( '.thumbnails img' ).addEventListener( 'click', function( event ) {
         event.preventDefault();
         zoom.to({ element: event.target });
       } );
