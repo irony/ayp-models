@@ -1,3 +1,12 @@
+body{
+  background: #000;
+  color: #fff;
+}
+
+body .navbar-inner{
+  background: #111;
+  color: #fff;
+}
 .thumbnail img {
   min-height: 130px;
   opacity: 0.9;
