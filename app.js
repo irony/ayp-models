@@ -37,7 +37,7 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-      app.use(express.session({ secret: 'keyboard cat', store: new MongoStore({url: process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'}) }));
+      app.use(express.session({ secret: 'keyboard cat', cookie: { maxAge: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)}, store: new MongoStore({url: process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos'}) }));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       app.use(passport.initialize());
