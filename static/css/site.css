@@ -45,6 +45,7 @@
     .carousel {
       margin-bottom: 60px;
       background: black;
+      -webkit-perspective: 500;
     }
 
     .carousel .container {
@@ -69,17 +70,27 @@
       vertical-align: middle;
     }
     .carousel img {
-      min-width: 100%;
+      min-width: 110%;
       position: absolute;
        top: -20%;
+      -webkit-transition:all 15s ease-in;
+      -moz-transition:all 15s linear;
+      transition:all 15s linear;
+    }
+
+    .carousel .item.active img {
+
+      -webkit-transform: scale(1.2) translateX(50px);
+      -moz-transform: scale(1.2);
+      transform: scale(1.2);
 
     }
 
     .carousel-caption {
-      background-color: transparent;
+      background-color: rgba(255,255,255,0.04);
       position: static;
       max-width: 550px;
-      padding: 0 20px;
+      padding: 20px;
       margin-bottom: 150px;
     }
     .carousel-caption h1,
@@ -225,25 +236,6 @@
 
     }
 
-
-.glass {
-    position: relative;
-}
-
-.glass:after{
-    content: " "; 
-    display: block;
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 0;
-    -webkit-background-origin: border-box;
-    -moz-background-origin: border;
-    background-origin: border-box;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, .15)), to(rgba(0, 0, 0, .25))), -webkit-gradient(linear, left top, right bottom, color-stop(0, rgba(255, 255, 255, 0)), color-stop(0.5, rgba(255, 255, 255, .15)), color-stop(0.501, rgba(255, 255, 255, 0)), color-stop(1, rgba(255, 255, 255, 0)));
-    background: -moz-linear-gradient(top, rgba(255, 255, 255, .15), rgba(0, 0, 0, .25)), -moz-linear-gradient(left top, rgba(255, 255, 255, 0), rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0));
-    background: linear-gradient(top, rgba(255, 255, 255, .15), rgba(0, 0, 0, .25)), linear-gradient(left top, rgba(255, 255, 255, 0), rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0));
-}
-
 #zoomLevel
 {
   position: fixed;
@@ -251,7 +243,7 @@
   left:0;
   z-index: 100;
   width:100%;
-
+  zoom:1;
 }
 
 .photos
@@ -260,7 +252,7 @@
 }
 
 body{
-  font-family: Corbel;
+  font-family: Corbel, Consolas;
 }
 
 body .navbar-inner{
