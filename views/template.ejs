@@ -1,31 +1,49 @@
 
-  <!-- Main hero unit for a primary marketing message or call to action -->
-  <div class="hero-unit">
-    <div class="container">
+        
 
-      <img src="img/RedChairDesign-icon.png" class="pull-left">
-      <h1>One app, all photos</h1>
-      <p>Combine all your photos from Dropbox, iCloud, Instagram, Google Drive, Flickr and Facebook and let us help you organize them into nicely organized folders with smart ways to sync them with your friends.</p>
-      <p>
-        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="/photos/random/1" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Your photos deserve a better life</h1>
+              <p class="lead">How often do you actually look at your photos from the past? Start here to collect all your photos from your different sources and start viewing them with our intuitive interface</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
         <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
         <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
-      </p>
-    </div>
-  </div>
-<div class="container">
-  <div class="row">
-    <div class="span6">
-      <h2>Share and collaborate</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      <p><a class="btn" href="#">View details &raquo;</a></p>
-    </div>
-    <div class="span6">
-    <img src="img/Photos-icon.png" class="pull-left">
-      <h2>Intelligentely&trade; organize your life</h2>
-      <p>By carefully combining information from many sources we will help you organize your photos based on location, calendars, tagged people, photo analyzing and face recognition.</p>
-      <p><a class="btn" href="#">View details &raquo;</a></p>
-    </div>
-  </div>
-</div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="/photos/random/2" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Get those photos organized</h1>
+              <p class="lead">By using our patented photo brain to help organizing your precious photos you can start getting them organized and also easily share a topic, event or time period with your friends</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="/photos/random/3" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Collect all your photos in one place</h1>
+              <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr" target="_blank"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+    </div><!-- /.carousel -->
+
   

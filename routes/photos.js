@@ -26,6 +26,23 @@ module.exports = function(app){
     });
   });
 
+  app.get('/photos/random/:id', function(req, res){
+    if (!req.user){
+      return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
+    }
+
+    Photo.find({owners: req.user._id})
+    .skip(Math.min(req.query.skip || 0))
+    .limit(Math.min(req.query.limit || 50))
+    .sort('-interstingness')
+    .exec(function(err, photos){
+
+      var photo = photos[Math.round(Math.random()*50)];
+      res.redirect('/img/thumbnails/' + photo.source + '/' + photo._id);
+
+    });
+  });
+
 
   app.get('/photoFeed', function(req, res){
 

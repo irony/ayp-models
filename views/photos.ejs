@@ -1,17 +1,17 @@
 
-
+  <div class="photos">
     <div style="padding-left: 100px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
         <div class="row">
           <div class="span12">
             <h2 ng-cloak>{{photos.length}} photos found</h2>
-            <input type="range" ng-model="zoomLevel">
+            <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>
         </div>
 
         <div id="wall" class="thumbnails">
           <div ng-repeat="group in groups | orderBy:reverse" class="row group">
-                <h3>{{group.name}}</h3>
-               <img ng-repeat="photo in group.photos" class="{{photo.class}}" ng-src="{{photo.src}}">
+                <h3 class="pull-right">{{group.name}}</h3>
+               <img ng-repeat="photo in group.photos" class="{{photo.class}} glass" ng-src="{{photo.src}}">
           </div>
         <div>
     </div>
@@ -28,4 +28,5 @@
       } );
 
     </script>
-
+  </div>
+</div>
