@@ -2,6 +2,7 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
     passport = require('passport'),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
+    FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
     User = require('../models/user.js'),
     auth = require('./auth.js'),
@@ -66,5 +67,17 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
 
     }
   ));
+
+  passport.use(new FacebookStrategy({
+    clientID: conf.facebook.appId,
+    clientSecret: conf.facebook.appSecret,
+    callbackURL: callbackBaseUrl + "/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return auth.findOrCreateAndUpdateUser(req.user, profile, done);
+    });
+  }
+));
 
 module.exports = passport;

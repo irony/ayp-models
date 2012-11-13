@@ -25,7 +25,7 @@ var PhotoSchema = new mongoose.Schema({
 PhotoSchema.pre('save', function (next) {
   var photo = this,
       _ = require('underscore'),
-      ShareSpan = require('./shareSpan'); //this needs to be in local scope
+      ShareSpan = require('./sharespan'); //this needs to be in local scope
 
   ShareSpan.find({
     startDate: { $lte : photo.taken },
