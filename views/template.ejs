@@ -3,9 +3,9 @@
 
     <!-- Carousel
     ================================================== -->
-    <div id="myCarousel" class="carousel slide">
+    <div id="myCarousel" class="carousel slide" data-interval="5000">
       <div class="carousel-inner">
-        <div class="item active">
+        <div class="item first">
           <img src="/photos/random/1" alt="">
           <div class="container">
             <div class="carousel-caption">
@@ -65,8 +65,13 @@
       var originStyle = (100 * offsetX / container.offsetWidth) + '% ' + (100 * offsetY / container.offsetHeight) + '%';
       container.style.webkitPerspectiveOrigin = originStyle;
     }
+    
+    $('#myCarousel .first').toggleClass('active'); // trigger ken-burns
+
 
     window.addEventListener('load', function() {
+      $('#myCarousel').carousel('cycle');
+
       var container = document.getElementById('myCarousel');
       container.addEventListener('mousemove', setPerspectiveOrigin, false);
       container.addEventListener('mouseout', function() {

@@ -4,7 +4,6 @@
         <div class="row">
           <div class="span12">
             <h2 ng-cloak>{{photos.length}} photos found</h2>
-            <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>
         </div>
 
@@ -13,6 +12,11 @@
                 <h3 class="pull-right">{{group.name}}</h3>
                <img ng-repeat="photo in group.photos" class="{{photo.class}} glass" ng-src="{{photo.src}}">
           </div>
+          <div class="slider">
+              <input type="range" ng-model="zoomLevel" id="zoomLevel">
+              <label class="pull-left  muted">Fewer</label>
+              <label class="pull-right  muted">More</label>
+          </div>  
         <div>
     </div>
   </div>
@@ -21,14 +25,12 @@
     <script type="text/javascript" src="/js/photo.js"></script>
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
     <script src="//vanilla-masonry.desandro.com/masonry.min.js"></script>
-
     <script>
-      document.querySelector( '.thumbnails' ).addEventListener( 'click', function( event ) {
-        zoom.to({ element: event.target });
-        // console.log('click', this)
-      } );
+      $('.thumbnails img').click(function(){
+        zoom.to({ element: this.get(0)});
+      });
 
-
+/*
       function updatePerpective(value)
       {
         document.body.style.webkitPerspective = value;
@@ -49,5 +51,5 @@
         var container = document.body;
         container.addEventListener('mousemove', setPerspectiveOrigin, false);
         updatePerpective(500)
-      }, false);
+      }, false);*/
   </script>

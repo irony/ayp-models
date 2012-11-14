@@ -55,7 +55,7 @@ module.exports = function(app){
 
     Photo.find({'owners': req.user._id})
     .skip(req.query.skip || 0)
-    .limit(req.query.limit || 500)
+    .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
       res.end(JSON.stringify(photos));
