@@ -1,7 +1,6 @@
 function PhotoController($scope, $http){
   
   var zoomTimeout = null;
-
   $scope.photos = [];
   $scope.groups = {};
   $scope.dateRange = new Date();
@@ -24,11 +23,11 @@ function PhotoController($scope, $http){
 
       $scope.photos.push.apply($scope.photos, data);
       counter += data.length;
-      $scope.recalulateGroups($scope.photos);
+      $scope.recalculateGroups($scope.photos);
     });
   };
 
-  $scope.recalulateGroups = function(photos){
+  $scope.recalculateGroups = function(photos){
       var groups = {};
       if (photos.length > 0){
         (photos||[]).forEach(function(photo){
@@ -36,18 +35,23 @@ function PhotoController($scope, $http){
           group.photos.push(photo);
         });
         
+
         angular.forEach(groups, function(group){
-          console.log(group);
+          var lastPhoto = group.photos[0];
           group.photos.sort(function(photoA, photoB){
             return photoA.interesting < photoB.interesting;
           })
           .map(function(photo){
             photo.class = "span3";
+            if (Math.abs(lastPhoto.taken - photo.taken) < (100 - $scope.zoomLevel) * 100 ){
+              return null;
+            }
+
+            lastPhoto = photo;
             return photo;
           })
           .slice(0, Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
           .forEach(function(photo){
-            console.log(photo);
             photo.class = "span9";
           });
         });
@@ -55,7 +59,7 @@ function PhotoController($scope, $http){
       $scope.groups = groups;
 
       setTimeout(function(){
-        var wall = new Masonry( document.getElementsByClassName('.group'), {
+        var wall = new Masonry( document.getElementsByClassName('.thumnails'), {
             isAnimated: true
         });
       }, 400);
@@ -68,7 +72,7 @@ function PhotoController($scope, $http){
       return photo.interesting < $scope.zoomLevel;
     });
 
-    $scope.recalulateGroups(filteredPhotos);
+    $scope.recalculateGroups(filteredPhotos);
 
   });
 

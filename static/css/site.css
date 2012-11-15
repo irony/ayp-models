@@ -125,6 +125,10 @@
 
 
 
+    .bodyPadding{
+      padding-top: 100px;
+    }
+
     /* MARKETING CONTENT
     -------------------------------------------------- */
 
@@ -256,11 +260,21 @@
     }
 
 
-.photos
-{
-  /* background: #111 url(/img/dark_leather.png);*/
-    background: #111; /* -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
-                      */
+.photo img{
+  float:left;
+}
+
+.photo a {
+  -webkit-transition: opacity 0.4s;
+  opacity:0;
+  float:left;
+  margin-right: -16px;
+  margin-left: 5px;
+  color: #333;
+}
+
+.photo:hover a {
+  opacity: 0.7;
 }
 
 body .navbar-inner{
@@ -268,7 +282,6 @@ body .navbar-inner{
   color: #fff;
 }
 .thumbnail img {
-  min-height: 130px;
   opacity: 0.9;
 }
 
@@ -289,7 +302,8 @@ body .navbar-inner{
 ------------------------- */
 .jumbotron {
   position: relative;
-  padding: 40px 0;
+  padding: 80px 0;
+  margin-bottom: 20px;
   color: #fff;
   text-align: center;
   text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
@@ -339,6 +353,13 @@ body .navbar-inner{
 
 .group{
   clear: both;
+}
+
+.group h3{
+  background: #333;
+  color: #111;
+  display: inline-block;
+  padding: 0 10px;
 }
 
 .thumbnails img
