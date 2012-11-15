@@ -11,7 +11,7 @@ function PhotoController($scope, $http){
   $scope.loadMore = function() {
       console.log('loadMore', counter);
 
-    var query = {skip : counter, limit: 50};
+    var query = {skip : counter, zoomLevel : $scope.zoomLevel, limit: 50};
     $http.get('/photoFeed', query)
     .success(function(data){
 
@@ -22,7 +22,7 @@ function PhotoController($scope, $http){
       });
 
       $scope.photos.push.apply($scope.photos, data);
-      counter += data.length;
+      // counter += data.length;
       $scope.recalculateGroups($scope.photos);
     });
   };
@@ -65,8 +65,16 @@ function PhotoController($scope, $http){
       }, 400);
   };
 
+  var timeout = null;
+
   $scope.$watch('zoomLevel', function(value){
     
+    /*clearTimeout(timeout);
+
+    timeout = setTimeout(function(){
+      $scope.loadMore();
+    }, 100);
+    */
     var filteredPhotos = $scope.photos.filter(function(photo){
 
       return photo.interesting < $scope.zoomLevel;

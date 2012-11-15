@@ -78,7 +78,7 @@ module.exports = function(app){
     }
 
     Photo.find({'owners': req.user._id})
-    .limit(50)
+    .limit(500)
     .where('taken').gte(startDate).lte(stopDate)
     .sort('-taken')
     .exec(function(err, photos){
