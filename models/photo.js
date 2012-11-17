@@ -13,7 +13,7 @@ var PhotoSchema = new mongoose.Schema({
   source : { type: String},
   mimeType : { type: String},
   thumbnails : {type: Schema.Types.Mixed},
-  interestingness : {type: Number},
+  interestingness : {type: Number, default: 50},
   original : { type: String},
   tags : { type: []},
   metadata : { type:  Schema.Types.Mixed},

@@ -397,7 +397,7 @@ body .navbar-inner{
 #wall .slider
 {
   position: fixed;
-  bottom: 100px;
+  bottom: 50px;
   opacity: 0;
   -webkit-transition: all 0.5s;
 

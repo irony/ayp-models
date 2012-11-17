@@ -12,18 +12,8 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    Photo.find({owners: req.user._id})
-    .skip(Math.min(req.query.skip || 0))
-    .limit(Math.min(req.query.limit || 50))
-    .sort('-taken')
-    .exec(function(err, photos){
-    
-      console.log('photos, err', err);
-      model.photos = photos || [];
+    res.render('photos.ejs', model);
 
-      res.render('photos.ejs', model);
-
-    });
   });
 
   app.get('/photos/random/:id', function(req, res){
@@ -38,11 +28,14 @@ module.exports = function(app){
     .exec(function(err, photos){
 
       var photo = photos[Math.round(Math.random()*50)];
+      if(photo) {
+        return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
+      }
+ 
       res.redirect('/img/thumbnails/' + photo.source + '/' + photo._id);
 
     });
   });
-
 
   app.get('/photoFeed', function(req, res){
 
@@ -54,10 +47,16 @@ module.exports = function(app){
     }
 
     Photo.find({'owners': req.user._id})
+    .where('taken').gte(req.query.startDate || new Date(1900,0,1))
+    .where('interestingness').gte(100- (req.query.interestingness || 50))
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
+      (photos || []).map(function(photo){
+        photo.metadata = null;
+      });
+
       res.end(JSON.stringify(photos));
     });
   });

@@ -11,76 +11,77 @@ function PhotoController($scope, $http){
   $scope.loadMore = function() {
       console.log('loadMore', counter);
 
-    var query = {skip : counter, zoomLevel : $scope.zoomLevel, limit: 50};
-    $http.get('/photoFeed', query)
+    var query = {skip : counter, interestingness : $scope.zoomLevel, limit: 100};
+    $http.get('/photoFeed', {params : query})
     .success(function(data){
 
-      (data||[]).forEach(function(photo){
+      data = (data||[]).map(function(photo){
         photo.src='/img/thumbnails/' + photo.source + '/' + photo._id;
-        photo.interesting = Math.random() * 100; // dummy value now. TODO: change to real one
+
+        if (photo.interestingness === 50){
+          photo.interestingness = Math.random() * 100; // dummy value now. TODO: change to real one
+        }
+
         photo.class = "span3";
+        return photo;
       });
 
-      $scope.photos.push.apply($scope.photos, data);
+      Array.prototype.push.apply($scope.photos, data);
       // counter += data.length;
       $scope.recalculateGroups($scope.photos);
     });
   };
 
   $scope.recalculateGroups = function(photos){
+     
+      console.log(photos.length)
+
+      var filteredPhotos = photos.filter(function(photo){
+        return (photo.interestingness > 100 - $scope.zoomLevel);  
+      });
+
+      console.log(filteredPhotos.length)
+
       var groups = {};
-      if (photos.length > 0){
-        (photos||[]).forEach(function(photo){
+      if (filteredPhotos.length > 0){
+        (filteredPhotos||[]).forEach(function(photo){
           var group = getGroup(groups, photo);
           group.photos.push(photo);
         });
         
 
         angular.forEach(groups, function(group){
-          var lastPhoto = group.photos[0];
           group.photos.sort(function(photoA, photoB){
-            return photoA.interesting < photoB.interesting;
+            return photoA.interestingness < photoB.interestingness;
           })
           .map(function(photo){
             photo.class = "span3";
-            if (Math.abs(lastPhoto.taken - photo.taken) < (100 - $scope.zoomLevel) * 100 ){
-              return null;
-            }
-
-            lastPhoto = photo;
             return photo;
           })
-          .slice(0, Math.max(1, Math.round(group.photos.length / 4 ))) // top 3 per twelve
+          .slice(0, Math.max(1, Math.round(group.photos.length / 8 ))) // top 3 per twelve
           .forEach(function(photo){
-            photo.class = "span9";
+            photo.class = "span9 pull-left";
           });
         });
       }
       $scope.groups = groups;
-
+/*
       setTimeout(function(){
-        var wall = new Masonry( document.getElementsByClassName('.thumnails'), {
+        var wall = new Masonry( document.getElementsByClassName('group'), {
             isAnimated: true
         });
-      }, 400);
+      }, 400); */
   };
 
   var timeout = null;
 
   $scope.$watch('zoomLevel', function(value){
     
-    /*clearTimeout(timeout);
+    clearTimeout(timeout);
 
     timeout = setTimeout(function(){
       $scope.loadMore();
     }, 100);
-    */
-    var filteredPhotos = $scope.photos.filter(function(photo){
-
-      return photo.interesting < $scope.zoomLevel;
-    });
-
-    $scope.recalculateGroups(filteredPhotos);
 
   });
 
