@@ -8,19 +8,19 @@
         </div>
 
 
-        <div id="wall" class="thumbnails"  when-scrolled="loadMore()">
-          <div ng-repeat="group in groups | orderBy:'name':true" id="{{group.name}}" class="row group">
-                <h3 class="pull-right">{{group.name}}</h3>
+        <div id="wall" class="thumbnails row"  when-scrolled="loadMore()">
+          <div ng-repeat="group in groups | orderBy:'name':true" id="{{group.name}}" class="group">
+                <h3 class="pull-center">{{group.name}}</h3>
                 <div  ng-repeat="photo in group.photos" class="photo">
-                  <img class="{{photo.class}} img-rounded" ng-src="{{photo.src}}">
+                  <img class="{{photo.class}}" ng-src="{{photo.src}}">
                   <a href="/share?date={{photo.taken}}"><i class="icon-share"></i></a>
                 </div>
 
           </div>
           <div class="slider">
+              <label class="pull-left  muted">Only the best</label>
+              <label class="pull-right  muted">All your photos</label>
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
-              <label class="pull-left  muted">Best</label>
-              <label class="pull-right  muted">All</label>
           </div>  
         <div>
     </div>
@@ -29,10 +29,9 @@
 
     <script type="text/javascript" src="/controllers/photo.js"></script>
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
-    <script src="//vanilla-masonry.desandro.com/masonry.min.js"></script>
     <script>
     
-      document.querySelector( '.thumbnails' ).addEventListener( 'click', function( event ) {
+      document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
         if (event.target.tagName == "IMG") {
           zoom.to({ element: event.target });
           $('.slider').toggle();

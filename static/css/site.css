@@ -15,11 +15,12 @@
       font-weight: normal !important;
     }
 
-    
+    /*
     #wall{
-      overflow: auto;
+      overflow-y: scroll;
       height: 900px;
-    }
+    }*/
+
     /* CUSTOMIZE THE NAVBAR
     -------------------------------------------------- */
 
@@ -348,36 +349,30 @@ body .navbar-inner{
   text-shadow: 0 0 10px rgba(255,255,255,.25);
 }
 
-.kort {
-
-  overflow: auto;
-
-}
-
-.group{
-  clear: both;
-}
-
 .group h3{
   background: #333;
   color: #111;
-  display: inline-block;
+  display: block;
   padding: 0 10px;
+  clear: both;
 }
 
 .thumbnails img
 {
   margin-bottom: 20px;
+      -webkit-transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
 }
 
-.thumbnails
+.pull-center
 {
-  width: 100%;
+  text-align: center;
+  margin-left: auto;
 }
 
 #zoomLevel
 {
-  width:85%;
+  width:100%;
   height: 30px;
   margin-top:10px;
 }
@@ -390,11 +385,6 @@ body .navbar-inner{
 .inactive .slider
 {
   opacity: 0;
-}
-
-.slider label
-{
-  margin: 10px;
 }
 
 #wall .slider
