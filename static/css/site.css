@@ -16,7 +16,10 @@
     }
 
     
-
+    #wall{
+      overflow: auto;
+      height: 900px;
+    }
     /* CUSTOMIZE THE NAVBAR
     -------------------------------------------------- */
 

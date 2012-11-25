@@ -119,12 +119,13 @@ module.exports = function (app) {
 
 		var client = this.getClient(user);
 
-		client.search("/", "jpg", function(status, reply){
+		client.search("/", "jpg", {file_limit : 100000 /*should be enough for everyone ;) */}, function(status, reply){
 			
 			if (status !== 200){
 				return done(status, null);
 			}
 
+			console.log(reply);
 
 			var photos = Array.prototype.slice.call(reply);
 

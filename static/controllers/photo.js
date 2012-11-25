@@ -64,6 +64,8 @@ function PhotoController($scope, $http){
           });
         });
       }
+
+      console.log('groups', groups)
       $scope.groups = groups;
 /*
       setTimeout(function(){
@@ -87,7 +89,7 @@ function PhotoController($scope, $http){
 
   var getGroup = function(groups, photo){
     // group on date per default, TODO: add switch and control for this
-    var groupName = photo.taken.split('T')[0],
+    var groupName = getGroupName(photo),
         group = groups[groupName] = groups[groupName] || {};
     
     // split the groups if they are too big (based on interestingness)
@@ -101,11 +103,30 @@ function PhotoController($scope, $http){
     return group;
   };
 
+  var getGroupName = function(photo){
+
+    if ($scope.zoomLevel > 80) {
+      return photo.taken.split('T')[0]; // whole date
+    }
+
+    if ($scope.zoomLevel > 50) {
+      return photo.taken.substring(0, 7); // month
+    }
+
+    if ($scope.zoomLevel > 20){
+      return photo.taken.substring(0, 4); // year
+    }
+
+    return photo.taken.substring(0, 3); // decade
+
+  };
+
   $scope.loadMore();
 }
 
+
+
 angular.module('scroll', []).directive('whenScrolled', function() {
-  console.log('scroll', elm);
     return function(scope, elm, attr) {
         var raw = elm[0];
         

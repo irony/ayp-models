@@ -1,5 +1,5 @@
 
-  <div class="photos">
+  <div class="photos" >
     <div style="padding-left: 10px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
         <div class="row">
           <div class="span12">
@@ -7,8 +7,9 @@
           </div>
         </div>
 
-        <div id="wall" class="thumbnails">
-          <div ng-repeat="group in groups | orderBy:reverse" class="row group">
+
+        <div id="wall" class="thumbnails"  when-scrolled="loadMore()">
+          <div ng-repeat="group in groups | orderBy:'name':true" id="{{group.name}}" class="row group">
                 <h3 class="pull-right">{{group.name}}</h3>
                 <div  ng-repeat="photo in group.photos" class="photo">
                   <img class="{{photo.class}} img-rounded" ng-src="{{photo.src}}">
@@ -18,8 +19,8 @@
           </div>
           <div class="slider">
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
-              <label class="pull-left  muted">Fewer</label>
-              <label class="pull-right  muted">More</label>
+              <label class="pull-left  muted">Best</label>
+              <label class="pull-right  muted">All</label>
           </div>  
         <div>
     </div>

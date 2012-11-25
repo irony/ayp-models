@@ -45,19 +45,22 @@ module.exports = function(app){
       model.error = 'You have to login first';
       return res.render('500.ejs', model);
     }
+    console.log(req.query.startDate)
 
     Photo.find({'owners': req.user._id})
-    .where('taken').gte(req.query.startDate || new Date(1900,0,1))
+    .where('taken').lte(req.query.startDate || new Date())
     .where('interestingness').gte(100- (req.query.interestingness || 50))
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
+      console.log('query', req.query);
+
       (photos || []).map(function(photo){
         photo.metadata = null;
       });
 
-      res.end(JSON.stringify(photos));
+      res.json(photos);
     });
   });
 
