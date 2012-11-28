@@ -48,13 +48,13 @@ module.exports = function(app){
     console.log(req.query.startDate)
 
     Photo.find({'owners': req.user._id})
-    .where('taken').lte(req.query.startDate || new Date())
+    .where('taken').lt(req.query.startDate || new Date())
     .where('interestingness').gte(100- (req.query.interestingness || 50))
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
-      console.log('query', req.query);
+      console.log('query', req.query, 'found', photos.length);
 
       (photos || []).map(function(photo){
         photo.metadata = null;

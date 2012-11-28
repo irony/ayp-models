@@ -4,14 +4,14 @@ function PhotoController($scope, $http){
   $scope.photos = [];
   $scope.groups = {};
   $scope.dateRange = new Date();
+  $scope.lastDate = null;
 
   $scope.zoomLevel = 50;
 
   var counter = 0;
-  $scope.loadMore = function() {
-      console.log('loadMore', counter);
+  $scope.loadMore = function(zoomLevel, startDate) {
 
-    var query = {skip : counter, interestingness : $scope.zoomLevel, limit: 100};
+    var query = {skip : counter, interestingness : zoomLevel, startDate : startDate, limit: 40};
     $http.get('/photoFeed', {params : query})
     .success(function(data){
 
@@ -25,8 +25,20 @@ function PhotoController($scope, $http){
         photo.class = "span3";
         return photo;
       });
+      $scope.lastDate = data[data.length-1].taken;
 
-      Array.prototype.push.apply($scope.photos, data);
+      if (startDate){ // append instead of reloading
+        Array.prototype.push.apply($scope.photos, data);
+        /*$scope.photos = data.sort(function(a,b){
+          return a.taken - b.taken;
+        }.reduce(function(a,b){
+          return a.taken !== b.taken ? [a,b] : [a];
+        }, []));*/
+      } else {
+        $scope.photos = data;
+      }
+
+
       // counter += data.length;
       $scope.recalculateGroups($scope.photos);
     });
@@ -34,15 +46,14 @@ function PhotoController($scope, $http){
 
   $scope.recalculateGroups = function(photos){
      
-      console.log(photos.length)
-
       var filteredPhotos = photos.filter(function(photo){
         return (photo.interestingness > 100 - $scope.zoomLevel);  
       });
 
-      console.log(filteredPhotos.length)
-
       var groups = {};
+
+      var groupArray = []; //  fix to reverse sort order
+
       if (filteredPhotos.length > 0){
         (filteredPhotos||[]).forEach(function(photo){
           var group = getGroup(groups, photo);
@@ -51,6 +62,8 @@ function PhotoController($scope, $http){
         
 
         angular.forEach(groups, function(group){
+          groupArray.push(group);
+
           group.photos.sort(function(photoA, photoB){
             return photoA.interestingness < photoB.interestingness;
           })
@@ -60,19 +73,19 @@ function PhotoController($scope, $http){
           })
           .slice(0, Math.max(1, Math.round(group.photos.length / 8 ))) // top 3 per twelve
           .forEach(function(photo){
-            photo.class = "span9 pull-left";
+            photo.class = "span6 pull-left";
           });
         });
       }
 
-      console.log('groups', groups)
-      $scope.groups = groups;
+      $scope.groups = groupArray;
 /*
+
       setTimeout(function(){
-        var wall = new Masonry( document.getElementsByClassName('group'), {
+        var wall = new Masonry( document.getElementsById('wall'), {
             isAnimated: true
         });
-      }, 400); */
+      }, 400);*/
   };
 
   var timeout = null;
@@ -82,7 +95,7 @@ function PhotoController($scope, $http){
     clearTimeout(timeout);
 
     timeout = setTimeout(function(){
-      $scope.loadMore();
+      $scope.loadMore(value);
     }, 100);
 
   });
@@ -92,14 +105,25 @@ function PhotoController($scope, $http){
     var groupName = getGroupName(photo),
         group = groups[groupName] = groups[groupName] || {};
     
-    // split the groups if they are too big (based on interestingness)
+    // split the groups if they are too big
     while(group.length > 20) {
       groupName = groupName + "_2";
       group = groups[groupName] = groups[groupName] || {};
     }
 
-    group.name = photo.taken.split('T')[0];
     group.photos = group.photos || [];
+
+    if (group.photos.length){
+      if (group.photos[group.photos.length-1].taken.split('T')[0] === group.photos[0].taken.split('T')[0])
+      {
+        group.name = group.photos[0].taken.split('T')[0];
+      }
+      else
+      {
+        group.name = group.photos[group.photos.length-1].taken.split('T')[0] + " - " + group.photos[0].taken.split('T')[0];
+      }
+      group.id = groupName;
+    }
     return group;
   };
 
@@ -109,7 +133,7 @@ function PhotoController($scope, $http){
       return photo.taken.split('T')[0]; // whole date
     }
 
-    if ($scope.zoomLevel > 50) {
+    if ($scope.zoomLevel >= 50) {
       return photo.taken.substring(0, 7); // month
     }
 
@@ -121,19 +145,8 @@ function PhotoController($scope, $http){
 
   };
 
-  $scope.loadMore();
+  // initial loading of photos
+  $scope.loadMore($scope.zoomLevel);
 }
 
-
-
-angular.module('scroll', []).directive('whenScrolled', function() {
-    return function(scope, elm, attr) {
-        var raw = elm[0];
-        
-        elm.bind('scroll', function() {
-            if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
-                scope.$apply(attr.whenScrolled);
-            }
-        });
-    };
-});
+var loadTimeout;

@@ -1,25 +1,22 @@
 
-  <div class="photos" >
-    <div style="padding-left: 10px;" ng-controller="PhotoController" when-scrolled="loadMore()" >
-        <div class="row">
-          <div class="span12">
-            <h2 ng-cloak>{{photos.length}} photos found</h2>
-          </div>
-        </div>
+  <div id="photos" class="photos" >
+    <div style="padding-left: 10px; " ng-controller="PhotoController">
 
-
-        <div id="wall" class="thumbnails row"  when-scrolled="loadMore()">
-          <div ng-repeat="group in groups | orderBy:'name':true" id="{{group.name}}" class="group">
+        <div id="wall" class="thumbnails row" style="height: 1024px; overflow: auto;" when-scrolled="loadMore(zoomLevel, lastDate)">
+          <div ng-repeat="group in groups" id="{{group.id}}" class="group">
                 <h3 class="pull-center">{{group.name}}</h3>
                 <div  ng-repeat="photo in group.photos" class="photo">
-                  <img class="{{photo.class}}" ng-src="{{photo.src}}">
-                  <a href="/share?date={{photo.taken}}"><i class="icon-share"></i></a>
+                  <img ng-src="{{photo.src}}" ng-dblclick="loadMore(zoomLevel + 80, photo.taken); e.preventDefault()">
+                  <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
+
                 </div>
 
           </div>
           <div class="slider">
-              <label class="pull-left  muted">Only the best</label>
               <label class="pull-right  muted">All your photos</label>
+              <label class="pull-left  muted">Only the best</label>
+              <label class="pull-center muted">{{photos.length}} photos loaded</label>
+
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>  
         <div>
@@ -34,10 +31,8 @@
       document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
         if (event.target.tagName == "IMG") {
           zoom.to({ element: event.target });
-          $('.slider').toggle();
         }
       } );
-
 /*
       function updatePerpective(value)
       {

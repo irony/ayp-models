@@ -3,7 +3,7 @@
 <header class="jumbotron subhead bodyPadding" id="overview">
   <div class="container">
     <h1>Share photo timeframe</h1>
-    <p class="lead">Instead of sharing photos one by one, you will share all photos within a timeframe</p>
+    <p class="lead">Instead of sharing photos one by one, you will share a timeframe in your life</p>
   </div>
 </header>
 
@@ -15,15 +15,18 @@
       <label>Email to share to</label>
       <input type="text" autocomplete="off" required="required" id="email" name="email" ng-change="refreshPhotos()" ng-model="email"><br>
       <label>Dates to share</label>
+      <input type="hidden" ng-model="fromDate" ng-init="fromDate = '<%=date ? date.split('T')[0] : ""%>'">
+      <input type="hidden" ng-model="toDate" ng-init="toDate = '<%=date ? date.split('T')[0] + " 23:59:59" : ""%>'">
+
       <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
       <input type="submit" class="btn btn-success pull-right" value="Share">
+      <small>{{photos.length}} photos selected</small>
       
     </form>
     <div class="span8">
-      <h2>{{photos.length}} photos selected <small ng-show="photos.length">All these will be shared </small></h2>
       <ul class="thumbnails preview pull-right">
         <li ng-repeat="photo in photos" class="thumbnail span1">
-          <img ng-src="{{photo}}">
+          <img ng-src="{{photo}}" ng-click="toDate = photo.taken">
         </li>
       </ul>
     
@@ -36,9 +39,18 @@
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/date.js"></script>
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="/js/bootstrap-daterangepicker/daterangepicker.css" />
+<script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
 
 <script type="text/javascript">
   $(document).ready(function() {
+
+    
+      document.querySelector( '.thumbnails' ).addEventListener( 'dblclick', function( event ) {
+        if (event.target.tagName == "IMG") {
+          zoom.to({ element: event.target });
+        }
+      } );
+
 
 
     $('input[name="daterange"]').daterangepicker(
