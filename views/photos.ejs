@@ -6,7 +6,7 @@
           <div ng-repeat="group in groups" id="{{group.id}}" class="group">
                 <h3 class="pull-center">{{group.name}}</h3>
                 <div  ng-repeat="photo in group.photos" class="photo">
-                  <img ng-src="{{photo.src}}" ng-dblclick="loadMore(zoomLevel + 80, photo.taken); e.preventDefault()">
+                  <img ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-dblclick="loadMore(zoomLevel + 80, photo.taken); e.preventDefault()">
                   <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
 
                 </div>

@@ -1,5 +1,8 @@
 var ViewModel = require('./viewModel');
 var Photo = require('../models/photo');
+var fs = require('fs');
+var path = require('path');
+var async = require('async');
 
 module.exports = function(app){
 
@@ -56,11 +59,17 @@ module.exports = function(app){
     .exec(function(err, photos){
       console.log('query', req.query, 'found', photos.length);
 
-      (photos || []).map(function(photo){
+      async.map((photos || []), function(photo, done){
         photo.metadata = null;
-      });
 
-      res.json(photos);
+        var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
+        fs.readFile(filename, function(err, data){
+          photo.src = err ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
+          done(null, photo);
+        });
+      }, function(err, photos){
+        res.json(photos);
+      });
     });
   });
 

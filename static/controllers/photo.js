@@ -16,7 +16,7 @@ function PhotoController($scope, $http){
     .success(function(data){
 
       data = (data||[]).map(function(photo){
-        photo.src='/img/thumbnails/' + photo.source + '/' + photo._id;
+        
 
         if (photo.interestingness === 50){
           photo.interestingness = Math.random() * 100; // dummy value now. TODO: change to real one
