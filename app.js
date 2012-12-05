@@ -69,9 +69,6 @@ exports.init = function(port) {
         res.render('500.ejs', { locals: { error: err },status: 500 });
     });
 
-    app.listen(port);
-
-    console.log("Listening on port %d in %s mode", app.address().port, app.settings.env);
 
     return app;
 }

@@ -5,9 +5,10 @@
         <div id="wall" class="thumbnails row" style="height: 1024px; overflow: auto;" when-scrolled="loadMore(zoomLevel, lastDate)">
           <div ng-repeat="group in groups" id="{{group.id}}" class="group">
                 <h3 class="pull-center">{{group.name}}</h3>
-                <div  ng-repeat="photo in group.photos" class="photo">
-                  <img ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-dblclick="loadMore(zoomLevel + 80, photo.taken); e.preventDefault()">
+                <div  ng-repeat="photo in group.photos" class="photo {{photo.class}}">
+                  <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
                   <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
+                  <img ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
 
                 </div>
 
@@ -26,6 +27,8 @@
 
     <script type="text/javascript" src="/controllers/photo.js"></script>
     <script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
     <script>
     
       document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
@@ -33,6 +36,8 @@
           zoom.to({ element: event.target });
         }
       } );
+
+
 /*
       function updatePerpective(value)
       {

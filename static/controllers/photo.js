@@ -1,3 +1,6 @@
+var socket = io.connect('/photos');
+var loadTimeout;
+
 function PhotoController($scope, $http){
   
   var zoomTimeout = null;
@@ -16,16 +19,11 @@ function PhotoController($scope, $http){
     .success(function(data){
 
       data = (data||[]).map(function(photo){
-        
-
-        if (photo.interestingness === 50){
-          photo.interestingness = Math.random() * 100; // dummy value now. TODO: change to real one
-        }
 
         photo.class = "span3";
         return photo;
       });
-      $scope.lastDate = data[data.length-1].taken;
+      $scope.lastDate = data.length ? data[data.length-1].taken : null;
 
       if (startDate){ // append instead of reloading
         Array.prototype.push.apply($scope.photos, data);
@@ -45,14 +43,13 @@ function PhotoController($scope, $http){
   };
 
   $scope.recalculateGroups = function(photos){
+      var groups = {};
+      var groupArray = []; //  fix to reverse sort order
      
       var filteredPhotos = photos.filter(function(photo){
         return (photo.interestingness > 100 - $scope.zoomLevel);  
       });
 
-      var groups = {};
-
-      var groupArray = []; //  fix to reverse sort order
 
       if (filteredPhotos.length > 0){
         (filteredPhotos||[]).forEach(function(photo){
@@ -99,6 +96,37 @@ function PhotoController($scope, $http){
     }, 100);
 
   });
+
+  $scope.mouseMove = function(photo){
+      socket.emit('views', photo._id);
+  };
+
+  $scope.click = function(photo){
+
+      // if someone views this image more than a few seconds - it will be counted as a click - otherwise it will be reverted
+      if (photo.updateClick) {
+        clearTimeout(photo.updateClick);
+        socket.emit('clicks', photo._id, -1);
+      } else {
+        photo.updateClick = setTimeout(function(){
+          socket.emit('clicks', photo._id, 1);
+        }, 1000);
+      }
+
+  };
+
+  $scope.hide = function(photo){
+    console.log('hide', photo);
+    socket.emit('hide', photo._id);
+    photo.class = 'hidden';
+  };
+
+  $scope.star = function(photo){
+    socket.emit('star', photo._id);
+    photo.class = 'star';
+    console.log('star', photo)
+  };
+
 
   var getGroup = function(groups, photo){
     // group on date per default, TODO: add switch and control for this
@@ -149,4 +177,6 @@ function PhotoController($scope, $http){
   $scope.loadMore($scope.zoomLevel);
 }
 
-var loadTimeout;
+socket.on('newPhoto', function (photo) {
+  console.log('newPhoto');
+});

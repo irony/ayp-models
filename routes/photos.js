@@ -48,27 +48,27 @@ module.exports = function(app){
       model.error = 'You have to login first';
       return res.render('500.ejs', model);
     }
-    console.log(req.query.startDate)
 
     Photo.find({'owners': req.user._id})
     .where('taken').lt(req.query.startDate || new Date())
     .where('interestingness').gte(100- (req.query.interestingness || 50))
+    .where('hidden').ne(true)
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
-      console.log('query', req.query, 'found', photos.length);
+      if (!photos)
+        return res.end();
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-
         var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
         fs.readFile(filename, function(err, data){
           photo.src = err ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
-          done(null, photo);
+          return done(null, photo);
         });
       }, function(err, photos){
-        res.json(photos);
+        return res.json(photos);
       });
     });
   });

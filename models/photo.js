@@ -14,6 +14,10 @@ var PhotoSchema = new mongoose.Schema({
   mimeType : { type: String},
   thumbnails : {type: Schema.Types.Mixed},
   interestingness : {type: Number, default: 50},
+  views : { type: Number, default: 0},
+  clicks : { type: Number, default: 0},
+  hidden : { type: Boolean, default: false},
+  starred : { type: Number, default: 0},
   original : { type: String},
   tags : { type: []},
   metadata : { type:  Schema.Types.Mixed},
@@ -28,17 +32,22 @@ PhotoSchema.pre('save', function (next) {
       _ = require('underscore'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
-  ShareSpan.find({
-    startDate: { $lte : photo.taken },
-    stopDate: { $gte : photo.taken },
-    members : { $in : photo.owners }
-  }, function(err, spans){
-    (spans || []).forEach(function(span){
-      photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      //photo.save();
+  photo.interestingness = photo.hidden ? 0 : photo.clicks * 10 + photo.views;
+
+  // only on create
+  if (!photo.id){
+    ShareSpan.find({
+      startDate: { $lte : photo.taken },
+      stopDate: { $gte : photo.taken },
+      members : { $in : photo.owners }
+    }, function(err, spans){
+      (spans || []).forEach(function(span){
+        photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
+        //photo.save();
+      });
+      next();
     });
-    next();
-  });
+  }
 
 });
 

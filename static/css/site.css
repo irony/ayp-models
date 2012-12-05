@@ -265,18 +265,34 @@
 
 
 .photo img{
+  z-index: 0;
+}
+
+.photo{
   float:left;
 }
 
 .photo a {
   -webkit-transition: opacity 0.4s;
-  text-shadow: 0.1em 0.1em #aaa;
+  text-shadow: 0.1em 0.1em #000;
   opacity:0;
-  float:left;
-  margin-left: -15px;
   color: #fff;
   text-decoration: none;
+  float:right;
+  clear: right;
+  margin-left: -20px;
+  padding-right:5px;
+  z-index: 100;
+  position: relative;
+}
 
+.photo.hidden{
+  opacity:0;
+  display:none;
+}
+
+.photo.star{
+  border:1px solid #330;
 }
 
 .photo:hover a {
