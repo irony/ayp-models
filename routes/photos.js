@@ -1,8 +1,10 @@
 var ViewModel = require('./viewModel');
 var Photo = require('../models/photo');
+var Group = require('../models/group');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
+var _ = require('underscore');
 
 module.exports = function(app){
 
@@ -18,6 +20,59 @@ module.exports = function(app){
     res.render('photos.ejs', model);
 
   });
+
+
+
+  app.get('/groups', function(req, res){
+    var model = new ViewModel(req.user);
+
+    if (!req.user){
+      model.error = 'You have to login first';
+      return res.render('500.ejs', model);
+    }
+
+    res.render('groups.ejs', model);
+
+  });
+
+  app.get('/groupFeed', function(req, res){
+    var model = new ViewModel(req.user);
+
+    if (!req.user){
+      model.error = 'You have to login first';
+      return res.render('500.ejs', model);
+    }
+
+
+    Group.find({_id : new RegExp(req.user._id + "/.*")})
+    .where('value.interestingness').gte(100- (req.query.interestingness || 50))
+    .where('value.hidden').ne(true)
+    .sort({'value.taken': '-1'})
+    .skip(req.query.skip || 0)
+    .limit(req.query.limit || 1000)
+    .exec(function(err, groups){
+      if (!groups)
+        return res.end();
+
+      async.map((groups || []), function(group, done){
+
+        var photo = group.value;
+        var id = group._id.split('/').splice(1).splice(0,3).join('/');
+        photo.groups = (photo.groups || []);
+        photo.groups.push(id);
+
+        photo.metadata = null;
+        photo.src =  '/img/thumbnails/' + photo.source + '/' + photo._id;
+        return done(null, photo);
+
+      }, function(err, photos){
+
+        return res.json(photos);
+      });
+    });
+
+  });
+
 
   app.get('/photos/random/:id', function(req, res){
     if (!req.user){
@@ -57,6 +112,7 @@ module.exports = function(app){
     .limit(req.query.limit || 100)
     .sort('-taken')
     .exec(function(err, photos){
+      console.log(req.query, photos.length)
       if (!photos)
         return res.end();
 

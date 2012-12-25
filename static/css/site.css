@@ -265,11 +265,7 @@
 
 
 .photo img{
-  z-index: 0;
-}
-
-.photo{
-  float:left;
+  margin-right: 0;  
 }
 
 .photo a {
@@ -433,11 +429,10 @@ body .navbar-inner{
   width: 50%;
   padding: 15px;
 }
-
-
 /**** Transitions ****/
 
-#wall, #wall img{
+.masonry,
+.masonry .masonry-brick {
   -webkit-transition-duration: 0.7s;
      -moz-transition-duration: 0.7s;
       -ms-transition-duration: 0.7s;
@@ -445,15 +440,15 @@ body .navbar-inner{
           transition-duration: 0.7s;
 }
 
-#wall {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
+.masonry {
+  -webkit-transition-property: width, height;
+     -moz-transition-property: width, height;
+      -ms-transition-property: width, height;
+       -o-transition-property: width, height;
+          transition-property: width, height;
 }
 
-#wall img{
+.masonry .masonry-brick {
   -webkit-transition-property: left, right, top;
      -moz-transition-property: left, right, top;
       -ms-transition-property: left, right, top;

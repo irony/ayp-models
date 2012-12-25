@@ -1,15 +1,15 @@
 
   <div id="photos" class="photos" >
-    <div style="padding-left: 10px; " ng-controller="PhotosController">
+    <div style="padding-left: 10px; " ng-controller="GroupsController">
 
-        <div id="wall" class="thumbnails row" style="height: 1024px; overflow: auto;" when-scrolled="loadMore(zoomLevel, lastDate)">
+        <div id="wall" class="thumbnails row" style="height: 1024px; overflow: auto;" when-scrolled="loadMore()">
           <div ng-repeat="group in groups" id="{{group.id}}" class="group">
-                <h3>{{group.name}}</h3>
-                <div  ng-repeat="photo in group.photos" class="photo {{photo.class}}" ng-controller="PhotoController">
-                  <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
-                  <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>
+                <h3 class="pull-center">{{group.name}}</h3>
+                <div  ng-repeat="photo in group.photos" class="photo {{photo.class}}">
+                  <a ng-click="hide(photo)"><i class="icon-thumbs-down"></i></a>
                   <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
-                  <img title="{{photo.groups}}" ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
+                  <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>{{group.photos.length}}
+                  <img ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
 
                 </div>
 
@@ -17,7 +17,7 @@
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>
-              <label class="pull-center muted">{{photos.length}} photos loaded</label>
+              <label class="pull-center muted">{{counter}} photos loaded.</label>
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>  
@@ -26,8 +26,7 @@
   </div>
 
 
-    <script type="text/javascript" src="/controllers/photos.js"></script>
-    <script type="text/javascript" src="/controllers/photo.js"></script>
+    <script type="text/javascript" src="/controllers/groups.js"></script>
     <script src="/js/zoom.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 

@@ -119,7 +119,7 @@ module.exports = function (app) {
 
 		var client = this.getClient(user);
 
-		client.search("/", "jpg", {file_limit : 100000 /*should be enough for everyone ;) */}, function(status, reply){
+		client.search("/", "jpg", {file_limit : 1000 /* max 1000 in api */}, function(status, reply){
 			
 			if (status !== 200){
 				return done(status, null);
