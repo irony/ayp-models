@@ -108,7 +108,6 @@ module.exports = function(app){
     .where('taken').lt(req.query.startDate || new Date())
     .where('hidden').ne(true)
     .where('interestingness').gte(100- (req.query.interestingness || 50))
-    .or([null, ''])
     .sort('-taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
