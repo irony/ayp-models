@@ -9,7 +9,7 @@
 
 <div class="container">
 
-  <div ng-controller="ShareController" class="row">
+  <div ng-controller="ShareController" class="row {{toggle}}">
     <form method="post" action="?" class="span3 well">
       <h2>Share timeframe</h2>
       <label>Email to share to</label>
@@ -26,7 +26,7 @@
     <div class="span8">
       <ul class="thumbnails preview pull-right">
         <li ng-repeat="photo in photos" class="thumbnail span1">
-          <img ng-src="{{photo}}" ng-click="toDate = photo.taken">
+          <img ng-src="{{photo.src}}" ng-click="select(photo)">
         </li>
       </ul>
     
@@ -39,7 +39,6 @@
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/date.js"></script>
 <script type="text/javascript" src="/js/bootstrap-daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="/js/bootstrap-daterangepicker/daterangepicker.css" />
-<script src="//raw.github.com/hakimel/zoom.js/master/js/zoom.js"></script>
 
 <script type="text/javascript">
   $(document).ready(function() {

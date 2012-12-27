@@ -1,9 +1,11 @@
 var dbox  = require("dbox");
 var config = { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'};
 var dbox  = require("dbox");
+var async  = require("async");
 var dropbox   = dbox.app(config);
 var passport = require('passport');
 var Photo = require('../models/photo');
+var PathReducer = require('../utils/PathReducer');
 var _ = require('underscore');
 
 
@@ -42,9 +44,14 @@ module.exports = function (app) {
 		
 		console.log('Downloading thumbnail', id);
 
-		Photo.findOne({'_id': id}, function(err, photo){
+		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
+
+			if ( err || !photo ) return res.send(404, err);
 
 			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
+				if (err) {
+					return res.send(500, err);
+				}
 
 				res.end(thumbnail);
 			});
@@ -74,11 +81,24 @@ module.exports = function (app) {
 		client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
 
 			if (status !== 200){
-				if (done) {
-					done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
+
+				if(status === 415) {
+					console.log('415 received, removing photo. This is not a photo.')
+					return photo.remove();
 				}
+
+				if(status === 404) {
+					console.log('404 received, removing photo. It is not found in dropbox.')
+					return photo.remove();
+				}
+
+
+				if (done && status) {
+					return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
+				}
+
 				
-				console.log('error', status, thumbnail);
+				console.log('error downloading thumbnail', status, thumbnail);
 				return;
 			}
 			var mkdirp = require('mkdirp');
@@ -118,24 +138,25 @@ module.exports = function (app) {
 		}
 
 		var client = this.getClient(user);
+		
+		console.log('getting all photo dirs');
 
-		client.search("/", "jpg", {file_limit : 1000 /* max 1000 in api */}, function(status, reply){
-			
-			if (status !== 200){
-				return done(status, null);
-			}
+		client.readdir('/', {recursive: true, details: true}, function(status, reply){
+				console.log('found %d files. Extracting media files...', reply.length, reply);
+		    var photos = reply.map(function(photo){
+					return photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
+		    }).reduce(function(a,b){
+					if (b) {a.push(b)} // remove empty rows
+					return a;
+		    }, []);
 
-			console.log(reply);
-
-			var photos = Array.prototype.slice.call(reply);
-
-			_.forEach(photos, function(photo){
-				photo.source = 'dropbox';
-				// self.downloadThumbnail(photo, client, user, done);
-			});
-
-			return done(null, photos);
+				_.forEach(photos, function(photo){
+					photo.source = 'dropbox';
+					// self.downloadThumbnail(photo, client, user, done);
+				});
+				return done(null, photos);
 		});
+
 
 	};
 

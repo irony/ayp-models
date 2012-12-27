@@ -2,10 +2,19 @@ var should = require("should");
 var app = require('../app');
 var auth = require('../auth/auth');
 var async = require('async');
+var PathReducer = require('../utils/PathReducer');
 
 describe("app", function(){
 
   var id = Math.floor((Math.random()*10000000)+1).toString();
+
+  it('should return a toplist from a list of files', function(done){
+    var files = ['/foo/bar.jpg', '/foo/bar/foo.jpg', '/foo/bars.jpg', '/foo/var.doc'];
+    var reduced = new PathReducer().reduce(files);
+    console.log(reduced);
+    reduced.should.have.length(2);
+    done();
+  })
 
   it("should be possible to create a user ", function(done) {
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test', id : id};

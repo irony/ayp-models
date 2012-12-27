@@ -2,16 +2,12 @@
   <div id="photos" class="photos" >
     <div style="padding-left: 10px; " ng-controller="PhotosController">
 
-        <div id="wall" class="thumbnails row" style="height: 1024px; overflow: auto;" when-scrolled="loadMore(zoomLevel, lastDate)">
-          <div ng-repeat="group in groups" id="{{group.id}}" class="group">
-                <h3>{{group.name}}</h3>
-                <div  ng-repeat="photo in group.photos" class="photo {{photo.class}}" ng-controller="PhotoController">
-                  <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
-                  <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>
-                  <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
-                  <img title="{{photo.groups}}" ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
-
-                </div>
+        <div id="wall" class="thumbnails row">
+          <div  ng-repeat="photo in photos" class="photo {{photo.class}}" ng-controller="PhotoController">
+            <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
+            <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>
+            <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
+            <img title="{{photo.groups}}" ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
 
           </div>
           <div class="slider">

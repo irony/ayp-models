@@ -106,13 +106,14 @@ module.exports = function(app){
 
     Photo.find({'owners': req.user._id})
     .where('taken').lt(req.query.startDate || new Date())
-    .where('interestingness').gte(100- (req.query.interestingness || 50))
     .where('hidden').ne(true)
+    .where('interestingness').gte(100- (req.query.interestingness || 50))
+    .or([null, ''])
+    .sort('-taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
-    .sort('-taken')
     .exec(function(err, photos){
-      console.log(req.query, photos.length)
+      console.log(req.query, photos.length, err)
       if (!photos)
         return res.end();
 
@@ -149,10 +150,19 @@ module.exports = function(app){
     .where('taken').gte(startDate).lte(stopDate)
     .sort('-taken')
     .exec(function(err, photos){
-      photos = (photos||[]).map(function(photo){
-        return '/img/thumbnails/' + photo.source + '/' + photo._id;
+
+      async.map((photos || []), function(photo, done){
+        photo.metadata = null;
+        var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
+        fs.readFile(filename, function(err, data){
+          photo.src = err ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
+          return done(null, photo);
+        });
+      }, function(err, photos){
+        return res.json(photos);
       });
-      res.end(JSON.stringify(photos));
+
+
     });
   });
 

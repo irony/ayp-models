@@ -15,8 +15,8 @@ function PhotoController ($scope, $http){
       } else {
         photo.updateClick = setTimeout(function(){
           socket.emit('click', photo._id, 1);
-          console.log("click", photo)
-        }, 1000);
+          console.log("click", photo);
+        }, 300);
       }
 
   };
@@ -30,7 +30,7 @@ function PhotoController ($scope, $http){
   $scope.star = function(photo){
     socket.emit('star', photo._id);
     photo.class = 'star';
-    console.log('star', photo)
+    console.log('star', photo);
   };
 
 }

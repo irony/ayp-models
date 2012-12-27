@@ -206,7 +206,7 @@ exports.app = function(config){
                 //
                 // If we have found any contents on this level of the folder
                 //
-                if (reply.contents) {
+                if (reply && reply.contents) {
                   reply.contents.forEach(function (item) {
                     //
                     // Add the item into our results array (details or path)

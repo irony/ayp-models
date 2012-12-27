@@ -16,7 +16,7 @@
     }
 
     /*
-    #wall{
+    #wall .group{
       overflow-y: scroll;
       height: 900px;
     }*/
@@ -313,6 +313,10 @@ body .navbar-inner{
   width: 64px;
 }
 
+.true.thumbnails .thumbnail:hover {
+  border-color: #abc;
+}
+
 /* Jumbotrons
 -------------------------------------------------- */
 
@@ -373,14 +377,15 @@ body .navbar-inner{
 
 .thumbnails img
 {
-  margin-bottom: 2px;
-  margin-right: 2px;
+  margin-bottom: 10px;
+  margin-right: 10px;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
 }
 
-#wall img {
-  min-height: 146px;
+.clear
+{
+  clear:both;
 }
 
 .pull-center
@@ -429,10 +434,106 @@ body .navbar-inner{
   width: 50%;
   padding: 15px;
 }
+
+
+
+#wall .group{
+    -moz-column-count: 5;
+    -moz-column-gap: 10px;
+    -webkit-column-count: 5;
+    -webkit-column-gap: 10px;
+    column-count: 5;
+    column-gap: 10px;
+    width: 1600px;
+    padding:0;
+    margin:0;
+}
+ 
+#wall .group .photo{
+    display: inline-block;
+    margin-bottom: 0px;
+    width: 100%;
+}
+
+#wall .group .photo.span4
+{
+  -webkit-column-span: all;
+}
+
+@media only screen and (max-width : 1199px),
+only screen and (max-device-width : 1199px){
+    #wall .group {
+        -moz-column-count: 5;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 5;
+        -webkit-column-gap: 5px;
+        column-count: 5;
+        column-gap: 5px;
+        width: 1000px;
+    }
+     
+    #wall .group {
+        width: 1000px;
+    }
+}
+ 
+ 
+@media only screen and (max-width : 999px),
+only screen and (max-device-width : 999px){
+    #wall .group {
+        -moz-column-count: 4;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 4;
+        -webkit-column-gap: 5px;
+        column-count: 4;
+        column-gap: 5px;
+        width: 800px;
+    }
+     
+    #wall .group {
+        width: 800px;
+    }
+}
+ 
+@media only screen and (max-width : 799px),
+only screen and (max-device-width : 799px){
+    #wall .group {
+        -moz-column-count: 3;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 3;
+        -webkit-column-gap: 5px;
+        column-count: 34;
+        column-gap: 5px;
+        width: 600px;
+    }
+     
+    #wall .group {
+        width: 600px;
+    }
+}
+ 
+@media only screen and (max-width : 599px),
+only screen and (max-device-width : 599px){
+    #wall .group {
+        -moz-column-count: 2;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 5px;
+        column-count: 2;
+        column-gap: 5px;
+        width: 400px;
+    }
+     
+    #wall .group {
+        width: 400px;
+    }
+}
+
+
+
 /**** Transitions ****/
 
-.masonry,
-.masonry .masonry-brick {
+#wall .group .photo{
   -webkit-transition-duration: 0.7s;
      -moz-transition-duration: 0.7s;
       -ms-transition-duration: 0.7s;
@@ -440,7 +541,7 @@ body .navbar-inner{
           transition-duration: 0.7s;
 }
 
-.masonry {
+#wall .group .photo {
   -webkit-transition-property: width, height;
      -moz-transition-property: width, height;
       -ms-transition-property: width, height;
@@ -448,7 +549,7 @@ body .navbar-inner{
           transition-property: width, height;
 }
 
-.masonry .masonry-brick {
+#wall .group .photo {
   -webkit-transition-property: left, right, top;
      -moz-transition-property: left, right, top;
       -ms-transition-property: left, right, top;

@@ -32,7 +32,7 @@ PhotoSchema.pre('save', function (next) {
       _ = require('underscore'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
-  photo.interestingness = photo.hidden ? 0 : photo.clicks * 10 + photo.views;
+  //photo.interestingness = photo.hidden ? 0 : photo.clicks * 10 + photo.views;
 
   // only on create
   if (!photo.id){

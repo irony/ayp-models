@@ -1,52 +1,57 @@
 function GroupsController($scope, $http){
   
   var zoomTimeout = null;
-  $scope.groups = {};
   $scope.dateRange = new Date();
-  $scope.lastDate = null;
-
   $scope.zoomLevel = 50;
-  $scope.photos = []; 
+  $scope.photos = [];
+  $scope.groups = [];
 
   $scope.counter = 0;
-  
-  $scope.loadMore = function(zoomLevel) {
 
-    if (zoomLevel){
+  $scope.loadMore = function(reset) {
+
+    if (reset){
       $scope.counter = 0;
-      $scope.groups = {};
+      $scope.photos = [];
+      $scope.groups = [];
     }
 
-    fetching = true;
+    var query = {skip : $scope.counter, interestingness : $scope.zoomLevel, limit: 40};
+    $http.get('/photoFeed', {params : query})
+    .success(function(photos){
 
-    var query = {skip : $scope.counter, interestingness : zoomLevel || $scope.zoomLevel, limit: 40};
-    $http.get('/groupFeed', {params : query})
-    .success(function(groups){
+        $scope.groups.push({photos: photos, id: photos[0].taken});
+        $scope.counter += photos.length;
 
-      for(var groupKey in groups){
-        $scope.groups[groupKey] = $scope.groups[groupKey] || {};
-        $scope.groups[groupKey].name = groupKey;
-        var photos = $scope.groups[groupKey].photos = $scope.groups[groupKey].photos || {};
-        if (!photos[groupKey]){
-          for(var photoKey in groups[groupKey])
-          {
-              photos[photoKey] = groups[groupKey][photoKey];
-          };
-        }
-      }
-          console.log($scope.groups);
     });
-
-
   };
+/*
+  $scope.$watch('photos', function(value){
+    var groups = [],
+        lastPhoto = null,
+        group = null;
 
-  var timeout = null;
+    value.forEach(function(photo){
+
+      if (!lastPhoto || photo.taken.getTime() - lastPhoto.taken.getTime() > 24*60*60)
+      {
+        group = {photos : []};
+        groups.push(group);
+      }
+
+      group.photos.push(photo);
+      lastPhoto = photo;
+
+    });
+    console.log(groups);
+    $scope.groups = groups;
+  });*/
 
   $scope.$watch('zoomLevel', function(value){
     
-    clearTimeout(timeout);
+    clearTimeout(zoomTimeout);
 
-    timeout = setTimeout(function(){
+    zoomTimeout = setTimeout(function(){
       $scope.loadMore(value);
     }, 100);
 
