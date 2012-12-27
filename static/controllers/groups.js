@@ -16,12 +16,15 @@ function GroupsController($scope, $http){
       $scope.groups = [];
     }
 
-    var query = {skip : $scope.counter, interestingness : $scope.zoomLevel, limit: 40};
+    var query = {skip : $scope.counter, interestingness : $scope.zoomLevel, limit: 24};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
 
-        $scope.groups.push({photos: photos, id: photos[0].taken});
+      if (photos)
+      {
+        $scope.groups.push({photos: photos, id: photos[0]._id, name: photos[0].taken.split('T')[0] + " - " + photos[photos.length-1].taken.split('T')[0] });
         $scope.counter += photos.length;
+      }
 
     });
   };

@@ -4,6 +4,7 @@
 
         <div id="wall" class="thumbnails row" when-scrolled="loadMore()">
           <div class="group" ng-repeat="group in groups" id="{{group.id}}">
+            <h2>{{group.name}}</h2>
             <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
               <a ng-click="hide(photo)"><i class="icon-thumbs-down"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
