@@ -1,12 +1,13 @@
 function GroupsController($scope, $http){
   
   var zoomTimeout = null;
-  $scope.dateRange = new Date();
+  $scope.selectedDate = new Date();
   $scope.zoomLevel = 50;
   $scope.photos = [];
   $scope.groups = [];
 
   $scope.counter = 0;
+
 
   $scope.loadMore = function(reset) {
 
@@ -16,13 +17,17 @@ function GroupsController($scope, $http){
       $scope.groups = [];
     }
 
-    var query = {skip : $scope.counter, interestingness : $scope.zoomLevel, limit: 24};
+    var query = {skip : $scope.counter, startDate: $scope.selectedDate.toISOString(), interestingness : $scope.zoomLevel, limit: 25};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
 
       if (photos)
       {
-        $scope.groups.push({photos: photos, id: photos[0]._id, name: photos[0].taken.split('T')[0] + " - " + photos[photos.length-1].taken.split('T')[0] });
+        var group = {photos: photos, id: photos[0]._id, name: photos[0].taken.split('T')[0] + " - " + photos[photos.length-1].taken.split('T')[0] };
+        group.photo = photos.sort(function(a,b){
+          return b.interestingness - a.interestingness;
+        })[0];
+        $scope.groups.push(group);
         $scope.counter += photos.length;
       }
 
@@ -58,6 +63,12 @@ function GroupsController($scope, $http){
       $scope.loadMore(value);
     }, 100);
 
+  });
+
+  $scope.$watch('groups.length',function(){
+    setTimeout(function(){
+      var $spy = $(document.body).scrollspy('refresh');
+    }, 100);
   });
 
 

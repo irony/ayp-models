@@ -1,7 +1,8 @@
 
     body{
       font-family: "Gill Sans", Corbel, Consolas;
-      background: #111;
+      background: #212223;
+      
     }
 
     body footer{
@@ -58,7 +59,10 @@
       margin-top: 10px;
     }
 
-
+    .navbar-fixed-bottom img
+    {
+      height: 28px;
+    }
 
     /* CUSTOMIZE THE NAVBAR
     -------------------------------------------------- */
@@ -265,7 +269,7 @@
 
 
 .photo img{
-  margin-right: 0;  
+  margin-right: 0;
 }
 
 .photo a {
@@ -280,6 +284,8 @@
   padding-right:5px;
   z-index: 100;
   position: relative;
+  font-size:9.5px;
+  line-height: 14px;
 }
 
 .photo.hidden{
@@ -368,17 +374,19 @@ body .navbar-inner{
 }
 
 .group h2{
-  background: #fff;
-  color: #000;
+  color: #fff;
   padding:0;
-  margin:0;
   margin-bottom:10px;
+  margin-right:10px;
+  font-weight: bold;
+  font-size: 28px;
 }
 
 .thumbnails img
 {
   margin-bottom: 10px;
   margin-right: 10px;
+  border-radius: 1px;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
 }
@@ -449,9 +457,10 @@ body .navbar-inner{
     -webkit-column-gap: 10px;
     column-count: 5;
     column-gap: 10px;
-    width: 1600px;
     padding:0;
-    margin:0;
+    margin: -20px 0 20px 0;
+    width: 95%;
+    margin: auto;
 }
  
 #wall .group .photo{

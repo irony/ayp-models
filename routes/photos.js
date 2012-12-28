@@ -107,7 +107,7 @@ module.exports = function(app){
     Photo.find({'owners': req.user._id})
     .where('taken').lt(req.query.startDate || new Date())
     .where('hidden').ne(true)
-    .where('interestingness').gte(100- (req.query.interestingness || 50))
+    .where('interestingness').gte(99- (req.query.interestingness || 50))
     .sort('-taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)

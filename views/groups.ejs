@@ -2,13 +2,20 @@
   <div id="photos" class="photos" >
     <div ng-controller="GroupsController">
 
+      <div class="navbar navbar-inverse navbar-fixed-bottom">
+        <div class="navbar-inner">
+          <ul class="nav">
+            <li ng-repeat="group in groups"><a href="#{{group.id}}"><img ng-src="{{group.photo.src}}"></a></li>
+          </ul>
+        </div>
+      </div>
         <div id="wall" class="thumbnails row" when-scrolled="loadMore()">
           <div class="group" ng-repeat="group in groups" id="{{group.id}}">
             <h2>{{group.name}}</h2>
             <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
-              <a ng-click="hide(photo)"><i class="icon-thumbs-down"></i></a>
-              <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
+              <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
               <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>
+              <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
               <a>{{photo.class}}</a>
               <img ng-src="{{photo.src}}" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
 
@@ -38,7 +45,6 @@
           zoom.to({ element: event.target });
         }
       } );
-
 
 /*
       function updatePerpective(value)

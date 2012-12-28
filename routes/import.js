@@ -9,6 +9,7 @@ module.exports = function(app){
   var dropboxConnector = require('../connectors/dropbox')(app);
   var instagramConnector = require('../connectors/instagram')(app);
   var flickrConnector = require('../connectors/flickr')(app);
+  var facebookConnector = require('../connectors/facebook')(app);
 
   app.get('/import', function(req, res){
 
