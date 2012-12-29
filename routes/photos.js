@@ -85,8 +85,8 @@ module.exports = function(app){
     .sort('-interstingness')
     .exec(function(err, photos){
 
-      var photo = photos[Math.round(Math.random()*50)];
-      if(photo) {
+      var photo = photos && photos[Math.round(Math.random()*50)];
+      if(!photo) {
         return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
       }
  
