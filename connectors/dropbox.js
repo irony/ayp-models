@@ -48,17 +48,10 @@ module.exports = function (app) {
 
 			if ( err || !photo ) return res.send(404, err);
 
-			var timeout = setTimeout(function(){
-					clearTimeout(timeout);
-					return res.send(500, new Error("Timeout"));
-			}, 1000); // one second timeout before sending timeout error
-
 			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
 				if (err) {
 					return res.send(500, err);
 				}
-
-				if (!timeout) return; // timeout already expired before this
 
 				return res.end(thumbnail);
 			});
