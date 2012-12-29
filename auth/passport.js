@@ -73,10 +73,13 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
     clientSecret: conf.facebook.appSecret,
     callbackURL: callbackBaseUrl + "/auth/facebook/callback"
   },
-  function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+  function(req, accessToken, refreshToken, profile, done) {
+
+      profile.token = accessToken;
+      profile.refreshToken = refreshToken;
+
       return auth.findOrCreateAndUpdateUser(req.user, profile, done);
-    });
+
   }
 ));
 
