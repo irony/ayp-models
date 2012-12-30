@@ -39,14 +39,14 @@ module.exports = function (app) {
 
 
 	app.get('/img/thumbnails/dropbox/*:id', function(req,res){
-		var id = req.url.split("/dropbox/")[1]; // because of a bug in req.params parser i can't use that parameter, i will use url instead
-		var client = this.getClient(req.user);
+		var id = req.url.split("/dropbox/")[1], // because of a bug in req.params parser i can't use that parameter, i will use url instead
+				client = this.getClient(req.user);
 		
 		console.log('Downloading thumbnail', id);
 
 		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
 
-			if ( err || !photo ) return res.send(404, err);
+			if ( err || !photo ) return res.send(403, err);
 
 			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
 				if (err) {
@@ -58,6 +58,28 @@ module.exports = function (app) {
 
 		});
 	});
+
+	app.get('/img/originals/dropbox/*:id', function(req,res){
+		var id = req.url.split("/dropbox/")[1], // because of a bug in req.params parser i can't use that parameter, i will use url instead
+				client = this.getClient(req.user);
+		
+		console.log('Downloading original', id);
+
+		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
+
+			if ( err || !photo ) return res.send(403, err);
+
+			self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
+				if (err) {
+					return res.send(500, err);
+				}
+
+				return res.end(thumbnail);
+			});
+
+		});
+	});
+
 
 
 	this.downloadThumbnail = function(photo, client, user, done){
@@ -88,8 +110,7 @@ module.exports = function (app) {
 				}
 
 				if(status === 404) {
-					console.log('404 received, removing photo. It is not found in dropbox.')
-					return photo.remove();
+					console.log('404 received, it was not found in your dropbox anymore.')
 				}
 
 
@@ -113,6 +134,60 @@ module.exports = function (app) {
 
 				fs.writeFile(filename, thumbnail, function(err){
 					return done(err, thumbnail);
+				});
+
+			});
+		});
+	};
+
+
+	this.downloadPhoto = function(photo, client, user, done){
+
+		if (!user || !user.accounts || !user.accounts.dropbox)
+			return done('Not a dropbox user', null);
+
+
+		if (!photo) {
+			return null;
+		}
+
+
+		var filename = __dirname + '/../static/img/originals/' + photo.source + '/' + photo._id,
+				fs = require('fs'),
+				p = require('path');
+
+		console.log('downloading path', photo.path, photo.metadata.bytes);
+	  client.get(photo.path, function(status, reply){
+
+			if (status !== 200){
+
+				if(status === 415) {
+					return console.log('415 received, removing photo. This is not a photo.', reply);
+				}
+
+				if(status === 404) {
+					return console.log('404 received, removing photo. It is not found in dropbox.', reply);
+				}
+
+				if (done && status) {
+					return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
+				}
+				
+				console.log('error downloading image', status, reply);
+				return;
+			}
+			var mkdirp = require('mkdirp'),
+					pathArray = filename.split('/');
+
+			pathArray.pop(); // remove file part
+
+			mkdirp(pathArray.join('/'), function (err) {
+				if (err && done) {
+					return done(err);
+				}
+
+				fs.writeFile(filename, reply, function(err){
+					return done(err, reply);
 				});
 
 			});

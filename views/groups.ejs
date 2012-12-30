@@ -9,7 +9,7 @@
           </ul>
         </div>
       </div>
-        <div id="wall" class="thumbnails row" when-scrolled="loadMore()">
+        <div id="wall" class="thumbnails row" when-scrolled="scroll()">
           <div class="group" ng-repeat="group in groups" id="{{group.id}}">
             <h2>{{group.name}} <small>{{group.photos.length}} OF XX PHOTOS AVAILABLE</small></h2>
             <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
@@ -28,7 +28,7 @@
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>
-        <div>
+          <div>
     </div>
   </div>
 

@@ -64,6 +64,8 @@ var zoom = (function(){
     if( supportsTransforms ) {
       var origin = pageOffsetX +'px '+ pageOffsetY +'px',
         transform = 'translate('+ -elementOffsetX +'px,'+ -elementOffsetY +'px) scale('+ scale +')';
+
+      if (scale === 1) transform = 'inherit';
       
       document.body.style.transformOrigin = origin;
       document.body.style.OTransformOrigin = origin;
@@ -80,7 +82,7 @@ var zoom = (function(){
     else {
       // Reset all values
       if( scale === 1 ) {
-        document.body.style.position = '';
+        document.body.style.position = 'inherit';
         document.body.style.left = '';
         document.body.style.top = '';
         document.body.style.width = '';

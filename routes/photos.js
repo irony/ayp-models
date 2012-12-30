@@ -35,45 +35,6 @@ module.exports = function(app){
 
   });
 
-  app.get('/groupFeed', function(req, res){
-    var model = new ViewModel(req.user);
-
-    if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
-    }
-
-
-    Group.find({_id : new RegExp(req.user._id + "/.*")})
-    .where('value.interestingness').gte(100- (req.query.interestingness || 50))
-    .where('value.hidden').ne(true)
-    .sort({'value.taken': '-1'})
-    .skip(req.query.skip || 0)
-    .limit(req.query.limit || 1000)
-    .exec(function(err, groups){
-      if (!groups)
-        return res.end();
-
-      async.map((groups || []), function(group, done){
-
-        var photo = group.value;
-        var id = group._id.split('/').splice(1).splice(0,3).join('/');
-        photo.groups = (photo.groups || []);
-        photo.groups.push(id);
-
-        photo.metadata = null;
-        photo.src =  '/img/thumbnails/' + photo.source + '/' + photo._id;
-        return done(null, photo);
-
-      }, function(err, photos){
-
-        return res.json(photos);
-      });
-    });
-
-  });
-
-
   app.get('/photos/random/:id', function(req, res){
     if (!req.user){
       return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
@@ -82,7 +43,7 @@ module.exports = function(app){
     Photo.find({owners: req.user._id})
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
-    .sort('-interstingness')
+    .sort('-interestingness')
     .exec(function(err, photos){
 
       var photo = photos && photos[Math.round(Math.random()*50)];
@@ -97,7 +58,9 @@ module.exports = function(app){
 
   app.get('/photoFeed', function(req, res){
 
-    var model = new ViewModel(req.user);
+    var model = new ViewModel(req.user),
+        reverse = req.query.reverse === 'true',
+        filter = (reverse) ? {$gte : req.query.startDate} : {$lte : req.query.startDate};
 
     if (!req.user){
       model.error = 'You have to login first';
@@ -105,16 +68,16 @@ module.exports = function(app){
     }
 
     Photo.find({'owners': req.user._id})
-    .where('taken').lt(req.query.startDate || new Date())
+    .where('taken', filter)
     .where('hidden').ne(true)
     .where('interestingness').gte(99- (req.query.interestingness || 50))
-    .sort('-taken')
+    .sort(reverse ? 'taken' : '-taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .exec(function(err, photos){
-      console.log(req.query, photos.length, err)
+      console.log(req.query, photos.length, err);
       if (!photos)
-        return res.end();
+        return res.end(err);
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;

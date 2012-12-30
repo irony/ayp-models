@@ -5,25 +5,40 @@ function GroupsController($scope, $http){
   $scope.zoomLevel = 50;
   $scope.photos = [];
   $scope.groups = [];
-
+  $scope.reverse = false;
   $scope.counter = 0;
 
+  $scope.scroll = function(){
+    if ( $(window).scrollTop() < 0) // reverse scroll, TODO: send as parameter instead
+    {
+      console.log($(window).scrollTop());
+      
+      if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date($scope.groups[0].photos[0].taken);
+      $scope.reverse = true;
+    } else {
+      $scope.reverse = false;
+    }
+    return $scope.loadMore();
+  };
 
   $scope.loadMore = function(resetDate, zoomLevel) {
 
     if (resetDate){
       $scope.counter = 0;
       $scope.photos = [];
+      $scope.endDate = null;
       $scope.startDate = new Date(resetDate);
+      window.stop(); // cancel all image downloads
     }
+
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), interestingness : $scope.zoomLevel, limit: 25};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.reverse, interestingness : $scope.zoomLevel, limit: 25};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
 
-      if (photos)
+      if (photos.length)
       {
 
 /*
@@ -42,7 +57,12 @@ function GroupsController($scope, $http){
 
         if (resetDate) $scope.groups = [];
         
-        $scope.groups.push(group);
+        if ($scope.reverse) {
+          $scope.groups.unshift(group);
+        } else {
+          $scope.groups.push(group);
+        }
+
         $scope.counter += photos.length;
       }
 

@@ -17,6 +17,9 @@ function PhotoController ($scope, $http){
         photo.updateClick = setTimeout(function(){
           socket.emit('click', photo._id, 1);
           console.log("click", photo);
+
+          photo.src = '/img/originals/' + photo.source + '/' + photo._id;
+
         }, 300);
       }
 
