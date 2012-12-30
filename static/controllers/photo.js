@@ -8,7 +8,7 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-      $scope.selectedDate = photo.taken;
+      $scope.startDate = photo.taken;
       // if someone views this image more than a few seconds - it will be counted as a click - otherwise it will be reverted
       if (photo.updateClick) {
         clearTimeout(photo.updateClick);

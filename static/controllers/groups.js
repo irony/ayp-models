@@ -1,7 +1,7 @@
 function GroupsController($scope, $http){
   
   var zoomTimeout = null;
-  $scope.selectedDate = new Date();
+  $scope.startDate = new Date();
   $scope.zoomLevel = 50;
   $scope.photos = [];
   $scope.groups = [];
@@ -9,24 +9,38 @@ function GroupsController($scope, $http){
   $scope.counter = 0;
 
 
-  $scope.loadMore = function(reset) {
+  $scope.loadMore = function(reset, zoomLevel) {
 
     if (reset){
       $scope.counter = 0;
       $scope.photos = [];
-      $scope.groups = [];
     }
+    if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
+    
 
-    var query = {skip : $scope.counter, startDate: $scope.selectedDate.toISOString(), interestingness : $scope.zoomLevel, limit: 25};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), interestingness : $scope.zoomLevel, limit: 25};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
 
       if (photos)
       {
-        var group = {photos: photos, id: photos[0]._id, name: photos[0].taken.split('T')[0] + " - " + photos[photos.length-1].taken.split('T')[0] };
-        group.photo = photos.sort(function(a,b){
-          return b.interestingness - a.interestingness;
-        })[0];
+
+/*
+        var averageDiff = photos.reduce(function(a,b){
+          return {taken : b.taken, count : a.count++, sumDiff : (a.sumDiff || 0 ) + b.taken.getTime() - a.taken.getTime()};
+        });
+
+        averageDiff = averageDiff.sumDiff / averageDiff.count;
+*/
+        var startDate = photos[0].taken.split('T')[0],
+            stopDate = photos[photos.length-1].taken.split('T')[0],
+            group = {photos: photos, id: photos[0]._id, name: startDate + (startDate !== stopDate ? " - " + stopDate : "")};
+
+
+        group.photo = photos[0];
+
+        if (reset) $scope.groups = [];
+        
         $scope.groups.push(group);
         $scope.counter += photos.length;
       }
@@ -60,7 +74,7 @@ function GroupsController($scope, $http){
     clearTimeout(zoomTimeout);
 
     zoomTimeout = setTimeout(function(){
-      $scope.loadMore(value);
+      $scope.loadMore($scope.startDate);
     }, 100);
 
   });
@@ -68,6 +82,11 @@ function GroupsController($scope, $http){
   $scope.$watch('groups.length',function(){
     setTimeout(function(){
       var $spy = $(document.body).scrollspy('refresh');
+      $("ul.nav li").on("activate", function(elm)
+      {
+          $scope.startDate = new Date(elm.target.attributes['data-date'].value);
+          console.log(elm.target.attributes['data-date'].value);
+      });
     }, 100);
   });
 
