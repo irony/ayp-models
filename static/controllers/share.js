@@ -11,6 +11,10 @@ function ShareController($scope, $http){
     $scope.dateRange = $scope.fromDate + " - " + $scope.toDate;
   });
 
+  $scope.$watch('defaultDateRange', function(value){
+    $scope.dateRange = value;
+  });
+
   $scope.select = function(photo){
     
     if ($scope.toggle = !$scope.toggle) {

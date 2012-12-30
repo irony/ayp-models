@@ -30,8 +30,12 @@ function PhotoController ($scope, $http){
 
   $scope.star = function(photo){
     socket.emit('star', photo._id);
-    photo.class = 'star';
+    photo.starred = !photo.starred;
     console.log('star', photo);
   };
 
+
+  $scope.starClass = function(photo){
+    return photo.starred ? "icon-heart" : "icon-heart-empty";
+  };
 }

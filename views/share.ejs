@@ -18,9 +18,9 @@
       <input type="hidden" ng-model="fromDate" ng-init="fromDate = '<%=date ? date.split('T')[0] : ""%>'">
       <input type="hidden" ng-model="toDate" ng-init="toDate = '<%=date ? date.split('T')[0] + " 23:59:59" : ""%>'">
 
-      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="dateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
+      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="defaultDateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
       <input type="submit" class="btn btn-success pull-right" value="Share">
-      <small>{{photos.length}} photos selected</small>
+      <small>{{photos.length}} photos selected (<a ng-click="dateRange = defaultDateRange" href="#">reset</a>)</small>
       
     </form>
     <div class="span8">

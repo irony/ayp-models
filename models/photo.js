@@ -20,6 +20,7 @@ var PhotoSchema = new mongoose.Schema({
   starred : { type: Number, default: 0},
   original : { type: String},
   tags : { type: []},
+  groups : { type: []},
   metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
   src : {type:String},

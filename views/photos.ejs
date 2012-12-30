@@ -5,7 +5,7 @@
         <div id="wall" class="thumbnails row">
           <div  ng-repeat="photo in photos" class="photo {{photo.class}}" ng-controller="PhotoController">
             <a ng-click="hide(photo)"><i class="icon-remove"></i></a>
-            <a ng-click="star(photo)"><i class="icon-heart-empty"></i></a>
+            <a ng-click="star(photo)"><i class="icon-heart-empty {{photo.star}}"></i></a>
             <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
             <img title="{{photo.groups}}" ng-src="{{photo.src}}" src="/img/photos-icon.png" ng-click="click(photo)" ng-dblclick="star(photo)" ng-mousemove="view(photo)">
 

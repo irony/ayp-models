@@ -2,7 +2,8 @@ var ObjectId = require('mongoose').Types.ObjectId,
     timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    emit = {};
 
 
 
@@ -11,35 +12,30 @@ module.exports = function(app){
   var map = function(){
 
     var self = this;
-    this.owners.forEach(function(user){
-
       // Wed, 05 Dec 2012 20:25:10 GMT
-      var datePart = new Date(self.taken).getDate();
-      var yearPart = new Date(self.taken).getFullYear();
-      var monthPart = new Date(self.taken).getMonth()+1;
-      var hourPart = new Date(self.taken).getHours();
-      var minutePart = new Date(self.taken).getMinutes();
+      var datePart = new Date(self.taken).getDate(),
+          yearPart = new Date(self.taken).getFullYear(),
+          monthPart = new Date(self.taken).getMonth()+1,
+          hourPart = new Date(self.taken).getHours(),
+          minutePart = new Date(self.taken).getMinutes();
 
-      emit(user + "/" + yearPart + "/" + monthPart + "/" + datePart + "/" + hourPart + "/" + minutePart, self);
-      emit(user + "/" + yearPart + "/" + monthPart + "/" + datePart + "/" + hourPart, self);
-      emit(user + "/" + yearPart + "/" + monthPart + "/" + datePart, self);
-      emit(user + "/" + yearPart + "/" + monthPart, self);
-      emit(user + "/" + yearPart, self);
+      emit(yearPart + "/" + monthPart + "/" + datePart + "/" + hourPart, self);
+      emit(yearPart + "/" + monthPart + "/" + datePart, self);
+      emit(yearPart + "/" + monthPart, self);
+      emit(yearPart, self);
       
       if (monthPart < 3 || monthPart > 10)
-        emit(user + "/" + yearPart + "/winter", self);
+        emit(yearPart + "/winter", self);
 
       if (monthPart >= 3 && monthPart < 6)
-        emit(user + "/" + yearPart + "/spring", self);
+        emit(yearPart + "/spring", self);
 
       if (monthPart >= 9 && monthPart < 11)
-        emit(user + "/" + yearPart + "/autumn", self);
+        emit(yearPart + "/autumn", self);
 
       if (monthPart >= 5 && monthPart < 9)
-        emit(user + "/" + yearPart + "/summer", self);
+        emit(yearPart + "/summer", self);
 
-
-    });
 
   };
 
@@ -51,14 +47,19 @@ module.exports = function(app){
 
   };
 
-
+  // add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}}, function(err, model, stats){
     console.log('Started reducing photos', model.toString());
 
     if (err) throw err;
 
     model.find(function(err, groups){
-      console.log(groups);
+      groups.forEach(function(group){
+        Photo.update({_id : group.value._id}, {$set : {groups : group._id.toString().split('/')}}, function(err, photo){
+          if (err) console.log('error when updating groups:', err);
+        });
+
+      });
     });
   });
 

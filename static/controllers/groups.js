@@ -9,11 +9,12 @@ function GroupsController($scope, $http){
   $scope.counter = 0;
 
 
-  $scope.loadMore = function(reset, zoomLevel) {
+  $scope.loadMore = function(resetDate, zoomLevel) {
 
-    if (reset){
+    if (resetDate){
       $scope.counter = 0;
       $scope.photos = [];
+      $scope.startDate = new Date(resetDate);
     }
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
@@ -34,12 +35,12 @@ function GroupsController($scope, $http){
 */
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
-            group = {photos: photos, id: photos[0]._id, name: startDate + (startDate !== stopDate ? " - " + stopDate : "")};
+            group = {photos: photos, id: photos[0]._id, name: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
 
 
         group.photo = photos[0];
 
-        if (reset) $scope.groups = [];
+        if (resetDate) $scope.groups = [];
         
         $scope.groups.push(group);
         $scope.counter += photos.length;
@@ -69,8 +70,11 @@ function GroupsController($scope, $http){
     $scope.groups = groups;
   });*/
 
-  $scope.$watch('zoomLevel', function(value){
+  $scope.$watch('zoomLevel', function(value, oldValue){
     
+    if (oldValue > value)
+      $scope.startDate = new Date(); // reset the value when zooming out
+
     clearTimeout(zoomTimeout);
 
     zoomTimeout = setTimeout(function(){
