@@ -22,10 +22,13 @@ function PhotoController ($scope, $http){
 
   };
 
-  $scope.hide = function(photo){
+  $scope.hide = function(photo, group){
     console.log('hide', photo);
     socket.emit('hide', photo._id);
-    photo.class = 'hidden';
+    for(var i=0; i<group.photos.length; i++){
+      if (group.photos[i]._id === photo._id)
+        return delete group.photos[i];
+    }
   };
 
   $scope.star = function(photo){
@@ -36,6 +39,6 @@ function PhotoController ($scope, $http){
 
 
   $scope.starClass = function(photo){
-    return photo.starred ? "icon-heart" : "icon-heart-empty";
+    return photo && photo.starred ? "icon-heart" : "icon-heart-empty";
   };
 }

@@ -293,10 +293,6 @@
   display:none;
 }
 
-.photo.star{
-  border:1px solid #330;
-}
-
 .photo:hover a {
   opacity: 0.4;
 }

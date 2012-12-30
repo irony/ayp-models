@@ -25,6 +25,12 @@ function ShareController($scope, $http){
 
   };
 
+  $scope.reset = function()
+  {
+    $scope.toggle = true;
+    $scope.dateRange = $scope.defaultDateRange;
+  };
+
   $scope.$watch('dateRange', function(newVal) {
     var query = {email : $scope.email.toString(), dateRange : $scope.dateRange.toString()};
     console.log(query);
