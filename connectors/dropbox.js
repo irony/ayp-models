@@ -112,7 +112,8 @@ module.exports = function (app) {
 				}
 
 				if(status === 404) {
-					console.log('404 received, it was not found in your dropbox anymore.')
+					console.log('404 received, it is not a photo. Removing...')
+					return photo.remove();
 				}
 
 
