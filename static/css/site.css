@@ -450,19 +450,16 @@ body .navbar-inner{
 #wall
 {
   margin:auto;
-}
+  }
 
 
 #wall .group{
-    -moz-column-count: 5;
-    -moz-column-gap: 10px;
-    -webkit-column-width: 256px;
+       -moz-column-count: 5;
+    -webkit-column-count: 5;
+       -moz-column-gap: 10px;
     -webkit-column-gap: 10px;
-
-    -webkit-column-fill: auto;
-
-    column-count: 5;
-    column-gap: 10px;
+            column-count: 5;
+            column-gap: 10px;
     padding:0;
     margin: -20px 0 20px 0;
     width: 95%;

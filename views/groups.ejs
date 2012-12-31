@@ -12,7 +12,7 @@
         <div id="wall" class="thumbnails row" when-scrolled="scroll()">
           <div class="group" ng-repeat="group in groups" id="{{group.id}}">
             <h2>{{group.name}} <small>{{group.photos.length}} OF XX PHOTOS AVAILABLE</small></h2>
-            <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
+            <div  ng-repeat="photo in group.photos|orderBy:'taken'" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
               <a ng-click="hide(photo, group)"><i class="icon-remove"></i></a>
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
