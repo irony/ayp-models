@@ -69,17 +69,13 @@ module.exports = function (app) {
 
 			if ( err || !photo ) return res.send(403, err);
 
-			if(photo.metadata.bytes < 5000000) {
-				self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
-					if (err) {
-						return res.send(500, err);
-					}
+			self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
+				if (err) {
+					return res.send(500, err);
+				}
 
-					return res.end(thumbnail);
-				});
-			} else {
-					return res.send(500, 'too large');
-			}
+				return res.end(thumbnail);
+			});
 
 		});
 	});
