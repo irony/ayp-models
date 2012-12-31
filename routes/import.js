@@ -27,6 +27,7 @@ module.exports = function(app){
         }
 
         Array.prototype.slice.call(photos);
+        var count = 0;
 
         async.map(photos, function(photo, next){
 
@@ -53,15 +54,15 @@ module.exports = function(app){
             dbPhoto.bytes = photo.bytes;
             dbPhoto.mimeType = photo.mime_type;
 
-console.log('save', dbPhoto, photo);
-
             dbPhoto.save(function(err, savedPhoto){
               return next(err, savedPhoto);
             });
+
           });
         }, function(err){
 
-          res.redirect('/photos');
+          res.redirect('/wall');
+
         });
 
 

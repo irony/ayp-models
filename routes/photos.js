@@ -9,21 +9,7 @@ var _ = require('underscore');
 module.exports = function(app){
 
 
-  app.get('/photos', function(req, res){
-    var model = new ViewModel(req.user);
-
-    if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
-    }
-
-    res.render('photos.ejs', model);
-
-  });
-
-
-
-  app.get('/groups', function(req, res){
+  app.get('/wall', function(req, res){
     var model = new ViewModel(req.user);
 
     if (!req.user){

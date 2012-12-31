@@ -1,4 +1,4 @@
-var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
+var callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
     passport = require('passport'),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
@@ -14,7 +14,8 @@ var callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000"),
   });
 
   passport.deserializeUser(function(user, done) {
-      User.findById(user._id, done);
+      done(null, user);
+//      User.findById(user._id, done);
   });
 
   // Use the InstagramStrategy within Passport.

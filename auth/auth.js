@@ -1,6 +1,6 @@
 var User = require('../models/user'),
     _ = require('underscore'),
-    callbackBaseUrl = "http://" + (process.env.HOST || "localhost:3000");
+    callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:3000");
 
 var updateProfile = function(user, profile, done){
 
@@ -22,6 +22,8 @@ var updateProfile = function(user, profile, done){
 //   user.set('emails', emails);
   user.set('accounts', accounts);
 
+  console.log('updated profile', user);
+
   return user.save(function(err, savedUser){
     done(err, savedUser);
   });
@@ -32,7 +34,8 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
 
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
   if (user && user._id){
-    return User.findOne(user._id, function(err, foundUser){
+    return User.findById(user._id, function(err, foundUser){
+            console.log('finding existing user via id', user._id, profile);
 
       if (!foundUser){
         foundUser = new User(user);
@@ -54,13 +57,24 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
       }
 
       if (!foundUser) {
-        user = new User();
+        if (profile.emails.length)
+        {
+          // if we can find this user by his email, we will connect the accounts together instead. Security issue.
+          User.findOne({emails : {$in : profile.emails}}, function(err, emailUser){
+            console.log('found user via email', emailUser);
+            return updateProfile(emailUser || new User(), profile, done);
+          });
+
+        } else {
+          console.log('couldnt find user and not via email', profile);
+          return updateProfile(new User(), profile, done);
+        }
       } else {
-        user = foundUser;
+          console.log('found user via provider. Updating profile...', profile);
+        return updateProfile(foundUser, profile, done);
       }
 
 
-      return updateProfile(user, profile, done);
 
   });
 };
