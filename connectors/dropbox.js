@@ -42,11 +42,13 @@ module.exports = function (app) {
 		var id = req.url.split("/dropbox/")[1], // because of a bug in req.params parser i can't use that parameter, i will use url instead
 				client = this.getClient(req.user);
 		
-		console.log('Downloading thumbnail', id);
 
 		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
 
+
 			if ( err || !photo ) return res.send(403, err);
+
+			console.log('Downloading thumbnail', photo.path);
 
 			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
 				if (err) {
