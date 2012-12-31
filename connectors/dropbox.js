@@ -69,13 +69,17 @@ module.exports = function (app) {
 
 			if ( err || !photo ) return res.send(403, err);
 
-			self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
-				if (err) {
-					return res.send(500, err);
-				}
+			if(photo.metadata.bytes < 5000000) {
+				self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
+					if (err) {
+						return res.send(500, err);
+					}
 
-				return res.end(thumbnail);
-			});
+					return res.end(thumbnail);
+				});
+			} else {
+					return res.send(500, 'too large');
+			}
 
 		});
 	});
@@ -156,7 +160,7 @@ module.exports = function (app) {
 				fs = require('fs'),
 				p = require('path');
 
-		console.log('downloading path', photo.path, photo.metadata.bytes);
+		console.log('downloading path...', photo.path, photo.metadata.bytes);
 	  client.get(photo.path, function(status, reply){
 
 			if (status !== 200){
@@ -187,6 +191,7 @@ module.exports = function (app) {
 				}
 
 				fs.writeFile(filename, reply, function(err){
+					console.log('done downloading photo');
 					return done(err, reply);
 				});
 

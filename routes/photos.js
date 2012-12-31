@@ -83,7 +83,7 @@ module.exports = function(app){
         photo.metadata = null;
         var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
         fs.readFile(filename, function(err, data){
-          photo.src = err ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
+          photo.src = err || photo.interestingness > 50 ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
           return done(null, photo);
         });
       }, function(err, photos){
