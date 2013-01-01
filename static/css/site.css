@@ -269,6 +269,7 @@
 
 
 .photo img{
+  min-height: 147px;
   margin-right: 0;
 }
 

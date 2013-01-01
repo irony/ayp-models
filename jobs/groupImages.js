@@ -11,11 +11,13 @@ module.exports = function(app){
 
   var map = function(){
 
+    var monthNames = [ "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December" ];
     var self = this;
       // Wed, 05 Dec 2012 20:25:10 GMT
       var datePart = new Date(self.taken).getDate(),
           yearPart = new Date(self.taken).getFullYear(),
-          monthPart = new Date(self.taken).getMonth()+1,
+          monthPart = monthNames[new Date(self.taken).getMonth()],
           hourPart = new Date(self.taken).getHours(),
           minutePart = new Date(self.taken).getMinutes();
 

@@ -11,6 +11,7 @@ require('./routes/404')(app);
 
 require('./jobs/groupImages')(app);
 require('./jobs/calculateInterestingness')(app);
+require('./jobs/tagPhotos')(app);
 
 
 

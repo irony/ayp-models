@@ -53,7 +53,7 @@ module.exports = function(app){
     model.find(function(err, photos){
       photos.forEach(function(photo){
 
-        Photo.update({_id : new ObjectId(photo._id.split('/')[1])}, {$set : {interestingness : photo.value, calculated : new Date()}}, function(err, photo){
+        Photo.update({_id : new ObjectId(photo._id.split('/')[1])}, {$set : {interestingness : photo.value.value, calculated : new Date()}}, function(err, photo){
           if (err) console.log('error when updating interestingness:', err);
         });
 
