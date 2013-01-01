@@ -2,7 +2,6 @@
     body{
       font-family: "Gill Sans", Corbel, Consolas;
       background: #212223;
-      
     }
 
     body footer{
@@ -98,7 +97,7 @@
     .carousel img {
       min-width: 110%;
       position: absolute;
-       top: -20%;
+       top: -60%;
       -webkit-transition:all 15s ease-in;
       -moz-transition:all 15s linear;
       transition:all 15s linear;
@@ -269,7 +268,7 @@
 
 
 .photo img{
-  min-height: 147px;
+  min-width:100%;
   margin-right: 0;
 }
 
@@ -451,6 +450,7 @@ body .navbar-inner{
 #wall
 {
   margin:auto;
+  padding-top: 100px;
   }
 
 

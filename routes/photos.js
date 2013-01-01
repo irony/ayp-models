@@ -27,17 +27,19 @@ module.exports = function(app){
     }
 
     Photo.find({owners: req.user._id})
+    .where('originalDownloaded').ne(false)
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
     .sort('-interestingness')
     .exec(function(err, photos){
 
+      console.log(photos);
       var photo = photos && photos[Math.round(Math.random()*50)];
       if(!photo) {
         return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
       }
  
-      res.redirect('/img/thumbnails/' + photo.source + '/' + photo._id);
+      res.redirect('/img/originals/' + photo.source + '/' + photo._id);
 
     });
   });

@@ -76,7 +76,7 @@ module.exports = function (app) {
 					return res.send(500, err);
 				}
 
-				return res.end(thumbnail);
+				return res.end(thumbnail, photo.mimeType);
 			});
 
 		});
@@ -113,7 +113,6 @@ module.exports = function (app) {
 
 				if(status === 404) {
 					console.log('404 received, it is not a photo. Removing...')
-					return photo.remove();
 				}
 
 
@@ -159,7 +158,7 @@ module.exports = function (app) {
 				fs = require('fs'),
 				p = require('path');
 
-		console.log('downloading path...', photo.path, photo.metadata.bytes);
+		console.log('downloading original path...', photo.path, photo.metadata.bytes);
 	  client.get(photo.path, function(status, reply){
 
 			if (status !== 200){
@@ -186,12 +185,17 @@ module.exports = function (app) {
 
 			mkdirp(pathArray.join('/'), function (err) {
 				if (err && done) {
+					console.log('error downloading', err);
+
 					return done(err);
 				}
 
 				fs.writeFile(filename, reply, function(err){
 					console.log('done downloading photo');
-					return done(err, reply);
+					photo.set('originalDownloaded', true);
+					photo.update(function(){
+						return done(err, reply);
+					});
 				});
 
 			});

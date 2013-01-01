@@ -16,8 +16,9 @@
               <a ng-click="hide(photo, group)"><i class="icon-remove"></i></a>
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
+              <a href="#" onclick="$('#{{group.id}}').modal()"><i class="icon-play"></i></a>
               <a>{{photo.class}}</a>
-              <img ng-src="{{photo.src}}" ng-click="click(photo)" ng-dblclick="loadMore(photo.taken, zoomLevel+10);" ng-mousemove="view(photo)">
+              <img ng-src="{{photo.src}}" ng-click="click(photo)" ng-dblclick="loadMore(photo.taken, zoomLevel+10); zoom.out()" ng-mousemove="view(photo)">
 
             </div>
           </div> 

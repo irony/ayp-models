@@ -24,6 +24,7 @@ var PhotoSchema = new mongoose.Schema({
   metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
   src : {type:String},
+  originalDownloaded : { type: Boolean, default: false},
   sharedTo : { type: [User]},
   owners : [Schema.ObjectId]
 });

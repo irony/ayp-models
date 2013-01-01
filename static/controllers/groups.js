@@ -12,7 +12,6 @@ function GroupsController($scope, $http){
     if ( $(window).scrollTop() < 0) // reverse scroll, TODO: send as parameter instead
     {
       console.log($(window).scrollTop());
-
       if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date($scope.groups[0].photos[0].taken);
       $scope.reverse = true;
     } else {
