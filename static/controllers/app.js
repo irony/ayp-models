@@ -21,3 +21,21 @@ angular.module('app', []).directive('whenScrolled', function() {
         };
     };
 });
+
+
+
+angular.module('app', []).directive('slideshow', 
+   function() {
+      var openDialog = {
+         link :   function(scope, element, attrs) {
+            function openDialog() {
+              var element = angular.element('#slideshow');
+              var ctrl = element.controller();
+              ctrl.setModel(scope);
+              element.modal('show');
+            }
+            element.bind('click', openDialog);
+       }
+   };
+   return openDialog;
+}); 

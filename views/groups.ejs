@@ -12,11 +12,11 @@
         <div id="wall" class="thumbnails row" when-scrolled="scroll()">
           <div class="group" ng-repeat="group in groups" id="{{group.id}}">
             <h2>{{group.name}} <small>{{group.photos.length}} OF XX PHOTOS AVAILABLE</small></h2>
+              <a slideshow><i class="icon-play"></i></a>
             <div  ng-repeat="photo in group.photos|orderBy:'taken'" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
               <a ng-click="hide(photo, group)"><i class="icon-remove"></i></a>
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
-              <a href="#" onclick="$('#{{group.id}}').modal()"><i class="icon-play"></i></a>
               <a>{{photo.class}}</a>
               <img ng-src="{{photo.src}}" ng-click="click(photo)" ng-dblclick="loadMore(photo.taken, zoomLevel+10); zoom.out()" ng-mousemove="view(photo)">
 
@@ -34,8 +34,25 @@
   </div>
 
 
+    <div class="modal hide fade" id="slideshow" ng-controller="SlideshowController">
+       <div class="modal-body">
+        <h2>{{group.name}}</h2>
+
+           <div id="myCarousel" class="carousel slide" data-interval="5000">
+            <div class="carousel-inner">
+              <div class="item" ng-repeat="photo in group.photos|orderBy:'taken'" >  
+                <img ng-src="{{photo.src}}" alt="">
+              </div>
+            </div>
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+          </div><!-- /.carousel -->
+       </div>
+    </div>
+
     <script type="text/javascript" src="/controllers/groups.js"></script>
     <script type="text/javascript" src="/controllers/photo.js"></script>
+    <script type="text/javascript" src="/controllers/slideshow.js"></script>
     <script src="/js/zoom.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 

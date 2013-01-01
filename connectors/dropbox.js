@@ -193,7 +193,7 @@ module.exports = function (app) {
 				fs.writeFile(filename, reply, function(err){
 					console.log('done downloading photo');
 					photo.set('originalDownloaded', true);
-					photo.update(function(){
+					photo.save(function(){
 						return done(err, reply);
 					});
 				});
@@ -214,7 +214,7 @@ module.exports = function (app) {
 		return client;
 	};
 
-	this.downloadAllPhotos = function(user, done)
+	this.downloadAllMetadata = function(user, done)
 	{
 		if (!user || !user.accounts.dropbox){
 			return done('Not dropbox folder', null);

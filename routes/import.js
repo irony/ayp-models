@@ -21,7 +21,7 @@ module.exports = function(app){
 
     if (req.user.accounts && req.user.accounts.dropbox){
 
-      dropboxConnector.downloadAllPhotos(req.user, function(err, photos){
+      dropboxConnector.downloadAllMetadata(req.user, function(err, photos){
         if (err || !photos) {
           throw err;
         }
@@ -48,7 +48,7 @@ module.exports = function(app){
             dbPhoto.path = photo.path;
             dbPhoto.modified = photo.modified;
             dbPhoto.taken = photo.client_mtime;
-            dbPhoto.interestingness = Math.random() * 100; // dummy value now. TODO: change to real one
+            dbPhoto.interestingness = dbPhoto.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
             // dbPhoto.interestingness = dbPhoto.interestingness || 50; 
             dbPhoto.metadata = photo;
             dbPhoto.bytes = photo.bytes;
