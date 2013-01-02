@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var _ = require('underscore');
 
 var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
-
+var http = require('http');
 
 var express = require('express')
   , util = require('util');
@@ -43,6 +43,11 @@ exports.init = function(port) {
       app.use(express.static(__dirname + '/static'));
       app.use(app.router);
     });
+
+
+    http.globalAgent.maxSockets = Infinity;
+
+    console.log('maxSockets', http.globalAgent.maxSockets);
 
 
     app.get('/account', ensureAuthenticated, function(req, res){

@@ -11,6 +11,7 @@ angular.module('app', []).directive('whenScrolled', function() {
         var raw = document.body;
         window.onscroll = function(event) {
             if ($(window).scrollTop() + $(window).height() === $(document).height() || $(window).scrollTop() < 0) {
+                    console.log('loadMore')
                 if (!loading) setTimeout(function(){
                     scope.$apply(attr.whenScrolled, $(window).scrollTop());
                     loading = false;

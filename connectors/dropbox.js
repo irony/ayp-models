@@ -76,7 +76,7 @@ module.exports = function (app) {
 					return res.send(500, err);
 				}
 
-				return res.end(thumbnail, photo.mimeType);
+				return res.redirect(thumbnail.url);
 			});
 
 		});
@@ -158,8 +158,8 @@ module.exports = function (app) {
 				fs = require('fs'),
 				p = require('path');
 
-		console.log('downloading original path...', photo.path, photo.metadata.bytes);
-	  client.get(photo.path, function(status, reply){
+		client.media(photo.path, function(status, reply){
+
 
 			if (status !== 200){
 
@@ -178,26 +178,29 @@ module.exports = function (app) {
 				console.log('error downloading image', status, reply);
 				return;
 			}
-			var mkdirp = require('mkdirp'),
-					pathArray = filename.split('/');
 
-			pathArray.pop(); // remove file part
+			// user will continue while we download the actual file
+			done(null, reply);
 
-			mkdirp(pathArray.join('/'), function (err) {
-				if (err && done) {
-					console.log('error downloading', err);
+			client.get(photo.path, function(status, reply){
+				
+				var mkdirp = require('mkdirp'),
+						pathArray = filename.split('/');
 
-					return done(err);
-				}
+				pathArray.pop(); // remove file part
 
-				fs.writeFile(filename, reply, function(err){
-					console.log('done downloading photo');
-					photo.set('originalDownloaded', true);
-					photo.save(function(){
-						return done(err, reply);
+				mkdirp(pathArray.join('/'), function (err) {
+					if (err && done) {
+						return console.log('error downloading', err);
+					}
+
+					fs.writeFile(filename, reply, function(err){
+						photo.set('originalDownloaded', true);
+						photo.save(function(saveErr){
+							if (err || saveErr) console.log('error downloading photo', err, saveErr);
+						});
 					});
 				});
-
 			});
 		});
 	};
