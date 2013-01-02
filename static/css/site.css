@@ -385,13 +385,12 @@ body .navbar-inner{
 }
 
 .group h2{
-  color: #fff;
+  color: #000;
   padding:0;
-  margin-bottom:10px;
-  margin-right:10px;
   font-weight: bold;
   font-size: 28px;
-  line-height: 20px;
+  line-height: 30px;
+  margin-bottom:10px;
 }
 
 .thumbnails img
@@ -459,9 +458,15 @@ body .navbar-inner{
 #wall
 {
   margin:auto;
-  padding-top: 100px;
+  padding-top: 80px;
   }
 
+
+#wall .group.large{
+       -moz-column-count: 1;
+    -webkit-column-count: 1;
+            column-count: 1;
+}
 
 #wall .group{
        -moz-column-count: 5;
@@ -471,25 +476,41 @@ body .navbar-inner{
             column-count: 5;
             column-gap: 10px;
     padding:0;
-    margin: -20px 0 20px 0;
-    width: 95%;
-    margin: auto;
+    margin: 20px 0 20px 0;
+    width: 100%;
+}
+
+#wall .group header{
+  padding: 10px;
+  background: #fff;
+  margin-bottom: 10px;
 }
 
 #wall .group:nth-child(odd){
   background: #fff;
+  color:#000;
 }
  
+#wall h2 small {
+  clear:both;
+  display: block;
+}
+
 #wall .group .photo{
     display: inline-block;
     margin-bottom: 0px;
     width: 100%;
 }
 
-#wall .group .photo.span4
+#wall .group .clearfix
 {
   -webkit-column-span: all;
+  clear: both;
+  float:none;
+  display: block;
 }
+
+
 
 @media only screen and (max-width : 1199px),
 only screen and (max-device-width : 1199px){
@@ -557,6 +578,18 @@ only screen and (max-device-width : 599px){
      
     #wall .group {
         width: 400px;
+    }
+
+    #wall .slider {
+      height: 20px;
+    }
+
+    #wall .slider label{
+      display: none;
+    }
+
+    .navbar-fixed-bottom{
+      display: none;
     }
 }
 

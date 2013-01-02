@@ -165,10 +165,12 @@ module.exports = function (app) {
 
 				if(status === 415) {
 					return console.log('415 received, removing photo. This is not a photo.', reply);
+					photo.remove();
 				}
 
 				if(status === 404) {
 					return console.log('404 received, removing photo. It is not found in dropbox.', reply);
+					photo.remove();
 				}
 
 				if (done && status) {
