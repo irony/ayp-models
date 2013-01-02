@@ -475,6 +475,10 @@ body .navbar-inner{
     width: 95%;
     margin: auto;
 }
+
+#wall .group:nth-child(odd){
+  background: #fff;
+}
  
 #wall .group .photo{
     display: inline-block;

@@ -63,9 +63,24 @@ module.exports = function(app){
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .exec(function(err, photos){
-      console.log(req.query, photos.length, err);
-      if (!photos)
+      if (!photos || !photos.length)
         return res.end(err);
+
+
+      photos = photos.reduce(function(a,b){
+        var diffAverage = 0,
+            last = a.length ? a[a.length-1] : null;
+
+        if (last) {
+          b.timeDiff = Math.abs(last.taken.getTime() - b.taken.getTime());
+          b.diffTotal = (last.diffTotal || 0) + b.timeDiff;
+          diffAverage = b.diffTotal / a.length;
+        }
+
+        if (a.length <= photos.length / 2 || b.timeDiff < diffAverage * 1.5) a.push(b);
+
+        return a;
+      }, []);
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
