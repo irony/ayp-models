@@ -1,9 +1,10 @@
-var loadTimeout,
-    loading = false;
+var loadTimeout;
 
 function AppController($scope, $http)
 {
     $scope.loadMore = null;
+    $scope.loading = false;
+    $scope.loadingReverse = false;
 }
 
 angular.module('app', []).directive('whenScrolled', function() {
@@ -11,12 +12,11 @@ angular.module('app', []).directive('whenScrolled', function() {
         var raw = document.body;
         window.onscroll = function(event) {
             if ($(window).scrollTop() + $(window).height() === $(document).height() || $(window).scrollTop() < 0) {
-                if (!loading) setTimeout(function(){
-                    scope.$apply(attr.whenScrolled, $(window).scrollTop());
-                    loading = false;
+                if (!scope.loading) setTimeout(function(){
+                    scope.$apply(attr.whenScrolled);
+                    scope.loadingReverse = $(window).scrollTop() < 0;
                 }, 200);
-                loading = true;
-
+                scope.loading = true;
             }
         };
     };

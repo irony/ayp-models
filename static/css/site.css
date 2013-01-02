@@ -4,6 +4,11 @@
       background: #212223;
     }
 
+    body.loading{
+      padding-bottom: 150px;
+      margin-bottom: -150px;
+    }
+
     body footer{
       background: #fff;
       width: 100%;

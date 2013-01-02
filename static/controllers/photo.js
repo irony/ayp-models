@@ -6,6 +6,9 @@ function PhotoController ($scope, $http){
   $scope.mouseMove = function(photo){
       socket.emit('views', photo._id);
       activePhoto = photo;
+
+      if (photo.originalDownloaded) photo.src = '/img/originals/' + photo.source + '/' + photo._id;
+
       setTimeout(function(){
         if (activePhoto === photo)
           $scope.click(photo);

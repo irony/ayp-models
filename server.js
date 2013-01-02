@@ -13,6 +13,7 @@ require('./jobs/groupImages')(app);
 require('./jobs/calculateInterestingness')(app);
 require('./jobs/tagPhotos')(app);
 
+require('./utils/strings');
 
 app.listen(process.env.PORT || 3000);
 

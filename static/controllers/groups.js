@@ -5,17 +5,12 @@ function GroupsController($scope, $http){
   $scope.zoomLevel = 50;
   $scope.photos = [];
   $scope.groups = [];
-  $scope.reverse = false;
   $scope.counter = 0;
 
   $scope.scroll = function(){
-    if ( $(window).scrollTop() < 0) // reverse scroll, TODO: send as parameter instead
+    if ( $scope.loadingReverse) // reverse scroll, TODO: send as parameter instead
     {
-      console.log($(window).scrollTop());
       if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date($scope.groups[0].photos[0].taken);
-      $scope.reverse = true;
-    } else {
-      $scope.reverse = false;
     }
     return $scope.loadMore();
   };
@@ -33,7 +28,7 @@ function GroupsController($scope, $http){
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.reverse, interestingness : $scope.zoomLevel, limit: 25};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 25};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
 
@@ -48,20 +43,34 @@ function GroupsController($scope, $http){
 */
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
-            group = {photos: photos, viewMode:'grid', id: photos[0]._id, name: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
+            group = {photos: photos, viewMode:'grid', id: photos[0].taken, name: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
 
+        group.tags = group.photos.map(function(photo){
+          return photo.tags;
+        }).reduce(function(a,b){return a.concat(b)}).reduce(function(a,b){
+          var tag = a.filter(function(t){return t.tag === b})[0] || {tag:b, count:0};
+          
+          if (!tag.count)
+            a.push(tag);
 
-        group.photo = photos[0];
+          tag.count++;
+          return a;
+        }, []).sort(function(a,b){return b.count - a.count}).map(function(tag){return tag.tag});
+
+        group.photo = photos[photos.length-1]; // .sort(function(a,b){return b.interestingness - a.interestingness}).slice();
+        group.name = group.tags.slice(0,2).join(' '); // group.tags.length >= 2 ? group.tags.splice(0,2).join(' ') : group.name;
 
         if (resetDate) $scope.groups = [];
         
-        if ($scope.reverse) {
+        if ($scope.loadingReverse) {
           $scope.groups.unshift(group);
         } else {
           $scope.groups.push(group);
         }
 
         $scope.counter += photos.length;
+        $scope.loading = false;
+
       }
 
     });

@@ -112,7 +112,7 @@ module.exports = function (app) {
 				}
 
 				if(status === 404) {
-					console.log('404 received, it is not a photo. Removing...')
+					console.log('404 received, it is not a photo?', photo.path)
 				}
 
 
