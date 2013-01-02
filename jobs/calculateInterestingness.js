@@ -18,10 +18,10 @@ module.exports = function(app){
       if(self.starred) emit(user + "/" + self._id, {weight:100, value: 1});
       if(self.views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.views / 10)});
       
-      if(self.clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.5 + Math.abs(self.clicks) / 3)});
+      if(self.clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.clicks / 3)});
 
       if(self.tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.tags.length / 2)});
-      if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.groups.length / 2)});
+      if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.groups.length / 2)});
 
     });
 
@@ -33,7 +33,7 @@ module.exports = function(app){
     var returnWeight = 0;
     var count = 0;
     actions.forEach(function(action){
-      returnValue += action.value * (action.weight);
+      returnValue += Math.min(100, action.value * (action.weight));
       returnWeight += action.weight;
       count++;
     });
