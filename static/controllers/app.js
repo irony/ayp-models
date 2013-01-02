@@ -11,7 +11,6 @@ angular.module('app', []).directive('whenScrolled', function() {
         var raw = document.body;
         window.onscroll = function(event) {
             if ($(window).scrollTop() + $(window).height() === $(document).height() || $(window).scrollTop() < 0) {
-                    console.log('loadMore')
                 if (!loading) setTimeout(function(){
                     scope.$apply(attr.whenScrolled, $(window).scrollTop());
                     loading = false;
@@ -21,12 +20,7 @@ angular.module('app', []).directive('whenScrolled', function() {
             }
         };
     };
-});
-
-
-
-angular.module('app', []).directive('slideshow', 
-   function() {
+}).directive('slideshow', function() {
       var openDialog = {
          link :   function(scope, element, attrs) {
             function openDialog() {
@@ -39,4 +33,4 @@ angular.module('app', []).directive('slideshow',
        }
    };
    return openDialog;
-}); 
+});

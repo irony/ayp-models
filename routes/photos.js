@@ -71,15 +71,11 @@ module.exports = function(app){
         photo.metadata = null;
         photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
 
-        if (photo.interestingness >= 50) {
-          var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
-          fs.readFile(filename, function(err, data){
-            photo.src = err ? photo.src : 'data:image/jpeg;base64,' + data.toString('base64');
-            return done(null, photo);
-          });
-        } else {
-            return done(null, photo);
-        }
+        var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
+        fs.readFile(filename, function(err, data){
+          photo.src = err ? photo.src : 'data:image/jpeg;base64,' + data.toString('base64');
+          return done(null, photo);
+        });
       }, function(err, photos){
         return res.json(photos);
       });

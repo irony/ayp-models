@@ -10,7 +10,7 @@
         </div>
       </div>
         <div id="wall" class="thumbnails row" when-scrolled="scroll()">
-          <div class="group" ng-repeat="group in groups" id="{{group.id}}">
+          <div class="group" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <h2>{{group.name}} <small>{{group.photos.length}} OF XX PHOTOS AVAILABLE</small></h2>
               <a slideshow><i class="icon-play"></i></a>
             <div  ng-repeat="photo in group.photos|orderBy:'taken'" class="photo {{photo.class}} pull-left" title="{{photo.taken}}" ng-controller="PhotoController">
