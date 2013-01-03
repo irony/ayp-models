@@ -138,6 +138,7 @@ function GroupsController($scope, $http){
       });
     }, 100);
   });
-
-  $scope.startDate = new Date(document.location.hash.slice(1));
+  
+  if (document.location.hash)
+    $scope.startDate = new Date(document.location.hash.slice(1));
 }

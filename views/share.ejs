@@ -12,13 +12,17 @@
   <div ng-controller="ShareController" class="row {{toggle}}">
     <form method="post" action="?" class="span3 well">
       <h2>Share timeframe</h2>
+
+      <label>Name of this timeframe</label>
+      <input type="text" autocomplete="off" required="required" id="name" name="name" ng-model="name"><br>
+
       <label>Email to share to</label>
       <input type="text" autocomplete="off" required="required" id="email" name="email" ng-change="refreshPhotos()" ng-model="email"><br>
       <label>Dates to share</label>
-      <input type="hidden" ng-model="fromDate" ng-init="fromDate = '<%=date ? date.split('T')[0] : ""%>'">
-      <input type="hidden" ng-model="toDate" ng-init="toDate = '<%=date ? date.split('T')[0] + " 23:59:59" : ""%>'">
+      <input type="hidden" ng-model="fromDate" ng-init="fromDate = '<%=fromDate%>'">
+      <input type="hidden" ng-model="toDate" ng-init="toDate = '<%=toDate%>'">
 
-      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="defaultDateRange = '<%=date ? date.split('T')[0] + " - " + date.split('T')[0] + " 23:59:59" : ""%>'">
+      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="defaultDateRange = '<%=fromDate.split('T')[0] + " - " + toDate.split('T')[0] + ' 23:59:59' %>'">
       <input type="submit" class="btn btn-success pull-right" value="Share">
       <small>{{photos.length}} photos selected (<a ng-click="reset()" href="#">reset</a>)</small>
       

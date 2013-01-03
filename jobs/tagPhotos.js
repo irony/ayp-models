@@ -13,13 +13,13 @@ module.exports = function(app){
 
     var parts = (this.path || '').split('/');
     parts.pop(); // remove filename
-    parts.slice(); // remove /photos or main catalog, it's not that interesting
+    parts.splice(1,1); // remove /photos or main catalog, it's not that interesting
     if (parts.length)
     {
       var self = this;
         parts.forEach(function(tag){
           if (tag.trim())
-            emit(self._id, tag.trim());
+            emit(self._id, tag.trim().split('_').join(' '));
         });
     }
   };
@@ -38,7 +38,6 @@ module.exports = function(app){
 
     model.find(function(err, photos){
       photos.forEach(function(photo){
-
         Photo.update({_id : photo._id}, {$set : {tags : (photo.value || '').split(',')}}, function(err, photo){
           if (err) return console.log('error when updating tags:', err);
         });

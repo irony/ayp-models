@@ -7,7 +7,7 @@
           <div class="group {{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <header>
               <h2>{{group.name}} <small>{{group.range}}</small></h2>
-                <a slideshow class="btn btn-small"><i class="icon-play"></i> Slideshow</a>
+                <a href="/share?fromDate={{group.photos[0].taken}}&toDate={{group.photos[group.photos.length-1].taken}}" class="btn btn-small"><i class="icon-share"></i> Share</a>
                 <a class="btn btn-small {{group.viewMode == 'large' && 'active'}}" ng-click="group.viewMode = 'large'"><i class="icon-align-justify"></i> Large</a>
                 <a class="btn btn-small {{group.viewMode == 'grid' && 'active'}}" ng-click="group.viewMode = 'grid'"><i class="icon-th"></i> Grid</a>
                 <a class="btn btn-small" ng-disabled="zoomLevel == 100" href="#{{group.id}}" ng-click="loadMore(photo.taken, zoomLevel+10)"><i class="icon-picture"></i> Load More</a>
