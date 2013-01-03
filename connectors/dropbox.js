@@ -108,7 +108,7 @@ module.exports = function (app) {
 
 				if(status === 415) {
 					console.log('415 received, removing photo. This is not a photo.')
-					return photo.remove();
+					photo.remove(console.log);
 				}
 
 				if(status === 404) {

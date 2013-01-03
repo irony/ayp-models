@@ -1,10 +1,12 @@
 var loadTimeout;
+var appScope;
 
 function AppController($scope, $http)
 {
     $scope.loadMore = null;
     $scope.loading = false;
     $scope.loadingReverse = false;
+    appScope = $scope;
 }
 
 angular.module('app', []).directive('whenScrolled', function() {
@@ -12,11 +14,8 @@ angular.module('app', []).directive('whenScrolled', function() {
         var raw = document.body;
         window.onscroll = function(event) {
             if ($(window).scrollTop() + $(window).height() === $(document).height() || $(window).scrollTop() < 0) {
-                if (!scope.loading) setTimeout(function(){
-                    scope.$apply(attr.whenScrolled);
-                    scope.loadingReverse = $(window).scrollTop() < 0;
-                }, 200);
-                scope.loading = true;
+                appScope.loadingReverse = $(window).scrollTop() < 0;
+                scope.$apply(attr.whenScrolled);
             }
         };
     };
@@ -33,4 +32,20 @@ angular.module('app', []).directive('whenScrolled', function() {
        }
    };
    return openDialog;
+}).directive('rightClick', function($parse) {
+                console.log('rightclick');
+    return function(scope, element, attr) {
+                console.log('rightclick');
+        element.bind('contextmenu', function(event) {
+            event.preventDefault();
+            var fn = $parse(attr.rightClick);
+            scope.$apply(function() {
+                console.log('rightclick');
+                fn(scope, {
+                    $event: event
+                });
+            });
+            return false;
+        });
+    };
 });

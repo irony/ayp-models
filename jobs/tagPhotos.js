@@ -13,6 +13,7 @@ module.exports = function(app){
 
     var parts = (this.path || '').split('/');
     parts.pop(); // remove filename
+    parts.slice(); // remove /photos or main catalog, it's not that interesting
     if (parts.length)
     {
       var self = this;

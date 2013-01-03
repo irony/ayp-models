@@ -1,18 +1,12 @@
-
+  <div class="photos" ng-show="loadingReverse"><h2>Loading...</h2></div>
   <div id="photos" class="photos" >
     <div ng-controller="GroupsController">
 
-      <div class="navbar navbar-inverse navbar-fixed-bottom">
-        <div class="navbar-inner">
-          <ul class="nav">
-            <li ng-repeat="group in groups" data-date="{{group.photo.taken}}"><a href="#{{group.id}}"><img ng-src="{{group.photo.src}}"></a></li>
-          </ul>
-        </div>
-      </div>
+      
         <div id="wall" class="thumbnails row" when-scrolled="scroll()">
           <div class="group {{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <header>
-              <h2>{{group.name}} <small>{{group.photos.length}} OF XX PHOTOS</small></h2>
+              <h2>{{group.name}} <small>{{group.range}}</small></h2>
                 <a slideshow class="btn btn-small"><i class="icon-play"></i> Slideshow</a>
                 <a class="btn btn-small {{group.viewMode == 'large' && 'active'}}" ng-click="group.viewMode = 'large'"><i class="icon-align-justify"></i> Large</a>
                 <a class="btn btn-small {{group.viewMode == 'grid' && 'active'}}" ng-click="group.viewMode = 'grid'"><i class="icon-th"></i> Grid</a>
@@ -23,8 +17,13 @@
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
               <a>{{photo.class}}</a>
-              <img ng-src="{{photo.src}}" ng-click="click(photo)" ng-dblclick="loadMore(photo.taken, zoomLevel+10)" ng-mousemove="view(photo)">
-
+              <img ng-src="{{photo.src}}" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+              <aside>
+                <dd>
+                  <dt>Taken</dt>
+                  <dl>{{photo.taken}}</dl>
+                </dd>
+              </aside>
             </div>
             <div class="clearfix"></div>
           </div> 
@@ -35,7 +34,23 @@
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel">
           </div>
-          <div>
+
+          <footer>
+          <div class="group">
+            <header>
+              <h2>Loading...</h2>
+            </header>
+          </div>
+        </footer>
+
+        </div>
+        <div class="navbar navbar-inverse navbar-fixed-bottom">
+        <div class="navbar-inner">
+          <ul class="nav">
+            <li ng-repeat="group in groups" data-date="{{group.photo.taken}}"><a href="#{{group.id}}"><img ng-src="{{group.photo.src}}"></a></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 

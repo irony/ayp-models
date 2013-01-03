@@ -15,7 +15,15 @@ function GroupsController($scope, $http){
     return $scope.loadMore();
   };
 
-  $scope.loadMore = function(resetDate, zoomLevel) {
+  $scope.dblclick = function(photo){
+    $scope.loadingReverse = true;
+    $scope.loadMore(photo.taken, $scope.zoomLevel+10, function(err){
+      document.location = '#' + photo.taken;
+    });
+  };
+
+  $scope.loadMore = function(resetDate, zoomLevel, done) {
+
 
     if (resetDate){
       $scope.counter = 0;
@@ -23,7 +31,13 @@ function GroupsController($scope, $http){
       $scope.endDate = null;
       $scope.startDate = new Date(resetDate);
       window.stop(); // cancel all image downloads
+      $scope.loading = false;
     }
+
+    // prevent hammering
+    if ($scope.loading) return;
+    $scope.loading = true;
+
 
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
@@ -43,7 +57,7 @@ function GroupsController($scope, $http){
 */
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
-            group = {photos: photos, viewMode:'grid', id: photos[0].taken, name: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
+            group = {photos: photos, viewMode:'grid', id: photos[0].taken, range: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
 
         group.tags = group.photos.map(function(photo){
           return photo.tags;
@@ -58,8 +72,7 @@ function GroupsController($scope, $http){
         }, []).sort(function(a,b){return b.count - a.count}).map(function(tag){return tag.tag});
 
         group.photo = photos[photos.length-1]; // .sort(function(a,b){return b.interestingness - a.interestingness}).slice();
-        group.name = group.tags.slice(0,2).join(' '); // group.tags.length >= 2 ? group.tags.splice(0,2).join(' ') : group.name;
-
+        group.name = group.tags.slice(0,2).join(' ');
         if (resetDate) $scope.groups = [];
         
         if ($scope.loadingReverse) {
@@ -71,8 +84,13 @@ function GroupsController($scope, $http){
         $scope.counter += photos.length;
         $scope.loading = false;
 
-      }
+        if (done) done();
 
+      }
+    }).error(function(err){
+      $scope.loading = false;
+      if (done) done(err);
+      // alert somehow?
     });
   };
 /*
@@ -116,10 +134,10 @@ function GroupsController($scope, $http){
       $("ul.nav li").on("activate", function(elm)
       {
           $scope.startDate = new Date(elm.target.attributes['data-date'].value);
-          console.log(elm.target.attributes['data-date'].value);
+          document.location = '#' + $scope.startDate;
       });
     }, 100);
   });
 
-
+  $scope.startDate = new Date(document.location.hash.slice(1));
 }

@@ -15,6 +15,10 @@ function PhotoController ($scope, $http){
       }, 1000);
   };
 
+  $scope.rightclick = function(photo){
+    photo.class = 'flip';
+  };
+
   $scope.click = function(photo){
 
       $scope.startDate = photo.taken;
