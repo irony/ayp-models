@@ -84,13 +84,18 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-        photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
-
-        var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
-        fs.readFile(filename, function(err, data){
-          photo.src = err ? photo.src : 'data:image/jpeg;base64,' + data.toString('base64');
+        if (photo.mimeType.split('/')[0] == 'video'){
+          photo.src = '/img/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
-        });
+        } else {
+          photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
+
+          var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
+          fs.readFile(filename, function(err, data){
+            photo.src = err ? photo.src : 'data:' + photo.mimeType + ';base64,' + data.toString('base64');
+            return done(null, photo);
+          });
+        }
       }, function(err, photos){
         return res.json(photos);
       });

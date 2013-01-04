@@ -209,6 +209,9 @@ module.exports = function (app) {
 
 	this.getClient = function(user){
 
+		if (!user.accounts || !user.accounts.dropbox)
+			return;
+		
 		// TODO: load from database and move these to import class instead
 		var access_token = {
 			"oauth_token_secret"	:  user.accounts.dropbox.tokenSecret,
