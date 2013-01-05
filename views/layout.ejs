@@ -3,14 +3,29 @@
   <head>
     <meta charset="utf-8">
     <title><%= title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="viewport"
+          content="initial-scale=1.0">
+    <meta name="viewport"
+          content="width=320.1">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="description" content="<%= description %>">
     <meta name="author" content="<%= author %>">
-
+    <meta name="apple-mobile-web-app-title" content="Photos">
     <!-- Le styles -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
+
+    <!-- iPhone (Retina) -->
+    <link href="http://taylor.fausak.me/static/images/apple-touch-icon-114x114.png"
+          sizes="114x114"
+          rel="apple-touch-icon">
+    <link href="http://taylor.fausak.me/static/images/apple-touch-startup-image-640x920.png"
+          media="(device-width: 320px) and (device-height: 480px)
+             and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image">
 
     <script src="/js/jquery-1.7.1.min.js"></script>
     <script src="/js/angular.min.js"></script>
@@ -19,7 +34,7 @@
 
   </head>
 
-  <body data-offset="400" data-spy="scroll" ng-controller="AppController" class="{{loading}} {{loadingReverse == 'true' && 'loadingReverse'}}">
+  <body data-offset="400" data-spy="scroll" onload="window.top.scrollTo(0, 1);" ng-controller="AppController" class="{{loading}} {{loadingReverse == 'true' && 'loadingReverse'}}">
 
 
 
