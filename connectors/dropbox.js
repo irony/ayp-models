@@ -144,7 +144,7 @@ var connector = new Connector();
 			console.log('getting all photo dirs', user.accounts.dropbox.cursor);
 
 
-			var loadMore = function(cursor){
+			var loadDelta = function(cursor){
 				client.delta({cursor : cursor}, function(status, reply){
 			    var photos = reply.entries.map(function(photoRow){
 						var photo = photoRow[1];
@@ -160,7 +160,7 @@ var connector = new Connector();
 					});
 					if (reply.has_more) {
 						progress(null, photos);
-						loadMore(reply.cursor);
+						loadDelta(reply.cursor);
 					} else {
 						user.accounts.dropbox.cursor = reply.cursor;
 						user.save(function(err, user){
@@ -171,7 +171,7 @@ var connector = new Connector();
 				});
 			};
 
-			loadMore(user.accounts.dropbox.cursor);
+			loadDelta(user.accounts.dropbox.cursor);
 		});
 
 	};

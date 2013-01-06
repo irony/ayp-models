@@ -92,12 +92,19 @@ module.exports = function(app){
           photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
 
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
-          global.s3.getFile(filename, function(err, res){
-            res.on('end', function(data) {
-              photo.src = !data ? photo.src : 'data:' + photo.mimeType + ';base64,' + data.toString('base64');
+          global.s3.get(filename).on('response', function(res){
+            if (res.statusCode != 200 ) 
+              return done(null, photo);
+
+            var buffer = '';
+            res.on('data', function(data) {
+              buffer += data.toString('base64');
+            });
+            res.on('end', function(){
+              photo.src = !buffer.length ? photo.src : 'data:' + photo.mimeType + ';base64,' + buffer;
               return done(null, photo);
             });
-          });
+          }).end();
 
         }
       }, function(err, photos){
