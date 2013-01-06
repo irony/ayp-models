@@ -167,7 +167,7 @@ module.exports = function (app) {
 
 			// user will continue while we download the actual file
 			done(null, reply);
-
+/*
 			client.get(photo.path, function(status, reply){
 				
 
@@ -179,7 +179,7 @@ module.exports = function (app) {
 						});
 					});
 
-			});
+			});*/
 		});
 	};
 
