@@ -12,8 +12,7 @@ module.exports = function(app){
 
     var self = this;
 
-    Array.prototype.slice.call(this.owners);
-    for(var user in this.owners)
+    for(var user in this.owners){
 
       if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
@@ -25,9 +24,9 @@ module.exports = function(app){
       if(self.tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.tags.length / 2)});
       if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.groups.length / 2)});
 
-    });
+    }
 
-  };  
+  }; 
 
   var reduce = function(group, actions){
 
