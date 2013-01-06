@@ -12,18 +12,20 @@ module.exports = function(app){
 
     var self = this;
 
-    for(var user in this.owners){
+    if (this && this.owners){
+      for(var user in this.owners){
 
-      if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
+        if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
-      if(self.starred) emit(user + "/" + self._id, {weight:100, value: 1});
-      if(self.views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.views / 10)});
-      
-      if(self.clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.clicks / 3)});
+        if(self.starred) emit(user + "/" + self._id, {weight:100, value: 1});
+        if(self.views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.views / 10)});
+        
+        if(self.clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.clicks / 3)});
 
-      if(self.tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.tags.length / 2)});
-      if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.groups.length / 2)});
+        if(self.tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.tags.length / 2)});
+        if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.groups.length / 2)});
 
+      }
     }
 
   }; 
