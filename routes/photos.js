@@ -8,6 +8,7 @@ var _ = require('underscore');
 
 module.exports = function(app){
 
+  var s3UrlPrefix = 'http://' + app.s3.bucket + '.' + app.s3.datacenterUrl;
 
   app.get('/wall', function(req, res){
     var model = new ViewModel(req.user);
@@ -85,16 +86,19 @@ module.exports = function(app){
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
         if (photo.mimeType.split('/')[0] == 'video'){
-          photo.src = '/img/originals/' + photo.source + '/' + photo._id;
+          photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
         } else {
           photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
 
-          var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
-          fs.readFile(filename, function(err, data){
-            photo.src = err ? photo.src : 'data:' + photo.mimeType + ';base64,' + data.toString('base64');
-            return done(null, photo);
+          var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
+          app.s3.getFile(filename, function(err, res){
+            res.on('end', function(data) {
+              photo.src = !data ? photo.src : 'data:' + photo.mimeType + ';base64,' + data.toString('base64');
+              return done(null, photo);
+            });
           });
+
         }
       }, function(err, photos){
         return res.json(photos);

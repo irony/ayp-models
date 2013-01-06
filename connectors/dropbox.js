@@ -1,11 +1,10 @@
 var dbox  = require("dbox");
-var config = { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'};
+var config = require('../conf').dbox;
 var dbox  = require("dbox");
 var async  = require("async");
 var dropbox   = dbox.app(config);
 var passport = require('passport');
 var Photo = require('../models/photo');
-var PathReducer = require('../utils/PathReducer');
 var _ = require('underscore');
 
 
@@ -95,9 +94,7 @@ module.exports = function (app) {
 		}
 
 
-		var filename = __dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id;
-		var fs = require('fs');
-		var p = require('path');
+		var filename = photo.source + '/' + photo._id;
 
 		//if (p.existsSync(filename)) //TODO: add force download switch
 	//		return;
@@ -107,12 +104,12 @@ module.exports = function (app) {
 			if (status !== 200){
 
 				if(status === 415) {
-					console.log('415 received, removing photo. This is not a photo.')
+					console.log('415 received, removing photo. This is not a photo.');
 					photo.remove(console.log);
 				}
 
 				if(status === 404) {
-					console.log('404 received, it is not a photo?', photo.path)
+					console.log('404 received, it is not a photo?', photo.path);
 				}
 
 
@@ -124,21 +121,11 @@ module.exports = function (app) {
 				console.log('error downloading thumbnail', status, thumbnail);
 				return;
 			}
-			var mkdirp = require('mkdirp');
 
-			var pathArray = filename.split('/');
-			pathArray.pop(); // remove file part
-
-			mkdirp(pathArray.join('/'), function (err) {
-				if (err && done) {
-					return done(err);
-				}
-
-				fs.writeFile(filename, thumbnail, function(err){
-					return done(err, thumbnail);
-				});
-
+			self.save('thumbnails', photo, thumbnail, function(err){
+				return done(err, thumbnail);
 			});
+
 		});
 	};
 
@@ -154,9 +141,6 @@ module.exports = function (app) {
 		}
 
 
-		var filename = __dirname + '/../static/img/originals/' + photo.source + '/' + photo._id,
-				fs = require('fs'),
-				p = require('path');
 
 		client.media(photo.path, function(status, reply){
 
@@ -164,12 +148,12 @@ module.exports = function (app) {
 			if (status !== 200){
 
 				if(status === 415) {
-					return console.log('415 received, removing photo. This is not a photo.', reply);
+					console.log('415 received, removing photo. This is not a photo.', reply);
 					photo.remove();
 				}
 
 				if(status === 404) {
-					return console.log('404 received, removing photo. It is not found in dropbox.', reply);
+					console.log('404 received, removing photo. It is not found in dropbox.', reply);
 					photo.remove();
 				}
 
@@ -186,25 +170,60 @@ module.exports = function (app) {
 
 			client.get(photo.path, function(status, reply){
 				
-				var mkdirp = require('mkdirp'),
-						pathArray = filename.split('/');
 
-				pathArray.pop(); // remove file part
 
-				mkdirp(pathArray.join('/'), function (err) {
-					if (err && done) {
-						return console.log('error downloading', err);
-					}
-
-					fs.writeFile(filename, reply, function(err){
+				self.save('originals', photo, reply, function(err){
 						photo.set('originalDownloaded', true);
 						photo.save(function(saveErr){
 							if (err || saveErr) console.log('error downloading photo', err, saveErr);
 						});
 					});
-				});
+
 			});
 		});
+	};
+
+	// TODO: move to superclass instead
+	this.save = function(folder, photo, data, done){
+
+/*
+		console.log('saving to s3', filename);
+		app.s3.putFile('/' + filename, data, function(err, data){
+			console.log('done', err, data);
+			if (done) done(err, data);
+
+		});*/
+
+
+		var filename = '/' + folder + '/' + photo.source + '/' + photo._id,
+				req = app.s3.put(filename, {
+				    'Content-Length': data.length
+				  , 'Content-Type': photo.mimeType
+				});
+
+		req.on('response', function(res){
+		  if (200 === res.statusCode) {
+		    return done();
+		  }
+		  return done(new Error('Error when saving to S3, code: ' + res));
+		});
+
+		return req.end(data);
+
+		/*
+		console.log('save', filename)
+		var mkdirp = require('mkdirp'),
+				fs = require('fs'),
+				p = require('path'),
+				pathArray = filename.split('/');
+
+		pathArray.pop(); // remove file part
+
+		mkdirp(pathArray.join('/'), function (err) {
+			if (err && done) done(err);
+		});
+
+		fs.writeFile(filename, data, done);*/
 	};
 
 	this.getClient = function(user){

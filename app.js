@@ -10,6 +10,11 @@ var express = require('express')
 
 var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
+var config = require('./conf');
+
+var knox      = require('knox');
+
+var amazon_url = 'http://s3.amazonaws.com/' + config.aws.bucket;
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -18,7 +23,7 @@ var passport = require('./auth/passport');
 //   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+  res.redirect('/login');
 }
 
 
@@ -44,6 +49,9 @@ exports.init = function(port) {
       app.use(app.router);
     });
 
+
+    app.s3 = knox.createClient(config.aws);
+    console.log(app.s3)
 
     http.globalAgent.maxSockets = Infinity;
 
