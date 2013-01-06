@@ -13,7 +13,7 @@ module.exports = function(app){
     var self = this;
 
     Array.prototype.slice.call(this.owners);
-    if (this.owners.length) this.owners.forEach(function(user){
+    for(var user in this.owners)
 
       if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
