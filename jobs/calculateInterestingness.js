@@ -6,7 +6,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 
 
-module.exports = function(app){
+module.exports = function(){
 
   var map = function(){
 

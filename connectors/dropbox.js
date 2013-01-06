@@ -5,7 +5,9 @@ var async  = require("async");
 var dropbox   = dbox.app(config);
 var passport = require('passport');
 var Photo = require('../models/photo');
+var User = require('../models/user');
 var _ = require('underscore');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 
 module.exports = function (app) {
@@ -51,7 +53,7 @@ module.exports = function (app) {
 
 			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
 				if (err) {
-					return res.send(500, err);
+					return res.send(500, new Error(err));
 				}
 
 				return res.end(thumbnail);
@@ -72,7 +74,7 @@ module.exports = function (app) {
 
 			self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
 				if (err) {
-					return res.send(500, err);
+					return res.send(500, new Error(err));
 				}
 
 				return res.redirect(thumbnail.url);
@@ -228,7 +230,7 @@ module.exports = function (app) {
 
 	this.getClient = function(user){
 
-		if (!user.accounts || !user.accounts.dropbox)
+		if (!user || !user.accounts || !user.accounts.dropbox)
 			return;
 		
 		// TODO: load from database and move these to import class instead
@@ -241,32 +243,49 @@ module.exports = function (app) {
 		return client;
 	};
 
-	this.downloadAllMetadata = function(user, done)
+	this.downloadAllMetadata = function(user, progress)
 	{
 		if (!user || !user.accounts.dropbox){
 			return done('Not dropbox folder', null);
 		}
+		var self = this;
 
-		var client = this.getClient(user);
-		
-		console.log('getting all photo dirs');
+    User.findById(new ObjectId(user._id), function(err, user){
+    	if (err || !user ) console.log('Error:', err, user);
+			var client = self.getClient(user);
+			
+			console.log('getting all photo dirs', user.accounts.dropbox.cursor);
 
-		client.readdir('/', {recursive: true, details: true}, function(status, reply){
-				console.log('found %d files. Extracting media files...', reply.length, reply);
-		    var photos = reply.map(function(photo){
-					return photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
-		    }).reduce(function(a,b){
-					if (b) {a.push(b)} // remove empty rows
-					return a;
-		    }, []);
 
-				_.forEach(photos, function(photo){
-					photo.source = 'dropbox';
-					// self.downloadThumbnail(photo, client, user, done);
+			var loadMore = function(cursor){
+				client.delta({cursor : cursor}, function(status, reply){
+			    var photos = reply.entries.map(function(photoRow){
+						var photo = photoRow[1];
+						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
+			    }).reduce(function(a,b){
+						if (b) {a.push(b)} // remove empty rows
+						return a;
+			    }, []);
+
+					_.forEach(photos, function(photo){
+						photo.source = 'dropbox';
+						// self.downloadThumbnail(photo, client, user, done);
+					});
+					if (reply.has_more) {
+						progress(null, photos);
+						loadMore(reply.cursor);
+					} else {
+						user.accounts.dropbox.cursor = reply.cursor;
+						user.save(function(err, user){
+							console.log('updated user with cursor', reply.cursor, err);
+							return progress(null, photos);
+						});
+					}
 				});
-				return done(null, photos);
-		});
+			};
 
+			loadMore(user.accounts.dropbox.cursor);
+		});
 
 	};
 

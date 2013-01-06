@@ -93,6 +93,7 @@ module.exports = function(app){
 
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
           app.s3.getFile(filename, function(err, res){
+            console.log(res)
             res.on('end', function(data) {
               photo.src = !data ? photo.src : 'data:' + photo.mimeType + ';base64,' + data.toString('base64');
               return done(null, photo);
