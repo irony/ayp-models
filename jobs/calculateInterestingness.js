@@ -11,7 +11,7 @@ module.exports = function(app){
   var map = function(){
 
     var self = this;
-    this.owners.forEach(function(user){
+    if (this.owners) this.owners.forEach(function(user){
 
       if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
