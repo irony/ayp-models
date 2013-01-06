@@ -65,7 +65,7 @@ module.exports = function(app){
       _.each(req.user.accounts, function(account, connectorName){
         console.log('Evaluating', connectorName);
 
-        var connector = require('../connectors/' + connectorName)(app);
+        var connector = require('../connectors/' + connectorName)(req.user);
         if (connector.downloadAllMetadata) {
             console.log('downloading metadata from', connectorName);
 

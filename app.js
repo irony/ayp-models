@@ -50,8 +50,8 @@ exports.init = function(port) {
     });
 
 
-    app.s3 = knox.createClient(config.aws);
-    console.log(app.s3)
+    global.s3 = knox.createClient(config.aws);
+    console.log(global.s3)
 
     http.globalAgent.maxSockets = Infinity;
 

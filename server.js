@@ -1,22 +1,12 @@
 var app = require('./app').init();
 
+require('./routes/connectors')(app);
 require('./routes/share')(app);
 require('./routes/photos')(app);
 require('./routes/import')(app);
 require('./routes/index')(app);
 require('./sockets/photos')(app);
 
-
-require('./connectors/dropbox')(app);
-require('./connectors/facebook')(app);
-require('./connectors/flickr')(app);
-require('./connectors/instagram')(app);
-
-
-
-require('./jobs/groupImages')(app);
-require('./jobs/calculateInterestingness')(app);
-require('./jobs/tagPhotos')(app);
 
 require('./utils/strings');
 

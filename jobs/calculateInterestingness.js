@@ -50,7 +50,6 @@ module.exports = function(){
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}}, function(err, model, stats){
 
     if (err) throw err;
-    console.log('Started reducing photos', model.toString());
 
     model.find(function(err, photos){
       photos.forEach(function(photo){

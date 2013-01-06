@@ -1,20 +1,25 @@
 var passport = require('passport');
+var Connector = require('./connectorBase');
 
-module.exports = function (app) {
+module.exports = function () {
 
-app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  function(req, res){
-    // The request will be redirected to facebook for authentication, so this
-    // function will not be called.
-  });
+  this.downloadThumbnail = function(user, photo, done){
+    throw new Error('Not implemented');
+  };
 
-app.get('/auth/facebook/callback', 
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
+  this.downloadPhoto = function(user, photo, done){
+    throw new Error('Not implemented');
+  };
+
+  this.downloadAllMetadata = function(user, progress){
+    throw new Error('Not implemented');
+  };
+
+  this.getClient = function(user){
+    throw new Error('Not implemented');
+  };
+  
   return this;
-
 };
+
+module.exports.prototype = Connector.prototype; //inherit from Connector base

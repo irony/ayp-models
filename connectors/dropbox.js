@@ -4,88 +4,18 @@ var dbox  = require("dbox");
 var async  = require("async");
 var dropbox   = dbox.app(config);
 var passport = require('passport');
+var Connector = require('./connectorBase');
 var Photo = require('../models/photo');
 var User = require('../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 
-module.exports = function (app) {
+module.exports = function () {
 
 	var self = this;
 
-		// GET /auth/dropbox
-	//   Use passport.authenticate() as route middleware to authenticate the
-	//   request.  The first step in Dropbox authentication will involve redirecting
-	//   the user to dropbox.com.  After authorization, Dropbox will redirect the user
-	//   back to this application at /auth/dropbox/callback
-	app.get('/auth/dropbox',
-		passport.authenticate('dropbox'),
-		function(req, res){
-		// The request will be redirected to Dropbox for authentication, so this
-		// function will not be called.s
-	});
-
-	// GET /auth/dropbox/callback
-	//   Use passport.authenticate() as route middleware to authenticate the
-	//   request.  If authentication fails, the user will be redirected back to the
-	//   login page.  Otherwise, the primary route function function will be called,
-	//   which, in this example, will redirect the user to the home page.
-	app.get('/auth/dropbox/callback',
-		passport.authenticate('dropbox', { failureRedirect: '/login' }),
-		function(req, res) {
-			res.redirect('/import');
-		});
-
-
-
-	app.get('/img/thumbnails/dropbox/*:id', function(req,res){
-		var id = req.url.split("/dropbox/")[1], // because of a bug in req.params parser i can't use that parameter, i will use url instead
-				client = this.getClient(req.user);
-		
-
-		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
-
-
-			if ( err || !photo ) return res.send(403, err);
-
-			console.log('Downloading thumbnail', photo.path);
-
-			self.downloadThumbnail(photo, client, req.user, function(err, thumbnail){
-				if (err) {
-					return res.send(500, new Error(err));
-				}
-
-				return res.end(thumbnail);
-			});
-
-		});
-	});
-
-	app.get('/img/originals/dropbox/*:id', function(req,res){
-		var id = req.url.split("/dropbox/")[1], // because of a bug in req.params parser i can't use that parameter, i will use url instead
-				client = this.getClient(req.user);
-		
-		console.log('Downloading original', id);
-
-		Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
-
-			if ( err || !photo ) return res.send(403, err);
-
-			self.downloadPhoto(photo, client, req.user, function(err, thumbnail){
-				if (err) {
-					return res.send(500, new Error(err));
-				}
-
-				return res.redirect(thumbnail.url);
-			});
-
-		});
-	});
-
-
-
-	this.downloadThumbnail = function(photo, client, user, done){
+	this.downloadThumbnail = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done('Not a dropbox user', null);
@@ -100,6 +30,7 @@ module.exports = function (app) {
 
 		//if (p.existsSync(filename)) //TODO: add force download switch
 	//		return;
+		var client = this.getClient(user);
 
 		client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
 
@@ -132,7 +63,7 @@ module.exports = function (app) {
 	};
 
 
-	this.downloadPhoto = function(photo, client, user, done){
+	this.downloadPhoto = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done('Not a dropbox user', null);
@@ -142,8 +73,7 @@ module.exports = function (app) {
 			return null;
 		}
 
-
-
+		var client = this.getClient(user);
 		client.media(photo.path, function(status, reply){
 
 
@@ -185,48 +115,6 @@ module.exports = function (app) {
 		});
 	};
 
-	// TODO: move to superclass instead
-	this.save = function(folder, photo, data, done){
-
-/*
-		console.log('saving to s3', filename);
-		app.s3.putFile('/' + filename, data, function(err, data){
-			console.log('done', err, data);
-			if (done) done(err, data);
-
-		});*/
-
-
-		var filename = '/' + folder + '/' + photo.source + '/' + photo._id,
-				req = app.s3.put(filename, {
-				    'Content-Length': data.length
-				  , 'Content-Type': photo.mimeType
-				});
-
-		req.on('response', function(res){
-		  if (200 === res.statusCode) {
-		    return done();
-		  }
-		  return done(new Error('Error when saving to S3, code: ' + res));
-		});
-
-		return req.end(data);
-
-		/*
-		console.log('save', filename)
-		var mkdirp = require('mkdirp'),
-				fs = require('fs'),
-				p = require('path'),
-				pathArray = filename.split('/');
-
-		pathArray.pop(); // remove file part
-
-		mkdirp(pathArray.join('/'), function (err) {
-			if (err && done) done(err);
-		});
-
-		fs.writeFile(filename, data, done);*/
-	};
 
 	this.getClient = function(user){
 
@@ -245,10 +133,11 @@ module.exports = function (app) {
 
 	this.downloadAllMetadata = function(user, progress)
 	{
-		if (!user || !user.accounts.dropbox){
-			return done('Not dropbox folder', null);
+		if (!user || user.accounts.dropbox != undefined){
+			return progress('Not dropbox folder', null);
 		}
-		var self = this;
+		var client = this.getClient(user);
+
 
     User.findById(new ObjectId(user._id), function(err, user){
     	if (err || !user ) console.log('Error:', err, user);
@@ -289,6 +178,9 @@ module.exports = function (app) {
 
 	};
 
+
 	return this;
 
 };
+
+module.exports.prototype = Connector.prototype; //inherit from Connector base

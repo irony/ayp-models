@@ -51,8 +51,6 @@ module.exports = function(){
 
   // add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}}, function(err, model, stats){
-    console.log('Started reducing photos', model.toString());
-
     if (err) throw err;
 
     model.find(function(err, groups){
