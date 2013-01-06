@@ -3,6 +3,8 @@ var Connector = require('./connectorBase');
 
 module.exports = function () {
 
+  this.scope = ['user_photos'];
+
   this.downloadThumbnail = function(user, photo, done){
     throw new Error('Not implemented');
   };

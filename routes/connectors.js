@@ -20,13 +20,15 @@ module.exports = function (app) {
   */
 
   fs.readdirSync(__dirname + '/../connectors').map(function(file){
-    var connector = file.split('.')[0];
-    console.log('setting up connector', connector);
+    var connectorName = file.split('.')[0],
+        connector = require('../connectors/' + connectorName);
 
+    console.log('setting up connector ', connectorName);
 
-    app.get('/auth/' + connector, passport.authenticate(connector));
-    app.get('/auth/' + connector + '/callback', passport.authenticate(connector, { failureRedirect: '/' }),
+    app.get('/auth/' + connectorName, passport.authenticate(connectorName));
+    app.get('/auth/' + connectorName + '/callback', passport.authenticate(connectorName, { failureRedirect: '/' }),
       function(req, res) {
+        // connector.connect();
         res.redirect('/import');
       });
   });
