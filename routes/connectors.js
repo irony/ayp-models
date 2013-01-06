@@ -25,7 +25,7 @@ module.exports = function (app) {
 
     console.log('setting up connector ', connectorName);
 
-    app.get('/auth/' + connectorName, passport.authenticate(connectorName));
+    app.get('/auth/' + connectorName, passport.authenticate(connectorName, {scope : connector.scope}));
     app.get('/auth/' + connectorName + '/callback', passport.authenticate(connectorName, { failureRedirect: '/' }),
       function(req, res) {
         // connector.connect();
@@ -35,7 +35,7 @@ module.exports = function (app) {
 
   app.get('/img/thumbnails/:connector/:id', function(req,res){
     var id = req.params.id,
-        connector = require('../connectors/' + req.params.connector)();
+        connector = require('../connectors/' + req.params.connector);
 
     Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
 

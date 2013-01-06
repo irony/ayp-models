@@ -11,11 +11,9 @@ var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 
-module.exports = function () {
+var connector = new Connector();
 
-	var self = this;
-
-	this.downloadThumbnail = function(user, photo, done){
+	connector.downloadThumbnail = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done('Not a dropbox user', null);
@@ -55,7 +53,7 @@ module.exports = function () {
 				return;
 			}
 
-			self.save('thumbnails', photo, thumbnail, function(err){
+			connector.save('thumbnails', photo, thumbnail, function(err){
 				return done(err, thumbnail);
 			});
 
@@ -63,7 +61,7 @@ module.exports = function () {
 	};
 
 
-	this.downloadPhoto = function(user, photo, done){
+	connector.downloadPhoto = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done('Not a dropbox user', null);
@@ -104,7 +102,7 @@ module.exports = function () {
 				
 
 
-				self.save('originals', photo, reply, function(err){
+				connector.save('originals', photo, reply, function(err){
 						photo.set('originalDownloaded', true);
 						photo.save(function(saveErr){
 							if (err || saveErr) console.log('error downloading photo', err, saveErr);
@@ -116,7 +114,7 @@ module.exports = function () {
 	};
 
 
-	this.getClient = function(user){
+	connector.getClient = function(user){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return;
@@ -131,7 +129,7 @@ module.exports = function () {
 		return client;
 	};
 
-	this.downloadAllMetadata = function(user, progress)
+	connector.downloadAllMetadata = function(user, progress)
 	{
 		if (!user || user.accounts.dropbox != undefined){
 			return progress('Not dropbox folder', null);
@@ -141,7 +139,7 @@ module.exports = function () {
 
     User.findById(new ObjectId(user._id), function(err, user){
     	if (err || !user ) console.log('Error:', err, user);
-			var client = self.getClient(user);
+			var client = connector.getClient(user);
 			
 			console.log('getting all photo dirs', user.accounts.dropbox.cursor);
 
@@ -158,7 +156,7 @@ module.exports = function () {
 
 					_.forEach(photos, function(photo){
 						photo.source = 'dropbox';
-						// self.downloadThumbnail(photo, client, user, done);
+						// connector.downloadThumbnail(photo, client, user, done);
 					});
 					if (reply.has_more) {
 						progress(null, photos);
@@ -178,9 +176,4 @@ module.exports = function () {
 
 	};
 
-
-	return this;
-
-};
-
-module.exports.prototype = Connector.prototype; //inherit from Connector base
+module.exports = connector;

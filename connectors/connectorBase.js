@@ -2,6 +2,8 @@ function Connector(){
   
 }
 
+// Used to request specieal permissions from example facebook
+Connector.prototype.scope = {};
 
 Connector.prototype.downloadThumbnail = function(user, photo, done){
   throw new Error('Not implemented');
