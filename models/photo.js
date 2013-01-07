@@ -23,6 +23,7 @@ var PhotoSchema = new mongoose.Schema({
   groups : { type: []},
   metadata : { type:  Schema.Types.Mixed},
   folders : { type: []},
+  rank : { type: Number},
   src : {type:String},
   store : {type:Schema.Types.Mixed},
   originalDownloaded : { type: Boolean, default: false},
