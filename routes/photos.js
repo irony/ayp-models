@@ -89,8 +89,9 @@ module.exports = function(app){
           photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
         } else {
-          photo.src = '/img/thumbnails/' + photo.source + '/' + photo._id;
-
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/thumbnails/' + photo.source + '/' + photo._id;
+          return done(null, photo);
+/*
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
           global.s3.get(filename).on('response', function(res){
             if (res.statusCode != 200 ) 
@@ -105,7 +106,7 @@ module.exports = function(app){
               return done(null, photo);
             });
           }).end();
-
+*/
         }
       }, function(err, photos){
         return res.json(photos);
@@ -136,11 +137,8 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-        var filename = path.resolve(__dirname + '/../static/img/thumbnails/' + photo.source + '/' + photo._id);
-        fs.readFile(filename, function(err, data){
-          photo.src = err ? '/img/thumbnails/' + photo.source + '/' + photo._id : 'data:image/jpeg;base64,' + data.toString('base64');
-          return done(null, photo);
-        });
+        photo.src = photo.store && photo.store.thumbnails.url || '/img/thumbnails/' + photo.source + '/' + photo._id;
+        return done(null, photo);
       }, function(err, photos){
         return res.json(photos);
       });

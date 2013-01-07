@@ -9,7 +9,8 @@ function AppController($scope, $http)
     appScope = $scope;
 }
 
-angular.module('app', []).directive('whenScrolled', function() {
+angular.module('app', [])
+.directive('whenScrolled', function() {
     return function(scope, elm, attr) {
         var raw = document.body;
         window.onscroll = function(event) {
@@ -18,8 +19,8 @@ angular.module('app', []).directive('whenScrolled', function() {
                 scope.$apply(attr.whenScrolled);
             }
         };
-    };
-}).directive('slideshow', function() {
+    }})
+.directive('slideshow', function() {
       var openDialog = {
          link :   function(scope, element, attrs) {
             function openDialog() {
@@ -31,8 +32,8 @@ angular.module('app', []).directive('whenScrolled', function() {
             element.bind('click', openDialog);
        }
    };
-   return openDialog;
-}).directive('rightClick', function($parse) {
+   return openDialog;})
+.directive('rightClick', function($parse) {
                 console.log('rightclick');
     return function(scope, element, attr) {
                 console.log('rightclick');

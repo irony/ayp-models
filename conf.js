@@ -35,7 +35,7 @@ module.exports = {
     key: process.env.AWS_ACCESS_KEY_ID || 'AKIAJETT3QLQHO6ZZTZA',
     secret: process.env.AWS_SECRET_ACCESS_KEY || '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',
     bucket: process.env.AWS_S3_BUCKET || 'heroku-photos-1',
-    datacenterUrl: 's3-website-us-east-1.amazonaws.com'
+    datacenterUrl: 'http://heroku-photos-1.s3-website-us-east-1.amazonaws.com'
   },
   dbox:
   { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'}

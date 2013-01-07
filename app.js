@@ -51,12 +51,8 @@ exports.init = function(port) {
 
 
     global.s3 = knox.createClient(config.aws);
-    console.log(global.s3)
 
     http.globalAgent.maxSockets = Infinity;
-
-    console.log('maxSockets', http.globalAgent.maxSockets);
-
 
     app.get('/account', ensureAuthenticated, function(req, res){
       res.render('account', { user: req.user });

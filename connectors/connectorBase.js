@@ -43,9 +43,12 @@ Connector.prototype.save = function(folder, photo, data, done){
 
     req.on('response', function(res){
       if (200 === res.statusCode) {
-        return done();
+        photo.store = photo.store || {};
+        photo.store[folder] = photo.store[folder] || {};
+        photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
+        return photo.save(done);
       }
-      return done(new Error('Error when saving to S3, code: ' + res));
+      return done(new Error('Error when saving to S3, code: ', res));
     });
 
     return req.end(data);
