@@ -6,8 +6,8 @@ var knox      = require('knox');
 var amazon_url = 'http://s3.amazonaws.com/' + config.aws.bucket;
 var async = require('async');
 var http = require('http');
-var Photo = require('./models/photo');
 var User = require('./models/user');
+var Photo = require('./models/photo');
 var importer = require('./jobs/importer');
 var _ = require('underscore');
 
