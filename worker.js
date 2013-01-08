@@ -11,42 +11,32 @@ var Photo = require('./models/photo');
 var importer = require('./jobs/importer');
 var _ = require('underscore');
 
-var photoQuery = Photo.find().where('store.thumbnails.stored').exists(false).populate('owners').sort('-modified').limit(50);
+// more logs
+require('longjohn');
 
-var queryParser = function queryParser(err, photos){
-  async.map(function(photo, done){
-    queryParser.parsing = true;
-    _.uniq(photo.owners, function(a){return a._id}).forEach(function(user){
-      importer.downloadPhoto(user, photo, function(err, result){
-        console.log('.');
-        done(err);
-      });
-    });
-
-  }, function(err){
-    queryParser.parsing = false;
-    console.log('finished with batch', err);
-    photoQuery.exec(queryParser);
-  });
-};
 
 
 var jobs = [
-  require('./jobs/groupImages'),
-  require('./jobs/calculateInterestingness'),
-  require('./jobs/tagPhotos'),
-  function(){
-    
-    if (!queryParser.parsing) // we don't want to intrude in the parsing process
-      photoQuery.exec(queryParser);
-  }
+  {fn:require('./jobs/groupImages'), interval: 10000},
+  {fn:require('./jobs/calculateInterestingness'), interval: 10000},
+  {fn:require('./jobs/tagPhotos'), interval: 10000},
+  {fn:require('./jobs/importer').fetchNewMetadata, interval: 3 * 60 * 1000},
+  {fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
+
 ];
 
-setInterval(function(){
+jobs.map(function(job){
 
-  async.parallel(jobs);
+  // first run once
+  job.fn.call();
 
-}, 10000);
+
+  setInterval(function(){
+
+    job.fn.call();
+
+  }, job.interval);
+});
 
 
 http.globalAgent.maxSockets = Infinity;

@@ -1,5 +1,6 @@
 
 var Photo = require('../models/photo');
+var User = require('../models/user');
 var _ = require('underscore');
 var async = require('async');
 
@@ -35,7 +36,7 @@ var importer = {
             dbPhoto.mimeType = photo.mime_type;
 
             dbPhoto.save(function(err, savedPhoto){
-              return progress(err, savedPhoto);
+              return progress && progress(err, savedPhoto);
             });
 
           });
@@ -67,7 +68,7 @@ var importer = {
 
   importPhotosFromAllConnectors : function(user, done){
     if (user.accounts){
-
+      
       _.each(user.accounts, function(account, connectorName){
         console.log('Evaluating', connectorName);
 
@@ -77,7 +78,7 @@ var importer = {
 
           connector.downloadAllMetadata(user, function(err, photos){
             if (err || !photos) return console.error(err);
-            console.log('saving %d photos', photos.length);
+            console.log('saving metadata for %d photos', photos.length);
             return importer.savePhotos(user, photos, done);
 
           });
@@ -86,8 +87,50 @@ var importer = {
 
     }
 
+  },
+  fetchNewMetadata : function(){
+    User.find().where('accounts.dropbox').exists().exec(function(err, users){
+      users.map(function(user){
+        importer.importPhotosFromAllConnectors(user);
+      });
+    });
+  },
+
+  fetchNewPhotos : function(autoRestart){
+
+    var photoQuery = Photo.find().where('store.thumbnails.stored').exists(false).sort('-modified').limit(100);
+    var downloadAllResults = function downloadAllResults(err, photos){
+       console.log('Found %d photos without downloaded images. Downloading...', photos.length);
+
+      async.map(photos, function(photo, done){
+        User.find().where('_id').in(photo.owners).exec(function(err, users){
+          
+          if (!users || !users.length) {
+            console.log("Didn't find any user records for any of the user ids:", photo.owners);
+            return photo.remove(done);
+          }
+
+          users.map(function(user){
+            importer.downloadPhoto(user, photo, function(err, result){
+              process.stdout.write('.');
+              done(null, photo); // ignore errors since we want to continue
+              if (err) console.error('\nError importing photo: %s', photo._id, err);
+            });
+          });
+        });
+      }, function(err, photos){
+        
+        console.log('\nImported %d photos', _.compact(photos).length);
+  
+        if(autoRestart)
+          photoQuery.exec(downloadAllResults);
+      });
+    };
+    
+    photoQuery.exec(downloadAllResults);
+
   }
 
-}
+};
 
 module.exports = importer;

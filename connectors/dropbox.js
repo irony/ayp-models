@@ -72,7 +72,8 @@ var connector = new Connector();
 		}
 
 		var client = this.getClient(user);
-		client.media(photo.path, function(status, reply){
+		//client.media(photo.path, function(status, reply){
+		client.get(photo.path, function(status, reply){
 
 
 			if (status !== 200){
@@ -95,21 +96,15 @@ var connector = new Connector();
 				return;
 			}
 
-			// user will continue while we download the actual file
-			done(null, reply);
-/*
-			client.get(photo.path, function(status, reply){
-				
+			connector.save('originals', photo, reply, function(err){
+					photo.set('originalDownloaded', true);
+					photo.save(function(saveErr){
+						if (err || saveErr) console.log('error downloading photo', err, saveErr);
 
-
-				connector.save('originals', photo, reply, function(err){
-						photo.set('originalDownloaded', true);
-						photo.save(function(saveErr){
-							if (err || saveErr) console.log('error downloading photo', err, saveErr);
-						});
+						done(null, reply);
 					});
+				});
 
-			});*/
 		});
 	};
 
@@ -131,14 +126,28 @@ var connector = new Connector();
 
 	connector.downloadAllMetadata = function(user, progress)
 	{
-		if (!user || user.accounts.dropbox != undefined){
-			return progress('Not dropbox folder', null);
+		if (!user || !user._id || user.accounts.dropbox === undefined){
+			return progress(new Error('Not a valid dropbox user'), null);
 		}
 		var client = this.getClient(user);
 
+		console.log('downloading metadata from dropbox for user id', user._id);
 
-    User.findById(new ObjectId(user._id), function(err, user){
-    	if (err || !user ) console.log('Error:', err, user);
+    User.findById(user._id, function(err, user){
+			if (err || !user ) return console.log('Error:', err, user);
+
+			if (user.accounts.dropbox.lastImport)
+			{
+				var minutes = (new Date().getTime() - user.accounts.dropbox.lastImport.getTime()) / 1000 / 60;
+				if (minutes < 1) return console.log('Waiting for import', minutes);
+			
+				user.accounts.dropbox.lastImport = new Date();
+				user.save(console.log);
+			}
+
+
+
+
 			var client = connector.getClient(user);
 			
 			console.log('getting all photo dirs', user.accounts.dropbox.cursor);

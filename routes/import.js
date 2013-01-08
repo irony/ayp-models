@@ -22,7 +22,7 @@ module.exports = function(app){
 
     if (req.user.accounts){
       importer.importPhotosFromAllConnectors(req.user, function(photos){
-        console.log('%d photos imoprted', photos.length); // may be called more than one time
+        console.log('%d photos imoprted', photos && photos.length); // may be called more than one time
       });
 
       res.redirect('/importing');

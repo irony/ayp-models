@@ -26,6 +26,8 @@ Connector.prototype.getClient = function(user){
 
 Connector.prototype.save = function(folder, photo, data, done){
 
+
+  if (!data) return done(new Error('No data'));
 /*
     console.log('saving to s3', filename);
     global.s3.putFile('/' + filename, data, function(err, data){
