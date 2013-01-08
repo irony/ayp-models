@@ -12,7 +12,7 @@ var importer = require('./jobs/importer');
 var _ = require('underscore');
 
 // more logs
-require('longjohn');
+// require('longjohn');
 
 
 
