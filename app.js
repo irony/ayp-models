@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 
 var _ = require('underscore');
 
-var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
+//var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
+var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692');
 var http = require('http');
 
 var express = require('express')

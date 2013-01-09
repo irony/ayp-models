@@ -56,10 +56,12 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
+    var maxRank = 1500;
+
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
     .where('hidden').ne(true)
-    .where('interestingness').gte(99- (req.query.interestingness || 50))
+    .where('rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
     .sort(reverse ? 'taken' : '-taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
