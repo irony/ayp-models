@@ -3,6 +3,8 @@
 var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
     _ = require('underscore'),
+    PhotoCopy = require('./photoCopy')(mongoose).Schema,
+
     Schema = mongoose.Schema;
 
 var PhotoSchema = new mongoose.Schema({
@@ -13,21 +15,17 @@ var PhotoSchema = new mongoose.Schema({
       source : { type: String},
       mimeType : { type: String},
       thumbnails : {type: Schema.Types.Mixed},
-      interestingness : {type: Number, default: 50},
-      views : { type: Number, default: 0},
-      clicks : { type: Number, default: 0},
-      hidden : { type: Boolean, default: false},
-      starred : { type: Number, default: 0},
-      original : { type: String},
-      tags : { type: []},
-      groups : { type: []},
+
+
+      // copies.userId.views++
+      copies : {}, // userId : {type: PhotoCopy}},
+
       metadata : { type:  Schema.Types.Mixed},
-      folders : { type: []},
-      rank : { type: Number},
       src : {type:String},
+
       store : {type:Schema.Types.Mixed},
+
       originalDownloaded : { type: Boolean, default: false},
-      sharedTo : { type: [User]},
       owners : [{ type: Schema.Types.ObjectId, ref: 'User' }]
     });
 

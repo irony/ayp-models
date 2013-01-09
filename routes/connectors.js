@@ -58,7 +58,7 @@ module.exports = function (app) {
 
   app.get('/img/originals/:connector/:id', function(req,res){
     var id = req.params.id,
-        connector = require('../connectors/' + req.params.connector)();
+        connector = require('../connectors/' + req.params.connector);
 
     console.log('Downloading original', id);
 

@@ -14,17 +14,17 @@ module.exports = function(){
 
     if (this && this.owners){
       for(var user in this.owners){
+        if (user && self.copies){
+          if(self.copies[user].hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
-        if(self.hidden) emit(user + "/" + self._id, {weight:100, value: 0});
+          if(self.copies[user].starred) emit(user + "/" + self._id, {weight:100, value: 1});
+          if(self.copies[user].views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.copies[user].views / 10)});
+          
+          if(self.copies[user].clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.copies[user].clicks / 3)});
 
-        if(self.starred) emit(user + "/" + self._id, {weight:100, value: 1});
-        if(self.views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.views / 10)});
-        
-        if(self.clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.clicks / 3)});
-
-        if(self.tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.tags.length / 2)});
-        if(self.groups && self.groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.groups.length / 2)});
-
+          if(self.copies[user].tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.copies[user].tags.length / 2)});
+          if(self.copies[user].groups && self.copies[user].groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.copies[user].groups / 2)});
+        }
       }
     }
 
@@ -53,8 +53,14 @@ module.exports = function(){
 
     model.find(function(err, photos){
       photos.forEach(function(photo){
+        var userId = photo._id.split('/')[0];
+        var photoId = photo._id.split('/')[1];
 
-        Photo.update({_id : new ObjectId(photo._id.split('/')[1])}, {$set : {interestingness : photo.value.value, calculated : new Date()}}, function(err, photo){
+        var setter = {$set : null};
+        setter.$set['copies.' + userId + '.clicksinterestingness'] = photo.value.value;
+        setter.$set['copies.' + userId + '.calculated'] = new Date();
+
+        Photo.update({_id : new ObjectId(photoId)}, setter, function(err, photo){
           if (err) console.log('error when updating interestingness:', err);
         });
 

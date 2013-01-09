@@ -37,8 +37,9 @@ Connector.prototype.save = function(folder, photo, data, done){
     });*/
 
 
-    var filename = '/' + folder + '/' + photo.source + '/' + photo._id,
-        req = global.s3.put(filename, {
+    var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
+    
+    var req = global.s3.put(filename, {
             'Content-Length': data.length,
             'Content-Type': photo.mimeType
         });

@@ -31,7 +31,7 @@ module.exports = function(app){
     .where('originalDownloaded').ne(false)
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
-    .sort('-interestingness')
+    .sort('-copies.' + req.user._id + 'interestingness')
     .exec(function(err, photos){
 
       console.log(photos);
@@ -57,18 +57,19 @@ module.exports = function(app){
     }
 
     var maxRank = 1500;
+    console.log('searching photos:', req.query)
 
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
-    .where('hidden').ne(true)
-    .where('rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
-    .sort(reverse ? 'taken' : '-taken')
+    .where('copies.' + req.user._id + '.hidden').ne(true)
+    .where('copies.' + req.user._id + '.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
+    .sort((reverse ? '':'-') + 'copies.' + req.user._id + '.taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .exec(function(err, photos){
-      if (!photos || !photos.length)
-        return res.end(err);
-
+      if (!photos || !photos.length){
+        return res.json(photos);
+      }
 
       photos = photos.reduce(function(a,b){
         var diffAverage = 0,
@@ -86,8 +87,13 @@ module.exports = function(app){
       }, []);
 
       async.map((photos || []), function(photo, done){
-        photo.metadata = null;
-        if (photo.mimeType.split('/')[0] == 'video'){
+
+        photo = _.extend(photo, photo.copies[req.user._id]); // only use this user's personal settings
+
+        delete photo.copies; // and remove all other copies
+        delete photo.metadata;
+
+        if (photo.mimeType.split('/')[0] === 'video'){
           photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
         } else {
@@ -96,7 +102,7 @@ module.exports = function(app){
 /*
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
           global.s3.get(filename).on('response', function(res){
-            if (res.statusCode != 200 ) 
+            if (res.statusCode != 200 )
               return done(null, photo);
 
             var buffer = '';

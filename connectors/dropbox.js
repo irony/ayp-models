@@ -150,7 +150,9 @@ var connector = new Connector();
 
 			var client = connector.getClient(user);
 			
-			console.log('getting all photo dirs', user.accounts.dropbox.cursor);
+
+			if (user.accounts.dropbox.cursor)	console.log('importing new photos');
+			else console.log('importing all photos photos');
 
 
 			var loadDelta = function(cursor){
@@ -174,7 +176,6 @@ var connector = new Connector();
 						user.accounts.dropbox.cursor = reply.cursor;
 						user.markModified('accounts');
 						user.save(function(err, user){
-							console.log('updated user with cursor', user.accounts.dropbox.cursor, err);
 							return progress(null, photos);
 						});
 					}

@@ -12,16 +12,16 @@ var importer = require('./jobs/importer');
 var _ = require('underscore');
 
 // more logs
-// require('longjohn');
+require('longjohn');
 
 
 
 var jobs = [
-  {fn:require('./jobs/groupImages'), interval: 10000},
+  //{fn:require('./jobs/groupImages'), interval: 10000},
   {fn:require('./jobs/calculateInterestingness'), interval: 10000},
-  {fn:require('./jobs/tagPhotos'), interval: 10000},
+  //{fn:require('./jobs/tagPhotos'), interval: 10000},
   {fn:require('./jobs/importer').fetchNewMetadata, interval: 10000}
-  // ,{fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
+  ,{fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
 
 ];
 

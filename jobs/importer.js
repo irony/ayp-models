@@ -1,5 +1,6 @@
 
 var Photo = require('../models/photo');
+var PhotoCopy = require('../models/photoCopy');
 var User = require('../models/user');
 var _ = require('underscore');
 var async = require('async');
@@ -25,11 +26,14 @@ var importer = {
 
             dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
 
+            var photoCopy = dbPhoto.copies[user._id] = dbPhoto.copies && dbPhoto.copies[user._id] || new PhotoCopy();
+            photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
+            dbPhoto.markModified('copies');
+
             dbPhoto.source = photo.source;
             dbPhoto.path = photo.path;
             dbPhoto.modified = photo.modified;
             dbPhoto.taken = photo.client_mtime;
-            dbPhoto.interestingness = dbPhoto.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
             // dbPhoto.interestingness = dbPhoto.interestingness || 50;
             dbPhoto.metadata = photo;
             dbPhoto.bytes = photo.bytes;

@@ -4,8 +4,6 @@ module.exports = function(app){
   
 
   io.of('/photos').on('connection', function (socket) {
-      console.log('connect');
-    
     socket.on('views', function (photoId) {
       Photo.update({_id : photoId}, {$inc : {views: 1}, $set : {modified : new Date()}}, function(err, photo){
         console.log('views', photoId, photo);
