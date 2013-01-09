@@ -48,30 +48,11 @@
   $(document).ready(function() {
 
     
-      document.querySelector( '.thumbnails' ).addEventListener( 'dblclick', function( event ) {
-        if (event.target.tagName == "IMG") {
-          zoom.to({ element: event.target });
-        }
-      } );
-
-
-
-    $('input[name="daterange"]').daterangepicker(
-      {
-          ranges: {
-              'Today': ['today', 'today'],
-              'Yesterday': ['yesterday', 'yesterday'],
-              'Last 7 Days': [Date.today().add({ days: -6 }), 'today'],
-              'Last 30 Days': [Date.today().add({ days: -29 }), 'today'],
-              'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
-              'Last Month': [Date.today().moveToFirstDayOfMonth().add({ months: -1 }), Date.today().moveToFirstDayOfMonth().add({ days: -1 })]
-          }
-      }, 
-      function(start, end) {
-          $('#reportrange span').html(start.toString('yyyy-dd-MM') + ' - ' + end.toString('yyyy-dd-MM 23:59:59'));
-          $('#reportrange span').onChange();
+    document.querySelector( '.thumbnails' ).addEventListener( 'dblclick', function( event ) {
+      if (event.target.tagName == "IMG") {
+        zoom.to({ element: event.target });
       }
-    );
+    } );
 
     $('input#email').typeahead({
       source: function (query, process) {

@@ -49,4 +49,19 @@ angular.module('app', [])
             return false;
         });
     };
+})
+.directive('datepicker', function() {
+   return function(scope, element, attrs) {
+       element.datepicker({
+           inline: true,
+           dateFormat: 'dd.mm.yy',
+           onSelect: function(dateText) {
+               var modelPath = $(this).attr('ng-model');
+               scope[modelPath] = this.value;
+               scope.$apply();
+           }
+       });
+   };
 });
+
+;

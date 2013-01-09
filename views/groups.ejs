@@ -1,4 +1,10 @@
-  <div class="photos" ng-show="loadingReverse"><h2>Loading...</h2></div>
+  <header ng-show="loadingReverse" class="loader pull-left">
+      <span></span>
+      <span></span>
+      <span></span>
+  </header>
+
+
   <div id="photos" class="photos" >
     <div ng-controller="GroupsController">
 
@@ -42,8 +48,10 @@
 
           <footer>
           <div class="group">
-            <header>
-              <h2>Loading...</h2>
+            <header class="loader">
+                <span></span>
+                <span></span>
+                <span></span>
             </header>
           </div>
         </footer>
