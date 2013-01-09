@@ -22,7 +22,7 @@
       <input type="hidden" ng-model="fromDate" ng-init="fromDate = '<%=fromDate%>'">
       <input type="hidden" ng-model="toDate" ng-init="toDate = '<%=toDate%>'">
 
-      <input type="text" name="daterange" ng-model="dateRange" placeholder="Enter date" ng-init="defaultDateRange = '<%=fromDate.split('T')[0] + " - " + toDate.split('T')[0] + ' 23:59:59' %>'">
+      <input type="text" name="daterange" ng-model="dateRange" datepicker placeholder="Enter date" ng-init="defaultDateRange = '<%=fromDate.split('T')[0] + " - " + toDate.split('T')[0] + ' 23:59:59' %>'">
       <input type="submit" class="btn btn-success pull-right" value="Share">
       <small>{{photos.length}} photos selected (<a ng-click="reset()" href="#">reset</a>)</small>
       
@@ -48,11 +48,13 @@
   $(document).ready(function() {
 
     
-    document.querySelector( '.thumbnails' ).addEventListener( 'dblclick', function( event ) {
-      if (event.target.tagName == "IMG") {
-        zoom.to({ element: event.target });
-      }
-    } );
+      document.querySelector( '.thumbnails' ).addEventListener( 'dblclick', function( event ) {
+        if (event.target.tagName == "IMG") {
+          zoom.to({ element: event.target });
+        }
+      } );
+
+
 
     $('input#email').typeahead({
       source: function (query, process) {

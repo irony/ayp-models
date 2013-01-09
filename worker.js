@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://localhost/allmyphotos');
+var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692');
 var express = require('express');
 var config = require('./conf');
 var knox      = require('knox');
@@ -20,8 +20,8 @@ var jobs = [
   {fn:require('./jobs/groupImages'), interval: 10000},
   {fn:require('./jobs/calculateInterestingness'), interval: 10000},
   {fn:require('./jobs/tagPhotos'), interval: 10000},
-  {fn:require('./jobs/importer').fetchNewMetadata, interval: 3 * 60 * 1000},
-  {fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
+  {fn:require('./jobs/importer').fetchNewMetadata, interval: 10000}
+  // ,{fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
 
 ];
 

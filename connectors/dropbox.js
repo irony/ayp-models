@@ -172,8 +172,9 @@ var connector = new Connector();
 						loadDelta(reply.cursor);
 					} else {
 						user.accounts.dropbox.cursor = reply.cursor;
+						user.markModified('accounts');
 						user.save(function(err, user){
-							console.log('updated user with cursor', reply.cursor, err);
+							console.log('updated user with cursor', user.accounts.dropbox.cursor, err);
 							return progress(null, photos);
 						});
 					}
