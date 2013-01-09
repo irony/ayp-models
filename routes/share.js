@@ -29,20 +29,30 @@ module.exports = function(app){
   app.post('/share', function(req, res){
     var span = new ShareSpan(req.body);
 
-    User.findOne({'emails' : req.body.email}, function(err, user){
+    User.findOne({'emails' : req.body.email}, function(err, toUser){
 
-      if (!user) {
+      if (!toUser) {
+        console.log('no user');
+        /*
+        toUser = new User();
+        toUser.emails = [req.body.email];
+        toUser.save();
         var model = new ViewModel(req.user);
         model.error = "User could not be found " + req.body.email;
-        res.render('500.ejs', model);
-        return;
+        res.render('500.ejs', model);*/
+        return res.send(500, "no such user");
       }
 
-      span.members = [req.user, user];
+      console.log('sharing user', req.user);
+
+      span.members = [req.user._id, toUser._id];
       span.startDate = new Date(req.body.daterange.split(' - ')[0].trim());
       span.stopDate = new Date(req.body.daterange.split(' - ')[1].trim());
 
       span.save(function(err, savedSpan){
+        console.log('saved span', savedSpan, err);
+        if (err)
+          return res.send(500, err);
         res.redirect('/spans');
       });
 
