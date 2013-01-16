@@ -61,7 +61,7 @@ function GroupsController($scope, $http){
 
         group.tags = group.photos.map(function(photo){
           return photo.tags;
-        }).reduce(function(a,b){return a.concat(b)}).reduce(function(a,b){
+        }).reduce(function(a,b){return a.concat(b)}, []).reduce(function(a,b){
           var tag = a.filter(function(t){return t.tag === b})[0] || {tag:b, count:0};
           
           if (!tag.count)

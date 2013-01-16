@@ -14,7 +14,7 @@ module.exports = function(){
 
     if (this && this.owners){
       for(var user in this.owners){
-        if (user && self.copies){
+        if (user && self.copies && self.copies[user]){
           if(self.copies[user].hidden) emit(user + "/" + self._id, {weight:100, value: 0});
 
           if(self.copies[user].starred) emit(user + "/" + self._id, {weight:100, value: 1});
@@ -57,7 +57,7 @@ module.exports = function(){
         var photoId = photo._id.split('/')[1];
 
         var setter = {$set : null};
-        setter.$set['copies.' + userId + '.clicksinterestingness'] = photo.value.value;
+        setter.$set['copies.' + userId + '.interestingness'] = photo.value.value !== 50 ? photo.value.value : Math.floor(Math.random()*100);
         setter.$set['copies.' + userId + '.calculated'] = new Date();
 
         Photo.update({_id : new ObjectId(photoId)}, setter, function(err, photo){

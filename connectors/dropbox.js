@@ -16,11 +16,11 @@ var connector = new Connector();
 	connector.downloadThumbnail = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
-			return done('Not a dropbox user', null);
+			return done(null, null) // 'Not a dropbox user'
 
 
 		if (!photo) {
-			return null;
+			return done(null, null);
 		}
 
 
@@ -35,12 +35,12 @@ var connector = new Connector();
 			if (status !== 200){
 
 				if(status === 415) {
-					console.log('415 received, removing photo. This is not a photo.');
+					console.log('[415]'); // ' received, removing photo. This is not a photo.');
 					photo.remove(console.log);
 				}
 
 				if(status === 404) {
-					console.log('404 received, it is not a photo?', photo.path);
+					// console.log('[404]'); //' received, it is not a photo?', photo.path);
 				}
 
 
@@ -64,11 +64,11 @@ var connector = new Connector();
 	connector.downloadPhoto = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
-			return done('Not a dropbox user', null);
+			return done(null, null); // not a dropbox user
 
 
 		if (!photo) {
-			return null;
+			return done(null, null);
 		}
 
 		var client = this.getClient(user);
@@ -79,12 +79,12 @@ var connector = new Connector();
 			if (status !== 200){
 
 				if(status === 415) {
-					console.log('415 received, removing photo. This is not a photo.', reply);
+					console.log('[415]'); //' received, removing photo. This is not a photo.', reply);
 					photo.remove();
 				}
 
 				if(status === 404) {
-					console.log('404 received, removing photo. It is not found in dropbox.', reply);
+					console.log('[404]'); //' received, removing photo. It is not found in dropbox.', reply);
 					photo.remove();
 				}
 
@@ -151,13 +151,12 @@ var connector = new Connector();
 			var client = connector.getClient(user);
 			
 
-			if (user.accounts.dropbox.cursor)	console.log('importing new photos');
-			else console.log('importing all photos photos');
+			if (!user.accounts.dropbox.cursor) console.log('No cursor. Importing all photos for user', user._id);
 
 
 			var loadDelta = function(cursor){
 				client.delta({cursor : cursor}, function(status, reply){
-			    var photos = reply.entries.map(function(photoRow){
+			    var photos = (reply && reply.entries || []).map(function(photoRow){
 						var photo = photoRow[1];
 						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
 			    }).reduce(function(a,b){

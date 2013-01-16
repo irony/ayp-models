@@ -57,7 +57,7 @@ module.exports = function(app){
     }
 
     var maxRank = 1500;
-    console.log('searching photos:', req.query)
+    console.log('searching photos:', req.query);
 
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
@@ -88,6 +88,7 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
 
+        delete photo.copies[req.user._id]._id; // the _id of the subdocument shouldn't replace the id of the photo
         photo = _.extend(photo, photo.copies[req.user._id]); // only use this user's personal settings
 
         delete photo.copies; // and remove all other copies

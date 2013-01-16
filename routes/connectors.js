@@ -37,9 +37,12 @@ module.exports = function (app) {
     var id = req.params.id,
         connector = require('../connectors/' + req.params.connector);
 
-    Photo.findOne({'_id': id, 'owners':req.user._id}, function(err, photo){
+    Photo.findById(id, function(err, photo){
 
-      if ( err || !photo ) return res.send(403, err);
+      if ( err || !photo ) {
+        console.log('error when serving thumbnail', id, req.user._id, err, photo);
+        return res.send(403, err);
+      }
 
       console.log('Downloading thumbnail', req.params);
 

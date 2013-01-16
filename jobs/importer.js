@@ -21,12 +21,15 @@ var importer = {
 
             if (!dbPhoto){
               dbPhoto = new Photo();
+              dbPhoto.copies = {};
             }
 
 
             dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
 
-            var photoCopy = dbPhoto.copies[user._id] = dbPhoto.copies && dbPhoto.copies[user._id] || new PhotoCopy();
+            var photoCopy = dbPhoto.copies && dbPhoto.copies[user._id] || new PhotoCopy();
+            dbPhoto.copies[user._id] = photoCopy;
+
             photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
             dbPhoto.markModified('copies');
 
@@ -54,7 +57,7 @@ var importer = {
   downloadPhoto : function(user, photo, done){
 
     var connector = require('../connectors/' + photo.source);
-    if (connector.downloadPhoto) {
+    if (connector.downloadPhoto && user.accounts[photo.source]) {
       async.parallel({
         download : function(callback){
           connector.downloadPhoto(user, photo, callback);
@@ -74,14 +77,12 @@ var importer = {
     if (user.accounts){
       
       _.each(user.accounts, function(account, connectorName){
-        console.log('Evaluating', connectorName);
-
         var connector = require('../connectors/' + connectorName);
         if (connector.downloadAllMetadata) {
-            console.log('downloading metadata from', connectorName);
-
           connector.downloadAllMetadata(user, function(err, photos){
             if (err || !photos) return console.error(err);
+            if (photos.length === 0) return;
+
             console.log('saving metadata for %d photos', photos.length);
             return importer.savePhotos(user, photos, done);
 
@@ -94,7 +95,7 @@ var importer = {
   },
   fetchNewMetadata : function(){
     User.find().where('accounts.dropbox').exists().exec(function(err, users){
-      users.map(function(user){
+      _.uniq(users, false, function(a){return a._id}).map(function(user){
         importer.importPhotosFromAllConnectors(user);
       });
     });
@@ -102,15 +103,15 @@ var importer = {
 
   fetchNewPhotos : function(autoRestart){
 
-    var photoQuery = Photo.find().where('store.thumbnails.stored').exists(false).sort('-modified').limit(100);
+    var photoQuery = Photo.find().where('store.thumbnails.stored').exists(false).sort('-modified').limit(50);
     var downloadAllResults = function downloadAllResults(err, photos){
-       console.log('Found %d photos without downloaded images. Downloading...', photos.length);
+      // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
       async.map(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
           if (!users || !users.length) {
-            console.log("Didn't find any user records for any of the user ids:", photo.owners);
+            // console.log("Didn't find any user records for any of the user ids:", photo.owners);
             return photo.remove(done);
           }
 
