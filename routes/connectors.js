@@ -70,7 +70,7 @@ module.exports = function (app) {
       if ( err || !photo ) return res.send(403, err);
 
       connector.downloadPhoto(req.user, photo, function(err, thumbnail){
-        if (err) {
+        if (err || !thumbnail) {
           return res.send(500, new Error(err));
         }
 

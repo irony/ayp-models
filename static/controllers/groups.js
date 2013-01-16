@@ -83,12 +83,15 @@ function GroupsController($scope, $http){
 
         $scope.counter += photos.length;
         $scope.loading = false;
+        $scope.loadingReverse = false;
 
         if (done) done();
 
       }
     }).error(function(err){
       $scope.loading = false;
+      $scope.loadingReverse = false;
+      
       if (done) done(err);
       // alert somehow?
     });
