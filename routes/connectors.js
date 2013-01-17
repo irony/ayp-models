@@ -74,7 +74,10 @@ module.exports = function (app) {
           return res.send(500, new Error(err));
         }
 
-        return res.redirect(thumbnail.url);
+        if (thumbnail.url)
+          return res.redirect(thumbnail.url);
+        else return res.end(thumbnail);
+
       });
 
     });
