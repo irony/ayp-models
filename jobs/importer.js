@@ -83,7 +83,7 @@ var importer = {
             if (err || !photos) return console.error(err);
             if (photos.length === 0) return;
 
-            console.log('saving metadata for %d photos', photos.length);
+            console.log('found %d new photos', photos.length);
             return importer.savePhotos(user, photos, done);
 
           });

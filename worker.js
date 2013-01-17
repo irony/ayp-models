@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
-// var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692');
+// var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
+var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692');
 var express = require('express');
 var config = require('./conf');
 var knox      = require('knox');
