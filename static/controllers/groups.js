@@ -45,6 +45,8 @@ function GroupsController($scope, $http){
     var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 25};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
+      $scope.loading = false;
+      $scope.loadingReverse = false;
 
       if (photos.length)
       {
@@ -82,8 +84,6 @@ function GroupsController($scope, $http){
         }
 
         $scope.counter += photos.length;
-        $scope.loading = false;
-        $scope.loadingReverse = false;
 
         if (done) done();
 

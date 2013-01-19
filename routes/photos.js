@@ -34,7 +34,6 @@ module.exports = function(app){
     .sort('-copies.' + req.user._id + 'interestingness')
     .exec(function(err, photos){
 
-      console.log(photos);
       var photo = photos && photos[Math.round(Math.random()*50)];
       if(!photo) {
         return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
