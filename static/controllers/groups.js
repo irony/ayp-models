@@ -16,7 +16,6 @@ function GroupsController($scope, $http){
   };
 
   $scope.dblclick = function(photo){
-    $scope.loadingReverse = true;
     $scope.loadMore(photo.taken, $scope.zoomLevel+10, function(err){
       document.location = '#' + photo.taken;
     });
@@ -35,7 +34,7 @@ function GroupsController($scope, $http){
     }
 
     // prevent hammering
-    if ($scope.loading) return;
+    //if ($scope.loading) return;
     $scope.loading = true;
 
 
