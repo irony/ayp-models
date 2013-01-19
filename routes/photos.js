@@ -62,6 +62,7 @@ module.exports = function(app){
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
+    .where('store.thumbnails.stored').exists()
     .where('copies.' + req.user._id + '.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
     .sort((reverse ? '':'-') + 'copies.' + req.user._id + '.taken')
     .skip(req.query.skip || 0)
