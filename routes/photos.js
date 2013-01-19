@@ -146,7 +146,7 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-        photo.src = photo.store && photo.store.thumbnails.url || '/img/thumbnails/' + photo.source + '/' + photo._id;
+        photo.src = photo.store && photo.store.thumbnails && photo.store.thumbnails.url || '/img/thumbnails/' + photo.source + '/' + photo._id;
         return done(null, photo);
       }, function(err, photos){
         return res.json(photos);

@@ -16,7 +16,7 @@ var connector = new Connector();
 	connector.downloadThumbnail = function(user, photo, done){
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
-			return done(null, null) // 'Not a dropbox user'
+			return done(null, null); // 'Not a dropbox user'
 
 
 		if (!photo) {
@@ -30,7 +30,7 @@ var connector = new Connector();
 	//		return;
 		var client = this.getClient(user);
 
-		client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
+		return client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
 
 			if (status !== 200){
 
@@ -53,7 +53,7 @@ var connector = new Connector();
 				return;
 			}
 
-			connector.save('thumbnails', photo, thumbnail, function(err){
+			return connector.save('thumbnails', photo, thumbnail, function(err){
 				return done(err, thumbnail);
 			});
 
@@ -73,7 +73,7 @@ var connector = new Connector();
 
 		var client = this.getClient(user);
 		//client.media(photo.path, function(status, reply){
-		client.get(photo.path, function(status, reply){
+		return client.get(photo.path, function(status, reply){
 
 
 			if (status !== 200){
@@ -96,12 +96,12 @@ var connector = new Connector();
 				return;
 			}
 
-			connector.save('originals', photo, reply, function(err){
+			return connector.save('originals', photo, reply, function(err){
 					photo.set('originalDownloaded', true);
-					photo.save(function(saveErr){
+					return photo.save(function(saveErr){
 						if (err || saveErr) console.log('error downloading photo', err, saveErr);
 
-						done(null, reply);
+						return done(null, reply);
 					});
 				});
 
@@ -133,7 +133,7 @@ var connector = new Connector();
 
 		console.log('downloading metadata from dropbox for user id', user._id);
 
-    User.findById(user._id, function(err, user){
+    return User.findById(user._id, function(err, user){
 			if (err || !user ) return console.log('Error:', err, user);
 
 			if (user.accounts.dropbox.lastImport)
@@ -170,18 +170,18 @@ var connector = new Connector();
 					});
 					if (reply.has_more) {
 						progress(null, photos);
-						loadDelta(reply.cursor);
+						return loadDelta(reply.cursor);
 					} else {
 						user.accounts.dropbox.cursor = reply.cursor;
 						user.markModified('accounts');
-						user.save(function(err, user){
+						return user.save(function(err, user){
 							return progress(null, photos);
 						});
 					}
 				});
 			};
 
-			loadDelta(user.accounts.dropbox.cursor);
+			return loadDelta(user.accounts.dropbox.cursor);
 		});
 
 	};
