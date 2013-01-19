@@ -49,7 +49,11 @@ Connector.prototype.save = function(folder, photo, data, done){
         photo.store = photo.store || {};
         photo.store[folder] = photo.store[folder] || {};
         photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
-        return photo.save(done);
+        try{
+          return photo.save(done);
+        } catch(e){
+          return done(new Error('Error when saving photo to database, error: ', e));
+        }
       }
       return done(new Error('Error when saving to S3, code: ', res));
     });
