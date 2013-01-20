@@ -10,7 +10,8 @@ var PhotoCopy = new mongoose.Schema({
       starred : { type: Number, default: 0},
       tags : { type: []},
       groups : { type: []},
-      rank : { type: Number, default: 0}
+      top : { type: Number, default: null},
+      rank : { type: Number, default: 50}
     });
 
 module.exports = mongoose.model('PhotoCopy', PhotoCopy);

@@ -34,7 +34,7 @@ function GroupsController($scope, $http){
     }
 
     // prevent hammering
-    //if ($scope.loading) return;
+    if ($scope.loading) return;
     $scope.loading = true;
 
 

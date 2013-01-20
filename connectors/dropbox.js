@@ -73,8 +73,9 @@ var connector = new Connector();
 
 		var client = this.getClient(user);
 		//client.media(photo.path, function(status, reply){
-		return client.get(photo.path, function(status, reply){
+		client.stream(photo.path, function(status, reply){
 
+			console.log('received stream', status, reply)
 
 			if (status !== 200){
 
@@ -134,7 +135,7 @@ var connector = new Connector();
 		// console.log('downloading metadata from dropbox for user id', user._id);
 
     return User.findById(user._id, function(err, user){
-			if (err || !user ) return console.log('Error:', err, user);
+			if (err || !user || !user.accounts || !user.accounts.dropbox) return console.log('Error:', err, user);
 
 			/*
 			if (user.accounts.dropbox.lastImport)
@@ -157,7 +158,10 @@ var connector = new Connector();
 
 			var loadDelta = function(cursor){
 				client.delta({cursor : cursor}, function(status, reply){
-			    var photos = (reply && reply.entries || []).map(function(photoRow){
+					if (status !== 200 || !reply)
+						return progress(status, null);
+
+			    var photos = (reply.entries || []).map(function(photoRow){
 						var photo = photoRow[1];
 						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
 			    }).reduce(function(a,b){
@@ -169,7 +173,7 @@ var connector = new Connector();
 						photo.source = 'dropbox';
 						// connector.downloadThumbnail(photo, client, user, done);
 					});
-					if (reply && reply.has_more) {
+					if (reply.has_more) {
 						progress(null, photos);
 						return loadDelta(reply.cursor);
 					} else {

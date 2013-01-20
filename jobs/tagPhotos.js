@@ -18,8 +18,12 @@ module.exports = function(){
     {
       var self = this;
         parts.forEach(function(tag){
-          if (tag.trim())
-            emit(self._id, tag.trim().split('_').join(' '));
+          if (tag.trim()){
+            self.owners.map(function(user){
+              emit(self._id, tag.trim().split('_').join(' '));
+            });
+
+          }
         });
     }
   };
@@ -30,14 +34,21 @@ module.exports = function(){
 
   };
 
+  console.log('Starting map/reduce tags...');
+
   // add query to only reduce modified images
-  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'tags'}}, function(err, model, stats){
+  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'tags'}, verbose:true}, function(err, model, stats){
+  
+
     if (err) throw err;
 
     model.find(function(err, photos){
+      console.log('Done with tags map/reduce. Updating %d photos', photos.length, stats);
       photos.forEach(function(photo){
-        Photo.update({_id : photo._id}, {$set : {tags : (photo.value || '').split(',')}}, function(err, photo){
+        var updated = {tags : (photo.value || '').split(',')};
+        Photo.update({_id : photo._id}, updated, function(err, count){
           if (err) return console.log('error when updating tags:', err);
+          if (!photo) return console.log("didn't find photo to update");
         });
       });
 

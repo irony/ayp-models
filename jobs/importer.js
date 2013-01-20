@@ -120,16 +120,13 @@ var importer = {
 
           users.map(function(user){
             importer.downloadPhoto(user, photo, function(err, result){
-              done(err, photo);
+              done(null, photo); // ignore errors to continue
             });
           });
         });
       }, function(err, photos){
         
-        if (err)
-          console.error('\nError importing photo. Imported %d', photos.length, err);
-        else
-          console.log('\nImported %d photos', _.compact(photos).length);
+        console.log('\nImported %d photos', _.compact(photos).length);
   
         if(options && options.autoRestart){
           process.nextTick(function(){

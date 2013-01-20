@@ -2,6 +2,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
     timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
+    emit = {}, // fool jsLint
     mongoose = require('mongoose');
 
 
@@ -12,52 +13,54 @@ module.exports = function(){
 
     var self = this;
 
-    if (this && this.owners){
-      for(var user in this.owners){
-        if (user && self.copies && self.copies[user]){
-          if(self.copies[user].hidden) emit(user + "/" + self._id, {weight:100, value: 0});
+    for(var user in self.copies){
+      if (user && self.copies && self.copies[user]){
 
-          if(self.copies[user].starred) emit(user + "/" + self._id, {weight:100, value: 1});
-          if(self.copies[user].views) emit(user + "/" + self._id, {weight:80, value: Math.min(1, 0.5 + self.copies[user].views / 10)});
-          
-          if(self.copies[user].clicks) emit(user + "/" + self._id, {weight:90, value: Math.min(1, 0.8 + self.copies[user].clicks / 3)});
+        var group = user + "/" + self._id;
+        if(self.copies[user].hidden) emit(group, 0);
 
-          if(self.copies[user].tags.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.5 + self.copies[user].tags.length / 2)});
-          if(self.copies[user].groups && self.copies[user].groups.length) emit(user + "/" + self._id, {weight:70, value: Math.min(1, 0.6 + self.copies[user].groups / 2)});
-        }
+        if(self.copies[user].starred) emit(group, 100);
+        if(self.copies[user].views) emit(group, (0.5 + self.copies[user].views / 10)*100);
+        
+        if(self.copies[user].clicks) emit(group, (0.8 + self.copies[user].clicks / 3)*100);
+
+        if(self.tags && self.tags.length) emit(group, (0.5 + self.tags.length / 2)*100);
+        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, (0.6 + self.copies[user].groups / 2)*100);
       }
     }
 
-  }; 
+  };
 
   var reduce = function(group, actions){
 
     var returnValue = 0;
-    var returnWeight = 0;
     var count = 0;
     actions.forEach(function(action){
-      returnValue += Math.min(100, action.value * (action.weight));
-      returnWeight += action.weight;
+      returnValue += action.value;
       count++;
     });
 
-    if (returnWeight === 0) return null;
-
-    return {weight: Math.round(parseFloat(returnWeight / count)), value: Math.round(parseFloat(returnValue / count))};
+    return Math.round(parseFloat(returnValue / count));
   };
 
+  console.log('Starting map/reduce interestingness...');
+
 // add query to only reduce modified images
-  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}}, function(err, model, stats){
+  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}, verbose: true}, function(err, model, stats){
+
+    console.log('Done with map/reduce.', stats);
 
     if (err) throw err;
 
     model.find(function(err, photos){
+      console.log('Updating %d photos.', photos.length);
       photos.forEach(function(photo){
         var userId = photo._id.split('/')[0];
         var photoId = photo._id.split('/')[1];
 
-        var setter = {$set : null};
-        setter.$set['copies.' + userId + '.interestingness'] = photo.value.value != 50 ? photo.value.value : Math.floor(Math.random()*100);
+        var setter = {$set : {}};
+        var interestingness = photo.value !== 50 ? photo.value : Math.floor(Math.random()*100);
+        setter.$set['copies.' + userId + '.interestingness'] = interestingness;
         setter.$set['copies.' + userId + '.calculated'] = new Date();
 
         Photo.update({_id : new ObjectId(photoId)}, setter, function(err, photo){

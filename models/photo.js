@@ -15,12 +15,13 @@ var PhotoSchema = new mongoose.Schema({
       source : { type: String},
       mimeType : { type: String},
       thumbnails : {type: Schema.Types.Mixed},
-
+      tags : [String],
 
       // copies.userId.views++
       copies : {}, // userId : {type: PhotoCopy}},
 
       metadata : { type:  Schema.Types.Mixed},
+      exif : {},
       src : {type:String},
 
       store : {type:Schema.Types.Mixed},
