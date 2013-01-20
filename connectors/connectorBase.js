@@ -2,6 +2,41 @@ function Connector(){
   
 }
 
+var extractExif = function(data, done){
+  var ExifImage = require('exif').ExifImage;
+
+  try {
+      var exifExtractor = new ExifImage({ image : data}, function(err, exifArray){
+        
+        if (err || !exifArray)
+          return done(err, null);
+
+        var exif = {
+          gps: exifArray.gps.reduce(function(content, item){
+            console.log(item);
+           content[item.tagName] = item.value;
+           return content;
+          }, {})
+          ,
+          exif: exifArray.exif.reduce(function(content, item){
+           content[item.tagName] = item.value;
+           return content;
+          }, {})
+          ,
+          image: exifArray.image.reduce(function(content, item){
+           content[item.tagName] = item.value;
+           return content;
+          }, {})
+          ,
+          raw : exifArray
+        };
+        return done(err, exif);
+      });
+  } catch (error) {
+    return done(error, null);
+  }
+};
+
 // Used to request specieal permissions from example facebook
 Connector.prototype.scope = {};
 
@@ -45,17 +80,25 @@ Connector.prototype.save = function(folder, photo, data, done){
         });
 
     req.on('response', function(res){
-      if (200 === res.statusCode) {
-        photo.store = photo.store || {};
-        photo.store[folder] = photo.store[folder] || {};
-        photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
-        try{
-          return photo.save(done);
-        } catch(e){
-          return done(new Error('Error when saving photo to database, error: ', e));
-        }
-      }
-      return done(new Error('Error when saving to S3, code: ', res));
+      if (200 === res.statusCode && data) {
+
+        extractExif(data, function(err, exif){
+
+          if (exif)
+            console.log('exif:', err, exif);
+  
+          photo.set('exif', exif || photo.exif);
+          photo.store = photo.store || {};
+          photo.store[folder] = photo.store[folder] || {};
+          photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
+          try{
+            return photo.save(done);
+          } catch(e){
+            return done(new Error('Error when saving photo to database, error: ', e));
+          }
+        });
+
+      } else return done(new Error('Error when saving to S3, code: ', res));
     });
 
     return req.end(data);

@@ -22,7 +22,10 @@ var jobs = [
   {fn:require('./jobs/calculateInterestingness'), interval: 10000},
   //{fn:require('./jobs/tagPhotos'), interval: 10000},
   {fn:require('./jobs/importer').fetchNewMetadata, interval: 10000}
-  ,{fn:require('./jobs/importer').fetchNewPhotos, interval: 10000}
+  ,{fn:function(){require('./jobs/importer').fetchNewPhotos({
+      limit: 10,
+      autoRestart : true
+    })}, interval: 0}
 
 ];
 
@@ -32,11 +35,13 @@ jobs.map(function(job){
   job.fn.call();
 
 
-  setInterval(function(){
+  if (job.interval){
+    setInterval(function(){
 
-    job.fn.call();
+      job.fn.call();
 
-  }, job.interval);
+    }, job.interval);
+  }
 });
 
 

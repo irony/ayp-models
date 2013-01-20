@@ -101,9 +101,12 @@ var importer = {
     });
   },
 
-  fetchNewPhotos : function(autoRestart){
+  fetchNewPhotos : function(options){
 
-    var photoQuery = Photo.find().where('store.thumbnails.stored').exists(false).sort('-modified').limit(50);
+    var photoQuery = Photo.find().where('store.thumbnails.stored')
+    .exists(false)
+    .sort('-modified')
+    .limit(options && options.limit || 10);
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
@@ -117,21 +120,26 @@ var importer = {
 
           users.map(function(user){
             importer.downloadPhoto(user, photo, function(err, result){
-              process.stdout.write('.');
-              done(null, photo); // ignore errors since we want to continue
-              if (err) console.error('\nError importing photo: %s', photo._id, err);
+              done(err, photo);
             });
           });
         });
       }, function(err, photos){
         
-        console.log('\nImported %d photos', _.compact(photos).length);
+        if (err)
+          console.error('\nError importing photo. Imported %d', photos.length, err);
+        else
+          console.log('\nImported %d photos', _.compact(photos).length);
   
-        if(autoRestart)
-          photoQuery.exec(downloadAllResults);
+        if(options && options.autoRestart){
+          process.nextTick(function(){
+            photoQuery.exec(downloadAllResults);
+          });
+        }
       });
     };
     
+    // first run
     photoQuery.exec(downloadAllResults);
 
   }
