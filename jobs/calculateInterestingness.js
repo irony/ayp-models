@@ -57,7 +57,7 @@ module.exports = function(){
         var photoId = photo._id.split('/')[1];
 
         var setter = {$set : null};
-        setter.$set['copies.' + userId + '.interestingness'] = photo.value.value !== 50 ? photo.value.value : Math.floor(Math.random()*100);
+        setter.$set['copies.' + userId + '.interestingness'] = photo.value.value != 50 ? photo.value.value : Math.floor(Math.random()*100);
         setter.$set['copies.' + userId + '.calculated'] = new Date();
 
         Photo.update({_id : new ObjectId(photoId)}, setter, function(err, photo){

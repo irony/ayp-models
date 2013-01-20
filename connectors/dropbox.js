@@ -131,11 +131,12 @@ var connector = new Connector();
 		}
 		var client = this.getClient(user);
 
-		console.log('downloading metadata from dropbox for user id', user._id);
+		// console.log('downloading metadata from dropbox for user id', user._id);
 
     return User.findById(user._id, function(err, user){
 			if (err || !user ) return console.log('Error:', err, user);
 
+			/*
 			if (user.accounts.dropbox.lastImport)
 			{
 				var minutes = (new Date().getTime() - user.accounts.dropbox.lastImport.getTime()) / 1000 / 60;
@@ -143,7 +144,7 @@ var connector = new Connector();
 			
 				user.accounts.dropbox.lastImport = new Date();
 				user.save(console.log);
-			}
+			}*/
 
 
 
@@ -151,7 +152,7 @@ var connector = new Connector();
 			var client = connector.getClient(user);
 			
 
-			if (!user.accounts.dropbox.cursor) console.log('No cursor. Importing all photos for user', user._id);
+			if (!user.accounts.dropbox.cursor) console.log('Importing all photos for user', user._id);
 
 
 			var loadDelta = function(cursor){
@@ -168,7 +169,7 @@ var connector = new Connector();
 						photo.source = 'dropbox';
 						// connector.downloadThumbnail(photo, client, user, done);
 					});
-					if (reply.has_more) {
+					if (reply && reply.has_more) {
 						progress(null, photos);
 						return loadDelta(reply.cursor);
 					} else {

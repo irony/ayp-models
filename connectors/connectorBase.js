@@ -84,10 +84,9 @@ Connector.prototype.save = function(folder, photo, data, done){
 
         extractExif(data, function(err, exif){
 
-          if (exif)
-            console.log('exif:', err, exif);
-  
           photo.set('exif', exif || photo.exif);
+          photo.markModified('exif');
+
           photo.store = photo.store || {};
           photo.store[folder] = photo.store[folder] || {};
           photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
