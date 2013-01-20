@@ -13,7 +13,6 @@ var extractExif = function(data, done){
 
         var exif = {
           gps: exifArray.gps.reduce(function(content, item){
-            console.log(item);
            content[item.tagName] = item.value;
            return content;
           }, {})
