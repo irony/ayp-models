@@ -18,9 +18,9 @@ require('longjohn');
 
 
 var jobs = [
-  //{fn:require('./jobs/groupImages'), interval: 10000},
+  {fn:require('./jobs/groupImages'), interval: 120000},
   {fn:require('./jobs/calculateInterestingness'), interval: 10000},
-  //{fn:require('./jobs/tagPhotos'), interval: 10000},
+  {fn:require('./jobs/tagPhotos'), interval: 60000},
   {fn:require('./jobs/importer').fetchNewMetadata, interval: 10000}
   ,{fn:function(){require('./jobs/importer').fetchNewPhotos({
       limit: 10,
