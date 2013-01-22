@@ -64,6 +64,9 @@ module.exports = function(){
     model.find(function(err, ranking){
       ranking.forEach(function(photoRank){
         var userId = photoRank._id;
+
+        console.log('update rank for user ', userId, photoRank);
+
         var photos = photoRank.value.toplist;
         var maxRank = photos.length;
         var rank = 0;
