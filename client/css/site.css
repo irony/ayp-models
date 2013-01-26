@@ -686,3 +686,10 @@ only screen and (max-device-width : 599px){
 }
 
 .lazy-loaded { opacity: 1; }
+
+
+.dropzone{
+
+  border:10px solid rgba(0,0,0,0.7);
+  border-radius: 5px;
+}

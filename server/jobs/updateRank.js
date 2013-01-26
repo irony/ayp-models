@@ -14,27 +14,25 @@ module.exports = function(){
     var self = this;
 
     for(var user in self.copies){
-      if (user && self.copies && self.copies[user]){
 
-        var copy = self.copies[user];
+      var copy = self.copies[user];
 
-        emit(user, {id: self._id, interestingness: copy.interestingness});
+      emit(user, {id: self._id, interestingness: copy.interestingness});
 
-        /*
-        1 : 1:100
-        2 : 1:50
-        3 : 1:0
-        4 : 1:250
+      /*
+      1 : 1:100
+      2 : 1:50
+      3 : 1:0
+      4 : 1:250
 
-        1 : 2:175
-        2 : 2:20
-        3 : 2:5
-        4 : 2:150
+      1 : 2:175
+      2 : 2:20
+      3 : 2:5
+      4 : 2:150
 
-        => 1: [4,1,2,3], 2: [1,4,2,3]
-        */
+      => 1: [4,1,2,3], 2: [1,4,2,3]
+      */
 
-      }
     }
 
   };
@@ -49,7 +47,7 @@ module.exports = function(){
       return photo.id;
     });
 
-    return {toplist: result, count: photos.length};
+    return {toplist: result, userId : userId, count: result.length};
   };
 
   console.log('Starting map/reduce ranking...');

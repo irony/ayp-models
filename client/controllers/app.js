@@ -50,6 +50,23 @@ angular.module('app', [])
         });
     };
 })
+.directive('dropzone', function(){
+  return function(scope, element, attrs){
+    var dropzone = element;
+      dropzone.ondrop = function(e) {
+        var length = e.dataTransfer.items.length;
+        scope.droppedFiles = [];
+        for (var i = 0; i < length; i++) {
+          var entry = e.dataTransfer.items[i].webkitGetAsEntry();
+          if (entry.isFile) {
+            scope.droppedFiles.push(entry);
+          } else if (entry.isDirectory) {
+            // recurse?
+          }
+        }
+    };
+  };
+})
 .directive('datepicker', function() {
    return function(scope, element, attrs) {
 
