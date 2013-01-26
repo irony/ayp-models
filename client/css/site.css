@@ -1,0 +1,695 @@
+
+    body{
+      font-family: "Gill Sans", Corbel, Consolas;
+      background: #212223 url(/img/dark_leather_@2X.png);
+    }
+
+    body footer{
+      background: #fff;
+      width: 100%;
+      padding-top: 50px;
+      padding-bottom: 150px;
+    }
+
+    h1,h2,h3,h4,h5, a.brand
+    {
+      font-weight: normal !important;
+    }
+
+    /*
+    #wall .group{
+      overflow-y: scroll;
+      height: 900px;
+    }*/
+
+    /* CUSTOMIZE THE NAVBAR
+    -------------------------------------------------- */
+
+    /* Special class on .container surrounding .navbar, used for positioning it into place. */
+    .navbar-wrapper {
+      position: relative;
+      z-index: 10;
+      margin-top: 20px;
+      margin-bottom: -90px; /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
+    }
+
+    /* Remove border and change up box shadow for more contrast */
+    .navbar .navbar-inner {
+      border: 0;
+      -webkit-box-shadow: 0 2px 10px rgba(0,0,0,.25);
+         -moz-box-shadow: 0 2px 10px rgba(0,0,0,.25);
+              box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+
+    /* Downsize the brand/project name a bit */
+    .navbar .brand {
+      padding: 14px 20px 16px; /* Increase vertical padding to match navbar links */
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+    }
+
+    /* Navbar links: increase padding for taller navbar */
+    .navbar .nav > li > a {
+      padding: 15px 20px;
+    }
+
+    /* Offset the responsive button for proper vertical alignment */
+    .navbar .btn-navbar {
+      margin-top: 10px;
+    }
+
+    .navbar-fixed-bottom img
+    {
+      height: 28px;
+    }
+
+    /* CUSTOMIZE THE NAVBAR
+    -------------------------------------------------- */
+
+    /* Carousel base class */
+    .carousel {
+      margin-bottom: 0px;
+      background: black;
+      height: 520px;
+    }
+
+    .carousel .container {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .carousel-control {
+      background-color: transparent;
+      border: 0;
+      font-size: 120px;
+      margin-top: 0;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+
+    .carousel .item {
+      height: 500px;
+      border-bottom: 20px solid black;
+      overflow: none;
+      vertical-align: middle;
+    }
+    .carousel img {
+      min-width: 110%;
+      position: absolute;
+       top: -60%;
+      -webkit-transition:all 15s ease-in;
+      -moz-transition:all 15s linear;
+      transition:all 15s linear;
+    }
+
+    .carousel .item.active img {
+
+      -webkit-transform: scale(1.2) translateX(50px);
+      -moz-transform: scale(1.2);
+      transform: scale(1.2);
+
+    }
+
+    .carousel-caption {
+      background-color: rgba(255,255,255,0.04);
+      position: static;
+      max-width: 550px;
+      padding: 20px;
+      margin-bottom: 150px;
+    }
+    .carousel-caption h1,
+    .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      color: #fff;
+      font-weight: normal;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+    .carousel-caption .btn {
+      margin-top: 10px;
+    }
+
+
+
+    .bodyPadding{
+      padding-top: 100px;
+    }
+
+    /* MARKETING CONTENT
+    -------------------------------------------------- */
+
+    /* Center align the text within the three columns below the carousel */
+    .marketing .span4 {
+      text-align: center;
+    }
+    .marketing h2 {
+      font-weight: normal;
+    }
+    .marketing .span4 p {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+
+    /* Featurettes
+    ------------------------- */
+
+    .featurette-divider {
+      margin: 80px 0; /* Space out the Bootstrap <hr> more */
+    }
+    .featurette {
+      padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
+      overflow: hidden; /* Vertically center images part 2: clear their floats. */
+    }
+    .featurette-image {
+      margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+    }
+
+    /* Give some space on the sides of the floated elements so text doesn't run right into it. */
+    .featurette-image.pull-left {
+      margin-right: 40px;
+    }
+    .featurette-image.pull-right {
+      margin-left: 40px;
+    }
+
+    /* Thin out the marketing headings */
+    .featurette-heading {
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+
+
+    /* RESPONSIVE CSS
+    -------------------------------------------------- */
+
+    @media (max-width: 979px) {
+
+      .container.navbar-wrapper {
+        margin-bottom: 0;
+        width: auto;
+      }
+      .navbar-inner {
+        border-radius: 0;
+        margin: -20px 0;
+      }
+
+      .carousel .item {
+        height: 500px;
+      }
+      .carousel img {
+        width: auto;
+        height: 500px;
+      }
+
+      .featurette {
+        height: auto;
+        padding: 0;
+      }
+      .featurette-image.pull-left,
+      .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+      }
+    }
+
+
+    @media (max-width: 767px) {
+
+      .navbar-inner {
+        margin: -20px;
+      }
+
+      .carousel {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+      .carousel .container {
+
+      }
+      .carousel .item {
+        height: 300px;
+      }
+      .carousel img {
+        height: 300px;
+      }
+      .carousel-caption {
+        width: 65%;
+        padding: 0 70px;
+        margin-bottom: 40px;
+      }
+      .carousel-caption h1 {
+        font-size: 30px;
+      }
+      .carousel-caption .lead,
+      .carousel-caption .btn {
+        font-size: 18px;
+      }
+
+      .marketing .span4 + .span4 {
+        margin-top: 40px;
+      }
+
+      .featurette-heading {
+        font-size: 30px;
+      }
+      .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+    }
+
+
+.photo img, .photo video{
+  min-width:100%;
+  margin-right: 0;
+      -webkit-box-shadow: 0 2px 10px rgba(0,0,0,.25);
+         -moz-box-shadow: 0 2px 10px rgba(0,0,0,.25);
+              box-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+
+.photo aside{
+  display:none;
+   -webkit-transform: rotateX(180);
+}
+
+.photo.flip aside{
+  display:block;
+  position: absolute;
+}
+
+.photo.flip {
+   -webkit-transform: rotateX(180);
+  -webkit-transition: all 0.4s;
+}
+
+.photo a {
+  -webkit-transition: opacity 0.4s;
+  text-shadow: 0.1em 0.1em #000;
+  opacity:0;
+  color: #fff;
+  text-decoration: none;
+  float:right;
+  clear: right;
+  margin-left: -20px;
+  padding-right:5px;
+  z-index: 100;
+  position: relative;
+  font-size:9.5px;
+  line-height: 14px;
+}
+
+.photo.hidden{
+  opacity:0;
+  display:none;
+}
+
+.photo.starred{
+  -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+     -moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+          box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+}
+
+.photo:hover a {
+  opacity: 0.4;
+}
+
+
+.photo:hover a:hover {
+  color: #fff;
+  opacity: 1;
+  font-size: 120%;
+  margin-right: -2px;
+  margin-top: 2px;
+}
+
+body .navbar-inner{
+  background: #111;
+  color: #fff;
+}
+.thumbnail img {
+  opacity: 0.9;
+}
+
+.thumbnail:hover img
+{
+	opacity: 1;
+}
+
+.thumbnails.preview img
+{
+  width: 64px;
+}
+
+.true.thumbnails .thumbnail:hover {
+  border-color: #abc;
+}
+
+/* Jumbotrons
+-------------------------------------------------- */
+
+/* Base class
+------------------------- */
+.jumbotron {
+  position: relative;
+  padding: 80px 0;
+  margin-bottom: 40px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+  background: #020031; /* Old browsers */
+  background: -moz-linear-gradient(45deg,  #020031 0%, #aabbcc 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#020031), color-stop(100%,#aabbcc)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(45deg,  #020031 0%,#aabbcc 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(45deg,  #020031 0%,#aabbcc 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(45deg,  #020031 0%,#aabbcc 100%); /* IE10+ */
+  background: linear-gradient(45deg,  #020031 0%,#aabbcc 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#020031', endColorstr='#aabbcc',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+     -moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+          box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+}
+.jumbotron h1 {
+  font-size: 80px;
+  font-weight: bold;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.jumbotron p {
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 30px;
+  margin-bottom: 30px;
+}
+
+/* Link styles (used on .masthead-links as well) */
+.jumbotron a {
+  color: #fff;
+  color: rgba(255,255,255,.5);
+  -webkit-transition: all .2s ease-in-out;
+     -moz-transition: all .2s ease-in-out;
+          transition: all .2s ease-in-out;
+}
+.jumbotron a:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,.25);
+}
+
+.group h2{
+  color: #000;
+  padding:0;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 30px;
+  margin-bottom:10px;
+}
+
+.thumbnails img
+{
+  margin-bottom: 10px;
+  margin-right: 10px;
+  border-radius: 1px;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+}
+
+.clear
+{
+  clear:both;
+}
+
+.pull-center
+{
+  text-align: center;
+  margin-left: auto;
+}
+
+#zoomLevel
+{
+  width:100%;
+  height: 30px;
+  margin-top:10px;
+}
+
+#wall:hover .slider
+{
+  opacity:0.9;
+}
+
+.inactive .slider
+{
+  opacity: 0;
+}
+
+#wall .slider
+{
+  position: fixed !important;
+  bottom: 50px;
+  opacity: 0;
+  -webkit-transition: all 0.5s;
+
+  background: #000 -webkit-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000    -moz-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000     -ms-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000      -o-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000         linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+
+  border-radius: 5px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  height:50px;
+  margin: 0 20%;
+  width: 50%;
+  padding: 15px;
+    -webkit-transform: translateZ(10px);
+  -webkit-backface-visibility: hidden;
+
+}
+
+#wall
+{
+  margin:auto;
+  padding-top: 80px;
+  }
+
+
+#wall .group.large{
+       -moz-column-count: 1;
+    -webkit-column-count: 1;
+            column-count: 1;
+}
+
+#wall .group{
+       -moz-column-count: 5;
+    -webkit-column-count: 5;
+       -moz-column-gap: 10px;
+    -webkit-column-gap: 10px;
+            column-count: 5;
+            column-gap: 10px;
+    padding:0;
+    margin: 20px 0 20px 0;
+    width: 100%;
+}
+
+#wall .group header{
+  padding: 10px;
+  background: #fff;
+  margin-bottom: 10px;
+}
+
+#wall .group:nth-child(odd){
+  background: #fefefa;
+  color:#000;
+}
+ 
+#wall h2 small {
+  clear:both;
+  display: block;
+}
+
+#wall .group .photo{
+    display: inline-block;
+    margin-bottom: 0px;
+    width: 100%;
+}
+
+#wall .group .clearfix
+{
+  -webkit-column-span: all;
+  clear: both;
+  float:none;
+  display: block;
+}
+
+
+
+@media only screen and (max-width : 1199px),
+only screen and (max-device-width : 1199px){
+    #wall .group {
+        -moz-column-count: 5;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 5;
+        -webkit-column-gap: 5px;
+        column-count: 5;
+        column-gap: 5px;
+    }
+     
+}
+ 
+ 
+@media only screen and (max-width : 999px),
+only screen and (max-device-width : 999px){
+    #wall .group {
+        -moz-column-count: 4;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 4;
+        -webkit-column-gap: 5px;
+        column-count: 4;
+        column-gap: 5px;
+    }
+     
+}
+ 
+@media only screen and (max-width : 799px),
+only screen and (max-device-width : 799px){
+    #wall .group {
+        -moz-column-count: 3;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 3;
+        -webkit-column-gap: 5px;
+        column-count: 3;
+        column-gap: 5px;
+    }
+
+}
+ 
+@media only screen and (max-width : 599px),
+only screen and (max-device-width : 599px){
+    #wall .group {
+        -moz-column-count: 2;
+        -moz-column-gap: 5px;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 5px;
+        column-count: 2;
+        column-gap: 5px;
+    }
+     
+    #wall .slider {
+      height: 20px;
+    }
+
+    #wall .slider label{
+      display: none;
+    }
+
+    .navbar-fixed-bottom{
+      display: none;
+    }
+}
+
+
+
+/**** Transitions ****/
+
+#wall .group .photo{
+  -webkit-transition-duration: 0.7s;
+     -moz-transition-duration: 0.7s;
+      -ms-transition-duration: 0.7s;
+       -o-transition-duration: 0.7s;
+          transition-duration: 0.7s;
+}
+
+#wall .group .photo {
+  -webkit-transition-property: width, height;
+     -moz-transition-property: width, height;
+      -ms-transition-property: width, height;
+       -o-transition-property: width, height;
+          transition-property: width, height;
+}
+
+#wall .group .photo {
+  -webkit-transition-property: left, right, top;
+     -moz-transition-property: left, right, top;
+      -ms-transition-property: left, right, top;
+       -o-transition-property: left, right, top;
+          transition-property: left, right, top;
+}
+
+
+.loader {
+    text-align: center;    
+}
+.loader span {
+    display: inline-block;
+    vertical-align: middle;
+    width: 10px;
+    height: 10px;
+    margin: 50px auto;
+    background: black;
+    border-radius: 50px;
+    -webkit-animation: loader 0.9s infinite alternate;
+    -moz-animation: loader 0.9s infinite alternate;
+}
+.loader span:nth-of-type(2) {
+    -webkit-animation-delay: 0.3s;
+    -moz-animation-delay: 0.3s;
+}
+.loader span:nth-of-type(3) {
+    -webkit-animation-delay: 0.6s;
+    -moz-animation-delay: 0.6s;
+}
+@-webkit-keyframes loader {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.9;
+    -webkit-transform: translateY(0);
+  }
+  100% {
+    width: 24px;
+    height: 24px;
+    opacity: 0.1;
+    -webkit-transform: translateY(-21px);
+  }
+}
+@-moz-keyframes loader {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.9;
+    -moz-transform: translateY(0);
+  }
+  100% {
+    width: 24px;
+    height: 24px;
+    opacity: 0.1;
+    -moz-transform: translateY(-21px);
+  }
+}
+
+
+.lazy-load, .lazy-loaded {
+  -webkit-transition: opacity 0.3s;
+  -moz-transition: opacity 0.3s;
+  -ms-transition: opacity 0.3s;
+  -o-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.lazy-loaded { opacity: 1; }
+
+
+.dropzone{
+
+  border:10px solid rgba(0,0,0,0.7);
+  border-radius: 5px;
+}

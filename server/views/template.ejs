@@ -1,0 +1,122 @@
+
+        
+
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-interval="5000">
+      <div class="carousel-inner">
+        <div class="item first">
+          <img src="/photos/random/1" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Your photos deserve a better life</h1>
+              <p class="lead">How often do you actually look at your photos from the past? Start here to collect all your photos from your different sources and start viewing them with our intuitive interface. Start by logging in with these:</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.facebook ? 'disabled': '' %>" href="auth/facebook"><i class="icon <%= user && user.accounts && user.accounts.facebook ? 'icon-check': 'icon-check-empty' %>"></i> Facebook</a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="/photos/random/2" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Get those photos organized</h1>
+              <p class="lead">By using our patented photo brain to help organizing your precious photos you can start getting them organized and also easily share a topic, event or time period with your friends. Start by logging in with these:</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="/photos/random/3" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Collect all your photos in one place</h1>
+              <p class="lead">Just click the links below and we will collect and backup all your photos to one place.  Start by logging in with these:</p>
+              <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Dropbox</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Instagram</a>
+        <a class="btn btn-primary btn-large <%= user && user.accounts && user.accounts.flickr ? 'disabled': '' %>" href="auth/flickr"><i class="icon <%= user && user.accounts && user.accounts.flickr ? 'icon-check': 'icon-check-empty' %>"></i> Flickr</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+    </div><!-- /.carousel -->
+
+  
+
+  <footer id="footer">
+
+      <div class="container marketing">
+
+
+        <!-- Three columns of text below the carousel -->
+        <div class="row">
+          <div class="span4">
+            <img class="img-circle" src="http://placehold.it/140x140">
+            <h2>Share and collaborate</h2>
+            <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+          </div><!-- /.span4 -->
+          <div class="span4">
+                <img src="img/Photos-icon.png" class="img-circle">
+            <h2>Intelligentely&trade; organize your life</h2>
+            <p>By carefully combining information from many sources we will help you organize your photos based on location, calendars, tagged people, photo analyzing and face recognition.</p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+          </div><!-- /.span4 -->
+          <div class="span4">
+            <img class="img-circle" src="http://placehold.it/140x140">
+            <h2>Heading</h2>
+            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+          </div><!-- /.span4 -->
+        </div><!-- /.row -->
+
+
+        <!-- START THE FEATURETTES -->
+
+        <hr class="featurette-divider">
+
+        <div class="featurette">
+          <img class="featurette-image pull-right" width="40%" src="http://s3.amazonaws.com/fromus/blog_posts/photos_taken_by_year.png">
+          <h2 class="featurette-heading">One billion photos per day<span class="muted">, you love them all</span></h2>
+          <p class="lead">Why should we have to choose only a few of our precious photos to view in the cloud? We want them all.</p>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <div class="featurette">
+          <img class="featurette-image pull-left" src="../assets/img/examples/browser-icon-firefox.png">
+          <h2 class="featurette-heading">Why do we have to organize them  <span class="muted">manually?</span></h2>
+          <p class="lead">Each photo contains so many clues on how to organize them, such as dates, gps, people. Especially if we combine the information from different sources effectively. Instead of trying to manually sort pictures in different folders and drives, just connect them to us and we will organize them all for you.</p>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <div class="featurette">
+          <img class="featurette-image pull-right" src="../assets/img/examples/browser-icon-safari.png">
+          <h2 class="featurette-heading">Frankly. All your photos <span class="muted">are important.</span></h2>
+          <p class="lead">We promise to help you to automatically hide those duplicates, under exposed, over exposed pictures and snaps of whiteboard tables. We use information such as viewing time, clicks, shares, time and date as clues</p>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- /END THE FEATURETTES -->
+
+
+          <p class="pull-right"><a href="#">Back to top</a></p>
+          <p>&copy; 2012 Billion Photos Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        </footer>
+
+      </div><!-- /.container -->
+    </footer>
+  
+  <script>
+    
+    $('#myCarousel .first').toggleClass('active'); // trigger ken-burns
+
+  </script>
