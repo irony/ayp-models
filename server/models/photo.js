@@ -1,3 +1,6 @@
+// Photo
+// =====
+// Photo including all non-user specific properties. copies includes a list to all copies of this photo
 
 
 var mongoose = require('mongoose'),
@@ -7,10 +10,6 @@ var mongoose = require('mongoose'),
 
     Schema = mongoose.Schema;
 
-/**
- * _Photo_
- * Photo including all non-user specific properties. copies includes a list to all copies of this photo
- */
 var PhotoSchema = new mongoose.Schema({
       id  :  { type: Schema.ObjectId},
       path : { type: String},

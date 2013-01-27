@@ -1,3 +1,7 @@
+// Group
+// =====
+// Not used anymore?
+
 var mongoose = require('mongoose'),
     Photo = require('./photo')(mongoose).Schema,
     _ = require('underscore'),

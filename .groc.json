@@ -1,4 +1,3 @@
 {
-  "glob": ["server/*.js", "README.md", "server/connectors/*.js", "server/jobs/*.js", "server/models/*.js", "server/routes/*.js"],
-  "github": true
+  "glob": ["server/*.js", "README.md", "client/controllers/*.js", "server/sockets/*.ejs","server/connectors/*.js", "server/jobs/*.js", "server/models/*.js", "server/routes/*.js"]
 }

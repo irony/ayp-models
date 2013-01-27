@@ -21,10 +21,158 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       "depth": 1,
       "outline": []
     }, {
+      "type": "file",
+      "data": {
+        "language": {
+          "nameMatchers": [".js"],
+          "pygmentsLexer": "javascript",
+          "singleLineComment": ["//"],
+          "name": "JavaScript"
+        },
+        "sourcePath": "/Users/cln/Projects/allyourphotos/server/app.js",
+        "projectPath": "server/app.js",
+        "targetPath": "app",
+        "title": "app"
+      },
+      "depth": 1,
+      "outline": []
+    }, {
       "type": "folder",
       "data": {
-        "path": "server",
-        "title": "server"
+        "path": "client",
+        "title": "client"
+      },
+      "depth": 1,
+      "children": [
+        {
+          "type": "folder",
+          "data": {
+            "path": "client/controllers",
+            "title": "controllers"
+          },
+          "depth": 2,
+          "children": [
+            {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/app.js",
+                "projectPath": "client/controllers/app.js",
+                "targetPath": "client/controllers/app",
+                "title": "app"
+              },
+              "depth": 3,
+              "outline": []
+            }, {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/groups.js",
+                "projectPath": "client/controllers/groups.js",
+                "targetPath": "client/controllers/groups",
+                "title": "groups"
+              },
+              "depth": 3,
+              "outline": []
+            }, {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/photo.js",
+                "projectPath": "client/controllers/photo.js",
+                "targetPath": "client/controllers/photo",
+                "title": "photo"
+              },
+              "depth": 3,
+              "outline": []
+            }, {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/photos.js",
+                "projectPath": "client/controllers/photos.js",
+                "targetPath": "client/controllers/photos",
+                "title": "photos"
+              },
+              "depth": 3,
+              "outline": []
+            }, {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/share.js",
+                "projectPath": "client/controllers/share.js",
+                "targetPath": "client/controllers/share",
+                "title": "share"
+              },
+              "depth": 3,
+              "outline": []
+            }, {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "singleLineComment": ["//"],
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/cln/Projects/allyourphotos/client/controllers/slideshow.js",
+                "projectPath": "client/controllers/slideshow.js",
+                "targetPath": "client/controllers/slideshow",
+                "title": "slideshow"
+              },
+              "depth": 3,
+              "outline": []
+            }
+          ]
+        }
+      ]
+    }, {
+      "type": "file",
+      "data": {
+        "language": {
+          "nameMatchers": [".js"],
+          "pygmentsLexer": "javascript",
+          "singleLineComment": ["//"],
+          "name": "JavaScript"
+        },
+        "sourcePath": "/Users/cln/Projects/allyourphotos/server/conf.js",
+        "projectPath": "server/conf.js",
+        "targetPath": "conf",
+        "title": "conf"
+      },
+      "depth": 1,
+      "outline": []
+    }, {
+      "type": "folder",
+      "data": {
+        "path": "connectors",
+        "title": "connectors"
       },
       "depth": 1,
       "children": [
@@ -37,10 +185,10 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/app.js",
-            "projectPath": "server/app.js",
-            "targetPath": "server/app",
-            "title": "app"
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/connectors/connectorBase.js",
+            "projectPath": "server/connectors/connectorBase.js",
+            "targetPath": "connectors/connectorBase",
+            "title": "connectorBase"
           },
           "depth": 2,
           "outline": []
@@ -53,10 +201,10 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/conf.js",
-            "projectPath": "server/conf.js",
-            "targetPath": "server/conf",
-            "title": "conf"
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/connectors/dropbox.js",
+            "projectPath": "server/connectors/dropbox.js",
+            "targetPath": "connectors/dropbox",
+            "title": "dropbox"
           },
           "depth": 2,
           "outline": []
@@ -69,10 +217,10 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/server.js",
-            "projectPath": "server/server.js",
-            "targetPath": "server/server",
-            "title": "server"
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/connectors/facebook.js",
+            "projectPath": "server/connectors/facebook.js",
+            "targetPath": "connectors/facebook",
+            "title": "facebook"
           },
           "depth": 2,
           "outline": []
@@ -85,15 +233,401 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/worker.js",
-            "projectPath": "server/worker.js",
-            "targetPath": "server/worker",
-            "title": "worker"
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/connectors/flickr.js",
+            "projectPath": "server/connectors/flickr.js",
+            "targetPath": "connectors/flickr",
+            "title": "flickr"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/connectors/instagram.js",
+            "projectPath": "server/connectors/instagram.js",
+            "targetPath": "connectors/instagram",
+            "title": "instagram"
           },
           "depth": 2,
           "outline": []
         }
       ]
+    }, {
+      "type": "folder",
+      "data": {
+        "path": "jobs",
+        "title": "jobs"
+      },
+      "depth": 1,
+      "children": [
+        {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/calculateInterestingness.js",
+            "projectPath": "server/jobs/calculateInterestingness.js",
+            "targetPath": "jobs/calculateInterestingness",
+            "title": "calculateInterestingness"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/exifExtractor.js",
+            "projectPath": "server/jobs/exifExtractor.js",
+            "targetPath": "jobs/exifExtractor",
+            "title": "exifExtractor"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/groupImages.js",
+            "projectPath": "server/jobs/groupImages.js",
+            "targetPath": "jobs/groupImages",
+            "title": "groupImages"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/importer.js",
+            "projectPath": "server/jobs/importer.js",
+            "targetPath": "jobs/importer",
+            "title": "importer"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/tagPhotos.js",
+            "projectPath": "server/jobs/tagPhotos.js",
+            "targetPath": "jobs/tagPhotos",
+            "title": "tagPhotos"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/updateRank.js",
+            "projectPath": "server/jobs/updateRank.js",
+            "targetPath": "jobs/updateRank",
+            "title": "updateRank"
+          },
+          "depth": 2,
+          "outline": []
+        }
+      ]
+    }, {
+      "type": "folder",
+      "data": {
+        "path": "models",
+        "title": "models"
+      },
+      "depth": 1,
+      "children": [
+        {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/group.js",
+            "projectPath": "server/models/group.js",
+            "targetPath": "models/group",
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Group",
+                "slug": "group",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Group"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/photo.js",
+            "projectPath": "server/models/photo.js",
+            "targetPath": "models/photo",
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Photo",
+                "slug": "photo",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Photo"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/photoCopy.js",
+            "projectPath": "server/models/photoCopy.js",
+            "targetPath": "models/photoCopy",
+            "title": "photoCopy"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/sharespan.js",
+            "projectPath": "server/models/sharespan.js",
+            "targetPath": "models/sharespan",
+            "title": "sharespan"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/user.js",
+            "projectPath": "server/models/user.js",
+            "targetPath": "models/user",
+            "title": "user"
+          },
+          "depth": 2,
+          "outline": []
+        }
+      ]
+    }, {
+      "type": "folder",
+      "data": {
+        "path": "routes",
+        "title": "routes"
+      },
+      "depth": 1,
+      "children": [
+        {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/404.js",
+            "projectPath": "server/routes/404.js",
+            "targetPath": "routes/404",
+            "title": "404"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/connectors.js",
+            "projectPath": "server/routes/connectors.js",
+            "targetPath": "routes/connectors",
+            "title": "connectors"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/import.js",
+            "projectPath": "server/routes/import.js",
+            "targetPath": "routes/import",
+            "title": "import"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/index.js",
+            "projectPath": "server/routes/index.js",
+            "targetPath": "routes/index",
+            "title": "index"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/photos.js",
+            "projectPath": "server/routes/photos.js",
+            "targetPath": "routes/photos",
+            "title": "photos"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/share.js",
+            "projectPath": "server/routes/share.js",
+            "targetPath": "routes/share",
+            "title": "share"
+          },
+          "depth": 2,
+          "outline": []
+        }, {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/server/routes/viewModel.js",
+            "projectPath": "server/routes/viewModel.js",
+            "targetPath": "routes/viewModel",
+            "title": "viewModel"
+          },
+          "depth": 2,
+          "outline": []
+        }
+      ]
+    }, {
+      "type": "file",
+      "data": {
+        "language": {
+          "nameMatchers": [".js"],
+          "pygmentsLexer": "javascript",
+          "singleLineComment": ["//"],
+          "name": "JavaScript"
+        },
+        "sourcePath": "/Users/cln/Projects/allyourphotos/server/server.js",
+        "projectPath": "server/server.js",
+        "targetPath": "server",
+        "title": "server"
+      },
+      "depth": 1,
+      "outline": []
+    }, {
+      "type": "file",
+      "data": {
+        "language": {
+          "nameMatchers": [".js"],
+          "pygmentsLexer": "javascript",
+          "singleLineComment": ["//"],
+          "name": "JavaScript"
+        },
+        "sourcePath": "/Users/cln/Projects/allyourphotos/server/worker.js",
+        "projectPath": "server/worker.js",
+        "targetPath": "worker",
+        "title": "worker"
+      },
+      "depth": 1,
+      "outline": []
     }
   ];
 
