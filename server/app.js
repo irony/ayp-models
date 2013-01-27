@@ -47,7 +47,7 @@ exports.init = function(port) {
       // persistent login sessions (recommended).
       app.use(passport.initialize());
       app.use(passport.session());
-      app.use(express.static(__dirname + '/static'));
+      app.use(express.static(__dirname + '/../client'));
       app.use(app.router);
     });
 

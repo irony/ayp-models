@@ -1,0 +1,4 @@
+{
+  "glob": ["server/*.js", "README.md", "server/connectors/*.js", "server/jobs/*.js", "server/models/*.js", "server/routes/*.js"],
+  "github": true
+}
