@@ -31,7 +31,7 @@ module.exports = function(app){
     .where('originalDownloaded').ne(false)
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
-    .sort('-copies.interestingness')
+    .sort('-copies.' + req.user._id + '.interestingness')
     .exec(function(err, photos){
 
       var photo = photos && photos[Math.round(Math.random()*50)];
@@ -60,10 +60,10 @@ module.exports = function(app){
 
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
-    .where('copies.hidden').ne(true)
+    .where('copies.' + req.user._id + '.hidden').ne(true)
     .where('store.thumbnails.stored').exists()
-    .where('copies.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
-    .sort((reverse ? '':'-') + 'copies.taken')
+    .where('copies.' + req.user._id + '.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
+    .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .exec(function(err, photos){

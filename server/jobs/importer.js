@@ -29,16 +29,16 @@ var importer = {
 
             if (!dbPhoto){
               dbPhoto = new Photo();
-              dbPhoto.copies = [];
+              dbPhoto.copies = {};
             }
 
 
             dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
 
-            var photoCopy = dbPhoto.copies.reduce(function(a,b){if (b.user === [user._id]) return b});
+            var photoCopy = dbPhoto.copies[user._id];
 
             if (!photoCopy)
-              dbPhoto.copies.push(photoCopy = new PhotoCopy());
+              dbPhoto.copies[user._id] = photoCopy = new PhotoCopy();
 
             photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
             dbPhoto.markModified('copies');

@@ -18,11 +18,11 @@ module.exports = function(){
 
     var self = this;
 
-    for(var i in self.copies){
+    for(var user in self.copies){
 
-      var copy = self.copies[i];
+      var copy = self.copies[user];
 
-      emit(copy.user, {id: self._id, interestingness: copy.interestingness});
+      emit(user, {id: self._id, interestingness: copy.interestingness});
 
       /*
       1 : 1:100
@@ -79,8 +79,8 @@ module.exports = function(){
 
           var setter = {$set : {}};
           var normalizedRank = ((maxRank - rank) / maxRank) * 100;
-          setter.$set['copies.rank'] = normalizedRank;
-          setter.$set['copies.top'] = rank;
+          setter.$set['copies.' + userId + '.rank'] = normalizedRank;
+          setter.$set['copies.' + userId + '.top'] = rank;
 
           Photo.update({_id : photoId}, setter, function(err, photo){
             if (err) console.log('error when updating rank:', err);

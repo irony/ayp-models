@@ -19,7 +19,7 @@ var PhotoSchema = new mongoose.Schema({
       mimeType : { type: String},
       thumbnails : {type: Schema.Types.Mixed},
       tags : [String],
-      copies : [PhotoCopy],
+      copies : {}, // [PhotoCopy],
 
       metadata : { type:  Schema.Types.Mixed},
       exif : {},
