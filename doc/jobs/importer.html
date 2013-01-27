@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><title>jobs/importer</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="jobs/importer"><meta name="groc-project-path" content="server/jobs/importer.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">server/jobs/importer.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Photo</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/photo&#39;</span><span class="p">);</span>
+<!DOCTYPE html><html lang="en"><head><title>jobs/importer</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="jobs/importer"><meta name="groc-project-path" content="server/jobs/importer.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">server/jobs/importer.js</div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="importer">Importer</h1>
+
+<p>Helper methods for downloading metadata and photos for all active connectors</p></div></div><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Photo</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/photo&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">PhotoCopy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/photoCopy&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
@@ -7,7 +9,12 @@
 
 <span class="kd">var</span> <span class="nx">importer</span> <span class="o">=</span> <span class="p">{</span>
 
-
+  <span class="cm">/**</span>
+<span class="cm">   * Save an array of photos fetched elsewhere to the database</span>
+<span class="cm">   * @param  {[type]} user     a mongoose user model</span>
+<span class="cm">   * @param  {[type]} photos   array of photos</span>
+<span class="cm">   * @param  {[type]} progress callback which will be called after save of whole collection with (err, photos)</span>
+<span class="cm">   */</span>
   <span class="nx">savePhotos</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">photos</span><span class="p">,</span> <span class="nx">progress</span><span class="p">){</span>
 
         <span class="nx">async</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">photos</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">photo</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
@@ -52,7 +59,13 @@
 
         <span class="p">});</span>
   <span class="p">},</span>
-
+  
+  <span class="cm">/**</span>
+<span class="cm">   * download both original and thumbnail of photo from photos connector</span>
+<span class="cm">   * @param  {[type]}   user  user</span>
+<span class="cm">   * @param  {[type]}   photo photo</span>
+<span class="cm">   * @param  {Function} done  callback when both are done</span>
+<span class="cm">   */</span>
   <span class="nx">downloadPhoto</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">photo</span><span class="p">,</span> <span class="nx">done</span><span class="p">){</span>
 
     <span class="kd">var</span> <span class="nx">connector</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../connectors/&#39;</span> <span class="o">+</span> <span class="nx">photo</span><span class="p">.</span><span class="nx">source</span><span class="p">);</span>
@@ -71,7 +84,11 @@
 
   <span class="p">},</span>
 
-
+  <span class="cm">/**</span>
+<span class="cm">   * Downloads and saves metadata for all connectors of the provided user</span>
+<span class="cm">   * @param  {[type]}   user user</span>
+<span class="cm">   * @param  {Function} done callback when done</span>
+<span class="cm">   */</span>
   <span class="nx">importPhotosFromAllConnectors</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">done</span><span class="p">){</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">accounts</span><span class="p">){</span>
       
@@ -100,6 +117,13 @@
     <span class="p">});</span>
   <span class="p">},</span>
 
+  <span class="cm">/**</span>
+<span class="cm">   * Dpwnload photos for all newly downloaded metadata where the photos haven&#39;t been downloaded yet</span>
+<span class="cm">   * @param  {[type]} options {</span>
+<span class="cm">   *                             limit : 10 // how many should be downloaded in each batch?</span>
+<span class="cm">   *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?</span>
+<span class="cm">   *                          }</span>
+<span class="cm">   */</span>
   <span class="nx">fetchNewPhotos</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">){</span>
 
     <span class="kd">var</span> <span class="nx">photoQuery</span> <span class="o">=</span> <span class="nx">Photo</span><span class="p">.</span><span class="nx">find</span><span class="p">().</span><span class="nx">where</span><span class="p">(</span><span class="s1">&#39;store.thumbnails.stored&#39;</span><span class="p">)</span>

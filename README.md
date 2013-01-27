@@ -1,13 +1,52 @@
 Allyourphotos.org
+=================
 
+An express, node, passport, mongoose app to import and manage all your photos in a web environment.
+
+License
+=======
+This project is not open source and thus not licenced for any use without explicit authorization from the authors: Christian Landgren and Henrik Landgren
+
+Server
+======
+
+Code structure
+--------------
+
+Site related parts:
+* Views
+* Routes
+
+Database related parts:
+* Models
+
+Authorization parts (based on Passport):
+* Auth
+* Connectors
+
+Worker related parts
+* Jobs
+* Connectors
+
+
+Client
+======
+
+Contains all client code
+
+
+Rules
+=====
 
 Regler:
+- - - -
 1. Varje gruppering ska vara mellan 24 och 36 bilder. Hämta 36 per grupp från databasen, välj ut 24 på klientsidan.
 2. Dublettbilder bör sorteras bort så tidigt som möjligt
 3. När grupperingen innehåller för många bilder visas endast de bästa bilderna ut (topplista)
 4. Nya bilder är viktigare än gamla
 
 Zoomnivå:
+- - - -
 
 Liv - 24 bilder per epok i livet (decennier?), c:a 3 grupperingar = 72 bilder
 Begränsning: DateTime.Min - DateTime.Now
@@ -24,9 +63,6 @@ Helg - 24 bilder per tre dagar
 Dag - 24 bilder per dag
 Händelse - 24 bilder per sammahållen tidsperiod
 Alla - 24 bilder per gruppering
-
-
-
 
 
 
@@ -48,6 +84,7 @@ Alla - 24 bilder per gruppering
 
 
 
+- - - -
 
 Datum       Klockslag    Interestingness  Zoom1     Zoom5
 2012-09-01  11:11:33     11     
@@ -56,3 +93,5 @@ Datum       Klockslag    Interestingness  Zoom1     Zoom5
 2012-09-01  11:11:33     13
 2012-09-01  11:11:33     99               Ja?
 2012-09-01  11:11:34     92               Nej?
+
+- - - -

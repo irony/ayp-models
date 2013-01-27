@@ -1,3 +1,7 @@
+// Calculate Interestingness
+// ===
+// A job to calculate interestingness for all photos by all users
+
 var ObjectId = require('mongoose').Types.ObjectId,
     timeago = require('timeago'),
     Photo = require('../models/photo'),
@@ -9,6 +13,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 module.exports = function(){
 
+  // Emit each relevant source of information
   var map = function(){
 
     var self = this;
@@ -31,6 +36,7 @@ module.exports = function(){
 
   };
 
+  // Calculate a sum per photo
   var reduce = function(group, actions){
 
     var returnValue = 0;
@@ -45,13 +51,16 @@ module.exports = function(){
 
   console.log('Starting map/reduce interestingness...');
 
-// add query to only reduce modified images
+  // Start the map / reduce job
+  // - - -
+  // TODO: add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}, verbose: true}, function(err, model, stats){
 
     console.log('Done with map/reduce.', stats);
 
     if (err) throw err;
 
+    // Query the results
     model.find(function(err, photos){
       console.log('Updating %d photos.', photos.length);
       photos.forEach(function(photo){
@@ -60,6 +69,8 @@ module.exports = function(){
 
         var setter = {$set : {}};
         var interestingness = photo.value !== 50 ? photo.value : Math.floor(Math.random()*100);
+        
+        // TODO: move to individual updates per user
         setter.$set['copies.interestingness'] = interestingness;
         setter.$set['copies.calculated'] = new Date();
 

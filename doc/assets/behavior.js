@@ -16,10 +16,65 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         "sourcePath": "/Users/cln/Projects/allyourphotos/README.md",
         "projectPath": "README.md",
         "targetPath": "index",
-        "title": "index"
+        "firstHeader": {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "Allyourphotos.org",
+            "slug": "allyourphotosorg",
+            "isFileHeader": true
+          },
+          "depth": 1
+        },
+        "title": "Allyourphotos.org"
       },
       "depth": 1,
-      "outline": []
+      "outline": [
+        {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "License",
+            "slug": "license"
+          },
+          "depth": 1
+        }, {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "Server",
+            "slug": "server"
+          },
+          "depth": 1,
+          "children": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 2,
+                "title": "Code structure",
+                "slug": "code-structure"
+              },
+              "depth": 2
+            }
+          ]
+        }, {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "Client",
+            "slug": "client"
+          },
+          "depth": 1
+        }, {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "Rules",
+            "slug": "rules"
+          },
+          "depth": 1
+        }
+      ]
     }, {
       "type": "file",
       "data": {
@@ -32,7 +87,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         "sourcePath": "/Users/cln/Projects/allyourphotos/server/app.js",
         "projectPath": "server/app.js",
         "targetPath": "app",
-        "title": "app"
+        "firstHeader": {
+          "type": "heading",
+          "data": {
+            "level": 1,
+            "title": "Main app configuration",
+            "slug": "main-app-configuration",
+            "isFileHeader": true
+          },
+          "depth": 1
+        },
+        "title": "Main app configuration"
       },
       "depth": 1,
       "outline": []
@@ -278,7 +343,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/calculateInterestingness.js",
             "projectPath": "server/jobs/calculateInterestingness.js",
             "targetPath": "jobs/calculateInterestingness",
-            "title": "calculateInterestingness"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Calculate Interestingness",
+                "slug": "calculate-interestingness",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Calculate Interestingness"
           },
           "depth": 2,
           "outline": []
@@ -294,7 +369,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/exifExtractor.js",
             "projectPath": "server/jobs/exifExtractor.js",
             "targetPath": "jobs/exifExtractor",
-            "title": "exifExtractor"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Extract EXIF information",
+                "slug": "extract-exif-information",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Extract EXIF information"
           },
           "depth": 2,
           "outline": []
@@ -310,7 +395,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/groupImages.js",
             "projectPath": "server/jobs/groupImages.js",
             "targetPath": "jobs/groupImages",
-            "title": "groupImages"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Group Photos",
+                "slug": "group-photos",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Group Photos"
           },
           "depth": 2,
           "outline": []
@@ -326,7 +421,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/importer.js",
             "projectPath": "server/jobs/importer.js",
             "targetPath": "jobs/importer",
-            "title": "importer"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Importer",
+                "slug": "importer",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Importer"
           },
           "depth": 2,
           "outline": []
@@ -358,7 +463,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/updateRank.js",
             "projectPath": "server/jobs/updateRank.js",
             "targetPath": "jobs/updateRank",
-            "title": "updateRank"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Update Rank",
+                "slug": "update-rank",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Update Rank"
           },
           "depth": 2,
           "outline": []
@@ -436,7 +551,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/photoCopy.js",
             "projectPath": "server/models/photoCopy.js",
             "targetPath": "models/photoCopy",
-            "title": "photoCopy"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Photo Copy",
+                "slug": "photo-copy",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Photo Copy"
           },
           "depth": 2,
           "outline": []
@@ -452,7 +577,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/sharespan.js",
             "projectPath": "server/models/sharespan.js",
             "targetPath": "models/sharespan",
-            "title": "sharespan"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Share Span",
+                "slug": "share-span",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Share Span"
           },
           "depth": 2,
           "outline": []

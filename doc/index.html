@@ -1,12 +1,50 @@
-<!DOCTYPE html><html lang="en"><head><title>index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="index"><meta name="groc-project-path" content="README.md"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">README.md</div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><p>Allyourphotos.org</p>
+<!DOCTYPE html><html lang="en"><head><title>index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="index"><meta name="groc-project-path" content="README.md"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">README.md</div></div><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="allyourphotosorg">Allyourphotos.org</h1>
 
-<p>Regler:
-1. Varje gruppering ska vara mellan 24 och 36 bilder. Hämta 36 per grupp från databasen, välj ut 24 på klientsidan.
-2. Dublettbilder bör sorteras bort så tidigt som möjligt
-3. När grupperingen innehåller för många bilder visas endast de bästa bilderna ut (topplista)
-4. Nya bilder är viktigare än gamla</p>
+<p>An express, node, passport, mongoose app to import and manage all your photos in a web environment.</p>
+
+<h1 id="license">License</h1>
+
+<p>This project is not open source and thus not licenced for any use without explicit authorization from the authors: Christian Landgren and Henrik Landgren</p>
+
+<h1 id="server">Server</h1>
+
+<h2 id="code-structure">Code structure</h2>
+
+<p>Site related parts:
+* Views
+* Routes</p>
+
+<p>Database related parts:
+* Models</p>
+
+<p>Authorization parts (based on Passport):
+* Auth
+* Connectors</p>
+
+<p>Worker related parts
+* Jobs
+* Connectors</p>
+
+<h1 id="client">Client</h1>
+
+<p>Contains all client code</p>
+
+<h1 id="rules">Rules</h1>
+
+<p>Regler:</p>
+
+<hr />
+
+<ol>
+<li>Varje gruppering ska vara mellan 24 och 36 bilder. Hämta 36 per grupp från databasen, välj ut 24 på klientsidan.</li>
+<li>Dublettbilder bör sorteras bort så tidigt som möjligt</li>
+<li>När grupperingen innehåller för många bilder visas endast de bästa bilderna ut (topplista)</li>
+<li>Nya bilder är viktigare än gamla</li>
+</ol>
 
 <p>Zoomnivå:</p>
+
+<hr />
 
 <p>Liv - 24 bilder per epok i livet (decennier?), c:a 3 grupperingar = 72 bilder
 Begränsning: DateTime.Min - DateTime.Now</p>
@@ -38,10 +76,14 @@ Alla - 24 bilder per gruppering</p>
 
 <p>100 = alla bilder</p>
 
+<hr />
+
 <p>Datum       Klockslag    Interestingness  Zoom1     Zoom5
 2012-09-01  11:11:33     11 <br />
 2012-09-01  11:11:33     55
 2012-09-01  11:11:33     22
 2012-09-01  11:11:33     13
 2012-09-01  11:11:33     99               Ja?
-2012-09-01  11:11:34     92               Nej?</p></div></div></div></div></body></html>
+2012-09-01  11:11:34     92               Nej?</p>
+
+<hr /></div></div></div></div></body></html>

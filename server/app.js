@@ -1,3 +1,8 @@
+// Main app configuration
+// ======================
+// Initializes all routes and express
+
+
 var mongoose = require('mongoose');
 
 var _ = require('underscore');
@@ -29,7 +34,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
-exports.init = function(port) {
+exports.init = function() {
 
 
     var app = express.createServer();
@@ -42,6 +47,8 @@ exports.init = function(port) {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
+      
+      // We use mongo to store sessions
       app.use(express.session({ secret: 'keyboard cat', cookie: { maxAge: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)}, store: new MongoStore({url: config.mongoUrl })}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
@@ -52,8 +59,10 @@ exports.init = function(port) {
     });
 
 
+    // store the s3 client globally so we can use it from both jobs and routes without passing it as parameters
     global.s3 = knox.createClient(config.aws);
 
+    // default is 5 and we need download in parallell from s3
     http.globalAgent.maxSockets = Infinity;
 
     app.get('/account', ensureAuthenticated, function(req, res){
@@ -75,7 +84,7 @@ exports.init = function(port) {
         app.use(express.errorHandler());
     });
 
-
+    // Error handler
     app.error(function(err, req, res, next){
         res.render('500.ejs', { locals: { error: err },status: 500 });
     });

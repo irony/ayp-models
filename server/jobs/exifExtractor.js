@@ -1,3 +1,10 @@
+// Extract EXIF information
+// ===
+// This job will use BlitLine to extract all missing EXIF information from the S3 bucket
+// - - - -
+// TODO:
+// Make it work
+
 var blitline = require('blitline')
     Photo = require('../models/photo'),
     callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:3000");

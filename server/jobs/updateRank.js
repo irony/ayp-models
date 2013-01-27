@@ -1,10 +1,15 @@
+// Update Rank
+// ===
+// Based on interestingness get the most interesting photos and convert it to a normalized rank value
+// which can be used to filter all photos on
+
+
 var ObjectId = require('mongoose').Types.ObjectId,
     timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
     emit = {}, // fool jsLint
     mongoose = require('mongoose');
-
 
 
 module.exports = function(){

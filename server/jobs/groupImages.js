@@ -1,3 +1,8 @@
+// Group Photos
+// ===
+// Find relevant information to group on. First off is the date.
+// Use dayname, month, summer, winter, known holidays etc
+
 var ObjectId = require('mongoose').Types.ObjectId,
     timeago = require('timeago'),
     Photo = require('../models/photo'),

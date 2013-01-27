@@ -1,3 +1,6 @@
+// Importer
+// ====
+// Helper methods for downloading metadata and photos for all active connectors
 
 var Photo = require('../models/photo');
 var PhotoCopy = require('../models/photoCopy');
@@ -8,7 +11,12 @@ var async = require('async');
 
 var importer = {
 
-
+  /**
+   * Save an array of photos fetched elsewhere to the database
+   * @param  {[type]} user     a mongoose user model
+   * @param  {[type]} photos   array of photos
+   * @param  {[type]} progress callback which will be called after save of whole collection with (err, photos)
+   */
   savePhotos : function(user, photos, progress){
 
         async.map(photos, function(photo, next){
@@ -55,7 +63,13 @@ var importer = {
 
         });
   },
-
+  
+  /**
+   * download both original and thumbnail of photo from photos connector
+   * @param  {[type]}   user  user
+   * @param  {[type]}   photo photo
+   * @param  {Function} done  callback when both are done
+   */
   downloadPhoto : function(user, photo, done){
 
     var connector = require('../connectors/' + photo.source);
@@ -74,7 +88,11 @@ var importer = {
 
   },
 
-
+  /**
+   * Downloads and saves metadata for all connectors of the provided user
+   * @param  {[type]}   user user
+   * @param  {Function} done callback when done
+   */
   importPhotosFromAllConnectors : function(user, done){
     if (user.accounts){
       
@@ -103,6 +121,13 @@ var importer = {
     });
   },
 
+  /**
+   * Dpwnload photos for all newly downloaded metadata where the photos haven't been downloaded yet
+   * @param  {[type]} options {
+   *                             limit : 10 // how many should be downloaded in each batch?
+   *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?
+   *                          }
+   */
   fetchNewPhotos : function(options){
 
     var photoQuery = Photo.find().where('store.thumbnails.stored')

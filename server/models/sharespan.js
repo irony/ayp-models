@@ -1,3 +1,9 @@
+// Share Span
+// ==========
+// A share span is a timeframe that connects all included members. All photos added within this timeframe
+// from any users will be copied to all members.
+// - - -
+// TODO: Add a one-way option or active-flag per member
 
 
 var mongoose = require('mongoose'),
@@ -5,11 +11,6 @@ var mongoose = require('mongoose'),
     Photo = require('./photo'),
     Schema = mongoose.Schema;
 
-/**
- * _Share Span_
- * A timeframe that connects all members to each other. All photos added within this timeframe
- * will be copied to all members. TODO: Add a one-way option here
- */
 var ShareSpanSchema = new mongoose.Schema({
   added : { type: Date, default: Date.now()},
   startDate: {type : Date},
