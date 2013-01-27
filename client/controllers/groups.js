@@ -10,7 +10,9 @@ function GroupsController($scope, $http){
   $scope.scroll = function(){
     if ( $scope.loadingReverse) // reverse scroll, TODO: send as parameter instead
     {
-      if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date($scope.groups[0].photos[0].taken);
+      var firstDate = $scope.groups[0].photos[$scope.groups[0].photos.length-1].taken;
+      if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date(firstDate);
+      $scope.counter = 0;
     }
     return $scope.loadMore();
   };
@@ -45,7 +47,6 @@ function GroupsController($scope, $http){
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
-      $scope.loadingReverse = false;
 
       if (photos.length)
       {

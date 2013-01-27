@@ -13,6 +13,7 @@ var UserSchema = new mongoose.Schema({
   displayName : { type: String},
   emails : { type: []},
   accounts : {type :  Schema.Types.Mixed},
+  maxRank : {type : Number},
   updated : {type: Date}
 });
 

@@ -1,4 +1,4 @@
-  <header ng-show="loadingReverse" class="loader pull-left">
+  <header ng-show="loading && loadingReverse" class="loader pull-left">
       <span></span>
       <span></span>
       <span></span>
@@ -47,7 +47,7 @@
           </div>
 
           <footer>
-          <div class="group">
+          <div class="group" ng-show="loading">
             <header class="loader">
                 <span></span>
                 <span></span>

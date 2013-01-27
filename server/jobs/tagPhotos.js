@@ -20,7 +20,7 @@ module.exports = function(){
         parts.forEach(function(tag){
           if (tag.trim()){
             self.owners.map(function(user){
-              emit(self._id, tag.trim().split('_').join(' '));
+              emit({photoId : self._id, userId : user}, tag.trim().split('_').join(' '));
             });
 
           }
@@ -28,7 +28,7 @@ module.exports = function(){
     }
   };
 
-  var reduce = function(photoId, tags){
+  var reduce = function(key, tags){
 
     return tags.join(',');
 
@@ -45,8 +45,10 @@ module.exports = function(){
     model.find(function(err, photos){
       console.log('Done with tags map/reduce. Updating %d photos', photos.length, stats);
       photos.forEach(function(photo){
-        var updated = {tags : (photo.value || '').split(',')};
-        Photo.update({_id : photo._id}, updated, function(err, count){
+        var photoSet = {copies : {}};
+        var key = photo._id;
+        photoSet.copies[key.userId] = {tags : photo.value};
+        return Photo.update({_id : key.photoId}, photoSet, function(err, count){
           if (err) return console.log('error when updating tags:', err);
           if (!photo) return console.log("didn't find photo to update");
         });

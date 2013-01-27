@@ -54,7 +54,7 @@ module.exports = function(app){
       throw new Error('You have to login first');
     }
 
-    var maxRank = 1500;
+    var maxRank = req.user.maxRank || 1500;
     var limitRank = maxRank * req.query.interestingness / 100;
     console.log('searching photos:', req.query);
 
