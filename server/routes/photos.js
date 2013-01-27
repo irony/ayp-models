@@ -51,8 +51,7 @@ module.exports = function(app){
         filter = (reverse) ? {$gte : req.query.startDate} : {$lte : req.query.startDate};
 
     if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
+      throw new Error('You have to login first');
     }
 
     var maxRank = 1500;
@@ -61,7 +60,7 @@ module.exports = function(app){
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
-    .where('store.thumbnails.stored').exists()
+    //.where('store.thumbnails.stored').exists()
     .where('copies.' + req.user._id + '.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
     .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
@@ -70,6 +69,8 @@ module.exports = function(app){
       if (!photos || !photos.length){
         return res.json(photos);
       }
+
+      console.log('found %d photos', photos.length);
 
       photos = photos.reduce(function(a,b){
         var diffAverage = 0,
