@@ -61,7 +61,7 @@ module.exports = function(app){
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
     //.where('store.thumbnails.stored').exists()
-    .where('copies.' + req.user._id + '.rank').lte((99 - (req.query.interestingness || 50)) / 100 * maxRank )
+    .where('copies.' + req.user._id + '.rank').gte(((99 - (req.query.interestingness || 50)) / 100) * maxRank )
     .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)

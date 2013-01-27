@@ -1,3 +1,11 @@
+// Photo Sockets
+// =============
+// Sockets for handling activity on a photo:
+// * Viewing time
+// * Clicks
+// * Hide or show
+// * Star / heart
+
 module.exports = function(app){
   var io = require('socket.io').listen(app);
   var Photo = require('../models/photo');
