@@ -52,6 +52,8 @@ exports.init = function() {
       app.use(express.session({ secret: 'keyboard cat', cookie: { maxAge: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)}, store: new MongoStore({url: config.mongoUrl })}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
+      // 
+      // TODO: Add authentication for socket.io here
       app.use(passport.initialize());
       app.use(passport.session());
       app.use(express.static(__dirname + '/../client'));
