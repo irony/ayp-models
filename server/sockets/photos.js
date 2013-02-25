@@ -5,6 +5,8 @@
 // * Clicks
 // * Hide or show
 // * Star / heart
+// 
+// TODO: Add session management / authentication with express - socket.io
 
 module.exports = function(app){
   var io = require('socket.io').listen(app);

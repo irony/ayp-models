@@ -27,16 +27,16 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dbPhoto</span><span class="p">){</span>
               <span class="nx">dbPhoto</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Photo</span><span class="p">();</span>
-              <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span> <span class="o">=</span> <span class="p">[];</span>
+              <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span> <span class="o">=</span> <span class="p">{};</span>
             <span class="p">}</span>
 
 
             <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;owners&#39;</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">uniq</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">union</span><span class="p">([</span><span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">],</span> <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">owners</span><span class="p">)));</span>
 
-            <span class="kd">var</span> <span class="nx">photoCopy</span> <span class="o">=</span> <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span><span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">user</span> <span class="o">===</span> <span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">])</span> <span class="k">return</span> <span class="nx">b</span><span class="p">});</span>
+            <span class="kd">var</span> <span class="nx">photoCopy</span> <span class="o">=</span> <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">];</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">photoCopy</span><span class="p">)</span>
-              <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">photoCopy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhotoCopy</span><span class="p">());</span>
+              <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">copies</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">photoCopy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhotoCopy</span><span class="p">();</span>
 
             <span class="nx">photoCopy</span><span class="p">.</span><span class="nx">interestingness</span> <span class="o">=</span> <span class="nx">photoCopy</span><span class="p">.</span><span class="nx">interestingness</span> <span class="o">||</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">// dummy value now. TODO: change to real one</span>
             <span class="nx">dbPhoto</span><span class="p">.</span><span class="nx">markModified</span><span class="p">(</span><span class="s1">&#39;copies&#39;</span><span class="p">);</span>

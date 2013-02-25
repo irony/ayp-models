@@ -22,7 +22,7 @@ var jobs = [
   {fn:require('./jobs/tagPhotos'), interval: 9 * 60 * 1000},
   {fn:require('./jobs/calculateInterestingness'), interval: 10 * 60 * 1000},
   {fn:require('./jobs/updateRank'), interval: 11 * 60 * 1000},
-  {fn:require('./jobs/importer').fetchNewMetadata, interval: 1 * 60 * 1000}
+  {fn:require('./jobs/importer').fetchNewMetadata, interval: 1 * 10 * 1000}
   ,{fn:function(){require('./jobs/importer').fetchNewPhotos({
       limit: 10,
       autoRestart : true

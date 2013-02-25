@@ -1,6 +1,5 @@
 var User = require('../models/user'),
-    _ = require('underscore'),
-    callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:3000");
+    _ = require('underscore');
 
 var updateProfile = function(user, profile, done){
 
