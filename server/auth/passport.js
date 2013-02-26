@@ -1,4 +1,4 @@
-var callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:5000"),
+var callbackBaseUrl = "http://" + (process.env.HOST || "www.allyourphotos.org"),
     passport = require('passport'),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
