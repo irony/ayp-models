@@ -72,8 +72,7 @@ module.exports = function(app){
       }
 
       console.log('found %d photos', photos.length);
-
-
+/*
       photos = photos.reduce(function(a,b){
         var diffAverage = 0,
             last = a.length ? a[a.length-1] : null;
@@ -91,6 +90,8 @@ module.exports = function(app){
 
         return a;
       }, []);
+*/
+
 
       async.map((photos || []), function(photo, done){
 
@@ -104,7 +105,7 @@ module.exports = function(app){
           photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
         } else {
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/thumbnails/' + photo.source + '/' + photo._id;
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.png';
           return done(null, photo);
 /*
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);

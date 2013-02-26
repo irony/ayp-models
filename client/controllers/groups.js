@@ -43,7 +43,7 @@ function GroupsController($scope, $http){
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 25};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 100};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
