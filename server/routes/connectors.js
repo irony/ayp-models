@@ -50,7 +50,7 @@ module.exports = function (app) {
         if (err) {
         console.error('Error downloading thumbnail', err);
 
-          return res.send(500, new Error(err));
+          return res.send(404, new Error(err));
         }
 
         return res.end(thumbnail);
@@ -71,7 +71,7 @@ module.exports = function (app) {
 
       connector.downloadPhoto(req.user, photo, function(err, thumbnail){
         if (err || !thumbnail) {
-          return res.send(500, new Error(err));
+          return res.send(404, new Error(err));
         }
 
         if (thumbnail.url)

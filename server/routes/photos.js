@@ -73,6 +73,7 @@ module.exports = function(app){
 
       console.log('found %d photos', photos.length);
 
+
       photos = photos.reduce(function(a,b){
         var diffAverage = 0,
             last = a.length ? a[a.length-1] : null;
@@ -83,6 +84,9 @@ module.exports = function(app){
           diffAverage = b.diffTotal / a.length;
         }
 
+        // Allow at least half of the photos in the group.
+        // And then only add photos which similar time diff compared to the rest of the photos
+        // This is to prevent "horungar" from being added to a group
         if (a.length <= photos.length / 2 || b.timeDiff < diffAverage * 1.5) a.push(b);
 
         return a;
