@@ -3,4 +3,6 @@ touch tmp/restart.txt
 echo "restarting All Your Photos after receiving push"
 npm install
 npm test
-forever restartall
+forever stopall
+forever -o app.log start server/server.js 
+forever -o worker.log start server/worker.js
