@@ -4,5 +4,5 @@ echo "restarting All Your Photos after receiving push"
 npm install
 npm test
 forever stopall
-sudo forever -l app.log start server/server.js 
-sudo forever -l worker.log start server/worker.js
+forever -a -l app.log start server/server.js 
+forever -a -l worker.log start server/worker.js
