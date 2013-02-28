@@ -128,10 +128,10 @@ var importer = {
    *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?
    *                          }
    */
-  fetchNewPhotos : function(options){
+  fetchNewPhotos : function(done, options){
 
-    var photoQuery = Photo.find().where('store.thumbnails.stored')
-    .exists(false)
+    var photoQuery = Photo.find()
+    .where('store.thumbnails.stored').exists(false)
     .sort('-modified')
     .limit(options && options.limit || 10);
     var downloadAllResults = function downloadAllResults(err, photos){
@@ -145,9 +145,10 @@ var importer = {
             return photo.remove(done);
           }
 
+          // We don't know which user this photo belongs to so we try to download them all
           users.map(function(user){
             importer.downloadPhoto(user, photo, function(err, result){
-              done(null, photo); // ignore errors to continue
+              return done(null, photo); // ignore errors to continue
             });
           });
         });
@@ -160,6 +161,8 @@ var importer = {
             photoQuery.exec(downloadAllResults);
           });
         }
+        
+        return done(err, photos);
       });
     };
     

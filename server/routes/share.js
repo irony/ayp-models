@@ -1,8 +1,7 @@
 var ViewModel = require('./viewModel');
-var ShareSpan = require('../models/sharespan');
-var User = require('../models/user');
+var ShareSpan = require('../../models/sharespan');
+var User = require('../../models/user');
 var ObjectId = require('mongoose').Types.ObjectId;
-var timeago = require('timeago');
 
 module.exports = function(app){
 

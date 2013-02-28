@@ -4,7 +4,6 @@
 // Use dayname, month, summer, winter, known holidays etc
 
 var ObjectId = require('mongoose').Types.ObjectId,
-    timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
     mongoose = require('mongoose'),
@@ -12,7 +11,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 
 
-module.exports = function(){
+module.exports = function(done){
 
   var map = function(){
 
@@ -55,15 +54,15 @@ module.exports = function(){
   };
 
   // add query to only reduce modified images
-  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}}, function(err, model, stats){
-    if (err) throw err;
+  Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}, verbose:true}, function(err, model, stats){
+    if (err) return done(err);
 
+    // update all included photos with the new groups
     model.find(function(err, groups){
-      groups.forEach(function(group){
-        Photo.update({_id : group.value._id}, {$set : {groups : group._id.toString().split('/')}}, function(err, photo){
-          if (err) console.log('error when updating groups:', err);
-        });
-
+      async.map(groups, function(group, done){
+        Photo.findOneAndUpdate({_id : group.value._id}, {$set : {groups : group._id.toString().split('/')}}, {safe:true}, done);
+      }, function(err, photos){
+        if (done) done();
       });
     });
   });

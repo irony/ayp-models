@@ -45,8 +45,8 @@ describe("app", function(){
 
   it("should be possible to add a span, and find it with a date", function(done){
 
-    var ShareSpan = require('../models/sharespan');
-    var User = require('../models/user');
+    var ShareSpan = require('../../models/sharespan');
+    var User = require('../../models/user');
 
 
     var userA = new User();
@@ -82,9 +82,9 @@ describe("app", function(){
 
   it("should be possible to add a span, a photo and get multiple owners of the photo", function(done){
 
-    var Photo = require('../models/photo');
-    var ShareSpan = require('../models/sharespan');
-    var User = require('../models/user');
+    var Photo = require('../../models/photo');
+    var ShareSpan = require('../../models/sharespan');
+    var User = require('../../models/user');
 
 
     var userA = new User();

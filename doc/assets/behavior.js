@@ -218,22 +218,6 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         }
       ]
     }, {
-      "type": "file",
-      "data": {
-        "language": {
-          "nameMatchers": [".js"],
-          "pygmentsLexer": "javascript",
-          "singleLineComment": ["//"],
-          "name": "JavaScript"
-        },
-        "sourcePath": "/Users/cln/Projects/allyourphotos/server/conf.js",
-        "projectPath": "server/conf.js",
-        "targetPath": "conf",
-        "title": "conf"
-      },
-      "depth": 1,
-      "outline": []
-    }, {
       "type": "folder",
       "data": {
         "path": "connectors",
@@ -340,8 +324,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/calculateInterestingness.js",
-            "projectPath": "server/jobs/calculateInterestingness.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/calculateInterestingness.js",
+            "projectPath": "jobs/calculateInterestingness.js",
             "targetPath": "jobs/calculateInterestingness",
             "firstHeader": {
               "type": "heading",
@@ -366,8 +350,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/exifExtractor.js",
-            "projectPath": "server/jobs/exifExtractor.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/exifExtractor.js",
+            "projectPath": "jobs/exifExtractor.js",
             "targetPath": "jobs/exifExtractor",
             "firstHeader": {
               "type": "heading",
@@ -392,8 +376,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/groupImages.js",
-            "projectPath": "server/jobs/groupImages.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/groupImages.js",
+            "projectPath": "jobs/groupImages.js",
             "targetPath": "jobs/groupImages",
             "firstHeader": {
               "type": "heading",
@@ -418,8 +402,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/importer.js",
-            "projectPath": "server/jobs/importer.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/importer.js",
+            "projectPath": "jobs/importer.js",
             "targetPath": "jobs/importer",
             "firstHeader": {
               "type": "heading",
@@ -444,8 +428,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/tagPhotos.js",
-            "projectPath": "server/jobs/tagPhotos.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/tagPhotos.js",
+            "projectPath": "jobs/tagPhotos.js",
             "targetPath": "jobs/tagPhotos",
             "title": "tagPhotos"
           },
@@ -460,8 +444,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/jobs/updateRank.js",
-            "projectPath": "server/jobs/updateRank.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/jobs/updateRank.js",
+            "projectPath": "jobs/updateRank.js",
             "targetPath": "jobs/updateRank",
             "firstHeader": {
               "type": "heading",
@@ -496,8 +480,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/group.js",
-            "projectPath": "server/models/group.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/models/group.js",
+            "projectPath": "models/group.js",
             "targetPath": "models/group",
             "firstHeader": {
               "type": "heading",
@@ -522,8 +506,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/photo.js",
-            "projectPath": "server/models/photo.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/models/photo.js",
+            "projectPath": "models/photo.js",
             "targetPath": "models/photo",
             "firstHeader": {
               "type": "heading",
@@ -548,8 +532,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/photoCopy.js",
-            "projectPath": "server/models/photoCopy.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/models/photoCopy.js",
+            "projectPath": "models/photoCopy.js",
             "targetPath": "models/photoCopy",
             "firstHeader": {
               "type": "heading",
@@ -574,8 +558,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/sharespan.js",
-            "projectPath": "server/models/sharespan.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/models/sharespan.js",
+            "projectPath": "models/sharespan.js",
             "targetPath": "models/sharespan",
             "firstHeader": {
               "type": "heading",
@@ -600,8 +584,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "singleLineComment": ["//"],
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/cln/Projects/allyourphotos/server/models/user.js",
-            "projectPath": "server/models/user.js",
+            "sourcePath": "/Users/cln/Projects/allyourphotos/models/user.js",
+            "projectPath": "models/user.js",
             "targetPath": "models/user",
             "title": "user"
           },
@@ -748,21 +732,31 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       "depth": 1,
       "outline": []
     }, {
-      "type": "file",
+      "type": "folder",
       "data": {
-        "language": {
-          "nameMatchers": [".js"],
-          "pygmentsLexer": "javascript",
-          "singleLineComment": ["//"],
-          "name": "JavaScript"
-        },
-        "sourcePath": "/Users/cln/Projects/allyourphotos/server/worker.js",
-        "projectPath": "server/worker.js",
-        "targetPath": "worker",
+        "path": "worker",
         "title": "worker"
       },
       "depth": 1,
-      "outline": []
+      "children": [
+        {
+          "type": "file",
+          "data": {
+            "language": {
+              "nameMatchers": [".js"],
+              "pygmentsLexer": "javascript",
+              "singleLineComment": ["//"],
+              "name": "JavaScript"
+            },
+            "sourcePath": "/Users/cln/Projects/allyourphotos/worker/worker.js",
+            "projectPath": "worker/worker.js",
+            "targetPath": "worker/worker",
+            "title": "worker"
+          },
+          "depth": 2,
+          "outline": []
+        }
+      ]
     }
   ];
 

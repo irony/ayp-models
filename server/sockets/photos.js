@@ -10,7 +10,7 @@
 
 module.exports = function(app){
   var io = require('socket.io').listen(app);
-  var Photo = require('../models/photo');
+  var Photo = require('../../models/photo');
   
 
   io.of('/photos').on('connection', function (socket) {

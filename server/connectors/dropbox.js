@@ -1,12 +1,12 @@
 var dbox  = require("dbox");
-var config = require('../conf').dbox;
+var config = require('../../conf');
 var dbox  = require("dbox");
 var async  = require("async");
-var dropbox   = dbox.app(config);
+var dropbox   = dbox.app(config.dbox);
 var passport = require('passport');
 var Connector = require('./connectorBase');
-var Photo = require('../models/photo');
-var User = require('../models/user');
+var Photo = require('../../models/photo');
+var User = require('../../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
@@ -26,38 +26,41 @@ var connector = new Connector();
 
 		var filename = photo.source + '/' + photo._id;
 
-		//if (p.existsSync(filename)) //TODO: add force download switch
-	//		return;
-		var client = this.getClient(user);
+		try {
+			var client = this.getClient(user);
 
-		return client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
+			return client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
 
-			if (status !== 200){
+				if (status !== 200){
 
-				if(status === 415) {
-					console.log('[415]'); // ' received, removing photo. This is not a photo.');
-					photo.remove(console.log);
+					if(status === 415) {
+						console.log('[415]'); // ' received, removing photo. This is not a photo.');
+						photo.remove(console.log);
+					}
+
+					if(status === 404) {
+						// console.log('[404]'); //' received, it is not a photo?', photo.path);
+					}
+
+
+					if (done && status) {
+						return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
+					}
+
+					
+					console.log('error downloading thumbnail', status, thumbnail);
+					return;
 				}
 
-				if(status === 404) {
-					// console.log('[404]'); //' received, it is not a photo?', photo.path);
-				}
+				return connector.save('thumbnails', photo, thumbnail, function(err){
+					return done(err, thumbnail);
+				});
 
-
-				if (done && status) {
-					return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
-				}
-
-				
-				console.log('error downloading thumbnail', status, thumbnail);
-				return;
-			}
-
-			return connector.save('thumbnails', photo, thumbnail, function(err){
-				return done(err, thumbnail);
 			});
+		} catch(err){
+			done(err, null);
+		}
 
-		});
 	};
 
 

@@ -7,6 +7,7 @@ function PhotosController($scope, $http){
   $scope.groups = {};
   $scope.dateRange = new Date();
   $scope.lastDate = null;
+  $scope.startDate = new Date();
 
   $scope.zoomLevel = 50;
 
@@ -14,29 +15,30 @@ function PhotosController($scope, $http){
   
   $scope.loadMore = function(zoomLevel, startDate) {
 
-    fetching = true;
+    $scope.loading = true;
 
-    var query = {skip : counter, interestingness : zoomLevel, startDate : startDate, limit: 40};
-    $http.get('/groupFeed', {params : query})
-    .success(function(data){
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 100};
+    $http.get('/photoFeed', {params : query})
+    .success(function(photos){
+      $scope.loading = false;
 
-      data = (data||[]).map(function(photo){
+      photos.map(function(photo){
 
         photo.class = "span3";
         return photo;
       });
 
-      counter += data.length;
+      counter += photos.length;
       if (startDate){ // append instead of reloading
-        Array.prototype.push.apply($scope.photos, data);
+        Array.prototype.push.apply($scope.photos, photos);
         /*$scope.photos = data.sort(function(a,b){
           return a.taken - b.taken;
         }.reduce(function(a,b){
           return a.taken !== b.taken ? [a,b] : [a];
         }, []));*/
       } else {
-        $scope.photos = data;
-        counter = data.length; // reset counter
+        $scope.photos = photos;
+        counter = photos.length; // reset counter
       }
 
 
@@ -51,7 +53,7 @@ function PhotosController($scope, $http){
         return a;
       }, []);
 
-      $scope.recalculateGroups($scope.photos);
+      // $scope.recalculateGroups($scope.photos);
     });
   };
 

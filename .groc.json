@@ -5,8 +5,9 @@
     "client/controllers/*.js", 
     "server/sockets/*.ejs",
     "server/connectors/*.js", 
-    "server/jobs/*.js", 
-    "server/models/*.js", 
-    "server/routes/*.js"
+    "server/routes/*.js",
+    "worker/*.js",
+    "jobs/*.js", 
+    "models/*.js"
   ]
 }

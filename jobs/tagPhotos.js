@@ -1,5 +1,4 @@
 var ObjectId = require('mongoose').Types.ObjectId,
-    timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
     mongoose = require('mongoose'),
@@ -7,7 +6,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 
 
-module.exports = function(){
+module.exports = function(done){
 
   var map = function(){
 
@@ -43,15 +42,13 @@ module.exports = function(){
     if (err) throw err;
 
     model.find(function(err, photos){
-      console.log('Done with tags map/reduce. Updating %d photos', photos.length, stats);
-      photos.forEach(function(photo){
+      async.forEach(photos, function(photo, done){
         var photoSet = {copies : {}};
         var key = photo._id;
         photoSet.copies[key.userId] = {tags : photo.value};
-        return Photo.update({_id : key.photoId}, photoSet, function(err, count){
-          if (err) return console.log('error when updating tags:', err);
-          if (!photo) return console.log("didn't find photo to update");
-        });
+        Photo.findOneAndUpdate({_id : key.photoId}, photoSet, {safe:true}, done);
+      }, function(err, updated){
+        if (done) return done(err, updated);
       });
 
     });

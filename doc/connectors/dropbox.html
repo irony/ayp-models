@@ -1,12 +1,12 @@
 <!DOCTYPE html><html lang="en"><head><title>connectors/dropbox</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="connectors/dropbox"><meta name="groc-project-path" content="server/connectors/dropbox.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">server/connectors/dropbox.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">dbox</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dbox&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../conf&#39;</span><span class="p">).</span><span class="nx">dbox</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../conf&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">dbox</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dbox&quot;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">async</span>  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;async&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">dropbox</span>   <span class="o">=</span> <span class="nx">dbox</span><span class="p">.</span><span class="nx">app</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">dropbox</span>   <span class="o">=</span> <span class="nx">dbox</span><span class="p">.</span><span class="nx">app</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">dbox</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">passport</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;passport&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">Connector</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./connectorBase&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Photo</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/photo&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Photo</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../models/photo&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../models/user&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">ObjectId</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongoose&#39;</span><span class="p">).</span><span class="nx">Types</span><span class="p">.</span><span class="nx">ObjectId</span><span class="p">;</span>
 
@@ -26,35 +26,39 @@
 
     <span class="kd">var</span> <span class="nx">filename</span> <span class="o">=</span> <span class="nx">photo</span><span class="p">.</span><span class="nx">source</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">photo</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
 
-    <span class="c1">//if (p.existsSync(filename)) //TODO: add force download switch</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><pre><code>return;
-</code></pre></div></div><div class="code"><div class="wrapper">    <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClient</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClient</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
 
-    <span class="k">return</span> <span class="nx">client</span><span class="p">.</span><span class="nx">thumbnails</span><span class="p">(</span><span class="nx">photo</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="p">{</span><span class="nx">size</span><span class="o">:</span> <span class="s1">&#39;l&#39;</span><span class="p">},</span><span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">){</span>
+      <span class="k">return</span> <span class="nx">client</span><span class="p">.</span><span class="nx">thumbnails</span><span class="p">(</span><span class="nx">photo</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="p">{</span><span class="nx">size</span><span class="o">:</span> <span class="s1">&#39;l&#39;</span><span class="p">},</span><span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">){</span>
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">status</span> <span class="o">!==</span> <span class="mi">200</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">status</span> <span class="o">!==</span> <span class="mi">200</span><span class="p">){</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">415</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[415]&#39;</span><span class="p">);</span> <span class="c1">// &#39; received, removing photo. This is not a photo.&#39;);</span>
-          <span class="nx">photo</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">415</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[415]&#39;</span><span class="p">);</span> <span class="c1">// &#39; received, removing photo. This is not a photo.&#39;);</span>
+            <span class="nx">photo</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="k">if</span><span class="p">(</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">404</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>console.log('[404]'); //' received, it is not a photo?', photo.path);</p></div></div><div class="code"><div class="wrapper">          <span class="p">}</span>
+
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">done</span> <span class="o">&amp;&amp;</span> <span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Could not download thumbnail from dropbox, error nr &#39;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">));</span>
+          <span class="p">}</span>
+
+          
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;error downloading thumbnail&#39;</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">);</span>
+          <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span><span class="p">(</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">404</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>console.log('[404]'); //' received, it is not a photo?', photo.path);</p></div></div><div class="code"><div class="wrapper">        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">connector</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">,</span> <span class="nx">photo</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+          <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">);</span>
+        <span class="p">});</span>
 
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">done</span> <span class="o">&amp;&amp;</span> <span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Could not download thumbnail from dropbox, error nr &#39;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">));</span>
-        <span class="p">}</span>
-
-        
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;error downloading thumbnail&#39;</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span>
-
-      <span class="k">return</span> <span class="nx">connector</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">,</span> <span class="nx">photo</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-        <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">thumbnail</span><span class="p">);</span>
       <span class="p">});</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+      <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+    <span class="p">}</span>
 
-    <span class="p">});</span>
   <span class="p">};</span>
 
 

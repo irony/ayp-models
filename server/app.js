@@ -2,26 +2,28 @@
 // ======================
 // Initializes all routes and express
 
-
 var mongoose = require('mongoose');
-
 var _ = require('underscore');
-
-//var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
-var config = require('./conf');
-var conn = mongoose.connect(config.mongoUrl);
+var config = require('../conf');
 var http = require('http');
-
-var express = require('express')
-  , util = require('util');
+var express = require('express');
+var util = require('util');
 
 var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
-var config = require('./conf');
-
 var knox      = require('knox');
-
 var amazon_url = 'http://s3.amazonaws.com/' + config.aws.bucket;
+
+
+mongoose.connect(config.mongoUrl);
+
+mongoose.connection.on('error', function(err){
+  console.log('Connection error:', err);
+});
+
+
+// more logs
+// require('longjohn');
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -52,7 +54,7 @@ exports.init = function() {
       app.use(express.session({ secret: 'keyboard cat', cookie: { maxAge: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)}, store: new MongoStore({url: config.mongoUrl })}));
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
-      // 
+      //
       // TODO: Add authentication for socket.io here
       app.use(passport.initialize());
       app.use(passport.session());
@@ -65,7 +67,7 @@ exports.init = function() {
     global.s3 = knox.createClient(config.aws);
 
     // default is 5 and we need download in parallell from s3
-    http.globalAgent.maxSockets = Infinity;
+    // http.globalAgent.maxSockets = 50;
 
     app.get('/account', ensureAuthenticated, function(req, res){
       res.render('account', { user: req.user });

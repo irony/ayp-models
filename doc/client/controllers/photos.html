@@ -7,6 +7,7 @@
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">groups</span> <span class="o">=</span> <span class="p">{};</span>
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">dateRange</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">lastDate</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="nx">$scope</span><span class="p">.</span><span class="nx">startDate</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
 
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">zoomLevel</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
 
@@ -14,29 +15,30 @@
   
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">loadMore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">zoomLevel</span><span class="p">,</span> <span class="nx">startDate</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="nx">fetching</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nx">$scope</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="p">{</span><span class="nx">skip</span> <span class="o">:</span> <span class="nx">counter</span><span class="p">,</span> <span class="nx">interestingness</span> <span class="o">:</span> <span class="nx">zoomLevel</span><span class="p">,</span> <span class="nx">startDate</span> <span class="o">:</span> <span class="nx">startDate</span><span class="p">,</span> <span class="nx">limit</span><span class="o">:</span> <span class="mi">40</span><span class="p">};</span>
-    <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/groupFeed&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">params</span> <span class="o">:</span> <span class="nx">query</span><span class="p">})</span>
-    <span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="p">{</span><span class="nx">skip</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">counter</span><span class="p">,</span> <span class="nx">startDate</span><span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">startDate</span><span class="p">.</span><span class="nx">toISOString</span><span class="p">(),</span> <span class="nx">reverse</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">loadingReverse</span><span class="p">,</span> <span class="nx">interestingness</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">zoomLevel</span><span class="p">,</span> <span class="nx">limit</span><span class="o">:</span> <span class="mi">100</span><span class="p">};</span>
+    <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/photoFeed&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">params</span> <span class="o">:</span> <span class="nx">query</span><span class="p">})</span>
+    <span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">photos</span><span class="p">){</span>
+      <span class="nx">$scope</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-      <span class="nx">data</span> <span class="o">=</span> <span class="p">(</span><span class="nx">data</span><span class="o">||</span><span class="p">[]).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">photo</span><span class="p">){</span>
+      <span class="nx">photos</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">photo</span><span class="p">){</span>
 
         <span class="nx">photo</span><span class="p">.</span><span class="kr">class</span> <span class="o">=</span> <span class="s2">&quot;span3&quot;</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">photo</span><span class="p">;</span>
       <span class="p">});</span>
 
-      <span class="nx">counter</span> <span class="o">+=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+      <span class="nx">counter</span> <span class="o">+=</span> <span class="nx">photos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">startDate</span><span class="p">){</span> <span class="c1">// append instead of reloading</span>
-        <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+        <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span><span class="p">,</span> <span class="nx">photos</span><span class="p">);</span>
         <span class="cm">/*$scope.photos = data.sort(function(a,b){</span>
 <span class="cm">          return a.taken - b.taken;</span>
 <span class="cm">        }.reduce(function(a,b){</span>
 <span class="cm">          return a.taken !== b.taken ? [a,b] : [a];</span>
 <span class="cm">        }, []));*/</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
-        <span class="nx">counter</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="c1">// reset counter</span>
+        <span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span> <span class="o">=</span> <span class="nx">photos</span><span class="p">;</span>
+        <span class="nx">counter</span> <span class="o">=</span> <span class="nx">photos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="c1">// reset counter</span>
       <span class="p">}</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>counter += data.length;</p></div></div><div class="code"><div class="wrapper">      <span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">photo</span><span class="p">){</span><span class="k">return</span> <span class="nx">photo</span><span class="p">.</span><span class="nx">_id</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">_id</span><span class="p">}))</span> <span class="p">{</span>
@@ -44,10 +46,7 @@
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">a</span><span class="p">;</span>
-      <span class="p">},</span> <span class="p">[]);</span>
-
-      <span class="nx">$scope</span><span class="p">.</span><span class="nx">recalculateGroups</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">photos</span><span class="p">);</span>
-    <span class="p">});</span>
+      <span class="p">},</span> <span class="p">[]);</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>$scope.recalculateGroups($scope.photos);</p></div></div><div class="code"><div class="wrapper">    <span class="p">});</span>
   <span class="p">};</span>
 
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">recalculateGroups</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">photos</span><span class="p">){</span>

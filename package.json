@@ -13,6 +13,9 @@
     , "ejs" : "*"
     , "mkdirp": "*"
     , "mongoose": "*"
+    , "async" : "*"
+    , "underscore" : "*"
     , "spdy" : "*"
+    , "knox" : "*"
   }
 }

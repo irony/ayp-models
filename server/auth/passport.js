@@ -1,12 +1,12 @@
-var callbackBaseUrl = "http://" + (process.env.HOST || "www.allyourphotos.org"),
+var conf = require('../../conf'),
+    callbackBaseUrl = conf.baseUrl,
     passport = require('passport'),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
-    User = require('../models/user.js'),
-    auth = require('./auth.js'),
-    conf = require('../conf.js');
+    User = require('../../models/user.js'),
+    auth = require('./auth.js');
 
 
   passport.serializeUser(function(user, done) {

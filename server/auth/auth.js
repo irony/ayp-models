@@ -1,4 +1,4 @@
-var User = require('../models/user'),
+var User = require('../../models/user'),
     _ = require('underscore');
 
 var updateProfile = function(user, profile, done){

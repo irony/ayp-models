@@ -1,9 +1,9 @@
 
 var ViewModel = require('./viewModel');
-var Photo = require('../models/photo');
+var Photo = require('../../models/photo');
 var _ = require('underscore');
 var async = require('async');
-var importer = require('../jobs/importer');
+var importer = require('../../jobs/importer');
 
 
 module.exports = function(app){

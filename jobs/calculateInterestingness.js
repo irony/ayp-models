@@ -3,7 +3,6 @@
 // A job to calculate interestingness for all photos by all users
 
 var ObjectId = require('mongoose').Types.ObjectId,
-    timeago = require('timeago'),
     Photo = require('../models/photo'),
     async = require('async'),
     emit = {}, // fool jsLint
@@ -11,7 +10,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 
 
-module.exports = function(){
+module.exports = function(done){
 
   // Emit each relevant source of information
   var map = function(){
@@ -22,15 +21,18 @@ module.exports = function(){
       if (user && self.copies && self.copies[user]){
 
         var group = user + "/" + self._id;
+
         if(self.copies[user].hidden) emit(group, 0);
 
-        if(self.copies[user].starred) emit(group, 100);
-        if(self.copies[user].views) emit(group, (0.5 + self.copies[user].views / 10)*100);
-        
-        if(self.copies[user].clicks) emit(group, (0.8 + self.copies[user].clicks / 3)*100);
+        if(self.copies[user].starred) emit(group, 500);
 
-        if(self.tags && self.tags.length) emit(group, (0.5 + self.tags.length / 2)*100);
-        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, (0.6 + self.copies[user].groups / 2)*100);
+        if(self.copies[user].views) emit(group, 100 + self.copies[user].views * 5);
+        
+        if(self.copies[user].clicks) emit(group, 100 + self.copies[user].clicks * 10);
+
+        if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length)*3);
+
+        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, 100 + self.copies[user].groups * 10);
       }
     }
 
@@ -46,7 +48,7 @@ module.exports = function(){
       count++;
     });
 
-    return Math.round(parseFloat(returnValue / count));
+    return parseFloat(returnValue / count);
   };
 
   console.log('Starting map/reduce interestingness...');
@@ -56,28 +58,25 @@ module.exports = function(){
   // TODO: add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}, verbose: true}, function(err, model, stats){
 
-    console.log('Done with map/reduce.', stats);
-
-    if (err) throw err;
+    if (err) return done(err);
 
     // Query the results
     model.find(function(err, photos){
       console.log('Updating %d photos.', photos.length);
-      photos.forEach(function(photo){
+      async.map(photos, function(photo, done){
         var userId = photo._id.split('/')[0];
         var photoId = photo._id.split('/')[1];
 
         var setter = {$set : {}};
-        var interestingness = photo.value !== 50 ? photo.value : Math.floor(Math.random()*100);
+        var interestingness = photo.value >= 100 ? photo.value : Math.floor(Math.random()*100);
         
-        // TODO: move to individual updates per user
         setter.$set['copies.' + userId + '.interestingness'] = interestingness;
         setter.$set['copies.' + userId + '.calculated'] = new Date();
 
-        Photo.update({_id : new ObjectId(photoId)}, setter, function(err, photo){
-          if (err) console.log('error when updating interestingness:', err);
-        });
+        Photo.findOneAndUpdate({_id : new ObjectId(photoId)}, setter, {upsert:true, safe:true}, done);
 
+      }, function(err, updated){
+        if (done) done(err, updated);
       });
 
     });

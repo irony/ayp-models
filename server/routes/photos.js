@@ -1,13 +1,14 @@
 var ViewModel = require('./viewModel');
-var Photo = require('../models/photo');
-var Group = require('../models/group');
+var Photo = require('../../models/photo');
+var Group = require('../../models/group');
+var User = require('../../models/user');
 var fs = require('fs');
+var util = require('util');
 var path = require('path');
 var async = require('async');
 var _ = require('underscore');
 
 module.exports = function(app){
-
   var s3UrlPrefix = 'http://' + global.s3.bucket + '.' + global.s3.datacenterUrl;
 
   app.get('/wall', function(req, res){
@@ -18,7 +19,7 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    res.render('groups.ejs', model);
+    res.render('photos.ejs', model);
 
   });
 
@@ -94,18 +95,17 @@ module.exports = function(app){
 
 
       async.map((photos || []), function(photo, done){
+        photo.copies[req.user._id]._id = undefined; // the _id of the subdocument shouldn't replace the id of the photo
+        photo.mine = photo.copies[req.user._id]; // only use this user's personal settings
 
-        delete photo.copies[req.user._id]._id; // the _id of the subdocument shouldn't replace the id of the photo
-        photo = _.extend(photo, photo.copies[req.user._id]); // only use this user's personal settings
-
-        delete photo.copies; // and remove all other copies
-        delete photo.metadata;
+        photo.copies = undefined; // and remove all other copies
+        photo.metadata = undefined;
 
         if (photo.mimeType.split('/')[0] === 'video'){
           photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
           return done(null, photo);
         } else {
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.png';
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
           return done(null, photo);
 /*
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
@@ -160,6 +160,47 @@ module.exports = function(app){
       });
 
 
+    });
+  });
+
+  app.get('/library', function(req, res){
+
+
+
+    var model = new ViewModel(req.user);
+
+    if (!req.user){
+      model.error = 'You have to login first';
+      return res.render('500.ejs', model);
+    }
+
+    console.log('Calculating library...', req.user._id);
+
+
+    // Get an updated user record for an updated user maxRank.
+    User.findOne({_id : req.user._id}, function(err, user){
+      console.log(user);
+
+      Photo.find({'owners': req.user._id})
+      .limit(500)
+      .sort('-taken')
+      .exec(function(err, photos){
+        // return all photos with just bare minimum information for local caching
+        async.map((photos || []), function(photo, done){
+          var mine = photo.copies[req.user._id] || {};
+          util.write('.');
+
+          if (!mine) return done(); // unranked images are not welcome here
+          if (!mine.rank)
+            console.log(photo);
+
+          var group = Math.floor(parseFloat(mine.rank / user.maxRank) * 10);
+
+          return done(null, {taken:photo.taken, interestingness: mine.interestingness, group: group , ratio: photo.ratio});
+        }, function(err, photos){
+          return res.json(photos);
+        });
+      });
     });
   });
 

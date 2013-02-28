@@ -18,10 +18,12 @@ var PhotoSchema = new mongoose.Schema({
       source : { type: String},
       mimeType : { type: String},
       thumbnails : {type: Schema.Types.Mixed},
-      tags : [String],
       copies : {}, // [PhotoCopy],
 
       metadata : { type:  Schema.Types.Mixed},
+
+      // pointer to the current user's copy - will only be populated in runtime
+      mine : { type:  Schema.Types.Mixed},
       exif : {},
       src : {type:String},
 
