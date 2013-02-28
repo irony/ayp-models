@@ -1,3 +1,8 @@
+// Server initializations
+// =====
+// This contains the lower level initializations of the app
+
+
 var app = require('./app').init();
 var fs = require('fs');
 var http = require('http');

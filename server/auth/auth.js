@@ -1,3 +1,9 @@
+// User initializations
+// ====
+// Handles updates of user record in database
+// TODO: rewrite this with upsert
+//
+
 var User = require('../../models/user'),
     _ = require('underscore');
 

@@ -1,10 +1,12 @@
 // Main app configuration
 // ======================
-// Initializes all routes and express
+// Initializes database, all routes and express
 
 var config = require('../conf');
 var mongoose = require('mongoose');
 
+// Connect database directly
+var conn = mongoose.connect(config.mongoUrl);
 
 // load dependencies
 var _ = require('underscore');
@@ -16,8 +18,6 @@ var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
 var knox      = require('knox');
 
-// Connect database directly
-var conn = mongoose.connect(config.mongoUrl);
 
 // more logs
 // require('longjohn');
