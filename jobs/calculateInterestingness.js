@@ -62,7 +62,6 @@ module.exports = function(done){
 
     // Query the results
     model.find(function(err, photos){
-      console.log('Updating %d photos.', photos.length);
       async.map(photos, function(photo, done){
         var userId = photo._id.split('/')[0];
         var photoId = photo._id.split('/')[1];

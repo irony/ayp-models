@@ -3,7 +3,6 @@ var Photo = require('../../models/photo');
 var Group = require('../../models/group');
 var User = require('../../models/user');
 var fs = require('fs');
-var util = require('util');
 var path = require('path');
 var async = require('async');
 var _ = require('underscore');
@@ -188,7 +187,6 @@ module.exports = function(app){
         // return all photos with just bare minimum information for local caching
         async.map((photos || []), function(photo, done){
           var mine = photo.copies[req.user._id] || {};
-          util.write('.');
 
           if (!mine) return done(); // unranked images are not welcome here
           if (!mine.rank)

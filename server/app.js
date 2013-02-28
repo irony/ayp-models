@@ -2,9 +2,12 @@
 // ======================
 // Initializes all routes and express
 
-var mongoose = require('mongoose');
-var _ = require('underscore');
 var config = require('../conf');
+var mongoose = require('mongoose');
+
+
+// load dependencies
+var _ = require('underscore');
 var http = require('http');
 var express = require('express');
 var util = require('util');
@@ -12,15 +15,9 @@ var util = require('util');
 var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
 var knox      = require('knox');
-var amazon_url = 'http://s3.amazonaws.com/' + config.aws.bucket;
 
-
-mongoose.connect(config.mongoUrl);
-
-mongoose.connection.on('error', function(err){
-  console.log('Connection error:', err);
-});
-
+// Connect database directly
+var conn = mongoose.connect(config.mongoUrl);
 
 // more logs
 // require('longjohn');

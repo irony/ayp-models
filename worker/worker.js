@@ -1,32 +1,20 @@
 var mongoose = require('mongoose');
 var config = require('../conf');
-
-// var conn = mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/allmyphotos');
-mongoose.connect(config.mongoUrl);
-
-mongoose.connection.on('error', function(err){
-  console.log('Connection error:', err);
-});
-
-
 var express = require('express');
 var knox      = require('knox');
-var amazon_url = 'http://s3.amazonaws.com/' + config.aws.bucket;
 var async = require('async');
 var http = require('http');
 var User = require('../models/user');
 var Photo = require('../models/photo');
 var importer = require('../jobs/importer');
 var _ = require('underscore');
+var colors = require('colors');
+
+// Connect mongodb
+var conn = mongoose.connect(config.mongoUrl);
 
 // more logs
 // require('longjohn');
-
-// define some nasty colors for console.
-var red, blue, reset;
-red   = '\033[31m';
-blue  = '\033[34m';
-reset = '\033[0m';
 
 
 var jobs = [
@@ -58,14 +46,14 @@ var jobs = [
 async.mapSeries(jobs, function(job, done){
   console.log('Starting %s', job.title);
   job.fn(function(err){
-    if (!err) console.log('[' + blue + 'OK' + reset + ']');
+    if (!err) console.log('[' + 'OK'.green + ']');
     return done(err);
   });
 
   if (job.interval) setInterval(job.fn, job.interval);
 },
 function(err){
-  console.log('Done with initial jobs %s', (err ? red : blue) + (err || 'without errors') + reset);
+  console.log('Done with initial jobs %s', err ? err.toString().red : 'without errors'.green);
 });
 
 http.globalAgent.maxSockets = 50;

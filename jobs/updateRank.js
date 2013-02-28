@@ -39,7 +39,7 @@ module.exports = function(done){
 
           var setter = {$set : {}};
           setter.$set['copies.' + user._id + '.rank'] = rank;
-          return Photo.findOneAndUpdate({_id : photo._id}, setter, {safe:true}, done);
+          return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
           // console.log('updated %s', photo._id);
         },function(err, photos){
           console.log(': OK %d photos', photos.length, err);
