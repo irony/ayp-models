@@ -51,8 +51,6 @@ module.exports = function(done){
     return parseFloat(returnValue / count);
   };
 
-  console.log('Starting map/reduce interestingness...');
-
   // Start the map / reduce job
   // - - -
   // TODO: add query to only reduce modified images

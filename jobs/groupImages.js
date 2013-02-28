@@ -62,7 +62,7 @@ module.exports = function(done){
       async.map(groups, function(group, done){
         Photo.findOneAndUpdate({_id : group.value._id}, {$set : {groups : group._id.toString().split('/')}}, {safe:true}, done);
       }, function(err, photos){
-        if (done) done();
+        if (done) done(err, photos);
       });
     });
   });

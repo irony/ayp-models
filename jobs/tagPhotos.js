@@ -33,8 +33,6 @@ module.exports = function(done){
 
   };
 
-  console.log('Starting map/reduce tags...');
-
   // add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'tags'}, verbose:true}, function(err, model, stats){
   
@@ -45,8 +43,10 @@ module.exports = function(done){
       async.forEach(photos, function(photo, done){
         var photoSet = {copies : {}};
         var key = photo._id;
-        photoSet.copies[key.userId] = {tags : photo.value};
-        Photo.findOneAndUpdate({_id : key.photoId}, photoSet, {safe:true}, done);
+
+        var setter = {$set : {}};
+        setter.$set['copies.' + key.userId + '.tags'] = photo.value;
+        return Photo.findOneAndUpdate({_id : key.photoId}, setter, {upsert: true, safe:true}, done);
       }, function(err, updated){
         if (done) return done(err, updated);
       });

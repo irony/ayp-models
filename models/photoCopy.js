@@ -13,7 +13,7 @@ var PhotoCopy = new mongoose.Schema({
       views : { type: Number, default: 0},
       clicks : { type: Number, default: 0},
       hidden : { type: Boolean, default: false},
-      starred : { type: Number, default: 0},
+      vote : { type: Number, default: 0},
       tags : { type: []},
       groups : { type: []},
       top : { type: Number, default: null},

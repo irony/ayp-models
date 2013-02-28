@@ -25,7 +25,7 @@ module.exports = function(done){
 
       // find all their photos and sort them on interestingness
       Photo.find({'owners': user._id})
-      .sort('-copies.' + user._id + '.interestingness -taken')
+      .sort('-copies.' + user._id + '.interestingness')
       .limit(50000)
       .exec(function(err, photos){
         if (err) throw err;
@@ -35,10 +35,10 @@ module.exports = function(done){
         var rank = 0;
         
         async.map(photos, function(photo, done){
-          rank++;
+          var localRank = rank++;
 
           var setter = {$set : {}};
-          setter.$set['copies.' + user._id + '.rank'] = rank;
+          setter.$set['copies.' + user._id + '.rank'] = localRank;
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
           // console.log('updated %s', photo._id);
         },function(err, photos){

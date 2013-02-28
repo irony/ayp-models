@@ -173,15 +173,16 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    console.log('Calculating library...', req.user._id);
+    console.log('Calculating library...', req.user.maxRank);
 
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      console.log(user);
+      console.log('Max rank:', user.maxRank);
 
       Photo.find({'owners': req.user._id})
       .limit(500)
+//      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('-taken')
       .exec(function(err, photos){
         // return all photos with just bare minimum information for local caching
@@ -189,14 +190,12 @@ module.exports = function(app){
           var mine = photo.copies[req.user._id] || {};
 
           if (!mine) return done(); // unranked images are not welcome here
-          if (!mine.rank)
-            console.log(photo);
 
-          var group = Math.floor(parseFloat(mine.rank / user.maxRank) * 10);
+          var vote = mine.vote || (mine.rank / user.maxRank) * 10;
 
-          return done(null, {taken:photo.taken, interestingness: mine.interestingness, group: group , ratio: photo.ratio});
+          return done(null, {taken:photo.taken.getTime(), vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
-          return res.json(photos);
+          return res.json({maxRank: user.maxRank, photos: photos});
         });
       });
     });
