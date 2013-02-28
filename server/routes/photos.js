@@ -48,25 +48,25 @@ module.exports = function(app){
 
     var model = new ViewModel(req.user),
         reverse = req.query.reverse === 'true',
-        filter = (reverse) ? {$gte : req.query.startDate} : {$lte : req.query.startDate};
+        filter = (reverse) ? {$gte : req.query.startDate || new Date()} : {$lte : req.query.startDate || new Date()};
 
     if (!req.user){
       throw new Error('You have to login first');
     }
 
-    var maxRank = req.user.maxRank || 1500;
-    var limitRank = maxRank * req.query.interestingness / 100;
     console.log('searching photos:', req.query);
 
     Photo.find({'owners': req.user._id})
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
     //.where('store.thumbnails.stored').exists()
-    .where('copies.' + req.user._id + '.rank').lte(limitRank)
+    .where('copies.' + req.user._id + '.calculatedVote').lte(parseFloat(req.query.vote))
     .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
     .limit(req.query.limit || 100)
     .exec(function(err, photos){
+      if (err) throw err;
+
       if (!photos || !photos.length){
         return res.json(photos);
       }
@@ -173,14 +173,9 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    console.log('Calculating library...', req.user.maxRank);
-
-
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      console.log('Max rank:', user.maxRank);
-
-      Photo.find({'owners': req.user._id})
+      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken')
       .limit(500)
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('-taken')
@@ -191,9 +186,9 @@ module.exports = function(app){
 
           if (!mine) return done(); // unranked images are not welcome here
 
-          var vote = mine.vote || (mine.rank / user.maxRank) * 10;
+          var vote = mine.vote || (mine.calculatedVote);
 
-          return done(null, {taken:photo.taken.getTime(), vote: Math.floor(vote), ratio: photo.ratio});
+          return done(null, {mine: mine, taken:photo.taken.getTime(), vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
           return res.json({maxRank: user.maxRank, photos: photos});
         });

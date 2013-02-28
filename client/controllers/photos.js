@@ -17,14 +17,14 @@ function PhotosController($scope, $http){
 
     $scope.loading = true;
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, interestingness : $scope.zoomLevel, limit: 100};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : $scope.zoomLevel, limit: 100};
     $http.get('/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
 
       photos.map(function(photo){
 
-        photo.class = "span3";
+        photo.class = "vote" + photo.mine.vote;
         return photo;
       });
 

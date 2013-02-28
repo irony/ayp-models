@@ -30,9 +30,9 @@ module.exports = function(done){
         
         if(self.copies[user].clicks) emit(group, 100 + self.copies[user].clicks * 10);
 
-        if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length)*3);
+        if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length));
 
-        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, 100 + self.copies[user].groups * 10);
+        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, 100 + self.copies[user].groups.length * 10);
       }
     }
 

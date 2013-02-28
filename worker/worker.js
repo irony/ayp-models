@@ -44,7 +44,7 @@ var jobs = [
 // first run once in serial mode == wait for the first job to be finished before the next job continues.
 // This requires all jobs to accept a callback as first parameter)
 async.mapSeries(jobs, function(job, done){
-  console.log('Starting %s', job.title);
+  console.log('Starting job: %s', job.title.white);
   job.fn(function(err){
     if (!err) console.log('[' + 'OK'.green + ']');
     return done(err);

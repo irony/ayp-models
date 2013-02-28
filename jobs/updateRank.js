@@ -35,12 +35,17 @@ module.exports = function(done){
         var rank = 0;
         
         async.map(photos, function(photo, done){
-          var localRank = rank++;
+
+          // closure
+          var currentRank = rank++;
 
           var setter = {$set : {}};
-          setter.$set['copies.' + user._id + '.rank'] = localRank;
+          var mine = photo.copies[user._id];
+          setter.$set['copies.' + user._id + '.rank'] = currentRank;
+          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.floor(currentRank / photos.length * 10);
+
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
-          // console.log('updated %s', photo._id);
+
         },function(err, photos){
           console.log(': OK %d photos', photos.length, err);
 
