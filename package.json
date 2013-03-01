@@ -19,6 +19,7 @@
     , "socket.io" : "*"
     , "mongoose": "*"
     , "async" : "*"
+    , "colors" : "*"
     , "underscore" : "*"
     , "spdy" : "*"
     , "knox" : "*"
