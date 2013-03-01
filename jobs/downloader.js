@@ -1,6 +1,6 @@
 // Importer
 // ====
-// Helper methods for downloading metadata and photos for all active connectors
+// Helper methods for downloading all photos for all active connectors
 
 var Photo = require('../models/photo');
 var PhotoCopy = require('../models/photoCopy');
@@ -18,6 +18,7 @@ var downloader = {
    * @param  {Function} done  callback when both are done
    */
   downloadPhoto : function(user, photo, done){
+    if (!done) throw new Error("Callback is mandatory");
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
@@ -52,12 +53,14 @@ var downloader = {
    *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?
    *                          }
    */
-  downloadNewPhotos : function(done, options){
+  downloadNewPhotos : function(done){
+   
+    if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find()
     .where('store.original.stored').exists(false)
     .sort('-taken')
-    .limit(options && options.batchSize || 10);
+    .limit(10);
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
@@ -78,16 +81,9 @@ var downloader = {
         });
       }, function(err, photos){
         
-        console.log('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
-  
-        if(options && options.autoRestart){
-          setTimeout(function(){
-            photoQuery.exec(downloadAllResults);
-          }, 200);
-        } else{
-          return done(err, photos);
-        }
-        
+        // console.log('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
+        return done(err, photos);
+
       });
     };
     

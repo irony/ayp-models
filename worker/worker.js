@@ -20,7 +20,12 @@ var jobs = [
   {
     title:'Import New Photos',
     fn:require('../jobs/importer').importAllNewPhotos,
-    interval: 5 * 60 * 1000
+    interval: 1 * 60 * 1000
+  },
+  {
+    title: 'Download new photos',
+    fn:require('../jobs/downloader').downloadNewPhotos,
+    interval: 10 // download as fast as possible
   },
   {
     title:'Group Photos',
@@ -40,19 +45,31 @@ var jobs = [
   {
     title:'Update Rank for all Photos',
     fn:require('../jobs/updateRank'),
-    interval: 15 * 60 * 1000 // TODO: nightly job?
-  },
-  {
-    title: 'Download new photos',
-    fn:function(done){
-      require('../jobs/downloader').downloadNewPhotos(done, {
-        batchSize: 10,
-        autoRestart : true
-      });
-
-    }, interval: 0}
+    interval: 1 * 60 * 1000 // TODO: only update affected photos / pub/sub
+  }
 
 ];
+
+/* Start a job and log it */
+function startJob (job, done){
+  console.log('Starting job: %s', job.title.white);
+  job.fn(function(err){
+    finished(job, err);
+    
+    // Restart the job recursivly after finished (after a specified interval).
+    // This means that two incarnations of the same job will not run at the same time
+    setTimeout(function() {
+        startJob(job);
+    }, job.interval);
+
+    return done && done(err);
+  });
+}
+
+/* Log when the job is finished */
+function finished (job, err){
+    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']');
+}
 
 // first run may be put in serial mode (just add .mapSeries) which mean it will wait for the first job to be finished
 // before the next job continues. Good for debugging.
@@ -60,18 +77,7 @@ var jobs = [
 // This setup requires all jobs to accept a callback as first parameter which should be fired when all job is done
 //
 async.mapSeries(jobs, function(job, done){
-  console.log('Starting job: %s', job.title.white);
-
-  // start the job and receive a callback when the job is finished.
-  job.fn(function finished (err){
-    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']');
-    return done(err);
-  });
-
-  if (job.interval) setInterval(job.fn, job.interval);
-},
-function(err){
-  console.log('Done with initial jobs %s', err ? err.toString().red : 'without errors'.green);
+  startJob(job, done);
 });
 
 // http.globalAgent.maxSockets = 50;

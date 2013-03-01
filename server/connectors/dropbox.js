@@ -14,6 +14,8 @@ var ObjectId = require('mongoose').Types.ObjectId;
 var connector = new Connector();
 
 	connector.downloadThumbnail = function(user, photo, done){
+	
+	  if (!done) throw new Error("Callback is mandatory");
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done(null, null); // 'Not a dropbox user'
@@ -58,6 +60,9 @@ var connector = new Connector();
 
 
 	connector.downloadOriginal = function(user, photo, done){
+		
+  	if (!done) throw new Error("Callback is mandatory");
+
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done(new Error('Not a dropbox user'), null); // not a dropbox user
 
@@ -117,6 +122,8 @@ var connector = new Connector();
 
 	connector.importNewPhotos = function(user, done)
 	{
+
+	  if (!done) throw new Error("Callback is mandatory");
 
 		if (!user || !user._id || user.accounts.dropbox === undefined){
 			return done(new Error('Not a valid dropbox user'));

@@ -7,6 +7,8 @@ var Photo = require("../../models/photo");
 
 var extractExif = function(data, done){
 
+  if (!done) throw new Error("Callback is mandatory");
+
   try {
 
       var headers = new ImageHeaders();
@@ -44,6 +46,7 @@ Connector.prototype.getClient = function(user){
 
 Connector.prototype.save = function(folder, photo, stream, done){
 
+  if (!done) throw new Error("Callback is mandatory");
 
   if (!stream) return done(new Error('No stream'));
 
@@ -90,7 +93,7 @@ Connector.prototype.save = function(folder, photo, stream, done){
         });
 
       } else {
-        return done(new Error('Error when saving to S3, code: ' +res));
+        return done(new Error('Error when saving to S3, code: ' + JSON.stringify(res)));
       }
     });
 

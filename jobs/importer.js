@@ -1,6 +1,6 @@
 // Importer
 // ====
-// Helper methods for downloading metadata and photos for all active connectors
+// Helper methods for importing metadata for all active connectors
 
 var Photo = require('../models/photo');
 var PhotoCopy = require('../models/photoCopy');
@@ -70,7 +70,7 @@ var importer = {
         var connector = require('../server/connectors/' + connectorName);
         if (connector.importNewPhotos) {
           connector.importNewPhotos(user, function(err, photos){
-            if (err || !photos || !photos.length) return done(err);
+            if (err || !photos || !photos.length) return done && done(err);
 
             console.log('Importer: Found %d new photos', photos.length);
             return importer.savePhotos(user, photos, done);
@@ -86,7 +86,7 @@ var importer = {
   importAllNewPhotos : function(done){
     User.find().where('accounts.dropbox').exists().exec(function(err, users){
       
-      if (err) done(err);
+      if (err || !users.length) done(err);
 
       async.mapSeries(users, function(user, done){
         console.log('importing new photos for ', user._id);
