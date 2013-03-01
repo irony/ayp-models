@@ -57,7 +57,7 @@ var downloader = {
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find()
-    .where('store.original.stored').exists(false)
+    .where('store.originals.stored').exists(false)
     .sort('-taken')
     .limit(10);
     var downloadAllResults = function downloadAllResults(err, photos){

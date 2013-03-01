@@ -70,7 +70,7 @@ Connector.prototype.save = function(folder, photo, stream, done){
     });
 
     req.on('response', function(res){
-      if (200 === res.statusCode && stream) {
+      if (200 === res.statusCode || 307 ==res.statusCode) {
         extractExif(stream, function(err, headers){
 
           if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
@@ -86,7 +86,6 @@ Connector.prototype.save = function(folder, photo, stream, done){
         });
 
       } else {
-        debugger;
         return done(new Error('Error when saving to S3, code: ' + res.toString()));
       }
     });

@@ -14,6 +14,8 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 module.exports = function(done){
 
+  if (!done) throw new Error("Callback is mandatory");
+
   // find all users
   User.find().exec(function(err, users){
     
