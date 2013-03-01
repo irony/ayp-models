@@ -6,7 +6,7 @@
 // TODO: Add a one-way option or active-flag per member
 
 
-var mongoose = require('mongoose'),
+var mongoose = require('../node_modules/mongoose');
     User = require('./user')(mongoose).Schema,
     Photo = require('./photo'),
     Schema = mongoose.Schema;

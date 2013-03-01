@@ -3,7 +3,7 @@
 // Photo including all non-user specific properties. copies includes a list to all copies of this photo
 
 
-var mongoose = require('mongoose'),
+var mongoose = require('../node_modules/mongoose'),
     User = require('./user')(mongoose).Schema,
     _ = require('underscore'),
     PhotoCopy = require('./photoCopy')(mongoose).Schema,

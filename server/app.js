@@ -3,10 +3,10 @@
 // Initializes database, all routes and express
 
 var config = require('../conf');
-var mongoose = require('mongoose');
+var mongoose = require('../node_modules/mongoose');
 
 // Connect database directly
-var conn = mongoose.createConnection(config.mongoUrl);
+var conn = mongoose.connect(config.mongoUrl);
 
 // load dependencies
 var _ = require('underscore');

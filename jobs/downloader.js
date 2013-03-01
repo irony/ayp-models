@@ -56,7 +56,7 @@ var downloader = {
 
     var photoQuery = Photo.find()
     .where('store.original.stored').exists(false)
-    .sort('-modified')
+    .sort('-taken')
     .limit(options && options.batchSize || 10);
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);

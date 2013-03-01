@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require('../node_modules/mongoose');
 var config = require('../conf');
 var express = require('express');
 var knox      = require('knox');
@@ -23,7 +23,7 @@ var jobs = [
     interval: 5 * 60 * 1000
   },
   {
-    title:'Group images',
+    title:'Group Photos',
     fn:require('../jobs/groupImages'),
     interval: 9 * 60 * 1000
   },
@@ -43,7 +43,7 @@ var jobs = [
     interval: 15 * 60 * 1000 // TODO: nightly job?
   },
   {
-    title: 'Import new photos from all connectors',
+    title: 'Download new photos',
     fn:function(done){
       require('../jobs/downloader').downloadNewPhotos(done, {
         batchSize: 10,

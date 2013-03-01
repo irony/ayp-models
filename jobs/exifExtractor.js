@@ -17,7 +17,7 @@ module.exports = {
     var photoQuery = Photo.find()
     .where('store.originals.stored').exists()
     .where('exif').exists(false)
-    .sort('-modified')
+    .sort('-taken')
     .limit(50);
     var parseAllResults = function parseAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
