@@ -17,7 +17,7 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    res.render('photos.ejs', model);
+    res.render('groups.ejs', model);
 
   });
 
@@ -175,7 +175,7 @@ module.exports = function(app){
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken')
-      .limit(500)
+      .limit(5000)
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('-taken')
       .exec(function(err, photos){

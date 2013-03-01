@@ -10,7 +10,7 @@
 
       
         <div id="wall" class="thumbnails row" when-scrolled="scroll()">
-          <div class="group {{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
+          <div class="{{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <header>
               <h2>{{group.name}} <small>{{group.range}}</small></h2>
                 <a href="/share?fromDate={{group.photos[0].taken}}&toDate={{group.photos[group.photos.length-1].taken}}" class="btn btn-small"><i class="icon-share"></i> Share</a>
@@ -23,18 +23,12 @@
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
               <a>{{photo.class}}</a>
-
+<!--
               <video controls width="100%" ng-show="photo.mimeType.split('/')[0] == 'video'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
                 <source src="{{photo.src}}" type="{{photo.mimeType}}">
               </video>
-
-              <img ng-src="{{photo.src}}" ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
-              <aside>
-                <dd>
-                  <dt>Taken</dt>
-                  <dl>{{photo.taken}}</dl>
-                </dd>
-              </aside>
+-->
+              <img ng-src="{{photo.src}}" width="{{300 * (photo.ratio || 1)}}" ng-cloak ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
             </div>
             <div class="clearfix"></div>
           </div> 
