@@ -4,16 +4,10 @@
 
 var config = require('../conf');
 var mongoose = require('../node_modules/mongoose');
-
-// Connect database directly
-var conn = mongoose.connect(config.mongoUrl);
-
-// load dependencies
 var _ = require('underscore');
 var http = require('http');
 var express = require('express');
 var util = require('util');
-
 var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
 var knox      = require('knox');
@@ -34,6 +28,9 @@ function ensureAuthenticated(req, res, next) {
 
 
 exports.init = function() {
+  
+    // Connect database directly
+    mongoose.connect(config.mongoUrl);
 
 
     var app = express.createServer();

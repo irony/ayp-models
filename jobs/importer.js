@@ -68,12 +68,11 @@ var importer = {
       
       _.each(user.accounts, function(account, connectorName){
         var connector = require('../server/connectors/' + connectorName);
-        if (connector.downloadAllMetadata) {
-          connector.downloadAllMetadata(user, function(err, photos){
-            if (err || !photos) return console.error(err);
-            if (photos.length === 0) return;
+        if (connector.importNewPhotos) {
+          connector.importNewPhotos(user, function(err, photos){
+            if (err || !photos || !photos.length) return done(err);
 
-            console.log('found %d new photos', photos.length);
+            console.log('Importer: Found %d new photos', photos.length);
             return importer.savePhotos(user, photos, done);
 
           });
@@ -84,11 +83,15 @@ var importer = {
 
   },
 
-  importNewPhotos : function(done){
+  importAllNewPhotos : function(done){
     User.find().where('accounts.dropbox').exists().exec(function(err, users){
-      _.uniq(users, false, function(a){return a._id}).map(function(user){
+      
+      if (err) done(err);
+
+      async.mapSeries(users, function(user, done){
+        console.log('importing new photos for ', user._id);
         importer.importPhotosFromAllConnectors(user, done);
-      });
+      }, done);
     });
   },
 

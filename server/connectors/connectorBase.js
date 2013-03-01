@@ -33,7 +33,7 @@ Connector.prototype.downloadOriginal = function(user, photo, done){
 };
 
 
-Connector.prototype.downloadAllMetadata = function(user, progress){
+Connector.prototype.importNewPhotos = function(user, progress){
   throw new Error('Not implemented');
 };
 

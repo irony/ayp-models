@@ -13,7 +13,7 @@ module.exports = function () {
     throw new Error('Not implemented');
   };
 
-  this.downloadAllMetadata = function(user, progress){
+  this.importNewPhotos = function(user, progress){
     throw new Error('Not implemented');
   };
 

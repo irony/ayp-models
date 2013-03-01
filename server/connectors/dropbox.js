@@ -115,29 +115,21 @@ var connector = new Connector();
 		return client;
 	};
 
-	connector.downloadAllMetadata = function(user, progress)
+	connector.importNewPhotos = function(user, done)
 	{
+
 		if (!user || !user._id || user.accounts.dropbox === undefined){
-			return progress(new Error('Not a valid dropbox user'), null);
+			return done(new Error('Not a valid dropbox user'));
 		}
 		var client = this.getClient(user);
 
-		// console.log('downloading metadata from dropbox for user id', user._id);
+
+
+			// console.log('downloading metadata from dropbox for user id', user._id);
 
     return User.findById(user._id, function(err, user){
-			if (err || !user || !user.accounts || !user.accounts.dropbox) return console.log('Error:', err, user);
 
-			/*
-			if (user.accounts.dropbox.lastImport)
-			{
-				var minutes = (new Date().getTime() - user.accounts.dropbox.lastImport.getTime()) / 1000 / 60;
-				if (minutes < 1) return console.log('Waiting for import', minutes);
-			
-				user.accounts.dropbox.lastImport = new Date();
-				user.save(console.log);
-			}*/
-
-
+			if (err || !user || !user.accounts || !user.accounts.dropbox) return done('error finding user or this user don\'t have dropbox');
 
 
 			var client = connector.getClient(user);
@@ -148,8 +140,9 @@ var connector = new Connector();
 
 			var loadDelta = function(cursor){
 				client.delta({cursor : cursor}, function(status, reply){
+					
 					if (status !== 200 || !reply)
-						return progress(status, null);
+						return done && done(status);
 
 			    var photos = (reply.entries || []).map(function(photoRow){
 						var photo = photoRow[1];
@@ -164,13 +157,15 @@ var connector = new Connector();
 						// connector.downloadThumbnail(photo, client, user, done);
 					});
 					if (reply.has_more) {
-						progress(null, photos);
+						console.log('found more');
 						return loadDelta(reply.cursor);
 					} else {
+						
 						user.accounts.dropbox.cursor = reply.cursor;
 						user.markModified('accounts');
+
 						return user.save(function(err, user){
-							return progress(null, photos);
+							return done && done(err, photos);
 						});
 					}
 				});

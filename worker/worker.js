@@ -19,7 +19,7 @@ var conn = mongoose.connect(config.mongoUrl);
 var jobs = [
   {
     title:'Import New Photos',
-    fn:require('../jobs/importer').importNewPhotos,
+    fn:require('../jobs/importer').importAllNewPhotos,
     interval: 5 * 60 * 1000
   },
   {
@@ -54,12 +54,12 @@ var jobs = [
 
 ];
 
-// first run may be put in serial mode (MapSeries) which mean it will wait for the first job to be finished
+// first run may be put in serial mode (just add .mapSeries) which mean it will wait for the first job to be finished
 // before the next job continues. Good for debugging.
 //
 // This setup requires all jobs to accept a callback as first parameter which should be fired when all job is done
 //
-async.map(jobs, function(job, done){
+async.mapSeries(jobs, function(job, done){
   console.log('Starting job: %s', job.title.white);
 
   // start the job and receive a callback when the job is finished.
@@ -74,6 +74,6 @@ function(err){
   console.log('Done with initial jobs %s', err ? err.toString().red : 'without errors'.green);
 });
 
-http.globalAgent.maxSockets = 50;
+// http.globalAgent.maxSockets = 50;
 global.s3 = knox.createClient(config.aws);
 
