@@ -16,17 +16,11 @@
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
               <a>{{photo.class}}</a>
 
-              <video controls width="100%" ng-show="photo.mimeType.split('/')[0] == 'video'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+              <video controls ng-cloak ng-show="photo.mimeType.split('/')[0] == 'video'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
                 <source src="{{photo.src}}" type="{{photo.mimeType}}">
               </video>
 
-              <img ng-src="{{photo.src}}" ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
-              <aside>
-                <dd>
-                  <dt>Taken</dt>
-                  <dl>{{photo.taken}}</dl>
-                </dd>
-              </aside>
+              <img ng-src="{{photo.src}}" ng-cloak ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
             </div>
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
@@ -36,7 +30,6 @@
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
           </div>
 
-          <footer>
           <div class="group" ng-show="loading">
             <header class="loader">
                 <span></span>
@@ -44,7 +37,6 @@
                 <span></span>
             </header>
           </div>
-        </footer>
 
         </div>
         <div class="navbar navbar-inverse navbar-fixed-bottom">
@@ -58,26 +50,10 @@
   </div>
 
 
-    <div class="modal hide fade" id="slideshow" ng-controller="SlideshowController">
-       <div class="modal-body">
-        <h2>{{group.name}}</h2>
-
-           <div id="myCarousel" class="carousel slide" data-interval="5000">
-            <div class="carousel-inner">
-              <div class="item" ng-repeat="photo in group.photos|orderBy:'taken'" >  
-                <img ng-src="{{photo.src}}" alt="">
-              </div>
-            </div>
-            <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-            <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-          </div><!-- /.carousel -->
-       </div>
-    </div>
 
     <script type="text/javascript" src="/controllers/photos.js"></script>
     <script type="text/javascript" src="/controllers/photo.js"></script>
-    <script type="text/javascript" src="/controllers/slideshow.js"></script>
-    <script src="/js/zoom.js"></script>
+<!--    <script src="/js/zoom.js"></script>-->
     <script src="/socket.io/socket.io.js"></script>
 
     <script>

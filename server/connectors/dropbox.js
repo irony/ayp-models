@@ -103,7 +103,7 @@ var connector = new Connector();
 			return connector.save('originals', photo, reply, function(err){
 					photo.set('originalDownloaded', true);
 					return photo.save(function(saveErr){
-						if (err || saveErr) console.log('error downloading photo', err, saveErr);
+						if (err || saveErr) console.log('error downloading photo'.red, err, saveErr);
 
 						return done(null, reply);
 					});

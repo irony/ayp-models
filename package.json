@@ -18,6 +18,7 @@
     , "passport-dropbox" : "*"
     , "passport-flickr" : "*"
     , "passport-instagram" : "*"
+    , "exif" : "*"
     , "socket.io" : "*"
     , "mongoose": "*"
     , "async" : "*"

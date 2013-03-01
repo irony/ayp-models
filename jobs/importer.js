@@ -53,7 +53,7 @@ var importer = {
             dbPhoto.mimeType = photo.mime_type;
 
             dbPhoto.save(function(err, savedPhoto){
-              return progress && progress(err, savedPhoto);
+              if (progress) progress(err, savedPhoto);
             });
 
           });
@@ -72,7 +72,7 @@ var importer = {
    */
   downloadPhoto : function(user, photo, done){
 
-    var connector = require('../connectors/' + photo.source);
+    var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadPhoto && user.accounts[photo.source]) {
       async.parallel({
         download : function(callback){
@@ -148,21 +148,22 @@ var importer = {
           // We don't know which user this photo belongs to so we try to download them all
           users.map(function(user){
             importer.downloadPhoto(user, photo, function(err, result){
-              return done(null, photo); // ignore errors to continue
+              return done(err, photo); // ignore errors to continue
             });
           });
         });
       }, function(err, photos){
         
-        console.log('\nImported %d photos', _.compact(photos).length);
+        console.log('Imported %d photos: %s', _.compact(photos).length, err.toString().red || 'Without errors');
   
         if(options && options.autoRestart){
           process.nextTick(function(){
             photoQuery.exec(downloadAllResults);
           });
+        } else{
+          return done(err, photos);
         }
         
-        return done(err, photos);
       });
     };
     

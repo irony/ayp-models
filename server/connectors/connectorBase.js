@@ -62,9 +62,8 @@ Connector.prototype.save = function(folder, photo, data, done){
 
 
   if (!data) return done(new Error('No data'));
-/*
-    console.log('saving to s3', filename);
-    global.s3.putFile('/' + filename, data, function(err, data){
+
+/*    global.s3.putFile('/' + filename, data, function(err, data){
       console.log('done', err, data);
       if (done) done(err, data);
 
@@ -78,6 +77,11 @@ Connector.prototype.save = function(folder, photo, data, done){
             'Content-Type': photo.mimeType
         });
 
+    //console.log('saving %s to s3', folder, req);
+    req.on('error', function(err) {
+      console.log('Request error when saving to S3: %s', err.toString().red);
+    });
+
     req.on('response', function(res){
       if (200 === res.statusCode && data) {
 
@@ -88,7 +92,7 @@ Connector.prototype.save = function(folder, photo, data, done){
 
           photo.store = photo.store || {};
           photo.store[folder] = photo.store[folder] || {};
-          photo.store[folder] = {url:global.s3.datacenterUrl + filename, stored: new Date()};
+          photo.store[folder] = {url:req.url, stored: new Date()};
           try{
             return photo.save(done);
           } catch(e){
@@ -96,7 +100,9 @@ Connector.prototype.save = function(folder, photo, data, done){
           }
         });
 
-      } else return done(new Error('Error when saving to S3, code: ', res));
+      } else {
+        return done(new Error(String.format('Error when saving to S3, code: %s', res.statusCode)));
+      }
     });
 
     return req.end(data);

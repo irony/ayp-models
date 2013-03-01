@@ -1,4 +1,4 @@
-module.exports = {
+  module.exports = {
     mongoUrl : process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692',
     baseUrl : "http://" + (process.env.HOST || "www.allyourphotos.org"),
     facebook: {
@@ -34,8 +34,8 @@ module.exports = {
     consumerSecret : 'b970658338c81152'
   },
   aws: {
-    key: process.env.AWS_ACCESS_KEY_ID || 'AKIAJETT3QLQHO6ZZTZA',
-    secret: process.env.AWS_SECRET_ACCESS_KEY || '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',
+    key: process.env.AWS_ACCESS_KEY_ID || 'AKIAJRS4YILKC25PPTEA',
+    secret: process.env.AWS_SECRET_ACCESS_KEY || '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',
     bucket: process.env.AWS_S3_BUCKET || 'heroku-photos-1',
     datacenterUrl: 'http://heroku-photos-1.s3-website-us-east-1.amazonaws.com'
   },

@@ -6,7 +6,6 @@ var async = require('async');
 var http = require('http');
 var User = require('../models/user');
 var Photo = require('../models/photo');
-var importer = require('../jobs/importer');
 var _ = require('underscore');
 var colors = require('colors');
 
@@ -34,19 +33,29 @@ var jobs = [
     title:'Update rank for all photos',
     fn:require('../jobs/updateRank'),
     interval: 15 * 60 * 1000},
-  /*,{fn:function(){require('./jobs/importer').fetchNewPhotos({
-      limit: 10,
-      autoRestart : true
-    })}, interval: 0}*/
+  {
+    title: 'Import new photos from all connectors',
+    fn:function(done){
+      require('../jobs/importer').fetchNewPhotos(done, {
+        limit: 10,
+        autoRestart : true
+      }, done);
+
+    }, interval: 0}
 
 ];
 
-// first run once in serial mode == wait for the first job to be finished before the next job continues.
-// This requires all jobs to accept a callback as first parameter)
-async.mapSeries(jobs, function(job, done){
+// first run may be put in serial mode (MapSeries) which mean it will wait for the first job to be finished
+// before the next job continues. Good for debugging.
+//
+// This setup requires all jobs to accept a callback as first parameter which should be fired when all job is done
+//
+async.map(jobs, function(job, done){
   console.log('Starting job: %s', job.title.white);
-  job.fn(function(err){
-    if (!err) console.log('[' + 'OK'.green + ']');
+
+  // start the job and receive a callback when the job is finished.
+  job.fn(function finished (err){
+    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']');
     return done(err);
   });
 

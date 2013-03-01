@@ -7,6 +7,13 @@ function AppController($scope, $http)
     $scope.loading = false;
     $scope.loadingReverse = false;
     appScope = $scope;
+    $scope.library = localStorage && localStorage.getItem('library');
+
+    $scope.$watch('library', function(value){
+      if (!value){
+        console.log('load library here');
+      }
+    });
 }
 
 angular.module('app', [])

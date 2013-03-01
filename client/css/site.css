@@ -270,25 +270,6 @@
 
 .photo img, .photo video{
   height:300px;
-  margin-right: 0;
-      -webkit-box-shadow: 0 2px 10px rgba(0,0,0,.25);
-         -moz-box-shadow: 0 2px 10px rgba(0,0,0,.25);
-              box-shadow: 0 2px 10px rgba(0,0,0,.25);
-}
-
-.photo aside{
-  display:none;
-   -webkit-transform: rotateX(180);
-}
-
-.photo.flip aside{
-  display:block;
-  position: absolute;
-}
-
-.photo.flip {
-   -webkit-transform: rotateX(180);
-  -webkit-transition: all 0.4s;
 }
 
 .photo a {
@@ -321,7 +302,36 @@
 .photo:hover a {
   opacity: 0.4;
 }
+/*
+.photo.vote0 img{
+  width:450px;
+  height:450px;
+}
 
+
+.photo.vote1 img, 
+.photo.vote2 img, 
+.photo.vote3 img{
+  width:300px;
+  height:300px;
+}
+
+
+.photo.vote9 img, 
+.photo.vote8 img{
+  width:50px;
+  height:50px;
+}
+
+
+.photo.vote4 img,
+.photo.vote5 img,
+.photo.vote6 img,
+.photo.vote7 img{
+  height:150px;
+  width:150px;
+}
+*/
 
 .photo:hover a:hover {
   color: #fff;
