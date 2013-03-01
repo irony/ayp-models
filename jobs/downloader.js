@@ -54,7 +54,6 @@ var downloader = {
    *                          }
    */
   downloadNewPhotos : function(done){
-   
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find()

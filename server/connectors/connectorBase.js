@@ -74,18 +74,11 @@ Connector.prototype.save = function(folder, photo, stream, done){
         extractExif(stream, function(err, headers){
 
           if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
-
-          if (headers.exif_data){
-            photo.set('exif', headers.exif_data || photo.exif);
-          }
-
-          if (headers.width && headers.height){
-            photo.ratio = headers.width / headers.height;
-          }
-
-
+            
           var setter = {$set : {}};
           setter.$set['store.' + folder] = {url:req.url, width : headers.width, height: headers.height, stored: new Date()};
+          if (headers.exif_data) setter.$set.exif = headers.exif_data;
+          if (headers.width && headers.height) setter.ratio = headers.width / headers.height;
           
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, function(err){
             return done(err, photo);
@@ -93,7 +86,8 @@ Connector.prototype.save = function(folder, photo, stream, done){
         });
 
       } else {
-        return done(new Error('Error when saving to S3, code: ' + JSON.stringify(res)));
+        debugger;
+        return done(new Error('Error when saving to S3, code: ' + res.toString()));
       }
     });
 

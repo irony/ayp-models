@@ -50,35 +50,38 @@ var jobs = [
 
 ];
 
-/* Start a job and log it */
+/* Start a job and keep it running */
 function startJob (job, done){
-  console.log('Starting job: %s', job.title.white);
-  job.fn(function(err){
-    finished(job, err);
-    
-    // Restart the job recursivly after finished (after a specified interval).
-    // This means that two incarnations of the same job will not run at the same time
-    setTimeout(function() {
-        startJob(job);
-    }, job.interval);
 
-    return done && done(err);
-  });
+  function start(){
+    console.log('Starting job: %s', job.title.white);
+  }
+
+  function finish(err, result){
+    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
+  }
+
+  start(
+    job.fn(function(err, result){
+
+      finish(err,result);
+      
+      // Restart the job recursivly after it is finished (after a specified interval).
+      // This means that two incarnations of the same job can not run at the same time
+      setTimeout(function() {
+          startJob(job, finish);
+      }, job.interval);
+
+    })
+  );
 }
 
-/* Log when the job is finished */
-function finished (job, err){
-    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']');
-}
 
 // first run may be put in serial mode (just add .mapSeries) which mean it will wait for the first job to be finished
 // before the next job continues. Good for debugging.
 //
 // This setup requires all jobs to accept a callback as first parameter which should be fired when all job is done
-//
-async.mapSeries(jobs, function(job, done){
-  startJob(job, done);
-});
+async.map(jobs, startJob);
 
 // http.globalAgent.maxSockets = 50;
 global.s3 = knox.createClient(config.aws);

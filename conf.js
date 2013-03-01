@@ -36,8 +36,7 @@
   aws: {
     key: process.env.AWS_ACCESS_KEY_ID || 'AKIAJRS4YILKC25PPTEA',
     secret: process.env.AWS_SECRET_ACCESS_KEY || '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',
-    bucket: process.env.AWS_S3_BUCKET || 'heroku-photos-1',
-    datacenterUrl: 'http://heroku-photos-1.s3-website-us-east-1.amazonaws.com'
+    bucket: process.env.AWS_S3_BUCKET || 'allyourphotos-eu'
   },
   dbox:
   { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'}

@@ -8,7 +8,6 @@ var async = require('async');
 var _ = require('underscore');
 
 module.exports = function(app){
-  var s3UrlPrefix = 'http://' + global.s3.bucket + '.' + global.s3.datacenterUrl;
 
   app.get('/wall', function(req, res){
     var model = new ViewModel(req.user);
@@ -101,7 +100,7 @@ module.exports = function(app){
         photo.metadata = undefined;
 
         if (photo.mimeType.split('/')[0] === 'video'){
-          photo.src = s3UrlPrefix + '/originals/' + photo.source + '/' + photo._id;
+          photo.src = photo.store && photo.store.orginals ? photo.store.originals.url : '/img/novideo.mp4';
           return done(null, photo);
         } else {
           photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
