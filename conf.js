@@ -1,6 +1,6 @@
   module.exports = {
     mongoUrl : process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692',
-    baseUrl : "http://" + (process.env.HOST || "www.allyourphotos.org"),
+    baseUrl : "http://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
     facebook: {
         appId: '509552485736388'
       , appSecret: 'f4f302039147fae5d118b42d2a6a0205'

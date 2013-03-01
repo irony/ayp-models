@@ -81,9 +81,9 @@ var downloader = {
         console.log('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
   
         if(options && options.autoRestart){
-          process.nextTick(function(){
+          setTimeout(function(){
             photoQuery.exec(downloadAllResults);
-          });
+          }, 200);
         } else{
           return done(err, photos);
         }

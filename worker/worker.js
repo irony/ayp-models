@@ -18,25 +18,34 @@ var conn = mongoose.connect(config.mongoUrl);
 
 var jobs = [
   {
+    title:'Import New Photos',
+    fn:require('../jobs/importer').importNewPhotos,
+    interval: 5 * 60 * 1000
+  },
+  {
     title:'Group images',
     fn:require('../jobs/groupImages'),
-    interval: 9 * 60 * 1000},
+    interval: 9 * 60 * 1000
+  },
   {
     title:'Tag Photos',
     fn:require('../jobs/tagPhotos'),
-    interval: 9 * 60 * 1000},
+    interval: 9 * 60 * 1000
+  },
   {
     title:'Calculate Interestingness',
     fn:require('../jobs/calculateInterestingness'),
-    interval: 10 * 60 * 1000},
+    interval: 10 * 60 * 1000
+  },
   {
-    title:'Update rank for all photos',
+    title:'Update Rank for all Photos',
     fn:require('../jobs/updateRank'),
-    interval: 15 * 60 * 1000},
+    interval: 15 * 60 * 1000 // TODO: nightly job?
+  },
   {
     title: 'Import new photos from all connectors',
     fn:function(done){
-      require('../jobs/importer').downloadNewPhotos(done, {
+      require('../jobs/downloader').downloadNewPhotos(done, {
         batchSize: 10,
         autoRestart : true
       });

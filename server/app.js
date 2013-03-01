@@ -6,7 +6,7 @@ var config = require('../conf');
 var mongoose = require('mongoose');
 
 // Connect database directly
-var conn = mongoose.connect(config.mongoUrl);
+var conn = mongoose.createConnection(config.mongoUrl);
 
 // load dependencies
 var _ = require('underscore');
