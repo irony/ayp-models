@@ -2,12 +2,14 @@ function Connector(){
   
 }
 
+var im = require('imagemagick');
+
 var extractExif = function(data, done){
   var ExifImage = require('exif').ExifImage;
 
   try {
       var exifExtractor = new ExifImage({ image : data}, function(err, exifArray){
-        
+        console.log('exctracting exif');
         if (err || !exifArray)
           return done(err, null);
 
@@ -29,6 +31,9 @@ var extractExif = function(data, done){
           ,
           raw : exifArray
         };
+
+        console.log('resulting exif', exif);
+
         return done(err, exif);
       });
   } catch (error) {
@@ -86,6 +91,8 @@ Connector.prototype.save = function(folder, photo, data, done){
       if (200 === res.statusCode && data) {
 
         extractExif(data, function(err, exif){
+
+          if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
 
           photo.set('exif', exif || photo.exif);
           photo.markModified('exif');
