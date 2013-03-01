@@ -36,10 +36,10 @@ var jobs = [
   {
     title: 'Import new photos from all connectors',
     fn:function(done){
-      require('../jobs/importer').fetchNewPhotos(done, {
-        limit: 10,
+      require('../jobs/importer').downloadNewPhotos(done, {
+        batchSize: 10,
         autoRestart : true
-      }, done);
+      });
 
     }, interval: 0}
 

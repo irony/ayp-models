@@ -70,19 +70,28 @@ var importer = {
    * @param  {[type]}   photo photo
    * @param  {Function} done  callback when both are done
    */
-  downloadPhoto : function(user, photo, done){
+  downloadOriginal : function(user, photo, done){
 
     var connector = require('../server/connectors/' + photo.source);
-    if (connector.downloadPhoto && user.accounts[photo.source]) {
+    if (connector.downloadOriginal && user.accounts[photo.source]) {
       async.parallel({
-        download : function(callback){
-          connector.downloadPhoto(user, photo, callback);
+        original : function(done){
+          //console.log('Downloading original...');
+          connector.downloadOriginal(user, photo, function(err, result){
+            return done(err, result);
+          });
         },
-        thumbnail : function(callback){
-          connector.downloadThumbnail(user, photo, callback);
+        thumbnail : function(done){
+          // console.log('Downloading thumbnail...');
+          connector.downloadThumbnail(user, photo, function(err, result){
+            return done(err, result);
+          });
         }
       }, function(err, results){
-        done(err, results);
+    
+        // console.log('Finished downloading photo', photo._id);
+
+        return done(err, results);
       });
     }
 
@@ -124,16 +133,16 @@ var importer = {
   /**
    * Dpwnload photos for all newly downloaded metadata where the photos haven't been downloaded yet
    * @param  {[type]} options {
-   *                             limit : 10 // how many should be downloaded in each batch?
+   *                             batchSize : 10 // how many should be downloaded in each batch?
    *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?
    *                          }
    */
-  fetchNewPhotos : function(done, options){
+  downloadNewPhotos : function(done, options){
 
     var photoQuery = Photo.find()
-    .where('store.thumbnails.stored').exists(false)
+    .where('store.original.stored').exists(false)
     .sort('-modified')
-    .limit(options && options.limit || 10);
+    .limit(options && options.batchSize || 10);
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
@@ -147,14 +156,14 @@ var importer = {
 
           // We don't know which user this photo belongs to so we try to download them all
           users.map(function(user){
-            importer.downloadPhoto(user, photo, function(err, result){
+            importer.downloadOriginal(user, photo, function(err, result){
               return done(err, photo); // ignore errors to continue
             });
           });
         });
       }, function(err, photos){
         
-        console.log('Imported %d photos: %s', _.compact(photos).length, err.toString().red || 'Without errors');
+        console.log('Imported %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
   
         if(options && options.autoRestart){
           process.nextTick(function(){

@@ -65,7 +65,7 @@ module.exports = function (app) {
 
       if ( err || !photo ) return res.send(403, err);
 
-      connector.downloadPhoto(req.user, photo, function(err, thumbnail){
+      connector.downloadOriginal(req.user, photo, function(err, thumbnail){
         if (err || !thumbnail) {
           return res.send(404, new Error(err));
         }

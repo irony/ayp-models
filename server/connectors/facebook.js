@@ -9,7 +9,7 @@ module.exports = function () {
     throw new Error('Not implemented');
   };
 
-  this.downloadPhoto = function(user, photo, done){
+  this.downloadOriginal = function(user, photo, done){
     throw new Error('Not implemented');
   };
 

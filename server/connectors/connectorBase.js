@@ -3,6 +3,7 @@ function Connector(){
 }
 
 var ImageHeaders = require("image-headers");
+var Photo = require("../../models/photo");
 
 var extractExif = function(data, done){
 
@@ -23,12 +24,12 @@ var extractExif = function(data, done){
 Connector.prototype.scope = {};
 
 Connector.prototype.downloadThumbnail = function(user, photo, done){
-  throw new Error('Not implemented');
+  done(new Error('Not implemented'));
 };
 
 
-Connector.prototype.downloadPhoto = function(user, photo, done){
-  throw new Error('Not implemented');
+Connector.prototype.downloadOriginal = function(user, photo, done){
+  done( new Error('Not implemented'));
 };
 
 
@@ -41,14 +42,14 @@ Connector.prototype.getClient = function(user){
   throw new Error('Not implemented');
 };
 
-Connector.prototype.save = function(folder, photo, data, done){
+Connector.prototype.save = function(folder, photo, stream, done){
 
 
-  if (!data) return done(new Error('No data'));
+  if (!stream) return done(new Error('No stream'));
 
-/*    global.s3.putFile('/' + filename, data, function(err, data){
-      console.log('done', err, data);
-      if (done) done(err, data);
+/*    global.s3.putFile('/' + filename, stream, function(err, stream){
+      console.log('done', err, stream);
+      if (done) done(err, stream);
 
     });*/
 
@@ -56,7 +57,7 @@ Connector.prototype.save = function(folder, photo, data, done){
     var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
     
     var req = global.s3.put(filename, {
-            'Content-Length': data.length,
+            'Content-Length': stream.length,
             'Content-Type': photo.mimeType
         });
 
@@ -66,8 +67,8 @@ Connector.prototype.save = function(folder, photo, data, done){
     });
 
     req.on('response', function(res){
-      if (200 === res.statusCode && data) {
-        extractExif(data, function(err, headers){
+      if (200 === res.statusCode && stream) {
+        extractExif(stream, function(err, headers){
 
           if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
 
@@ -79,25 +80,21 @@ Connector.prototype.save = function(folder, photo, data, done){
             photo.ratio = headers.width / headers.height;
           }
 
-          photo.store = photo.store || {};
-          photo.store[folder] = photo.store[folder] || {};
-          photo.store[folder] = {url:req.url, stored: new Date()};
-          try{
-            return photo.save(function(err, data){
-              process.stdout.write(err ? '.'.red : '.'.green);
-              return done(err, data);
-            });
-          } catch(e){
-            return done(new Error('Error when saving photo to database, error: ', e));
-          }
+
+          var setter = {$set : {}};
+          setter.$set['store.' + folder] = {url:req.url, width : headers.width, height: headers.height, stored: new Date()};
+          
+          return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, function(err){
+            return done(err, photo);
+          });
         });
 
       } else {
-        return done(new Error(String.format('Error when saving to S3, code: %s', res.statusCode)));
+        return done(new Error('Error when saving to S3, code: ' +res));
       }
     });
 
-    return req.end(data);
+    return req.end(stream);
 
     /*
     console.log('save', filename)

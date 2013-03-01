@@ -42,14 +42,7 @@ var connector = new Connector();
 						// console.log('[404]'); //' received, it is not a photo?', photo.path);
 					}
 
-
-					if (done && status) {
-						return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
-					}
-
-					
-					console.log('error downloading thumbnail', status, thumbnail);
-					return;
+					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
 				return connector.save('thumbnails', photo, thumbnail, function(err){
@@ -64,10 +57,9 @@ var connector = new Connector();
 	};
 
 
-	connector.downloadPhoto = function(user, photo, done){
-
+	connector.downloadOriginal = function(user, photo, done){
 		if (!user || !user.accounts || !user.accounts.dropbox)
-			return done(null, null); // not a dropbox user
+			return done(new Error('Not a dropbox user'), null); // not a dropbox user
 
 
 		if (!photo) {
@@ -76,38 +68,34 @@ var connector = new Connector();
 
 		var client = this.getClient(user);
 		//client.media(photo.path, function(status, reply){
-		client.stream(photo.path, function(status, reply){
+		
+    // TODO: Replace the code below with the streamed version:
+		//
+		// return connector.save('originals', photo, client.stream(photo.path), function(err){
+		//	 console.log('saved returning...');
+		//	 return done(err, photo);
+		// });
 
-			console.log('received stream', status, reply)
+		client.get(photo.path, function(status, stream){
 
 			if (status !== 200){
 
 				if(status === 415) {
-					console.log('[415]'); //' received, removing photo. This is not a photo.', reply);
+					console.log('[415]'); //' received, removing photo. This is not a photo.', stream);
 					photo.remove();
 				}
 
 				if(status === 404) {
-					console.log('[404]'); //' received, removing photo. It is not found in dropbox.', reply);
+					console.log('[404]'); //' received, removing photo. It is not found in dropbox.', stream);
 					photo.remove();
 				}
 
-				if (done && status) {
-					return done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
-				}
-				
-				console.log('error downloading image', status, reply);
-				return;
+				return done && done(new Error('Could not download original from dropbox, error nr ' + status));
 			}
 
-			return connector.save('originals', photo, reply, function(err){
-					photo.set('originalDownloaded', true);
-					return photo.save(function(saveErr){
-						if (err || saveErr) console.log('error downloading photo'.red, err, saveErr);
-
-						return done(null, reply);
-					});
-				});
+			return connector.save('originals', photo, stream, function(err){
+				return done(err, photo);
+			});
 
 		});
 	};
@@ -118,10 +106,9 @@ var connector = new Connector();
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return;
 		
-		// TODO: load from database and move these to import class instead
 		var access_token = {
 			"oauth_token_secret"	:  user.accounts.dropbox.tokenSecret,
-			"oauth_token"			:  user.accounts.dropbox.token
+			"oauth_token"					:  user.accounts.dropbox.token
 		};
 
 		var client = dropbox.client(access_token);
