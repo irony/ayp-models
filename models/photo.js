@@ -25,6 +25,7 @@ var PhotoSchema = new mongoose.Schema({
       // pointer to the current user's copy - will only be populated in runtime
       mine : { type:  Schema.Types.Mixed},
       exif : {},
+      ratio : {type:Number},
       src : {type:String},
 
       store : {type:Schema.Types.Mixed},

@@ -5,7 +5,7 @@
 // TODO:
 // Make it work
 
-var blitline = require('blitline')
+var blitline = require('blitline'),
     Photo = require('../models/photo'),
     callbackBaseUrl = "http://" + (process.env.HOST || "dev.allyourphotos.org:3000");
 

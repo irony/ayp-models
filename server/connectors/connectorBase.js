@@ -2,40 +2,18 @@ function Connector(){
   
 }
 
-var im = require('imagemagick');
+var ImageHeaders = require("image-headers");
 
 var extractExif = function(data, done){
-  var ExifImage = require('exif').ExifImage;
 
   try {
-      var exifExtractor = new ExifImage({ image : data}, function(err, exifArray){
-        console.log('exctracting exif');
-        if (err || !exifArray)
-          return done(err, null);
 
-        var exif = {
-          gps: exifArray.gps.reduce(function(content, item){
-           content[item.tagName] = item.value;
-           return content;
-          }, {})
-          ,
-          exif: exifArray.exif.reduce(function(content, item){
-           content[item.tagName] = item.value;
-           return content;
-          }, {})
-          ,
-          image: exifArray.image.reduce(function(content, item){
-           content[item.tagName] = item.value;
-           return content;
-          }, {})
-          ,
-          raw : exifArray
-        };
-
-        console.log('resulting exif', exif);
-
-        return done(err, exif);
+      var headers = new ImageHeaders();
+      headers.add_bytes(data.slice(0, headers.MAX_SIZE));
+      return headers.finish(function(err, exif){
+        done(err, exif);
       });
+
   } catch (error) {
     return done(error, null);
   }
@@ -89,19 +67,26 @@ Connector.prototype.save = function(folder, photo, data, done){
 
     req.on('response', function(res){
       if (200 === res.statusCode && data) {
-
-        extractExif(data, function(err, exif){
+        extractExif(data, function(err, headers){
 
           if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
 
-          photo.set('exif', exif || photo.exif);
-          photo.markModified('exif');
+          if (headers.exif_data){
+            photo.set('exif', headers.exif_data || photo.exif);
+          }
+
+          if (headers.width && headers.height){
+            photo.ratio = headers.width / headers.height;
+          }
 
           photo.store = photo.store || {};
           photo.store[folder] = photo.store[folder] || {};
           photo.store[folder] = {url:req.url, stored: new Date()};
           try{
-            return photo.save(done);
+            return photo.save(function(err, data){
+              process.stdout.write(err ? '.'.red : '.'.green);
+              return done(err, data);
+            });
           } catch(e){
             return done(new Error('Error when saving photo to database, error: ', e));
           }
