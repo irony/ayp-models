@@ -22,19 +22,21 @@ module.exports = function(done){
       if (user && self.copies && self.copies[user]){
 
         var group = user + "/" + self._id;
+        var mine = self.copies[user];
+        if (!mine.interesting || mine.interesting === 50) emit(group, Math.floor(Math.random()*100));
+
         if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length));
-/*
-        if(self.copies[user].hidden) emit(group, 0);
 
-        if(self.copies[user].starred) emit(group, 500);
+        if(mine.hidden) emit(group, 0);
 
-        if(self.copies[user].views) emit(group, 100 + self.copies[user].views * 5);
+        if(mine.starred) emit(group, 500);
+
+        if(mine.views) emit(group, 100 + mine.views * 5);
         
-        if(self.copies[user].clicks) emit(group, 100 + self.copies[user].clicks * 10);
+        if(mine.clicks) emit(group, 100 + mine.clicks * 10);
 
+        if(mine.groups && mine.groups.length) emit(group, 100 + mine.groups.length * 10);
 
-        if(self.copies[user].groups && self.copies[user].groups.length) emit(group, 100 + self.copies[user].groups.length * 10);
-*/
       }
     }
 
@@ -60,11 +62,12 @@ module.exports = function(done){
 
     if (err) return done && done(err);
 
+    // console.log(stats);
+
     // Query the results
     model.find(function(err, photos){
       if (err || !photos || !photos.length) return done(err, photos);
 
-      console.log('saving...', photos.length);
       async.map(photos, function(photo, done){
         var userId = photo._id.split('/')[0];
         var photoId = photo._id.split('/')[1];

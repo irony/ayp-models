@@ -8,18 +8,18 @@ describe("worker", function(){
   var id = Math.floor((Math.random()*10000000)+1).toString();
 
 
+  it("should be possible to start ranking job", function(done){
+    this.timeout(20000);
+    require('../jobs/updateRank')(function(err, result){
+      should.ok(!err);
+      done(err);
+    });
+  });
+
 
   it("should be possible to start calculate interestingness job", function(done){
     this.timeout(15000);
     require('../jobs/calculateInterestingness')(function(err, result){
-      should.ok(!err);
-      done();
-    });
-  });
-
-  it("should be possible to start calculate interestingness job", function(done){
-    this.timeout(15000);
-    require('../jobs/updateRank')(function(err, result){
       should.ok(!err);
       done();
     });
@@ -32,6 +32,7 @@ describe("worker", function(){
       done();
     });
   });
+
 });
 
 describe("app", function(){

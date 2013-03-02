@@ -57,9 +57,9 @@ module.exports = function(app){
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store')
       .where('store.originals.url').exists(true)
-      .limit(1000)
+      .limit(500)
 //      .sort('-copies.' + req.user._id + '.interestingness')
-      .sort('vote -taken')
+      .sort('-taken')
       .exec(function(err, photos){
         // return all photos with just bare minimum information for local caching
         async.map((photos || []), function(photo, done){

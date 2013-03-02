@@ -129,7 +129,7 @@ module.exports = function(app){
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken')
+      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio')
       .limit(5000)
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('-taken')

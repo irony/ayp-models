@@ -21,43 +21,54 @@ module.exports = function(done){
     
     if (err) throw err;
     
-    async.mapSeries((users || []), function(user, nextUser){
+    async.map((users || []), function(user, userDone){
   
-      // console.log('Ranking user id %s...', user._id);
-
       // find all their photos and sort them on interestingness
-      Photo.find({'owners': user._id})
+      Photo.find({'owners': user._id}, 'copies.' + user._id + '.rank ')
       .sort('-copies.' + user._id + '.interestingness')
       .limit(50000)
       .exec(function(err, photos){
         if (err) throw err;
       
-        // console.log('Found %d photos, ranking...', photos.length);
-
         var rank = 0;
         
+        // no meaning to rank too few photos
+        if (photos.length < 30) return userDone();
+
         async.map(photos, function(photo, done){
-          if (!photo || photo.copies) return done();
+          if (!photo || !photo.copies) return done();
 
           // closure
-          var currentRank = rank++;
+          var newRank = rank++;
+          var mine = photo.copies[user._id];
+
+          // No noticable different (less than 1% change)
+          if (!mine || Math.floor(newRank / 10) === Math.floor(mine.rank / 10)){
+            return done();
+          }
+
+          // console.log('updating rank', photo._id, newRank / 100, mine.rank / 100);
 
           var setter = {$set : {}};
-          setter.$set['copies.' + user._id + '.rank'] = currentRank;
-          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.floor(currentRank / photos.length * 10);
+          setter.$set['copies.' + user._id + '.rank'] = newRank;
+          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.floor(newRank / photos.length * 10);
+          setter.$set['copies.' + user._id + '.calculated'] = new Date();
 
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
 
         },function(err, photos){
-          user.maxRank = rank;
-          user.save();
 
-          if (nextUser) nextUser(err, user);
+          if (photos.length){
+            user.maxRank = rank;
+            user.save();
+          }
+
+          return userDone(err, user);
 
         });
       });
     }, function(err, users){
-      if (!err) console.log(': OK %d users', users.length);
+      if (!err) console.debug(': Rank OK %d users', users.length);
       if (done) done(err, users);
     });
   });
