@@ -73,12 +73,13 @@ var downloader = {
             return photo.remove(done);
           }
 
-          // We don't know which user this photo belongs to so we try to download them all
-          users.map(function(user){
-            downloader.downloadPhoto(user, photo, function(err, result){
-              return done(err, photo); // ignore errors to continue
+          // We don't know which user this photo belongs to so we try to download them all but we stop trying when we found
+          // the photo.
+          users.reduce(function(found, user){
+            if (!found) downloader.downloadPhoto(user, photo, function(err, result){
+              return done(err, photo) && true; // don't try anymore users
             });
-          });
+          }, false);
         });
       }, function(err, photos){
         
