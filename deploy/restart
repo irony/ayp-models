@@ -4,4 +4,5 @@ echo "restarting All Your Photos after receiving push"
 npm install
 npm test
 mason build .
+foreman stop
 foreman start

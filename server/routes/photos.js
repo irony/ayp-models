@@ -57,7 +57,7 @@ module.exports = function(app){
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store')
       .where('store.originals.url').exists(true)
-      .limit(5000)
+      .limit(1000)
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('vote -taken')
       .exec(function(err, photos){
