@@ -1,4 +1,4 @@
-<section id="library" class="glossy-reflection">
+<section id="library">
   <% photos.map(function(photo){ %>
       <img class="v<%=photo.vote%>" src="<%=photo.src%>" height="300" width="<%= Math.floor(300 * photo.ratio || 300) %>">
   <% }) %>
@@ -7,6 +7,6 @@
 
 <style> 
   img{
-    margin:0px;
+    margin:1px;
   }
 </style>
