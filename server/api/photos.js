@@ -164,11 +164,17 @@ module.exports = function(app){
           .where('store.originals.stored').exists(true)
           .count(done);
       },
-      interestingness: function countHowManyAreImported (done) {
+      interesting: function countHowManyAreInteresting (done) {
         Photo.find({'owners': req.user._id})
           .where('copies.' + req.user._id + '.interestingness').gte(100)
           .count(done);
+      },
+      dropbox: function countHowManyAreImportedFromDropbox (done) {
+        Photo.find({'owners': req.user._id})
+          .where('source').equals('dropbox')
+          .count(done);
       }
+
     }, function (err, result) {
       return res.json(result);
     });

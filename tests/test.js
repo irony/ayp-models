@@ -10,8 +10,9 @@ describe("app", function(){
 
 
   it("should be possible to start interestingness job", function(done){
-    this.timeout(10000);
-    require('../jobs/calculateInterestingness')(function(err, result){
+    this.timeout(15000);
+    debugger;
+    require('../jobs/calculateInterestingn√ess')(function(err, result){
       should.ok(!err);
       console.log(result);
     });
@@ -33,7 +34,7 @@ describe("app", function(){
 	var profile = {displayName : 'Christian Landgren', emails : ['cln@iteam.se'], provider : 'test', id : id};
 	var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	should.ok(!err);
+    	should.ok(!err); 
 		savedUser.emails.should.have.length(2);
 		done();
     });

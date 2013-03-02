@@ -58,7 +58,8 @@ module.exports = function(done){
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}, verbose: true}, function(err, model, stats){
 
     if (err) return done(err);
-
+debugger;
+  
     console.log(': Interestingness', stats);
 
     // Query the results

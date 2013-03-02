@@ -67,7 +67,9 @@ var importer = {
     if (user.accounts){
       
       _.each(user.accounts, function(account, connectorName){
-        var connector = require('../server/connectors/' + connectorName);
+        if (!connectorName) return done();
+
+        var connector = require('../server/connectors/' + connectorName); //connectorName.replace(/^[a-z]/,''));
         if (connector.importNewPhotos) {
           connector.importNewPhotos(user, function(err, photos){
             if (err || !photos || !photos.length) return done && done(err);
