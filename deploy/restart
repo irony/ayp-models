@@ -2,6 +2,7 @@
 touch tmp/restart.txt
 echo "restarting All Your Photos after receiving push"
 npm install
+npm install foreman
 npm test
 forever stopall
 forever -a -l app.log start server/server.js 

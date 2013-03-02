@@ -1,25 +1,12 @@
-<section>
+<section id="library" class="glossy-reflection">
   <% photos.map(function(photo){ %>
-    <img class="v<%=photo.vote%>" src="<%=photo.src%>" height="300" width="<%= Math.floor((300 * photo.ratio) || 300) %>">
+      <img class="v<%=photo.vote%>" src="<%=photo.src%>" height="300" width="<%= Math.floor(300 * photo.ratio || 300) %>">
   <% }) %>
 </section>
 
 
 <style> 
   img{
-    transition: all 1s;
-    -moz-transition: all 1s; 
-    -webkit-transition: all 1s;
-    margin:2px;
-  }
-  img:hover{
-    -webkit-transform:     scale: (150%, 150%);
-  }
-
-  section
-  {
-    width: 100%;
-    padding: 10px;
-    text-align: justify;
+    margin:0px;
   }
 </style>

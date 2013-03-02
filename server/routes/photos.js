@@ -56,10 +56,10 @@ module.exports = function(app){
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store')
-      .where('store.originals.stored').exists(true)
+      .where('store.originals.url').exists(true)
       .limit(5000)
 //      .sort('-copies.' + req.user._id + '.interestingness')
-      .sort('-taken')
+      .sort('vote -taken')
       .exec(function(err, photos){
         // return all photos with just bare minimum information for local caching
         async.map((photos || []), function(photo, done){
