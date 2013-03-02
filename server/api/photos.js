@@ -150,5 +150,33 @@ module.exports = function(app){
     });
   });
 
+  app.get('/api/stats', function(req, res){
+
+    if (!req.user) res.send(403, 'Login first');
+
+    async.parallel({
+      all: function countAllPhotos (done) {
+        Photo.find({'owners': req.user._id})
+          .count(done);
+      },
+      imported: function countHowManyAreImported (done) {
+        Photo.find({'owners': req.user._id})
+          .where('store.originals.stored').exists(true)
+          .count(done);
+      },
+      interestingness: function countHowManyAreImported (done) {
+        Photo.find({'owners': req.user._id})
+          .where('copies.' + req.user._id + '.interestingness').gte(100)
+          .count(done);
+      }
+    }, function (err, result) {
+      return res.json(result);
+    });
+
+    
+
+
+  });
+
 
 };

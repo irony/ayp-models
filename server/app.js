@@ -3,7 +3,7 @@
 // Initializes database, all routes and express
 
 var config = require('../conf');
-var mongoose = require('../node_modules/mongoose');
+var mongoose = require('mongoose');
 var _ = require('underscore');
 var http = require('http');
 var express = require('express');
@@ -11,6 +11,8 @@ var util = require('util');
 var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
 var knox      = require('knox');
+
+mongoose.connect(config.mongoUrl);
 
 
 // more logs
@@ -29,10 +31,6 @@ function ensureAuthenticated(req, res, next) {
 
 exports.init = function() {
   
-    // Connect database directly
-    mongoose.connect(config.mongoUrl);
-
-
     var app = express.createServer();
 
     // configure Express
@@ -75,11 +73,14 @@ exports.init = function() {
 
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+        global.debug = true;
+        console.debug = console.log;
         // app.use(express.logger({ format: ':method :url' }));
     });
 
     app.configure('production', function(){
         app.use(express.errorHandler());
+        console.debug = function(){};
     });
 
     // Error handler

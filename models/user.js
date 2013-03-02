@@ -1,5 +1,5 @@
 
-var mongoose = require('../node_modules/mongoose');
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 

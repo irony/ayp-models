@@ -27,7 +27,7 @@ var updateProfile = function(user, profile, done){
 //   user.set('emails', emails);
   user.set('accounts', accounts);
 
-  console.log('updated profile', user);
+  // console.log('updated profile', user);
 
   return user.save(function(err, savedUser){
     done(err, savedUser);
@@ -66,16 +66,16 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
         {
           // if we can find this user by his email, we will connect the accounts together instead. Security issue.
           User.findOne({emails : {$in : profile.emails}}, function(err, emailUser){
-            console.log('found user via email', emailUser);
+            //console.log('found user via email', emailUser);
             return updateProfile(emailUser || new User(), profile, done);
           });
 
         } else {
-          console.log('couldnt find user and not via email', profile);
+          //console.log('couldnt find user and not via email', profile);
           return updateProfile(new User(), profile, done);
         }
       } else {
-          console.log('found user via provider. Updating profile...', profile);
+          //console.log('found user via provider. Updating profile...', profile);
         return updateProfile(foundUser, profile, done);
       }
 

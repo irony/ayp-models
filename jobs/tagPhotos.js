@@ -39,6 +39,9 @@ module.exports = function(done){
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'tags'}, verbose:true}, function(err, model, stats){
   
 
+    console.log(': tagPhotos', stats);
+  
+
     if (err) throw err;
 
     model.find(function(err, photos){

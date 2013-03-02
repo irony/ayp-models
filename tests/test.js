@@ -1,12 +1,23 @@
 var should = require("should");
-var app = require('../server/app');
-
 var auth = require('../server/auth/auth');
 var async = require('async');
+var app = require('../server/app');
 
 describe("app", function(){
 
   var id = Math.floor((Math.random()*10000000)+1).toString();
+
+
+
+  it("should be possible to start interestingness job", function(done){
+    this.timeout(10000);
+    require('../jobs/calculateInterestingness')(function(err, result){
+      should.ok(!err);
+      console.log(result);
+    });
+
+  });
+
 
   it("should be possible to create a user ", function(done) {
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test', id : id};
@@ -18,7 +29,7 @@ describe("app", function(){
     });
   });
 
-  it("should be possible to add new email to an existing user ", function(done) {
+/*  it("should be possible to add new email to an existing user ", function(done) {
 	var profile = {displayName : 'Christian Landgren', emails : ['cln@iteam.se'], provider : 'test', id : id};
 	var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
@@ -26,7 +37,7 @@ describe("app", function(){
 		savedUser.emails.should.have.length(2);
 		done();
     });
-  });
+  });*/
 
   it("should be possible to add new account to an existing user ", function(done) {
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test2', id : id};
@@ -107,9 +118,6 @@ describe("app", function(){
             });
 
             photo.save(function(err, photo){
-
-console.log('photo saved, err', err)
-        debugger;
 
               photo.owners.should.include(userA._id, "UserA does not exist");
 

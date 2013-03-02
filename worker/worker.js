@@ -1,4 +1,4 @@
-var mongoose = require('../node_modules/mongoose');
+var app = require('../server/app');
 var config = require('../conf');
 var express = require('express');
 var knox      = require('knox');
@@ -9,8 +9,8 @@ var Photo = require('../models/photo');
 var _ = require('underscore');
 var colors = require('colors');
 
-// Connect mongodb
-var conn = mongoose.connect(config.mongoUrl);
+
+console.debug = console.log;
 
 // more logs
 // require('longjohn');
@@ -27,11 +27,11 @@ var jobs = [
     fn:require('../jobs/downloader').downloadNewPhotos,
     interval: 10 // download as fast as possible
   },
-  {
+  /*{
     title:'Group Photos',
     fn:require('../jobs/groupImages'),
     interval: 9 * 60 * 1000
-  },
+  },*/
   {
     title:'Tag Photos',
     fn:require('../jobs/tagPhotos'),
@@ -69,7 +69,9 @@ function startJob (job, done){
       // Restart the job recursivly after it is finished (after a specified interval).
       // This means that two incarnations of the same job can not run at the same time
       setTimeout(function() {
-          startJob(job, finish);
+          process.nextTick(function(){
+            startJob(job, finish);
+          });
       }, job.interval);
 
     })

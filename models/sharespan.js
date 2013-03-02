@@ -6,7 +6,7 @@
 // TODO: Add a one-way option or active-flag per member
 
 
-var mongoose = require('../node_modules/mongoose');
+var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
     Photo = require('./photo'),
     Schema = mongoose.Schema;
@@ -33,7 +33,7 @@ ShareSpanSchema.pre('save', function (next) {
   .where('photos').nin(span.photos)
   .where('taken').gte(span.startDate).lte(span.stopDate)
   .exec(function(err, photos){
-    console.log('sharespan save');
+//     console.log('sharespan save');
     (photos || []).forEach(function(photo){
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
       photo.save();

@@ -59,6 +59,8 @@ module.exports = function(done){
 
     if (err) return done(err);
 
+    console.log(': Interestingness', stats);
+
     // Query the results
     model.find(function(err, photos){
       async.map(photos, function(photo, done){

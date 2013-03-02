@@ -2,7 +2,7 @@
 // =====
 // Not used anymore?
 
-var mongoose = require('../node_modules/mongoose'),
+var mongoose = require('mongoose'),
     Photo = require('./photo')(mongoose).Schema,
     _ = require('underscore'),
     Schema = mongoose.Schema;

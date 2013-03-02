@@ -27,22 +27,22 @@ module.exports = function(done){
           hourPart = new Date(self.taken).getHours(),
           minutePart = new Date(self.taken).getMinutes();
 
-      emit(yearPart + "/" + monthPart + "/" + datePart + "/" + hourPart, self);
-      emit(yearPart + "/" + monthPart + "/" + datePart, self);
-      emit(yearPart + "/" + monthPart, self);
-      emit(yearPart, self);
+      emit(yearPart + "/" + monthPart + "/" + datePart + "/" + hourPart, self._id);
+      emit(yearPart + "/" + monthPart + "/" + datePart, self._id);
+      emit(yearPart + "/" + monthPart, self._id);
+      emit(yearPart, self._id);
       
       if (monthPart < 3 || monthPart > 10)
-        emit(yearPart + "/winter", self);
+        emit(yearPart + "/winter", self._id);
 
       if (monthPart >= 3 && monthPart < 6)
-        emit(yearPart + "/spring", self);
+        emit(yearPart + "/spring", self._id);
 
       if (monthPart >= 9 && monthPart < 11)
-        emit(yearPart + "/autumn", self);
+        emit(yearPart + "/autumn", self._id);
 
       if (monthPart >= 5 && monthPart < 9)
-        emit(yearPart + "/summer", self);
+        emit(yearPart + "/summer", self._id);
 
 
   };
@@ -59,13 +59,13 @@ module.exports = function(done){
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}, verbose:true}, function(err, model, stats){
     if (err) return done(err);
 
+    console.log(': GroupImages', stats);
+
     // update all included photos with the new groups
     model.find(function(err, groups){
       async.map(groups, function(group, done){
-        Photo.findOneAndUpdate({_id : group.value._id}, {$set : {groups : group._id.toString().split('/')}}, {safe:true}, done);
-      }, function(err, photos){
-        if (done) done(err, photos);
-      });
+        Photo.findOneAndUpdate({_id : group.value}, {$set : {groups : group._id.toString().split('/')}}, {safe:true}, done);
+      }, done);
     });
   });
 

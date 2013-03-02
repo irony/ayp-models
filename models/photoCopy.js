@@ -2,7 +2,7 @@
 // ==========
 // A copy of a photo for another user. Even for the owner of a photo they still have a PhotoCopy.
 
-var mongoose = require('../node_modules/mongoose'),
+var mongoose = require('mongoose'),
     _ = require('underscore'),
     Schema = mongoose.Schema;
 
