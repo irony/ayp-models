@@ -20,6 +20,8 @@ var downloader = {
   downloadPhoto : function(user, photo, done){
     if (!done) throw new Error("Callback is mandatory");
 
+    if (!photo.source) return done();
+
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       async.parallel({
