@@ -11,9 +11,15 @@ echo files changed: $(git diff $oldrev $newrev --diff-filter=ACDMR --name-only |
 
 umask 002
 
-# sudo npm install -g forever
+# add these to your provisioning file
+# sudo npm install foreman -g
+# sudo gem install mason
 
 git submodule init && git submodule sync && git submodule update
+
+# do we have all we need?
+mason build
+mason buildpacks:install https://github.com/heroku/heroku-buildpack-nodejs.git
 
 run deploy/before_restart
 run deploy/restart && run deploy/after_restart
