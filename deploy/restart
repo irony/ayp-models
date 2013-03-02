@@ -5,4 +5,4 @@ npm install
 npm test
 forever stopall
 forever -a -l app.log start server/server.js 
-forever -a -l worker.log start server/worker.js
+forever -a -l worker.log start worker/worker.js

@@ -9,6 +9,7 @@ var http = require('http');
 var https = require('https');
 var spdy = require('spdy');
 
+// View routes
 require('./routes/connectors')(app);
 require('./routes/share')(app);
 require('./routes/photos')(app);
@@ -16,8 +17,8 @@ require('./routes/import')(app);
 require('./routes/index')(app);
 require('./sockets/photos')(app);
 
-
-require('./utils/strings');
+// Api methods
+require('./api/photos')(app);
 
 
 /* The 404 Route (ALWAYS Keep this as the last route) */

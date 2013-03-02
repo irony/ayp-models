@@ -44,7 +44,7 @@ function GroupsController($scope, $http){
     
 
     var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : Math.floor( $scope.zoomLevel / 10), limit: 500};
-    $http.get('/photoFeed', {params : query})
+    $http.get('/api/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
 

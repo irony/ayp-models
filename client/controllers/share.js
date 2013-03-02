@@ -34,7 +34,7 @@ function ShareController($scope, $http){
   $scope.$watch('dateRange', function(newVal) {
     var query = {email : $scope.email.toString(), dateRange : $scope.dateRange.toString()};
     console.log(query);
-    $http.post('/photoRange', query)
+    $http.post('/api/photoRange', query)
     .success(function(data){
       console.log(data);
       $scope.photos = data;
