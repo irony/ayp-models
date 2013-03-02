@@ -18,31 +18,21 @@ var downloader = {
    * @param  {Function} done  callback when both are done
    */
   downloadPhoto : function(user, photo, done){
-    if (!done) throw new Error("Callback is mandatory");
-
-    if (!photo.source) return done();
+    if (typeof(done) !== "function") throw new Error("Callback is mandatory" + JSON.stringify(done));
+    if (!photo.source) return done && done();
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       async.parallel({
         original : function(done){
           //console.log('Downloading original...');
-          connector.downloadOriginal(user, photo, function(err, result){
-            return done(err, result);
-          });
+          connector.downloadOriginal(user, photo, done);
         },
         thumbnail : function(done){
           // console.log('Downloading thumbnail...');
-          connector.downloadThumbnail(user, photo, function(err, result){
-            return done(err, result);
-          });
+          connector.downloadThumbnail(user, photo, done);
         }
-      }, function(err, results){
-    
-        // console.log('Finished downloading photo', photo._id);
-
-        return done(err, results);
-      });
+      }, done);
     }
 
   },
@@ -73,13 +63,10 @@ var downloader = {
             return photo.remove(done);
           }
 
-          // We don't know which user this photo belongs to so we try to download them all but we stop trying when we found
-          // the photo.
-          users.reduce(function(found, user){
-            if (!found) downloader.downloadPhoto(user, photo, function(err, result){
-              return done(err, photo) && true; // don't try anymore users
-            });
-          }, false);
+          // We don't know which user this photo belongs to so we try to download them all
+          async.map(users, function(user, done){
+            downloader.downloadPhoto(user, photo, done);
+          }, done);
         });
       }, function(err, photos){
         

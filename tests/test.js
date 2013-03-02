@@ -9,13 +9,20 @@ describe("app", function(){
 
 
 
-  it("should be possible to start interestingness job", function(done){
+  it("should be possible to start calculate interestingness job", function(done){
     this.timeout(15000);
     require('../jobs/calculateInterestingness')(function(err, result){
       should.ok(!err);
       done();
     });
+  });
 
+  it("should be possible to start downloading photos job", function(done){
+    this.timeout(15000);
+    require('../jobs/downloader').downloadNewPhotos(function(err, result){
+      should.ok(!err);
+      done();
+    });
   });
 
 
@@ -49,9 +56,6 @@ describe("app", function(){
 		done();
     });
   });
-
-
-
 
 
 
