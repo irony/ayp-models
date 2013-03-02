@@ -35,7 +35,7 @@ var options = {
 app.listen(process.env.PORT || 3000);
 
 console.log('Adding SPDY on 443');
-spdy.createServer(options, app.handle.bind(app)).listen(443);
+spdy.createServer(options, app.handle.bind(app)).listen(8443);
 
 //console.log("Listening on port %d in %s mode", app.address().port, app.settings.env);
 
