@@ -2,10 +2,17 @@ function GroupsController($scope, $http){
   
   var zoomTimeout = null;
   $scope.startDate = new Date();
-  $scope.zoomLevel = 50;
+  $scope.zoomLevel = 5;
   $scope.photos = [];
   $scope.groups = [];
   $scope.counter = 0;
+  $scope.stats = undefined;
+  $scope.nrPhotos = undefined;
+
+  $http.get('/api/stats').success(function(stats){
+    $scope.stats = stats;
+  });
+
 
   $scope.scroll = function(){
     if ( $scope.loadingReverse) // reverse scroll, TODO: send as parameter instead
@@ -43,7 +50,7 @@ function GroupsController($scope, $http){
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : Math.floor( $scope.zoomLevel / 10), limit: 500};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : $scope.zoomLevel, limit: 150};
     $http.get('/api/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
@@ -60,7 +67,7 @@ function GroupsController($scope, $http){
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
             group = {photos: photos, viewMode:'grid', id: photos[0].taken, range: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
-
+/*
         group.tags = group.photos.map(function(photo){
           return photo.tags;
         }).reduce(function(a,b){return a.concat(b)}, []).reduce(function(a,b){
@@ -75,6 +82,7 @@ function GroupsController($scope, $http){
 
         group.photo = photos[photos.length-1]; // .sort(function(a,b){return b.interestingness - a.interestingness}).slice();
         group.name = group.tags.slice(0,2).join(' ');
+*/
         if (resetDate) $scope.groups = [];
         
         if ($scope.loadingReverse) {
@@ -118,12 +126,14 @@ function GroupsController($scope, $http){
     $scope.groups = groups;
   });*/
 
-  $scope.$watch('zoomLevel', function(value, oldValue){
+  $scope.$watch('zoomLevel + (stats && stats.all)', function(value, oldValue){
     
-    if (oldValue > value)
+    if ($scope.zoomLevel > $scope.zoomLevel)
       $scope.startDate = new Date(); // reset the value when zooming out
 
     clearTimeout(zoomTimeout);
+
+    $scope.nrPhotos = $scope.stats && $scope.stats.all * $scope.zoomLevel / 10 || $scope.photos.length;
 
     zoomTimeout = setTimeout(function(){
       $scope.loadMore($scope.startDate);

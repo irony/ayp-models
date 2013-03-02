@@ -159,6 +159,11 @@ module.exports = function(app){
         Photo.find({'owners': req.user._id})
           .count(done);
       },
+      copies: function countAllPhotos (done) {
+        Photo.find()
+          .where('copies.' + req.user._id).exists(true)
+          .count(done);
+      },
       imported: function countHowManyAreImported (done) {
         Photo.find({'owners': req.user._id})
           .where('store.originals.stored').exists(true)

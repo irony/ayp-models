@@ -13,7 +13,7 @@ describe("app", function(){
     this.timeout(15000);
     require('../jobs/calculateInterestingness')(function(err, result){
       should.ok(!err);
-      console.log(result);
+      done();
     });
 
   });
