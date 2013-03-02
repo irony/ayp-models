@@ -84,6 +84,7 @@ var importer = {
   },
 
   importAllNewPhotos : function(done){
+    if (!done) throw new Error("Callback is mandatory");
     User.find().where('accounts.dropbox').exists().exec(function(err, users){
       
       if (err || !users.length) done(err);

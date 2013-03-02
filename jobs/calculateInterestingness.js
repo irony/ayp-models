@@ -11,6 +11,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 
 
 module.exports = function(done){
+  if (!done) throw new Error("Callback is mandatory");
 
   // Emit each relevant source of information
   var map = function(){
