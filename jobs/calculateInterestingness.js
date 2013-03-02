@@ -60,8 +60,6 @@ module.exports = function(done){
 
     if (err) return done && done(err);
 
-    console.log(': Interestingness', stats);
-
     // Query the results
     model.find(function(err, photos){
       if (err || !photos || !photos.length) return done(err, photos);

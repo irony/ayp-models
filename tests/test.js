@@ -3,7 +3,7 @@ var auth = require('../server/auth/auth');
 var async = require('async');
 var app = require('../server/app');
 
-describe("app", function(){
+describe("worker", function(){
 
   var id = Math.floor((Math.random()*10000000)+1).toString();
 
@@ -17,6 +17,14 @@ describe("app", function(){
     });
   });
 
+  it("should be possible to start calculate interestingness job", function(done){
+    this.timeout(15000);
+    require('../jobs/updateRank')(function(err, result){
+      should.ok(!err);
+      done();
+    });
+  });
+
   it("should be possible to start downloading photos job", function(done){
     this.timeout(15000);
     require('../jobs/downloader').downloadNewPhotos(function(err, result){
@@ -24,7 +32,11 @@ describe("app", function(){
       done();
     });
   });
+});
 
+describe("app", function(){
+
+  var id = Math.floor((Math.random()*10000000)+1).toString();
 
   it("should be possible to create a user ", function(done) {
 	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test', id : id};
