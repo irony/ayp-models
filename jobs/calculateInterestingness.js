@@ -34,6 +34,7 @@ module.exports = function(done){
         if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length));
 
         if(self.copies[user].groups && self.copies[user].groups.length) emit(group, 100 + self.copies[user].groups.length * 10);
+
       }
     }
 
@@ -57,13 +58,14 @@ module.exports = function(done){
   // TODO: add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'interestingness'}, verbose: true}, function(err, model, stats){
 
-    if (err) return done(err);
-debugger;
-  
+    if (err) return done && done(err);
+
     console.log(': Interestingness', stats);
 
     // Query the results
     model.find(function(err, photos){
+      if (err || !photos) return done(err, photos);
+
       async.map(photos, function(photo, done){
         var userId = photo._id.split('/')[0];
         var photoId = photo._id.split('/')[1];
@@ -76,9 +78,7 @@ debugger;
 
         Photo.findOneAndUpdate({_id : new ObjectId(photoId)}, setter, {upsert:true, safe:true}, done);
 
-      }, function(err, updated){
-        if (done) done(err, updated);
-      });
+      }, done);
 
     });
   });

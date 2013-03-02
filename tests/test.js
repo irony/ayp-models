@@ -11,8 +11,7 @@ describe("app", function(){
 
   it("should be possible to start interestingness job", function(done){
     this.timeout(15000);
-    debugger;
-    require('../jobs/calculateInterestingn√ess')(function(err, result){
+    require('../jobs/calculateInterestingness')(function(err, result){
       should.ok(!err);
       console.log(result);
     });
