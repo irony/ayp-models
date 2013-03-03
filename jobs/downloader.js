@@ -26,7 +26,7 @@ var downloader = {
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       
       console.log(': Downloading original and thumbnails from %s', photo.source);
-      async.parallell({
+      async.parallel({
         original : function(done){
           connector.downloadOriginal(user, photo, function(err, result){
             console.log(': Done original');

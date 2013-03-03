@@ -9,7 +9,7 @@ describe("worker", function(){
 
 
   it("should be possible to start ranking job", function(done){
-    this.timeout(20000);
+    this.timeout(10000);
     require('../jobs/updateRank')(function(err, result){
       should.ok(!err);
       done(err);
@@ -26,7 +26,7 @@ describe("worker", function(){
   });
 
   it("should be possible to start downloading photos job", function(done){
-    this.timeout(15000);
+    this.timeout(40000);
     require('../jobs/downloader').downloadNewPhotos(function(err, result){
       should.ok(!err);
       done();
