@@ -10,5 +10,8 @@ npm install
 npm test
 mason build .
 
+sudo stop app
+pkill -f "node"
+
 sudo foreman export upstart /etc/init -p 3000 -u ec2-user
-sudo restart app
+sudo start app
