@@ -9,5 +9,13 @@ export PORT=3000
 npm install
 npm test
 mason build .
-foreman stop
-foreman start
+
+
+forever stop server/server.js
+forever stop worker/worker.js
+
+
+forever start server/server.js
+forever start worker/worker.js
+
+#foreman start

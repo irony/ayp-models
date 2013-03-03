@@ -14,6 +14,8 @@ umask 002
 # add these to your provisioning file
 # sudo npm install foreman -g
 # sudo gem install mason
+# for ssl support:
+# sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/node
 
 git submodule init && git submodule sync && git submodule update
 
