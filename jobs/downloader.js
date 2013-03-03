@@ -18,8 +18,9 @@ var downloader = {
    * @param  {Function} done  callback when both are done
    */
   downloadPhoto : function(user, photo, done){
+
     if (typeof(done) !== "function") throw new Error("Callback is mandatory" + JSON.stringify(done));
-    if (!photo.source) return done && done();
+    if (!photo.source || !photo.source.length) done('No source connector found');
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
@@ -50,6 +51,7 @@ var downloader = {
 
     var photoQuery = Photo.find()
     .where('store.originals.stored').exists(false)
+    .where('store.error').exists(false)
     .sort('-taken')
     .limit(10);
     var downloadAllResults = function downloadAllResults(err, photos){
@@ -65,7 +67,18 @@ var downloader = {
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
-            downloader.downloadPhoto(user, photo, done);
+            downloader.downloadPhoto(user, photo, function(err){
+              if (err) {
+                photo.store = photo.store || {};
+                photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
+                photo.markModified('store');
+                return photo.save(function(err){
+                  return done(null, photo);
+                });
+              }
+
+              return done(null, photo);
+            });
           }, done);
         });
       }, function(err, photos){

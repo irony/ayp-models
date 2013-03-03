@@ -60,7 +60,6 @@ var connector = new Connector();
 
 
 	connector.downloadOriginal = function(user, photo, done){
-		
   	if (!done) throw new Error("Callback is mandatory");
 
 		if (!user || !user.accounts || !user.accounts.dropbox)

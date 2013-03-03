@@ -13,6 +13,9 @@ var passport = require('./auth/passport');
 var knox      = require('knox');
 
 mongoose.connect(config.mongoUrl);
+// store the s3 client globally so we can use it from both jobs and routes without passing it as parameters
+// TODO: move to connectors
+global.s3 = knox.createClient(config.aws);
 
 
 // more logs
@@ -55,8 +58,6 @@ exports.init = function() {
     });
 
 
-    // store the s3 client globally so we can use it from both jobs and routes without passing it as parameters
-    global.s3 = knox.createClient(config.aws);
 
     // default is 5 and we need download in parallell from s3
     // http.globalAgent.maxSockets = 50;
