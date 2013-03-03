@@ -69,8 +69,12 @@ var downloader = {
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
+                console.log(': Downloading photos', user._id);
             downloader.downloadPhoto(user, photo, function(err){
+                console.log(': Download photo done: ', err);
               if (err) {
+                
+
                 photo.store = photo.store || {};
                 photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
                 photo.markModified('store');

@@ -85,6 +85,6 @@ function startJob (job, done){
 // This setup requires all jobs to accept a callback as first parameter which should be fired when all job is done
 async.map(jobs, startJob);
 
-// http.globalAgent.maxSockets = 50;
+http.globalAgent.maxSockets = 50;
 global.s3 = knox.createClient(config.aws);
 
