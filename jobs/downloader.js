@@ -33,7 +33,9 @@ var downloader = {
           // console.log('Downloading thumbnail...');
           connector.downloadThumbnail(user, photo, done);
         }
-      }, done);
+      }, function(result){
+        done(null, result);
+      });
     }
 
   },
