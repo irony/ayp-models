@@ -20,27 +20,27 @@ var downloader = {
   downloadPhoto : function(user, photo, done){
 
     if (typeof(done) !== "function") throw new Error("Callback is mandatory" + JSON.stringify(done));
-    if (!photo.source || !photo.source.length) done('No source connector found');
+    if (!photo.source || !photo.source.length) return done('No source connector found');
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       
-      console.log(': Downloading original and thumbnails from %s', photo.source);
+      console.debug('Downloading original and thumbnails from %s', photo.source);
       async.parallel({
         original : function(done){
           connector.downloadOriginal(user, photo, function(err, result){
-            console.log(': Done original');
+            console.debug('Done original');
             done(err, result);
           });
         },
         thumbnail : function(done){
           connector.downloadThumbnail(user, photo, function(err, result){
-            console.log(': Done thumbnail');
+            console.debug('Done thumbnail');
             done(err, result);
           });
         }
       }, function(result){
-        console.log(': Done both', result);
+        console.debug('Done both', result);
         done(null, result);
       });
     }
@@ -78,7 +78,7 @@ var downloader = {
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
             downloader.downloadPhoto(user, photo, function(err){
-                console.log(': Download photo done: ', photo.store);
+                console.debug('Download photo done: ', photo.store);
               if (err) {
                 
 
@@ -96,7 +96,7 @@ var downloader = {
         });
       }, function(err, photos){
         
-        console.log(': Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
+        console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
         return done(err, photos);
 
       });

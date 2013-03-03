@@ -3,6 +3,9 @@ var auth = require('../server/auth/auth');
 var async = require('async');
 var app = require('../server/app');
 
+// disgard debug output
+console.debug = function(){};
+
 describe("worker", function(){
 
   var id = Math.floor((Math.random()*10000000)+1).toString();

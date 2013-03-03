@@ -10,7 +10,7 @@ var _ = require('underscore');
 var colors = require('colors');
 
 
-console.debug = console.log;
+console.debug = function(){ /* ignore debug messages*/};
 
 // more logs
 // require('longjohn');
@@ -61,8 +61,8 @@ function startJob (job, done){
     console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
   }
 
-  start(
-    job.fn(function(err, result){
+  try{
+    start(job.fn(function(err, result){
 
       finish(err,result);
       
@@ -74,8 +74,12 @@ function startJob (job, done){
           });
       }, job.interval);
 
-    })
-  );
+    }));
+  }
+  catch(err){
+    console.log('Unhandled exception in job %s:', job.title.white, err.toString().red);
+  }
+
 }
 
 

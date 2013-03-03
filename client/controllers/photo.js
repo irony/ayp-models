@@ -7,7 +7,7 @@ function PhotoController ($scope, $http){
       socket.emit('views', photo._id);
       activePhoto = photo;
 
-      if (photo.originalDownloaded) photo.src = '/img/originals/' + photo.source + '/' + photo._id;
+      photo.src = photo.src.replace('thumbnails', 'originals');
 
       setTimeout(function(){
         if (activePhoto === photo)

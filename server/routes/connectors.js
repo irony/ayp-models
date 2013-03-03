@@ -25,7 +25,7 @@ module.exports = function (app) {
     app.get('/auth/' + connectorName + '/callback', passport.authenticate(connectorName, { failureRedirect: '/' }),
       function(req, res) {
         // connector.connect();
-        res.redirect('/import');
+        res.redirect('/wall');
       });
   });
 
@@ -65,14 +65,15 @@ module.exports = function (app) {
 
       if ( err || !photo ) return res.send(403, err);
 
-      connector.downloadOriginal(req.user, photo, function(err, thumbnail){
-        if (err || !thumbnail) {
+      if (photo.store && photo.store.originals && photo.store.originals.url)
+        return res.redirect(photo.store.originals.url);
+
+      connector.downloadOriginal(req.user, photo, function(err, original){
+        if (err || !original) {
           return res.send(404, new Error(err));
         }
 
-        if (thumbnail.url)
-          return res.redirect(thumbnail.url);
-        else return res.end(thumbnail);
+        else return res.end(original);
 
       });
 

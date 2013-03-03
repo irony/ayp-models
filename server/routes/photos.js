@@ -27,17 +27,18 @@ module.exports = function(app){
     }
 
     Photo.find({owners: req.user._id})
+    .where('store.originals.stored').exists()
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
     .sort('-copies.' + req.user._id + '.interestingness')
     .exec(function(err, photos){
 
       var photo = photos && photos[Math.round(Math.random()*50)];
-      if(!photo) {
+      if(!photo || !photo.store || !photo.store.originals ) {
         return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
       }
  
-      res.redirect('/img/originals/' + photo.source + '/' + photo._id);
+      res.redirect(photo.store.originals.url);
 
     });
   });

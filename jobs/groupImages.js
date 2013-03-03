@@ -59,7 +59,7 @@ module.exports = function(done){
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'groups'}, verbose:true}, function(err, model, stats){
     if (err) return done(err);
 
-    console.log(': GroupImages', stats);
+    console.debug('GroupImages', stats);
 
     // update all included photos with the new groups
     model.find(function(err, groups){
