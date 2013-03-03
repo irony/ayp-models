@@ -15,7 +15,7 @@ forever stop server/server.js
 forever stop worker/worker.js
 
 
-forever start server/server.js
-forever start worker/worker.js
+forever server/server.js
+forever worker/worker.js
 
 #foreman start
