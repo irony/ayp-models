@@ -24,16 +24,24 @@ var downloader = {
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
-      async.parallel({
+      
+      console.log('Downloading original and thumbnails from %s', photo.source);
+      async.series({
         original : function(done){
-          //console.log('Downloading original...');
-          connector.downloadOriginal(user, photo, done);
+          connector.downloadOriginal(user, photo, function(err, result){
+            console.log(': done original');
+            done(err, result);
+          });
         },
         thumbnail : function(done){
-          // console.log('Downloading thumbnail...');
-          connector.downloadThumbnail(user, photo, done);
+          console.log('Downloading thumbnail...');
+          connector.downloadThumbnail(user, photo, function(err, result){
+            console.log(': done thumbnail');
+            done(err, result);
+          });
         }
       }, function(result){
+        console.log(': done both');
         done(null, result);
       });
     }
@@ -53,13 +61,14 @@ var downloader = {
 
     var photoQuery = Photo.find()
     .where('store.originals.stored').exists(false)
-    .where('store.error').exists(false)
-    .sort('-taken')
+    .where('store.error').exists(false) // skip photos with previous download problems
+    .sort('mimeType -taken') // images before videos
     .limit(10);
+
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
-      async.map(photos, function(photo, done){
+      async.mapSeries(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
           if (!users || !users.length) {
@@ -69,7 +78,7 @@ var downloader = {
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
-                console.log(': Downloading photos', user._id);
+                console.log(': Downloading photo', user._id);
             downloader.downloadPhoto(user, photo, function(err){
                 console.log(': Download photo done: ', err);
               if (err) {

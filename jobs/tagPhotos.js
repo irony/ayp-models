@@ -38,9 +38,7 @@ module.exports = function(done){
   // add query to only reduce modified images
   Photo.mapReduce({map:map, reduce:reduce, out : {replace : 'tags'}, verbose:true}, function(err, model, stats){
   
-
-    console.log(': tagPhotos', stats);
-  
+    // console.log(': tagPhotos', stats);
 
     if (err) throw err;
 

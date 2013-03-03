@@ -80,7 +80,9 @@ var connector = new Connector();
 		//	 return done(err, photo);
 		// });
 
+		console.log('downloading...', photo.path);
 		client.get(photo.path, function(status, stream){
+		console.log('got response...', status);
 
 			if (status !== 200){
 
