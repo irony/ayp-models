@@ -64,7 +64,7 @@ module.exports = function(app){
         if (photo.mimeType.split('/')[0] === 'video'){
           photo.src = photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
         } else {
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
         }
         
         var vote = photo.mine.vote || (photo.mine.calculatedVote);

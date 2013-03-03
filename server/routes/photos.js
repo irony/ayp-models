@@ -68,7 +68,7 @@ module.exports = function(app){
           if (!mine) return done(); // unranked images are not welcome here
 
           var vote = mine.vote || (mine.calculatedVote);
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
 
           return done(null, {id: photo._id, mine: mine, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){

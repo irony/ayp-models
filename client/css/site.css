@@ -485,6 +485,11 @@ body .navbar-inner{
 
 }
 
+#wall input{
+  padding: 10px 0;
+  margin-top: -15px;
+}
+
 #wall
 {
   margin:auto;
