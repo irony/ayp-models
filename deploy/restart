@@ -10,12 +10,4 @@ npm install
 npm test
 mason build .
 
-
-forever stop server/server.js
-forever stop worker/worker.js
-
-
-forever server/server.js
-forever worker/worker.js
-
-#foreman start
+sudo restart app

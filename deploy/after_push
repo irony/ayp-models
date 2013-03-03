@@ -16,6 +16,7 @@ umask 002
 # sudo gem install mason
 # for ssl support:
 # sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/node
+# sudo foreman export --app ayp upstart /etc/init
 
 git submodule init && git submodule sync && git submodule update
 
