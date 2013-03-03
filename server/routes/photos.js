@@ -26,7 +26,7 @@ module.exports = function(app){
       return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
     }
 
-    Photo.find({owners: req.user._id})
+    Photo.find({owners: req.user._id}, 'photo.store.originals.url')
     .where('store.originals.stored').exists()
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
