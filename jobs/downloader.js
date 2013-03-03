@@ -27,12 +27,12 @@ var downloader = {
       
       console.debug('Downloading original and thumbnails from %s', photo.source);
       async.parallel({
-        /*original : function(done){
+        original : function(done){
           connector.downloadOriginal(user, photo, function(err, result){
             console.debug('Done original');
             done(err, result);
           });
-        },*/
+        },
         thumbnail : function(done){
           connector.downloadThumbnail(user, photo, function(err, result){
             console.debug('Done thumbnail');
@@ -56,12 +56,10 @@ var downloader = {
    *                          }
    */
   downloadNewPhotos : function(done){
-
-
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find()
-    .where('store.thumbnails.stored').exists(false)
+    .where('store.originals.stored').exists(false)
     .where('store.error').exists(false) // skip photos with previous download problems
     .sort('mimeType -taken') // images before videos
     .limit(3);
