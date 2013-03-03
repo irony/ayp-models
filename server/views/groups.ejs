@@ -13,12 +13,8 @@
           <div class="{{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <header>
               <h2>{{group.name}} <small>{{group.range}}</small></h2>
-                <a href="/share?fromDate={{group.photos[0].taken}}&toDate={{group.photos[group.photos.length-1].taken}}" class="btn btn-small"><i class="icon-share"></i> Share</a>
-                <a class="btn btn-small {{group.viewMode == 'large' && 'active'}}" ng-click="group.viewMode = 'large'"><i class="icon-align-justify"></i> Large</a>
-                <a class="btn btn-small {{group.viewMode == 'grid' && 'active'}}" ng-click="group.viewMode = 'grid'"><i class="icon-th"></i> Grid</a>
-                <a class="btn btn-small" ng-disabled="zoomLevel == 100" href="#{{group.id}}" ng-click="loadMore(photo.taken, zoomLevel+10)"><i class="icon-picture"></i> Load More</a>
             </header> 
-            <div  ng-repeat="photo in group.photos|orderBy:'taken'" class="photo {{photo.class}} pull-left" title="{{photo.path}}" ng-controller="PhotoController">
+            <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.path}}" ng-controller="PhotoController">
               <a ng-click="hide(photo, group)"><i class="icon-remove"></i></a>
               <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
               <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
@@ -28,7 +24,7 @@
                 <source src="{{photo.src}}" type="{{photo.mimeType}}">
               </video>
 -->
-              <img ng-src="{{photo.src}}" width="{{300 * (photo.ratio || 1)}}" ng-cloak ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+              <img ng-src="{{photo.src}}" height="300" width="{{300 * (photo.ratio || 1)}}" ng-cloak ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
             </div>
             <div class="clearfix"></div>
           </div> 

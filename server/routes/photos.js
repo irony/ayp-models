@@ -27,7 +27,6 @@ module.exports = function(app){
     }
 
     Photo.find({owners: req.user._id})
-    .where('originalDownloaded').ne(false)
     .skip(Math.min(req.query.skip || 0))
     .limit(Math.min(req.query.limit || 50))
     .sort('-copies.' + req.user._id + '.interestingness')

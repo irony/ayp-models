@@ -17,7 +17,7 @@ module.exports = function(app){
 
     console.log('searching photos:', req.query);
 
-    Photo.find({'owners': req.user._id})
+    Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store mimeType')
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
     //.where('store.thumbnails.stored').exists()
@@ -63,10 +63,13 @@ module.exports = function(app){
 
         if (photo.mimeType.split('/')[0] === 'video'){
           photo.src = photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
-          return done(null, photo);
         } else {
           photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
-          return done(null, photo);
+        }
+        
+        var vote = photo.mine.vote || (photo.mine.calculatedVote);
+
+        return done(null, {id: photo._id, taken: photo.taken, mimeType: photo.mimeType, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
 /*
           var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
           global.s3.get(filename).on('response', function(res){
@@ -83,7 +86,6 @@ module.exports = function(app){
             });
           }).end();
 */
-        }
       }, function(err, photos){
         return res.json(photos);
       });

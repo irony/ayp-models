@@ -66,7 +66,7 @@ function GroupsController($scope, $http){
 */
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
-            group = {photos: photos, viewMode:'grid', id: photos[0].taken, range: stopDate + (startDate !== stopDate ? " - " + startDate : "")};
+            group = {photos: photos, viewMode:'grid', id: photos[0].taken, range: (startDate !== stopDate ? startDate + " - ": "") + stopDate};
 /*
         group.tags = group.photos.map(function(photo){
           return photo.tags;
