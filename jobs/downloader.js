@@ -74,8 +74,8 @@ var downloader = {
                 photo.store = photo.store || {};
                 photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
                 photo.markModified('store');
-                return photo.save(function(err){
-                  return done(null, photo);
+                return photo.save(function(){
+                  return done(err, photo);
                 });
               }
 
