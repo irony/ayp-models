@@ -70,7 +70,7 @@ module.exports = function(app){
           var vote = mine.vote || (mine.calculatedVote);
           photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/noimg.jpg';
 
-          return done(null, {mine: mine, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
+          return done(null, {id: photo._id, mine: mine, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
           
           model.maxRank = user.maxRank;
