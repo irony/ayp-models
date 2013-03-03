@@ -10,5 +10,5 @@ npm install
 npm test
 mason build .
 
-pkill -f 'foreman start'
-foreman start >> /var/log/allyourphotos/foreman.log
+sudo foreman export upstart /etc/init -p 3000 -u ec2-user
+sudo restart app
