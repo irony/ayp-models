@@ -11,4 +11,4 @@ npm test
 mason build .
 
 pkill -f 'foreman start'
-foreman start
+foreman start >> /var/log/allyourphotos/foreman.log
