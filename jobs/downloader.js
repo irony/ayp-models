@@ -25,23 +25,22 @@ var downloader = {
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       
-      console.log('Downloading original and thumbnails from %s', photo.source);
-      async.series({
+      console.log(': Downloading original and thumbnails from %s', photo.source);
+      async.parallell({
         original : function(done){
           connector.downloadOriginal(user, photo, function(err, result){
-            console.log(': done original');
+            console.log(': Done original');
             done(err, result);
           });
         },
         thumbnail : function(done){
-          console.log('Downloading thumbnail...');
           connector.downloadThumbnail(user, photo, function(err, result){
-            console.log(': done thumbnail');
+            console.log(': Done thumbnail');
             done(err, result);
           });
         }
       }, function(result){
-        console.log(': done both');
+        console.log(': Done both', result);
         done(null, result);
       });
     }
@@ -63,7 +62,7 @@ var downloader = {
     .where('store.originals.stored').exists(false)
     .where('store.error').exists(false) // skip photos with previous download problems
     .sort('mimeType -taken') // images before videos
-    .limit(10);
+    .limit(3);
 
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
@@ -78,9 +77,8 @@ var downloader = {
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
-                console.log(': Downloading photo', user._id);
             downloader.downloadPhoto(user, photo, function(err){
-                console.log(': Download photo done: ', err);
+                console.log(': Download photo done: ', photo.store);
               if (err) {
                 
 
@@ -98,7 +96,7 @@ var downloader = {
         });
       }, function(err, photos){
         
-        // console.log('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
+        console.log(': Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
         return done(err, photos);
 
       });

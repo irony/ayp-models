@@ -66,13 +66,13 @@ Connector.prototype.save = function(folder, photo, stream, done){
 
     //console.log('saving %s to s3', folder, req);
     req.on('error', function(err) {
-      console.log('Request error when saving to S3: %s', err.toString().red);
+      console.log(': Request error when saving to S3: %s', err.toString().red);
     });
-
     req.on('response', function(res){
       if (200 === res.statusCode || 307 ==res.statusCode) {
+        console.log(': Extracting exif...');
         extractExif(stream, function(err, headers){
-
+        
           if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
             
           var setter = {$set : {}};
@@ -80,7 +80,9 @@ Connector.prototype.save = function(folder, photo, stream, done){
           if (headers.exif_data) setter.$set.exif = headers.exif_data;
           if (headers.width && headers.height) setter.ratio = headers.width / headers.height;
           
-          return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, function(err){
+          console.log(': Saving %s to db...', folder);
+          return photo.update(setter, {upsert: true, safe:true}, function(err){
+            console.log(': Done saving to db...', err);
             return done(err, photo);
           });
         });

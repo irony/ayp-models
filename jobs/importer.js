@@ -92,7 +92,6 @@ var importer = {
       if (err || !users.length) done(err);
 
       async.mapSeries(users, function(user, done){
-        console.log('importing new photos for ', user._id);
         importer.importPhotosFromAllConnectors(user, done);
       }, done);
     });
