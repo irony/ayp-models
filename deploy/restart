@@ -10,4 +10,5 @@ npm install
 npm test
 mason build .
 
-sudo restart app
+pkill -f 'foreman start'
+foreman start
