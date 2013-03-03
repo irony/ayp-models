@@ -1,8 +1,8 @@
 var passport = require('passport');
-var Connector = require('./connectorBase');
+var InputConnector = require('./inputConnector');
 
 module.exports = function (app) {
 
 
 };
-module.exports.prototype = Connector.prototype; //inherit from Connector base
+module.exports.prototype = InputConnector.prototype; //inherit from InputConnector base

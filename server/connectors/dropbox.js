@@ -4,14 +4,14 @@ var dbox  = require("dbox");
 var async  = require("async");
 var dropbox   = dbox.app(config.dbox);
 var passport = require('passport');
-var Connector = require('./connectorBase');
+var InputConnector = require('./inputConnector');
 var Photo = require('../../models/photo');
 var User = require('../../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 
-var connector = new Connector();
+var connector = new InputConnector();
 
 	connector.downloadThumbnail = function(user, photo, done){
 	
