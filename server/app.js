@@ -1,6 +1,12 @@
 // Main app configuration
 // ======================
 // Initializes database, all routes and express
+ 
+
+// Profiler
+        require('nodetime').profile();
+
+
 
 var config = require('../conf');
 var mongoose = require('mongoose');
@@ -76,7 +82,6 @@ exports.init = function() {
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
         console.debug = console.log;
-        require('nodetime').profile();
         // app.use(express.logger({ format: ':method :url' }));
     });
 
