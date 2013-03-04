@@ -10,7 +10,6 @@ module.exports = function(app){
 
 
       res.render('template.ejs', model);
-      res.end();
 
       var pusher = new Pusher(req, res, './client');
       
