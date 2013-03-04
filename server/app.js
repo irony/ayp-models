@@ -2,13 +2,15 @@
 // ======================
 // Initializes database, all routes and express
 
+// profiling enabled
+require('nodetime').profile();
+
 var config = require('../conf');
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var http = require('http');
 var express = require('express');
 var util = require('util');
-var MongoStore = require('connect-mongo')(express);
 var passport = require('./auth/passport');
 var knox      = require('knox');
 
@@ -46,7 +48,8 @@ exports.init = function() {
       app.use(express.methodOverride());
       
       // We use mongo to store sessions
-      app.use(express.session({ secret: 'keyboard cat', cookie: { maxAge: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)}, store: new MongoStore({url: config.mongoUrl })}));
+      app.use(express.session({cookie: { path: '/', httpOnly: true, maxAge: null}, secret:'a2988-438674-f234a'}));
+
       // Initialize Passport!  Also use passport.session() middleware, to support
       // persistent login sessions (recommended).
       //
