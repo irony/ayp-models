@@ -10,6 +10,7 @@ module.exports = function(app){
 
 
       res.render('template.ejs', model);
+      res.end();
 
       var pusher = new Pusher(req, res, './client');
       
@@ -26,7 +27,6 @@ module.exports = function(app){
         '/js/date-utils.min.js',
       ], function(file, done){pusher.pushFile(file, done)}, function(){
       
-        res.end();
       });
   });
 
