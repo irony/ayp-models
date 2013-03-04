@@ -45,6 +45,9 @@ function Pusher(req, res, clientPath){
   this.clientPath = clientPath || './static';
 }
 
+var memoizedStat = async.memoize(fs.stat); // ec2 works too slow for file i/o
+var memoizedReadFile = async.memoize(fs.readFile); // ec2 works too slow for file i/o
+
 /**
  * Push file with SPDY
  * @param  {[type]}   filename [description]
@@ -56,8 +59,6 @@ Pusher.prototype.pushFile = function(filename, done)
   if (!this.res.push) return done();
   
   var self = this;
-  var memoizedStat = async.memoize(fs.stat); // ec2 works too slow for file i/o
-  var memoizedReadFile = async.memoize(fs.readFile); // ec2 works too slow for file i/o
 
   memoizedStat(path.resolve(self.clientPath + filename), function (err, stat) {
     var etag;
