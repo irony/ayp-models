@@ -15,4 +15,4 @@ sudo stop app
 sudo pkill "node"
 
 sudo foreman export upstart /etc/init -u ec2-user
-sudo start app
+sudo start app-web-1
