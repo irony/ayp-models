@@ -8,7 +8,6 @@ module.exports = function(app){
 
       var model = new ViewModel(req.user);
 
-
       res.render('template.ejs', model, function(err, data){
         var pusher = new Pusher(req, res, './client');
         
@@ -24,7 +23,7 @@ module.exports = function(app){
           '/controllers/app.js',
           '/js/date-utils.min.js',
         ].map(function(file){pusher.pushFile(file)});
-
+        res.end(data);
       });
   });
 
@@ -77,7 +76,7 @@ Pusher.prototype.pushFile = function(filename, done)
           if (err) return done(err);
 
           pushStream.end(data);
-          done();
+          return done && done();
         });
       });
     }
