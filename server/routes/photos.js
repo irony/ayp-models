@@ -71,10 +71,6 @@ module.exports = function(app){
           var vote = mine.vote || (mine.calculatedVote);
           photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
 
-          if (res.push){
-            console.log(res.push)
-            res.push('/js/zoom.js');
-          }
           return done(null, {id: photo._id, mine: mine, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
           

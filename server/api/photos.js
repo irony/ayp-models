@@ -68,24 +68,19 @@ module.exports = function(app){
         }
         
         var vote = photo.mine.vote || (photo.mine.calculatedVote);
-
-        return done(null, {id: photo._id, taken: photo.taken, mimeType: photo.mimeType, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
-/*
-          var filename = path.resolve('/thumbnails/' + photo.source + '/' + photo._id);
-          global.s3.get(filename).on('response', function(res){
-            if (res.statusCode != 200 )
-              return done(null, photo);
-
-            var buffer = '';
-            res.on('data', function(data) {
-              buffer += data.toString('base64');
-            });
-            res.on('end', function(){
-              photo.src = !buffer.length ? photo.src : 'data:' + photo.mimeType + ';base64,' + buffer;
-              return done(null, photo);
+        /*
+        if (res.push){
+          // SPDY is supported
+          photo.src = '/thumbnails/' + photo.source + '/' + photo._id;
+          global.s3.get(photo.src).on('response', function(_res){
+            res.push(photo.src,{}, function(pushStream){
+              _res.pipe(pushStream);
             });
           }).end();
-*/
+        }*/
+
+        return done(null, {id: photo._id, taken: photo.taken, mimeType: photo.mimeType, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
+
       }, function(err, photos){
         return res.json(photos);
       });

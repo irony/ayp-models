@@ -9,22 +9,23 @@ module.exports = function(app){
       var model = new ViewModel(req.user);
 
       res.render('template.ejs', model, function(err, data){
+
         var pusher = new Pusher(req, res, './client');
-        
         [
-          '/fonts/fontawesome-webfont.woff',
+          //'/fonts/fontawesome-webfont.woff',
           '/css/bootstrap.min.css',
           '/css/font-awesome.css',
           '/css/site.css',
           '/js/bootstrap.js',
           '/js/angular.min.js',
           '/js/jquery-1.7.1.min.js',
-          '/js/socket.io.js',
+          //'/js/socket.io.js',
           '/controllers/app.js',
-          '/js/date-utils.min.js',
         ].map(function(file){pusher.pushFile(file)});
         res.end(data);
       });
+
+
   });
 
 };
