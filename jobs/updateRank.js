@@ -26,7 +26,7 @@ module.exports = function(done){
       // find all their photos and sort them on interestingness
       Photo.find({'owners': user._id}, 'copies.' + user._id + '.rank ')
       //.sort('-copies.' + user._id + '.interestingness')
-      .limit(50000)
+      .limit(5000)
       .exec(function(err, photos){
         if (err) throw err;
       

@@ -73,7 +73,7 @@ Pusher.prototype.pushFile = function(filename, done)
       };
 
       self.res.push(filename, headers, function(err, pushStream) {
-        fs.readFile(path.resolve(self.clientPath + filename), function(err, data){
+        memoizedReadFile(path.resolve(self.clientPath + filename), function(err, data){
           if (err) return done(err);
 
           pushStream.end(data);
