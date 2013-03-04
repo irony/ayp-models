@@ -63,8 +63,11 @@ Pusher.prototype.pushFile = function(filename, done)
           ETag : stat.size + '-' + Date.parse(stat.mtime)
         };
 
-        self.res.push(filename, headers, function(err, stream) {
-          fs.createReadStream(path.resolve(self.clientPath + filename)).pipe(stream);
+        self.res.push(filename, headers, function(err, pushStream) {
+          var fileStream = fs.createReadStream(path.resolve(self.clientPath + filename));
+          fileStream.on('open', function () {
+            fileStream.pipe(pushStream);
+          });
         });
       }
     });
