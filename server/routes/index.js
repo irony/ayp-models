@@ -14,16 +14,16 @@ module.exports = function(app){
       var pusher = new Pusher(req, res, './client');
       
       async.map([
-        '/fonts/fontawesome-webfont.woff',
+        //'/fonts/fontawesome-webfont.woff',
         '/css/bootstrap.min.css',
-        '/css/font-awesome.css',
+        //'/css/font-awesome.css',
         '/css/site.css',
         '/js/bootstrap.js',
-        '/js/angular.min.js',
+        //'/js/angular.min.js',
         '/js/jquery-1.7.1.min.js',
-        '/js/socket.io.js',
+        //'/js/socket.io.js',
         '/controllers/app.js',
-        '/js/date-utils.min.js',
+        //'/js/date-utils.min.js',
       ], function(file, done){pusher.pushFile(file, done)}, function(){
       
       });
