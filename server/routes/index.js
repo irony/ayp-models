@@ -9,6 +9,8 @@ module.exports = function(app){
       var model = new ViewModel(req.user);
 
 
+      res.render('template.ejs', model);
+
       var pusher = new Pusher(req, res, './client');
       
       async.map([
@@ -24,10 +26,7 @@ module.exports = function(app){
         '/js/date-utils.min.js',
       ], function(file, done){pusher.pushFile(file, done)}, function(){
       
-        // Make sure we have initiated all pushes before
-        // sending the main document so it will parse faster
-        res.render('template.ejs', model);
-
+        res.end();
       });
   });
 
