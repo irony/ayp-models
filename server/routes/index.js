@@ -1,29 +1,33 @@
 var ViewModel = require('./viewModel');
 var fs = require('fs');
 var path = require('path');
+var async = require('async');
 
 module.exports = function(app){
   app.get('/', function(req,res){
 
       var model = new ViewModel(req.user);
 
-      res.render('template.ejs', model);
 
       var pusher = new Pusher(req, res, './client');
-      pusher.pushFile('/css/bootstrap.min.css');
-      pusher.pushFile('/js/bootstrap.js');
-      pusher.pushFile('/css/font-awesome.css');
-      pusher.pushFile('/fonts/fontawesome-webfont.woff');
-      pusher.pushFile('/js/angular.min.js');
-      pusher.pushFile('/js/jquery-1.7.1.min.js');
-      pusher.pushFile('/js/socket.io.js');
+      async.parallel([
+        function(done){pusher.pushFile('/fonts/fontawesome-webfont.woff', done)},
+        function(done){pusher.pushFile('/css/bootstrap.min.css', done)},
+        function(done){pusher.pushFile('/css/font-awesome.css', done)},
+        function(done){pusher.pushFile('/css/site.css', done)},
+        function(done){pusher.pushFile('/js/bootstrap.js', done)},
+        function(done){pusher.pushFile('/js/angular.min.js', done)},
+        function(done){pusher.pushFile('/js/jquery-1.7.1.min.js', done)},
+        function(done){pusher.pushFile('/js/socket.io.js', done)},
+        function(done){pusher.pushFile('/controllers/app.js', done)},
+        function(done){pusher.pushFile('/js/date-utils.min.js', done)},
+      ], function(){
+      
+        // Make sure we have initiated all pushes before
+        // sending the main document so it will parse faster
+        res.render('template.ejs', model);
 
-
-      pusher.pushFile('/css/site.css');
-      pusher.pushFile('/controllers/app.js');
-      pusher.pushFile('/js/date-utils.min.js');
-      pusher.pushFile('/js/app.js');
-
+      });
   });
 
 };
@@ -67,6 +71,7 @@ Pusher.prototype.pushFile = function(filename, done)
           var fileStream = fs.createReadStream(path.resolve(self.clientPath + filename));
           fileStream.on('open', function () {
             fileStream.pipe(pushStream);
+            return done();
           });
         });
       }
