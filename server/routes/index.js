@@ -53,29 +53,33 @@ function Pusher(req, res, clientPath){
  */
 Pusher.prototype.pushFile = function(filename, done)
 {
+  if (!this.res.push) return done();
+  
   var self = this;
-  if (this.res.push){
-    fs.stat(path.resolve(this.clientPath + filename), function (err, stat) {
-      var etag;
-      if (err) {
-        console.log(err);
-        return done && done(err);
-      }
-      else {
-        var headers = {
-          'Last-Modified' : stat.mtime,
-          'Content-Length' : stat.size,
-          ETag : stat.size + '-' + Date.parse(stat.mtime)
-        };
+  var memoizedStat = async.memoize(fs.stat); // ec2 works too slow for file i/o
+  var memoizedReadFile = async.memoize(fs.readFile); // ec2 works too slow for file i/o
 
-        self.res.push(filename, headers, function(err, pushStream) {
-          var fileStream = fs.createReadStream(path.resolve(self.clientPath + filename));
-          fileStream.on('open', function () {
-            fileStream.pipe(pushStream);
-            return done && done();
-          });
+  memoizedStat(path.resolve(self.clientPath + filename), function (err, stat) {
+    var etag;
+    if (err) {
+      console.log(err);
+      return done && done(err);
+    }
+    else {
+      var headers = {
+        'Last-Modified' : stat.mtime,
+        'Content-Length' : stat.size,
+        ETag : stat.size + '-' + Date.parse(stat.mtime)
+      };
+
+      self.res.push(filename, headers, function(err, pushStream) {
+        fs.readFile(path.resolve(self.clientPath + filename), function(err, data){
+          if (err) return done(err);
+
+          pushStream.end(data);
+          done();
         });
-      }
-    });
-  }
+      });
+    }
+  });
 };
