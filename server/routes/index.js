@@ -52,7 +52,7 @@ var memoizedReadFile = async.memoize(fs.readFile); // ec2 works too slow for fil
  */
 Pusher.prototype.pushFile = function(filename, done)
 {
-  if (!this.res.push) return done();
+  if (!this.res.push) return done && done();
   
   var self = this;
 
