@@ -11,7 +11,7 @@ module.exports = function(app){
 
       var pusher = new Pusher(req, res, './client');
       
-      async.parallel([
+      async.map([
         '/fonts/fontawesome-webfont.woff',
         '/css/bootstrap.min.css',
         '/css/font-awesome.css',
