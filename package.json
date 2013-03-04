@@ -17,6 +17,7 @@
     , "passport-flickr" : "*"
     , "passport-instagram" : "*"
     , "socket.io" : "*"
+    , "nodetime" : "*"
     , "mongoose": "*"
     , "async" : "*"
     , "colors" : "*"
