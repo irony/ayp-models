@@ -14,16 +14,16 @@ module.exports = function(app){
       var pusher = new Pusher(req, res, './client');
       
       async.map([
-        //'/fonts/fontawesome-webfont.woff',
+        '/fonts/fontawesome-webfont.woff',
         '/css/bootstrap.min.css',
-        //'/css/font-awesome.css',
+        '/css/font-awesome.css',
         '/css/site.css',
         '/js/bootstrap.js',
-        //'/js/angular.min.js',
+        '/js/angular.min.js',
         '/js/jquery-1.7.1.min.js',
-        //'/js/socket.io.js',
+        '/js/socket.io.js',
         '/controllers/app.js',
-        //'/js/date-utils.min.js',
+        '/js/date-utils.min.js',
       ], function(file, done){pusher.pushFile(file, done)}, function(){
       
       });
@@ -55,6 +55,7 @@ var memoizedReadFile = async.memoize(fs.readFile); // ec2 works too slow for fil
 Pusher.prototype.pushFile = function(filename, done)
 {
   if (!this.res.push) return done();
+          done();
   
   var self = this;
 
@@ -78,7 +79,6 @@ Pusher.prototype.pushFile = function(filename, done)
           if (err) return done(err);
 
           pushStream.end(data);
-          done();
         });
       });
     }
