@@ -66,9 +66,11 @@ Pusher.prototype.pushFile = function(filename, done)
     }
     else {
       var headers = {
-        'Last-Modified' : stat.mtime,
-        'Content-Length' : stat.size,
-        ETag : stat.size + '-' + Date.parse(stat.mtime)
+        ':Date' : stat.mtime,
+        ':Last-Modified' : stat.mtime,
+        ':Content-Length' : stat.size,
+        ':Cache-Control': 'public, max-age=31557600',
+        ':ETag' : stat.size + '-' + Date.parse(stat.mtime)
       };
 
       self.res.push(filename, headers, function(err, pushStream) {
