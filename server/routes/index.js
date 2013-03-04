@@ -10,18 +10,19 @@ module.exports = function(app){
 
 
       var pusher = new Pusher(req, res, './client');
+      
       async.parallel([
-        function(done){pusher.pushFile('/fonts/fontawesome-webfont.woff', done)},
-        function(done){pusher.pushFile('/css/bootstrap.min.css', done)},
-        function(done){pusher.pushFile('/css/font-awesome.css', done)},
-        function(done){pusher.pushFile('/css/site.css', done)},
-        function(done){pusher.pushFile('/js/bootstrap.js', done)},
-        function(done){pusher.pushFile('/js/angular.min.js', done)},
-        function(done){pusher.pushFile('/js/jquery-1.7.1.min.js', done)},
-        function(done){pusher.pushFile('/js/socket.io.js', done)},
-        function(done){pusher.pushFile('/controllers/app.js', done)},
-        function(done){pusher.pushFile('/js/date-utils.min.js', done)},
-      ], function(){
+        '/fonts/fontawesome-webfont.woff',
+        '/css/bootstrap.min.css',
+        '/css/font-awesome.css',
+        '/css/site.css',
+        '/js/bootstrap.js',
+        '/js/angular.min.js',
+        '/js/jquery-1.7.1.min.js',
+        '/js/socket.io.js',
+        '/controllers/app.js',
+        '/js/date-utils.min.js',
+      ], pusher.pushFile, function(){
       
         // Make sure we have initiated all pushes before
         // sending the main document so it will parse faster

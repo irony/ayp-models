@@ -3,12 +3,14 @@
 // Initializes database, all routes and express
  
 
-// Profiler
-        require('nodetime').profile();
-
-
-
 var config = require('../conf');
+        
+
+// Profiler
+require('nodetime').profile(config.nodetime);
+
+
+
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var http = require('http');

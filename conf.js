@@ -1,4 +1,8 @@
   module.exports = {
+    nodetime: {
+      accountKey: 'd703bc30a3cfffdff11ab520ddf0d9022825876f',
+      appName : 'All Your Photos'
+    },
     mongoUrl : process.env.MONGOHQ_URL || 'mongodb://R:billion@alex.mongohq.com:10053/app6520692',
     baseUrl : "http://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
     facebook: {

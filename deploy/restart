@@ -4,6 +4,7 @@ echo "restarting All Your Photos after receiving push"
 
 export NODE_ENV=production 
 export PORT=3000
+export SSL_PORT=443
 
 
 npm install
