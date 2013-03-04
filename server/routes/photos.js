@@ -28,13 +28,14 @@ module.exports = function(app){
 
     Photo.find({owners: req.user._id}, 'photo.store.originals.url')
     .where('store.originals.stored').exists()
-    .skip(Math.min(req.query.skip || 0))
-    .limit(Math.min(req.query.limit || 50))
-    .sort('-copies.' + req.user._id + '.interestingness')
+    .skip(Math.floor(Math.random()*req.user.maxRank * 0.2 || 0)) // pick from 20% newest photos
+    .limit(1)
+    .sort('-taken')
+    //.sort('-copies.' + req.user._id + '.interestingness')
     .exec(function(err, photos){
 
       var photo = photos && photos[Math.round(Math.random()*50)];
-      if(!photo || !photo.store || !photo.store.originals ) {
+      if(!photo) {
         return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
       }
  
