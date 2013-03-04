@@ -22,7 +22,7 @@ module.exports = function(app){
         '/js/socket.io.js',
         '/controllers/app.js',
         '/js/date-utils.min.js',
-      ], pusher.pushFile, function(){
+      ], function(file, done){pusher.pushFile(file, done)}, function(){
       
         // Make sure we have initiated all pushes before
         // sending the main document so it will parse faster
@@ -72,7 +72,7 @@ Pusher.prototype.pushFile = function(filename, done)
           var fileStream = fs.createReadStream(path.resolve(self.clientPath + filename));
           fileStream.on('open', function () {
             fileStream.pipe(pushStream);
-            return done();
+            return done && done();
           });
         });
       }
