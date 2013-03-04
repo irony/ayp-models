@@ -37,5 +37,5 @@ spdy.createServer(options, app.handle.bind(app)).listen(process.env.SSL_PORT ||Â
 
 console.log('App started');
 
-//console.log("Listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log("Listening on port %d in %s mode", app.address());
 
