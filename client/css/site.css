@@ -25,6 +25,12 @@
       font-weight: normal !important;
     }
 
+    .me{
+      width:22px;
+      border-radius:9px;
+      margin-right: 10px;
+    }
+
     /*
     #wall .group{
       overflow-y: scroll;

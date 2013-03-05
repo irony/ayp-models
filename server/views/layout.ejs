@@ -50,7 +50,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/"><%= title %></a>
+          <a class="brand" href="/">
+            <%if (user && user.accounts.facebook) {%>
+              <img src="http://graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
+            <% }%>
+            <%= title %></a>
           <div class="nav-collapse">
             <ul class="nav">
              <li class="active"><a href="/">Home</a></li>
@@ -58,7 +62,6 @@
              <%if (user) {%>
                <li><a href="/wall">Photo wall</a></li>
                <li><a href="/library">Library</a></li>
-               <li><a href="/share">Followers</a></li>
                <li><a href="pricing">Pricing</a></li>
 
               <li class="dropdown">

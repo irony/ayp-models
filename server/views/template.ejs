@@ -52,13 +52,13 @@
       <div class="container marketing">
 
         <header class="featurette">
-            <img class="pull-left" src="/img/memories.jpg">
 
             <h2 class="featurette-heading">Share your memories</h2>
             <p class="lead">You have thousands of photos but you can't view them easily today. We offer you a way to start enjoying all your photos and also provide a great way to share them with your friends and family.</p>
-            <small>Psst. start here, it's free for a year..</small><br>
+            <small>Start here! Pssst.. it's free for a year..</small><br>
             <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
-            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a><br>
+            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a>
+            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.facebook ? 'disabled': '' %>" href="auth/facebook"><i class="icon <%= user && user.accounts && user.accounts.facebook ? 'icon-check': 'icon-check-empty' %>"></i> Import from Facebook</a><br>
         </header>  
 
 <!--
@@ -111,6 +111,18 @@
 
         <hr class="featurette-divider">
 
+<div class="featurette">
+          
+          <img class="featurette-image pull-right" src="http://www.moreproduction.co.uk/wp-content/uploads/2012/01/british_queens_guard_prop.jpg">
+          <h2 class="featurette-heading">Your photos are <span class="muted">safe.</span></h2>
+          <p class="lead">We use state of the art cloud technology and ensure your photos will always be backed up and stored on at least two continents as long as you are a customer*.</p>
+        </div>
+
+        <hr class="featurette-divider">
+<img src="http://unbouncepages-com.s3.amazonaws.com/welcome.challengepost.com/get-apps-built-on-your-platform/1tfwryn-customer-logos-grey2.gif">
+
+
+        <hr class="featurette-divider">
         <!-- /END THE FEATURETTES -->
 
 
