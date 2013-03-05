@@ -4,9 +4,9 @@
       background: url(/img/dark_leather_@2X.png);
     }
 
-    header{
+    header.featurette{
       padding-top: 300px;
-      background: -webkit-radial-gradient(30% 40%, ellipse cover, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 50%); /* Chrome10+,Safari5.1+ */
+      background: url(img/cafe.jpg)
     }
     header a.btn{
       width: 200px;

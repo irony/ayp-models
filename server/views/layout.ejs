@@ -62,7 +62,6 @@
              <%if (user) {%>
                <li><a href="/wall">Photo wall</a></li>
                <li><a href="/library">Library</a></li>
-               <li><a href="pricing">Pricing</a></li>
 
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import more photos<b class="caret"></b>
@@ -75,7 +74,11 @@
                 </ul> 
               </li>
 
+             <%} else {%>
+               <li><a href="pricing">Pricing</a></li>
              <%}%>
+
+             <li class=""><a href="/about">About</a></li>
 
             </ul>
             <ul class="nav pull-right">
