@@ -2,7 +2,7 @@
         
 
     <!-- Carousel
-    ================================================== -->
+    ==================================================
     <div id="myCarousel" class="carousel slide" data-interval="5000">
       <div class="carousel-inner">
         <div class="item first">
@@ -45,62 +45,68 @@
       </div>
       <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-    </div><!-- /.carousel -->
-
-  
-
+    </div>
+-->
+      
   <footer id="footer">
-
       <div class="container marketing">
 
+        <header class="featurette">
+            <img class="pull-left" src="/img/memories.jpg">
 
-        <!-- Three columns of text below the carousel -->
+            <h2 class="featurette-heading">Share your memories</h2>
+            <p class="lead">You have thousands of photos but you can't view them easily today. We offer you a way to start enjoying all your photos and also provide a great way to share them with your friends and family.</p>
+            <small>Psst. start here, it's free for a year..</small><br>
+            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
+            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a><br>
+        </header>  
+
+<!--
         <div class="row">
           <div class="span4">
-            <img class="img-circle" src="http://placehold.it/140x140">
-            <h2>Share and collaborate</h2>
+            <h2>Complete your album</h2>
             <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
             <p><a class="btn" href="#">View details &raquo;</a></p>
-          </div><!-- /.span4 -->
+          </div>
           <div class="span4">
-                <img src="img/Photos-icon.png" class="img-circle">
-            <h2>Intelligentely&trade; organize your life</h2>
+            <h2>Get overview</h2>
             <p>By carefully combining information from many sources we will help you organize your photos based on location, calendars, tagged people, photo analyzing and face recognition.</p>
             <p><a class="btn" href="#">View details &raquo;</a></p>
-          </div><!-- /.span4 -->
+          </div>
           <div class="span4">
-            <img class="img-circle" src="http://placehold.it/140x140">
-            <h2>Heading</h2>
+            <h2>Secure storage</h2>
             <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
             <p><a class="btn" href="#">View details &raquo;</a></p>
-          </div><!-- /.span4 -->
-        </div><!-- /.row -->
-
+          </div>
+        </div>
+      -->
 
         <!-- START THE FEATURETTES -->
 
-        <hr class="featurette-divider">
 
         <div class="featurette">
-          <img class="featurette-image pull-right" width="40%" src="http://s3.amazonaws.com/fromus/blog_posts/photos_taken_by_year.png">
-          <h2 class="featurette-heading">One billion photos per day<span class="muted">, you love them all</span></h2>
-          <p class="lead">Why should we have to choose only a few of our precious photos to view in the cloud? We want them all.</p>
+           <img class="featurette-image pull-left" src="http://boygeniusreport.files.wordpress.com/2012/03/apple-ipad-white-hands.jpg?w=942">
+          
+          <h2 class="featurette-heading">Access all your photos<span class="muted">, everywhere</span></h2>
+          <p class="lead">Why should we only have access to the latest photos when you are on the run? Sync your library and you get access all your photos wherever you are.</p>
         </div>
 
         <hr class="featurette-divider">
 
         <div class="featurette">
-          <img class="featurette-image pull-left" src="../assets/img/examples/browser-icon-firefox.png">
-          <h2 class="featurette-heading">Why do we have to organize them  <span class="muted">manually?</span></h2>
-          <p class="lead">Each photo contains so many clues on how to organize them, such as dates, gps, people. Especially if we combine the information from different sources effectively. Instead of trying to manually sort pictures in different folders and drives, just connect them to us and we will organize them all for you.</p>
+          <img class="featurette-image pull-right" src="http://smartmobilestudio.com/wp-content/uploads/2012/06/leather-book-preview.png">
+
+          <h2 class="featurette-heading">Auto <span class="muted">organize</span></h2>
+          <p class="lead">Each photo contains many clues on how to organize them, such as dates, gps positions and faces. By carefully combining this information we make the job of organizing your library a breeze.</p>
         </div>
 
         <hr class="featurette-divider">
 
         <div class="featurette">
-          <img class="featurette-image pull-right" src="../assets/img/examples/browser-icon-safari.png">
-          <h2 class="featurette-heading">Frankly. All your photos <span class="muted">are important.</span></h2>
-          <p class="lead">We promise to help you to automatically hide those duplicates, under exposed, over exposed pictures and snaps of whiteboard tables. We use information such as viewing time, clicks, shares, time and date as clues</p>
+          
+          <img class="featurette-image pull-left" src="http://www.photographybasics.info/wp-content/uploads/2012/12/camera-lens1.jpg">
+          <h2 class="featurette-heading">Quality <span class="muted">matters.</span></h2>
+          <p class="lead">Your photos will stay untouched. Unlike other photo services you will get your original when viewing your photos which means crisp high quality images. </p>
         </div>
 
         <hr class="featurette-divider">

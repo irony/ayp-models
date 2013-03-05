@@ -1,11 +1,20 @@
 
     body{
       font-family: "Gill Sans", Corbel, Consolas;
-      background: #302F30; /* url(/img/dark_leather_@2X.png);*/
+      background: url(/img/dark_leather_@2X.png);
+    }
+
+    header{
+      padding-top: 300px;
+      background: -webkit-radial-gradient(30% 40%, ellipse cover, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 50%); /* Chrome10+,Safari5.1+ */
+    }
+    header a.btn{
+      width: 200px;
+      margin-top:10px;
     }
 
     body footer{
-      background: #fff;
+      background: #fefefe;
       width: 100%;
       padding-top: 50px;
       padding-bottom: 150px;
@@ -70,8 +79,7 @@
     /* Carousel base class */
     .carousel {
       margin-bottom: 0px;
-      background: black;
-      height: 520px;
+      height: 400px;
     }
 
     .carousel .container {
@@ -90,14 +98,14 @@
     }
 
     .carousel .item {
-      height: 500px;
-      border-bottom: 20px solid black;
+      height: 400px;
       overflow: none;
       vertical-align: middle;
     }
     .carousel img {
       min-width: 110%;
       position: absolute;
+      opacity:0.3;
        top: -60%;
       -webkit-transition:all 15s ease-in;
       -moz-transition:all 15s linear;
@@ -117,7 +125,7 @@
       position: static;
       max-width: 550px;
       padding: 20px;
-      margin-bottom: 150px;
+      margin-bottom: 26px;
     }
     .carousel-caption h1,
     .carousel-caption .lead {
@@ -152,27 +160,49 @@
       margin-right: 10px;
     }
 
+    .marketing .muted{
+      color: #cc8809;
+    }
+
+    header small{
+      color: #ccc;
+    }
 
     /* Featurettes
     ------------------------- */
 
+    header.featurette{
+      padding: 250px 0;
+    }
+
+    header img{
+      margin-left:-250px;
+      margin-top:-100px;
+      margin-right:100px;
+    }
+
     .featurette-divider {
-      margin: 80px 0; /* Space out the Bootstrap <hr> more */
+      padding: 10px 0; /* Space out the Bootstrap <hr> more */
+      margin: 60px -150px; /* Space out the Bootstrap <hr> more */
+      background: -webkit-linear-gradient(90deg,  #ffffff 3%,#faf7f7 100%); /* W3C */
+      width: 150%;
     }
     .featurette {
-      padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
-      overflow: hidden; /* Vertically center images part 2: clear their floats. */
+      padding-top: 60px; /* Vertically center images part 1: add padding above and below text. */
     }
     .featurette-image {
       margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+      height:400px;
     }
 
     /* Give some space on the sides of the floated elements so text doesn't run right into it. */
     .featurette-image.pull-left {
-      margin-right: 40px;
+      margin-left : -250px;
+      margin-right: 166px;
     }
     .featurette-image.pull-right {
-      margin-left: 40px;
+      margin-right: -200px;
+      margin-top: -175px;
     }
 
     /* Thin out the marketing headings */

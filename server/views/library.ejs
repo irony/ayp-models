@@ -1,6 +1,6 @@
 <section id="wall" ng-controller="LibraryCtrl" class="{{ 'filter' + zoomLevel }}">
   <% photos.map(function(photo){ %>
-      <img src="<%=photo.src%>" id="<%=photo.id%>" class="v<%=photo.vote%>" height="200" width="<%= Math.floor( (200 * photo.ratio || 0) || 200) %>" />
+      <img draggable="false" src="<%=photo.src%>" id="<%=photo.id%>" class="v<%=photo.vote%>" height="200" width="<%= Math.floor( (200 * photo.ratio || 0) || 200) %>" />
   <% }) %>
   <div class="slider">
       <label class="pull-right  muted">All your photos</label>
@@ -19,14 +19,13 @@
 
   #wall img{
     float:inherit;
-    position: relative;
     margin: 0 -1px;
-    padding:0 1px;
+    padding:0px;
     height: 200px;
     border: 0;
-    -webkit-transition    :all .3s ease-in;
-    -moz-transition       :all .3s ease-in;
-    transition            :all .3s ease-in;
+    -webkit-transition    :all .3s ease-out;
+    -moz-transition       :all .3s ease-out;
+    transition            :all .3s ease-out;
   }
 
 
@@ -34,7 +33,7 @@
 
   #wall img:hover
   {
-    min-width: 200px;
+    min-width: 50px;
     opacity:1;
   }
 
@@ -42,19 +41,19 @@
   {  background: #444; width:0px; display:none; /*special mode*/}
 
   .filter1 .v0,.filter1 .v1  
-  {  /*width:inherit*/; }
+  {  height:600px; width: auto; /*width:inherit*/; }
   .filter1 .v2, .filter1 .v3, .filter1 .v4, .filter1 .v5, .filter1 .v6, .filter1 .v7, .filter1 .v8, .filter1 .v9
-  {  background: #444; width:2px; }
+  {  background: #444; width:2px;  opacity:0.4;}
 
   .filter2 .v0, .filter2 .v1, .filter2 .v2 
   {  /*width:inherit*/; }
   .filter2 .v3, .filter2 .v4, .filter2 .v5, .filter2 .v6, .filter2 .v7, .filter2 .v8, .filter2 .v9
-  {  background: #444; width:2px; }
+  {  background: #444; width:2px;  opacity:0.4;}
  
   .filter4 .v0, .filter3 .v1, .filter3 .v2, .filter3 .v3 
   {  /*width:inherit*/; }
   .filter3 .v4, .filter3 .v5, .filter3 .v6, .filter3 .v7, .filter3 .v8, .filter3 .v9
-  {  background: #444; width:3px; }
+  {  background: #444; width:3px;  opacity:0.4;}
 
   .filter4 .v0, .filter4 .v1, .filter4 .v2, .filter4 .v3, .filter4 .v4 
   {  /*width:inherit*/; }
@@ -64,12 +63,12 @@
   .filter5 .v0, .filter5 .v1, .filter5 .v2, .filter5 .v3, .filter5 .v4, .filter5 .v5 
   {  /*width:inherit*/; }
   .filter5 .v6, .filter5 .v7, .filter5 .v8, .filter5 .v9
-  {  background: #444; width:3px; opacity:0.4;}
+  {  background: #444; width:5px; opacity:0.4;}
 
   .filter6 .v0, .filter6 .v1, .filter6 .v2, .filter6 .v3, .filter6 .v4, .filter6 .v5, .filter6 .v6 
   {  /*width:inherit*/; }
   .filter6 .v7, .filter6 .v8, .filter6 .v9
-  {  background: #444; width:5px; opacity:0.4;}
+  {  background: #444; width:10px; opacity:0.4;}
 
   .filter7 .v0, .filter7 .v1, .filter7 .v2, .filter7 .v3, .filter7 .v4, .filter7 .v5, .filter7 .v6, .filter7 .v7 
   {  /*width:inherit*/; }
