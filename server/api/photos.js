@@ -172,6 +172,11 @@ module.exports = function(app){
           .where('store.originals.stored').exists(true)
           .count(done);
       },
+      exif: function countHowManyHasExifExtracted (done) {
+        Photo.find({'owners': req.user._id})
+          .where('exif').exists(true)
+          .count(done);
+      },
       interesting: function countHowManyAreInteresting (done) {
         Photo.find({'owners': req.user._id})
           .where('copies.' + req.user._id + '.interestingness').gte(100)

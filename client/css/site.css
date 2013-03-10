@@ -759,3 +759,42 @@ only screen and (max-device-width : 599px){
   border:10px solid rgba(0,0,0,0.7);
   border-radius: 5px;
 }
+
+.featurette .container{
+    
+    -webkit-animation-delay: 3s;
+    -moz-animation-delay: 3s;
+
+    animation: fadein 1s ease-out;
+    -moz-animation: fadein 1s ease-out; /* Firefox */
+    -webkit-animation: fadein 1s ease-out; /* Safari and Chrome */
+    position:relative;
+}
+@keyframes fadein {
+    from {
+        opacity:0;
+        left:-30px
+    }
+    to {
+        opacity:1;
+    }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity:0;
+        left:-30px
+    }
+    to {
+        opacity:1;
+    }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity:0;
+        left:-30px
+    }
+    to {
+        opacity:1;
+        left:0;
+    }
+}

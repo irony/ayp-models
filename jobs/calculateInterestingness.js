@@ -25,7 +25,7 @@ module.exports = function(done){
         var mine = self.copies[user];
         if (!mine.interesting || mine.interesting === 50) emit(group, Math.floor(Math.random()*100));
 
-        if(self.tags && self.tags.length) emit(group, 100 + (self.tags.length));
+        if(self.tags && self.tags.length) emit(group, 50 + (self.tags.length));
 
         if(mine.hidden) emit(group, 0);
 
