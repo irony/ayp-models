@@ -52,13 +52,14 @@
       <div class="container marketing">
 
         <header class="featurette">
-
-            <h2 class="featurette-heading">Share your memories</h2>
-            <p class="lead">You have thousands of photos but you can't view them easily today. We offer you a way to start enjoying all your photos and also provide a great way to share them with your friends and family.</p>
-            <small>Start here! Pssst.. it's free for a year and it only takes a few seconds..</small><br>
-            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
-            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a>
-            <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.facebook ? 'disabled': '' %>" href="auth/facebook"><i class="icon <%= user && user.accounts && user.accounts.facebook ? 'icon-check': 'icon-check-empty' %>"></i> Import from Facebook</a><br>
+            <div class="container">
+              <h2 class="featurette-heading"></i>Share your memories</h2>
+              <p class="lead">You have thousands of photos but you can't view them easily today. We offer you a way to start enjoying all your photos and also provide a great way to share them with your friends and family.</p>
+              <small>Start here! Pssst.. it's free for a year and it only takes a few seconds..</small><br>
+              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
+              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a>
+              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.facebook ? 'disabled': '' %>" href="auth/facebook"><i class="icon <%= user && user.accounts && user.accounts.facebook ? 'icon-check': 'icon-check-empty' %>"></i> Import from Facebook</a><br>
+            </div>
         </header>  
 
 <!--
@@ -85,10 +86,10 @@
 
 
         <div class="featurette">
-           <img class="featurette-image pull-left" src="http://boygeniusreport.files.wordpress.com/2012/03/apple-ipad-white-hands.jpg?w=942">
+           <img class="featurette-image pull-left" src="/img/ipad.png">
           
           <h2 class="featurette-heading">Access all your photos<span class="muted">, everywhere</span></h2>
-          <p class="lead">Why should we only have access to the latest photos when you are on the run? Sync your library and you get access all your photos wherever you are.</p>
+          <p class="lead">Why should you have to choose which photos you should have access to when you are away from home? Sync your library and you get access all your photos wherever you are.</p>
         </div>
 
         <hr class="featurette-divider">
@@ -113,7 +114,7 @@
 
 <div class="featurette">
           
-          <img class="featurette-image pull-right" src="http://www.moreproduction.co.uk/wp-content/uploads/2012/01/british_queens_guard_prop.jpg">
+          <img class="featurette-image pull-right" src="/img/guard.png">
           <h2 class="featurette-heading">Your photos are <span class="muted">safe.</span></h2>
           <p class="lead">We use state of the art cloud technology and ensure your photos will always be backed up and stored on at least two continents as long as you are a customer*.</p>
         </div>

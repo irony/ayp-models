@@ -2,6 +2,11 @@ var should = require("should");
 var auth = require('../server/auth/auth');
 var async = require('async');
 var app = require('../server/app');
+var User = require('../models/user');
+
+var addedUsers = [];
+var addedPhotos = [];
+var addedSpans = [];
 
 // disgard debug output
 console.debug = function(){};
@@ -43,30 +48,30 @@ describe("app", function(){
   var id = Math.floor((Math.random()*10000000)+1).toString();
 
   it("should be possible to create a user ", function(done) {
-	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test', id : id};
+	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test', id : id};
 	var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	should.ok(!err);
+      should.ok(!err);
 		savedUser.should.have.property('accounts');
 		done();
     });
   });
 
-/*  it("should be possible to add new email to an existing user ", function(done) {
-	var profile = {displayName : 'Christian Landgren', emails : ['cln@iteam.se'], provider : 'test', id : id};
+ it("should be possible to add new email to an existing user ", function(done) {
+	var profile = {displayName : 'Test Landgren', emails : ['testing@stil.nu'], provider : 'test', id : id};
 	var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	should.ok(!err); 
+      should.ok(!err);
 		savedUser.emails.should.have.length(2);
 		done();
     });
-  });*/
+  });
 
   it("should be possible to add new account to an existing user ", function(done) {
-	var profile = {displayName : 'Christian Landgren', emails : ['cl@iteam.se'], provider : 'test2', id : id};
+	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test2', id : id};
 	var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-    	should.ok(!err);
+      should.ok(!err);
 		savedUser.should.have.property('accounts');
 		savedUser.accounts.should.have.property(profile.provider);
 		done();
@@ -84,6 +89,9 @@ describe("app", function(){
     var userA = new User();
     var userB = new User();
 
+    addedUsers.push(userA);
+    addedUsers.push(userB);
+
     userA.save(function(err, userA){
       userB.save(function(err, userB){
         var shareSpan = new ShareSpan({
@@ -91,6 +99,9 @@ describe("app", function(){
           stopDate: new Date(new Date().getTime()+1000),
           members : [userA, userB]
         });
+    
+        addedSpans.push(shareSpan);
+
 
         shareSpan.save(function(err, span){
           should.not.exist(err);
@@ -116,11 +127,14 @@ describe("app", function(){
 
     var Photo = require('../models/photo');
     var ShareSpan = require('../models/sharespan');
-    var User = require('../models/user');
 
 
     var userA = new User();
     var userB = new User();
+
+    addedUsers.push(userA);
+    addedUsers.push(userB);
+
 
     userA.save(function(err, userA){
       userB.save(function(err, userB){
@@ -130,12 +144,16 @@ describe("app", function(){
           members : [userA, userB]
         });
 
+        addedSpans.push(shareSpan);
+
         shareSpan.save(function(err, span){
 
             var photo = new Photo({
               taken : new Date(),
               owners : [userA] // only one user
             });
+
+            addedPhotos.push(photo);
 
             photo.save(function(err, photo){
 
@@ -163,6 +181,14 @@ describe("app", function(){
   });
   
   after(function(){
+
+    addedUsers.map(function(item){return item.remove()});
+    addedPhotos.map(function(item){return item.remove()});
+    addedSpans.map(function(item){return item.remove()});
+
+    User.find({$exists: 'accounts.test'}).limit(1000).remove();
+    //User.find({emails: {$size : 0}}).limit(1000).remove();
+
     //console.log("after step")
   });
 

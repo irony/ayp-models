@@ -25,5 +25,9 @@
     , "spdy" : "*"
     , "knox" : "*"
     , "image-headers" : "*"
+  },
+  "scripts" :
+  { 
+    "test" : "mocha tests/*"
   }
 }

@@ -4,6 +4,7 @@ var User = require('../../models/user');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
+var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('underscore');
 
 module.exports = function(app){
@@ -122,20 +123,23 @@ module.exports = function(app){
 
   app.get('/api/library', function(req, res){
 
-    if (!req.user) res.send(403, 'Login first');
+    if (!req.user) return res.send(403, 'Login first');
+
+    console.log('user', typeof(req.user._id));
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio')
-      .limit(5000)
+      Photo.find({'owners': user._id}, 'copies.' + req.user._id + ' taken ratio')
+      .limit(50)
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort('-taken')
       .exec(function(err, photos){
         // return all photos with just bare minimum information for local caching
+        console.log(photos && photos.length, err);
         async.map((photos || []), function(photo, done){
           var mine = photo.copies[req.user._id] || {};
 
-          if (!mine) return done(); // unranked images are not welcome here
+          // if (!mine) return done(); // unranked images are not welcome here
 
           var vote = mine.vote || (mine.calculatedVote);
 
@@ -149,7 +153,9 @@ module.exports = function(app){
 
   app.get('/api/stats', function(req, res){
 
-    if (!req.user) res.send(403, 'Login first');
+    if (!req.user) return res.send(403, 'Login first');
+
+    console.log(req.user._id);
 
     async.parallel({
       all: function countAllPhotos (done) {

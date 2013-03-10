@@ -4,13 +4,27 @@
       background: url(/img/dark_leather_@2X.png);
     }
 
+
+
     header.featurette{
-      padding-top: 300px;
-      background: url(img/cafe.jpg)
+      padding: 50px 500px;
+      margin: -50px -500px;
+      background: url(/img/street.jpg);
+      background-repeat: no-repeat;
+      background-size: 100%;
     }
+
+    header .container {
+      margin: auto;
+    }
+
     header a.btn{
       width: 200px;
       margin-top:10px;
+    }
+
+    header h2, header p{
+      color: #fff;
     }
 
     body footer{

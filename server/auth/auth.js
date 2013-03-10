@@ -55,7 +55,9 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
   // therefore we will search for this user according to it's id for this particular provider,
   // if no one is found we will create it. If found we will update the accounts.
 
-  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"] && this.accounts["' + profile.provider + '"].id == ' + profile.id }, function (err, foundUser) {
+  return User.findOne({ '$where' : 'this.accounts && this.accounts["' + profile.provider + '"] && this.accounts["' + profile.provider + '"].id == ' + profile.id })
+     .sort({'maxRank' : -1})
+     .exec(function (err, foundUser) {
 
       if (err){
         return done(err, null);
@@ -65,8 +67,10 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
         if (profile.emails.length)
         {
           // if we can find this user by his email, we will connect the accounts together instead. Security issue.
-          User.findOne({emails : {$in : profile.emails}}, function(err, emailUser){
-            //console.log('found user via email', emailUser);
+          User.findOne({emails : {$in : profile.emails}})
+          .sort({'maxRank' : -1})
+          .exec(function(err, emailUser){
+//            console.log('found user via email', emailUser);
             return updateProfile(emailUser || new User(), profile, done);
           });
 
@@ -75,7 +79,7 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
           return updateProfile(new User(), profile, done);
         }
       } else {
-          //console.log('found user via provider. Updating profile...', profile);
+//        console.log('found user via provider. Updating profile...', profile);
         return updateProfile(foundUser, profile, done);
       }
 

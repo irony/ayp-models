@@ -3,7 +3,7 @@ var InputConnector = require('./inputConnector');
 
 module.exports = function () {
 
-  this.scope = ['user_photos'];
+  this.scope = ['user_photos', 'email'];
 
   this.downloadThumbnail = function(user, photo, done){
     throw new Error('Not implemented');
