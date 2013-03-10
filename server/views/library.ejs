@@ -23,15 +23,16 @@
     padding:0px;
     height: 200px;
     border: 0;
-    -webkit-transition    :all .3s ease-out;
-    -moz-transition       :all .3s ease-out;
-    transition            :all .3s ease-out;
+    -webkit-transition    :all .3s ease-out-back; 
+    -moz-transition       :all .3s ease-out-back;
+    transition            :all .3s ease-out-back;
+
   }
 
 
   /* use css instead of javascript to use maximum power from the engine */
 
-  #wall img:hover
+  #wall img:hover, #wall img:selection
   {
     min-width: 50px;
     opacity:1;

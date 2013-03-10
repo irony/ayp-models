@@ -19,6 +19,7 @@ var PhotoSchema = new mongoose.Schema({
       mimeType : { type: String},
       thumbnails : {type: Schema.Types.Mixed},
       copies : {}, // [PhotoCopy],
+      bytes : {type: Number},
 
       metadata : { type:  Schema.Types.Mixed},
 
@@ -54,6 +55,8 @@ PhotoSchema.pre('save', function (next) {
       });
       next();
     });
+  } else {
+    next();
   }
 
 });

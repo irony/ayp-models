@@ -1,3 +1,6 @@
+
+var mongoose = require('mongoose');
+
 var should = require("should");
 var auth = require('../server/auth/auth');
 var async = require('async');
@@ -7,6 +10,8 @@ var User = require('../models/user');
 var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
+
+require('nodetime');
 
 // disgard debug output
 console.debug = function(){};
@@ -48,34 +53,35 @@ describe("app", function(){
   var id = Math.floor((Math.random()*10000000)+1).toString();
 
   it("should be possible to create a user ", function(done) {
-	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test', id : id};
-	var user = null;
+	  var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test', id : id};
+	  var user = null;
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
       should.ok(!err);
-		savedUser.should.have.property('accounts');
-		done();
+		  savedUser.should.have.property('accounts');
+		  done();
     });
   });
 
  it("should be possible to add new email to an existing user ", function(done) {
-	var profile = {displayName : 'Test Landgren', emails : ['testing@stil.nu'], provider : 'test', id : id};
-	var user = null;
+    var profile = {displayName : 'Test Landgren', emails : ['testing@stil.nu'], provider : 'test', id : id};
+    var user = null;
+    
     auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
       should.ok(!err);
-		savedUser.emails.should.have.length(2);
-		done();
+		  savedUser.emails.should.have.length(2);
+		  done();
     });
   });
 
   it("should be possible to add new account to an existing user ", function(done) {
-	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test2', id : id};
-	var user = null;
-    auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-      should.ok(!err);
-		savedUser.should.have.property('accounts');
-		savedUser.accounts.should.have.property(profile.provider);
-		done();
-    });
+  	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test2', id : id};
+  	var user = null;
+      auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
+        should.ok(!err);
+    		savedUser.should.have.property('accounts');
+    		savedUser.accounts.should.have.property(profile.provider);
+    		done();
+      });
   });
 
 
@@ -135,7 +141,6 @@ describe("app", function(){
     addedUsers.push(userA);
     addedUsers.push(userB);
 
-
     userA.save(function(err, userA){
       userB.save(function(err, userB){
         var shareSpan = new ShareSpan({
@@ -172,6 +177,69 @@ describe("app", function(){
 
             });
 
+        });
+      });
+
+    });
+
+  });
+
+  it("should be possible to add a new photo which already exists and resulting in two owners of the existing photo.", function(done){
+
+    var Photo = require('../models/photo');
+
+    var userA = new User();
+    var userB = new User();
+
+    addedUsers.push(userA);
+    addedUsers.push(userB);
+
+    var taken = new Date();
+    var size = Math.floor(Math.random()*30000);
+
+    console.log('saving users');
+
+    userA.save(function(err, userA){
+      userB.save(function(err, userB){
+
+        console.log('both saved');
+
+        var photoA = new Photo({
+          taken : taken,
+          bytes: size,
+          owners : [userA] // only one user
+        });
+
+        addedPhotos.push(photoA);
+
+        console.log('saving photoA');
+        photoA.save(function(err, photo){
+
+
+          photo.owners.should.include(userA._id, "UserA does not exist");
+
+          var photoB = new Photo({
+            taken : taken,
+            bytes: size,
+            owners : [userB] // only one user
+          });
+        
+          addedPhotos.push(photoB);
+          console.log('saving photoB');
+
+          photoB.save(function(err, savedPhoto){
+
+            console.log('finding photoA again');
+
+            // since we already have a photo with this taken date we will add users to it
+            Photo.findOne({_id: photoA._id}, function(err, photo) {
+              photo.owners.should.include(userA._id, "UserA does not exist");
+              photo.owners.should.include(userB._id, "UserB does not exist");
+              should.not.exist(err);
+              should.exist(photo);
+              done();
+            });
+          });
         });
       });
 

@@ -30,6 +30,7 @@ var updateProfile = function(user, profile, done){
   // console.log('updated profile', user);
 
   return user.save(function(err, savedUser){
+    console.log('saved user', err);
     done(err, savedUser);
   });
 };

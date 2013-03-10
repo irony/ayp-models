@@ -28,6 +28,13 @@ module.exports = function(app){
 
   });
 
+  app.get('/about', function(req,res){
+
+    var model = new ViewModel(req.user);
+
+    res.render('about.ejs', model);
+  });
+
 };
 
 /**
