@@ -35,6 +35,14 @@ module.exports = function(app){
     res.render('about.ejs', model);
   });
 
+
+  app.get('/pricing', function(req,res){
+
+    var model = new ViewModel(req.user);
+
+    res.render('pricing.ejs', model);
+  });
+
 };
 
 /**

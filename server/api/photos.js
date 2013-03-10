@@ -21,7 +21,7 @@ module.exports = function(app){
     Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store mimeType')
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
-    //.where('store.thumbnails.stored').exists()
+    .where('store.thumbnails.stored').exists()
     .where('copies.' + req.user._id + '.calculatedVote').lte(parseFloat(req.query.vote))
     .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
@@ -143,7 +143,7 @@ module.exports = function(app){
 
           var vote = mine.vote || (mine.calculatedVote);
 
-          return done(null, {mine: mine, taken:photo.taken.getTime(), vote: Math.floor(vote), ratio: photo.ratio});
+          return done(null, {exif: photo.exif, mine: mine, taken:photo.taken.getTime(), vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
           return res.json({maxRank: user.maxRank, photos: photos});
         });
