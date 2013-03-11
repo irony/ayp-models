@@ -75,9 +75,13 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
         
           if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
           var setter = {$set : {}};
-          setter.$set['store.' + folder] = {url:req.url, width : headers.width, height: headers.height, stored: new Date()};
+          setter.$set['store.' + folder] = {url:req.url, stored: new Date()};
           if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
-          if (headers && headers.width && headers.height) setter.ratio = headers.width / headers.height;
+          if (headers && headers.width && headers.height) {
+            setter.ratio = headers.width / headers.height;
+            setter.$set['store.' + folder].width = headers.width;
+            setter.$set['store.' + folder].height = headers.height;
+          }
           
           console.debug('Saving %s to db...', folder);
           return photo.update(setter, {upsert: true, safe:true}, function(err){
