@@ -1,5 +1,8 @@
-var app = require('../server/app');
 var config = require('../conf');
+
+require('nodetime').profile(config.nodetime);
+
+var app = require('../server/app');
 var express = require('express');
 var knox      = require('knox');
 var async = require('async');
