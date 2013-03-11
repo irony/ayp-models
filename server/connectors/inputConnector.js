@@ -12,7 +12,7 @@ var extractExif = function(data, done){
   try {
 
       var headers = new ImageHeaders();
-      headers.add_bytes(data.slice(0, headers.MAX_SIZE));
+      headers.add_bytes(data.slice(0, Math.min(data.length, headers.MAX_SIZE)));
       return headers.finish(function(err, exif){
         done(err, exif);
       });
@@ -69,17 +69,15 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
       console.debug('Request error when saving to S3: %s', err.toString().red);
     });
     req.on('response', function(res){
-      if (200 === res.statusCode || 307 ==res.statusCode) {
-        debugger;
+      if (200 === res.statusCode || 307 === res.statusCode) {
         console.debug('Extracting exif...');
         extractExif(stream, function(err, headers){
         
-          if (err) console.log('Could not read EXIF of photo %s', photo._id, err);
-            
+          if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
           var setter = {$set : {}};
           setter.$set['store.' + folder] = {url:req.url, width : headers.width, height: headers.height, stored: new Date()};
-          if (headers.exif_data) setter.$set.exif = headers.exif_data;
-          if (headers.width && headers.height) setter.ratio = headers.width / headers.height;
+          if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
+          if (headers && headers.width && headers.height) setter.ratio = headers.width / headers.height;
           
           console.debug('Saving %s to db...', folder);
           return photo.update(setter, {upsert: true, safe:true}, function(err){
