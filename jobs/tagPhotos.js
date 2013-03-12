@@ -48,7 +48,7 @@ module.exports = function(done){
         var key = photo._id;
 
         var setter = {$set : {}};
-        setter.$set['copies.' + key.userId + '.tags'] = photo.value;
+        setter.$set['copies.' + key.userId + '.tags'] = photo.value.split(',');
         return Photo.findOneAndUpdate({_id : key.photoId}, setter, {upsert: true, safe:true}, done);
       }, function(err, updated){
         if (done) return done(err, updated);
