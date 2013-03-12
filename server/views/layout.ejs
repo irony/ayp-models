@@ -6,8 +6,6 @@
     
     <meta name="viewport"
           content="initial-scale=1.0">
-    <meta name="viewport"
-          content="width=320.1">
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="description" content="<%= description %>">
@@ -17,15 +15,6 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
-
-    <!-- iPhone (Retina) -->
-    <link href="http://taylor.fausak.me/static/images/apple-touch-icon-114x114.png"
-          sizes="114x114"
-          rel="apple-touch-icon">
-    <link href="http://taylor.fausak.me/static/images/apple-touch-startup-image-640x920.png"
-          media="(device-width: 320px) and (device-height: 480px)
-             and (-webkit-device-pixel-ratio: 2)"
-          rel="apple-touch-startup-image">
 
     <script src="/js/jquery-1.7.1.min.js"></script>
     <script src="/js/angular.min.js"></script>
@@ -99,9 +88,26 @@
 
       <%- body %>
 
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-37801866-1']);
+      _gaq.push(['_setDomainName', 'allyourphotos.net']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
 
     <script src="/js/bootstrap.js"></script>
     <script src="/controllers/app.js"></script>
+  </body>
+</html>
     
   </body>
 </html>
