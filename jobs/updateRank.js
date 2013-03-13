@@ -51,7 +51,7 @@ module.exports = function(done){
 
           var setter = {$set : {}};
           setter.$set['copies.' + user._id + '.rank'] = newRank;
-          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.round(newRank / photos.length * 10);
+          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.min(10, Math.round(newRank / photos.length * 15)); // 15 is to allow fewer pictures in "the best"
           setter.$set['copies.' + user._id + '.calculated'] = new Date();
 
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);

@@ -678,9 +678,9 @@ only screen and (max-device-width : 599px){
 
   /* use css instead of javascript to use maximum power from the engine */
 
-  #wall .group img:hover, #wall img:selection
+  #wall img:hover, #wall img:selection
   {
-    width: 50px;
+    width: auto !important;
     opacity:1;
   }
 
