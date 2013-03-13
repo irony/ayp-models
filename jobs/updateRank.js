@@ -43,7 +43,7 @@ module.exports = function(done){
           var mine = photo.copies[user._id];
 
           // No noticable different (less than 1% change)
-          if (!mine || Math.floor(newRank / 10) === Math.floor(mine.rank / 10)){
+          if (!mine || Math.round(newRank / 10) === Math.round(mine.rank / 10)){
             return done();
           }
 
@@ -51,7 +51,7 @@ module.exports = function(done){
 
           var setter = {$set : {}};
           setter.$set['copies.' + user._id + '.rank'] = newRank;
-          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.floor(newRank / photos.length * 10);
+          setter.$set['copies.' + user._id + '.calculatedVote'] = Math.round(newRank / photos.length * 10);
           setter.$set['copies.' + user._id + '.calculated'] = new Date();
 
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);

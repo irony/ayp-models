@@ -18,7 +18,8 @@ var express = require('express');
 var util = require('util');
 var passport = require('./auth/passport');
 var knox      = require('knox');
-var MongoStore = require('connect-mongo')(express);
+// var MongoStore = require('connect-mongo')(express);
+var RedisStore = require('connect-redis')(express);
 
 mongoose.connect(config.mongoUrl);
 // store the s3 client globally so we can use it from both jobs and routes without passing it as parameters
@@ -53,7 +54,7 @@ exports.init = function() {
       app.use(express.bodyParser());
       app.use(express.methodOverride());
 
-      app.use(express.session({ secret: 'a2988-438674-f234a', store: new MongoStore({url: config.mongoUrl })}));
+      app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
 
       
       // Initialize Passport!  Also use passport.session() middleware, to support

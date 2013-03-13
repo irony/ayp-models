@@ -24,7 +24,7 @@ function PhotosController($scope, $http){
 
       photos.map(function(photo){
 
-        photo.class = "vote" + photo.mine.vote;
+        photo.class = "v" + photo.mine.vote;
         return photo;
       });
 

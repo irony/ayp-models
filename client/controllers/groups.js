@@ -6,26 +6,20 @@ function GroupsController($scope, $http){
   $scope.photos = [];
   $scope.groups = [];
   $scope.counter = 0;
-  $scope.stats = undefined;
   $scope.nrPhotos = undefined;
-
-  $http.get('/api/stats').success(function(stats){
-    $scope.stats = stats;
-  });
-
 
   $scope.scroll = function(){
     if ( $scope.loadingReverse) // reverse scroll, TODO: send as parameter instead
     {
-      var firstDate = $scope.groups[0].photos[$scope.groups[0].photos.length-1].taken;
-      if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date(firstDate);
-      $scope.counter = 0;
+      //var firstDate = $scope.groups[0].photos[$scope.groups[0].photos.length-1].taken;
+      //if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date(firstDate);
+      // $scope.counter = 0;
     }
     return $scope.loadMore();
   };
 
   $scope.dblclick = function(photo){
-    $scope.loadMore(photo.taken, $scope.zoomLevel+10, function(err){
+    $scope.loadMore(photo.taken, $scope.zoomLevel+1, function(err){
       document.location = '#' + photo.taken;
     });
   };
@@ -50,7 +44,7 @@ function GroupsController($scope, $http){
     if (zoomLevel) $scope.zoomLevel = Math.min(100, zoomLevel);
     
 
-    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : $scope.zoomLevel, limit: 150};
+    var query = {skip : $scope.counter, startDate: $scope.startDate.toISOString(), reverse : $scope.loadingReverse, vote : $scope.zoomLevel + 1, limit: 100};
     $http.get('/api/photoFeed', {params : query})
     .success(function(photos){
       $scope.loading = false;
@@ -67,22 +61,33 @@ function GroupsController($scope, $http){
         var startDate = photos[0].taken.split('T')[0],
             stopDate = photos[photos.length-1].taken.split('T')[0],
             group = {photos: photos, viewMode:'grid', id: photos[0].taken, range: (startDate !== stopDate ? startDate + " - ": "") + stopDate};
-/*
+
+        // calculate the most popular tags in this group
         group.tags = group.photos.map(function(photo){
           return photo.tags;
-        }).reduce(function(a,b){return a.concat(b)}, []).reduce(function(a,b){
+        })
+        // merge all tags to one array
+        .reduce(function(a,b){return a.concat(b)}, [])
+        // reduce them to a new struct with count and tag
+        .reduce(function(a,b){
+          b = b.trim(' ');
+
           var tag = a.filter(function(t){return t.tag === b})[0] || {tag:b, count:0};
           
-          if (!tag.count)
+          if (tag.count === 0)
             a.push(tag);
 
           tag.count++;
           return a;
-        }, []).sort(function(a,b){return b.count - a.count}).map(function(tag){return tag.tag});
+        }, [])
+        // get the most used tag
+        .sort(function(a,b){return b.count - a.count})
+        // take out the actual tags
+        .map(function(tag){return tag.tag});
 
-        group.photo = photos[photos.length-1]; // .sort(function(a,b){return b.interestingness - a.interestingness}).slice();
-        group.name = group.tags.slice(0,2).join(' ');
-*/
+        group.photo = photos[0]; // .sort(function(a,b){return b.interestingness - a.interestingness}).slice();
+        group.name = group.tags.slice(0,3).join(' ');
+
         if (resetDate) $scope.groups = [];
         
         if ($scope.loadingReverse) {

@@ -34,7 +34,6 @@ module.exports = function(app){
       }
 
       console.log('found %d photos', photos.length);
-/*
       photos = photos.reduce(function(a,b){
         var diffAverage = 0,
             last = a.length ? a[a.length-1] : null;
@@ -45,25 +44,19 @@ module.exports = function(app){
           diffAverage = b.diffTotal / a.length;
         }
 
-        // Allow at least half of the photos in the group.
+        // Allow at least one fourth of the photos in the group.
         // And then only add photos which similar time diff compared to the rest of the photos
         // This is to prevent "horungar" from being added to a group
-        if (a.length <= photos.length / 2 || b.timeDiff < diffAverage * 1.5) a.push(b);
+        if (a.length <= photos.length / 4 || b.timeDiff < diffAverage * 1.5) a.push(b);
 
         return a;
       }, []);
-*/
-
 
       async.map((photos || []), function(photo, done){
-        photo.copies[req.user._id]._id = undefined; // the _id of the subdocument shouldn't replace the id of the photo
         photo.mine = photo.copies[req.user._id]; // only use this user's personal settings
 
-        photo.copies = undefined; // and remove all other copies
-        photo.metadata = undefined;
-
         if (photo.mimeType.split('/')[0] === 'video'){
-          photo.src = photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
+          photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
         } else {
           photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
         }
@@ -80,7 +73,7 @@ module.exports = function(app){
           }).end();
         }*/
 
-        return done(null, {id: photo._id, taken: photo.taken, mimeType: photo.mimeType, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
+        return done(null, {id: photo._id, tags: photo.mine.tags, taken: photo.taken, mimeType: photo.mimeType, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
 
       }, function(err, photos){
         return res.json(photos);

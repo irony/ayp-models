@@ -24,6 +24,7 @@
     , "underscore" : "*"
     , "spdy" : "*"
     , "knox" : "*"
+    , "connect-redis" : "*"
     , "image-headers" : "*"
   },
   "scripts" :

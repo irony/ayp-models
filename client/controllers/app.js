@@ -7,11 +7,17 @@ function AppController($scope, $http)
     $scope.loading = false;
     $scope.loadingReverse = false;
     appScope = $scope;
-    $scope.library = localStorage && localStorage.getItem('library');
+    $scope.stats = localStorage && localStorage.getItem('stats');
 
-    $scope.$watch('library', function(value){
+    $scope.$watch('stats', function(value){
       if (!value){
-        console.log('load library here');
+
+        $http.get('/api/stats', {params: null}).success(function(stats){
+          $scope.stats = stats;
+          console.log('stats', stats);
+        }).error(function(err){
+          console.log('stats error', err);
+        });
       }
     });
 }
@@ -21,7 +27,7 @@ angular.module('app', [])
     return function(scope, elm, attr) {
         var raw = document.body;
         window.onscroll = function(event) {
-            if ($(window).scrollTop() + $(window).height() === $(document).height() || $(window).scrollTop() < 0) {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() * 0.5 || $(window).scrollTop() < 0) {
                 appScope.loadingReverse = $(window).scrollTop() < 0;
                 scope.$apply(attr.whenScrolled);
             }
@@ -56,6 +62,17 @@ angular.module('app', [])
             return false;
         });
     };
+})
+.directive('dragstart', function($parse) {
+  return function(scope, element, attr) {
+    console.log('dragstart');
+    var fn = $parse(attr['dragstart']);
+    element.bind('dragstart', function(event) {
+      scope.$apply(function() {
+        fn(scope, {$event:event});
+      });
+    });
+  };
 })
 .directive('dropzone', function(){
   return function(scope, element, attrs){

@@ -9,34 +9,21 @@
     <div ng-controller="GroupsController">
 
       
-        <div id="wall" class="thumbnails row" when-scrolled="scroll()">
-          <div class="{{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
+        <div id="wall" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
+          <div class="group {{group.viewMode}}" ng-repeat="group in groups" id="{{group.id}}" ng-cloak>
             <header>
               <h2>{{group.name}} <small>{{group.range}}</small></h2>
             </header> 
-            <div  ng-repeat="photo in group.photos" class="photo {{photo.class}} pull-left" title="{{photo.path}}" ng-controller="PhotoController">
-              <a ng-click="hide(photo, group)"><i class="icon-remove"></i></a>
-              <a ng-click="star(photo)"><i class="{{starClass(photo)}}"></i></a>
-              <a href="/share?date={{photo.taken.split('T')[0]}}"><i class="icon-share"></i></a>
-              <a>{{photo.class}}</a>
-<!--
-              <video controls width="100%" ng-show="photo.mimeType.split('/')[0] == 'video'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
-                <source src="{{photo.src}}" type="{{photo.mimeType}}">
-              </video>
--->
-              <img ng-src="{{photo.src}}" height="300" width="{{300 * (photo.ratio || 1)}}" ng-cloak ng-show="photo.mimeType.split('/')[0] == 'image'" ng-click="click(photo)" rightClick="rightclick(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
-            </div>
-            <div class="clearfix"></div>
+              <img ng-repeat="photo in group.photos" ng-controller="PhotoController" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="300" width="{{300 * (photo.ratio || 1)}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
           </div> 
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>
-              <label class="pull-center muted">{{counter}} photos</label>
+              <label class="pull-center muted">{{nrPhotos}} photos</label>
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
           </div>
 
-          <footer>
           <div class="group" ng-show="loading">
             <header class="loader">
                 <span></span>
@@ -44,7 +31,6 @@
                 <span></span>
             </header>
           </div>
-        </footer>
 
         </div>
         <div class="navbar navbar-inverse navbar-fixed-bottom">

@@ -15,6 +15,10 @@ function PhotoController ($scope, $http){
       }, 1000);
   };
 
+  $scope.dragstart = function(photo){
+    photo.class = 'clear';
+  };
+
   $scope.rightclick = function(photo){
     photo.class = 'flip';
   };
