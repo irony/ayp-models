@@ -1,6 +1,6 @@
 <section id="wall" ng-controller="LibraryCtrl" class="{{ 'filter' + zoomLevel }}">
   <% photos.map(function(photo){ %>
-      <img draggable="false" src="<%=photo.src%>" id="<%=photo.id%>" class="v<%=photo.vote%>" height="200" width="<%= Math.floor( (200 * photo.ratio || 0) || 200) %>" />
+      <img draggable="false" src="<%=photo.src%>" id="<%=photo.id%>" class="v<%=photo.vote%>" height="240" width="<%= Math.floor( (240 * photo.ratio || 0) || 240) %>" />
   <% }) %>
   <div class="slider">
       <label class="pull-right  muted">All your photos</label>

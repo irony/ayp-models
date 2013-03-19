@@ -673,7 +673,21 @@ only screen and (max-device-width : 599px){
   #wall img{
     margin: 2px;
     border: 0;
-  }
+    height:240px;
+    -webkit-transition: all 500ms cubic-bezier(0.000, 1, 0.670, 0.920); /* older webkit */
+    -webkit-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+       -moz-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+        -ms-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+         -o-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+            transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); /* custom */
+
+    -webkit-transition-timing-function: cubic-bezier(0.000, 1, 0.670, 0.920); /* older webkit */
+    -webkit-transition-timing-function: cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+       -moz-transition-timing-function: cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+        -ms-transition-timing-function: cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+         -o-transition-timing-function: cubic-bezier(0.000, 1.375, 0.670, 0.920); 
+            transition-timing-function: cubic-bezier(0.000, 1.375, 0.670, 0.920); /* custom */
+}
 
 
   /* use css instead of javascript to use maximum power from the engine */
@@ -685,52 +699,52 @@ only screen and (max-device-width : 599px){
   }
 
   .filter0 .v0
-  {  height:600px; width: auto; /*width:inherit*/; }
+  {  height:240px; width: auto; /*width:inherit*/; }
   .filter0 .v1, .filter0 .v2, .filter0 .v3, .filter0 .v4, .filter0 .v5, .filter0 .v6, .filter0 .v7, .filter0 .v8, .filter0 .v9
-  {  background: #444; width:2px; height: 600px;}
+  {  background: #444; width:5px; height: 240px;}
 
   .filter1 .v0,.filter1 .v1  
-  {  height:600px; width: auto; /*width:inherit*/; }
+  {  height:240px; width: auto; /*width:inherit*/; }
   .filter1 .v2, .filter1 .v3, .filter1 .v4, .filter1 .v5, .filter1 .v6, .filter1 .v7, .filter1 .v8, .filter1 .v9
-  {  background: #444; width:5px; height: 600px; opacity:0.4;}
+  {  background: #444; width:5px; height: 240px; opacity:0.4;}
 
   .filter2 .v0, .filter2 .v1, .filter2 .v2 
   {  /*width:inherit*/; }
   .filter2 .v3, .filter2 .v4, .filter2 .v5, .filter2 .v6, .filter2 .v7, .filter2 .v8, .filter2 .v9
-  {  background: #444; width:5px; height: 300px; opacity:0.4;}
+  {  background: #444; width:5px; height: 240px; opacity:0.4;}
  
   .filter4 .v0, .filter3 .v1, .filter3 .v2, .filter3 .v3 
   {  /*width:inherit*/; }
   .filter3 .v4, .filter3 .v5, .filter3 .v6, .filter3 .v7, .filter3 .v8, .filter3 .v9
-  {  background: #444; width:8px; height: 300px; opacity:0.4;}
+  {  background: #444; width:10px; height: 240px; opacity:0.4;}
 
   .filter4 .v0, .filter4 .v1, .filter4 .v2, .filter4 .v3, .filter4 .v4 
   {  /*width:inherit*/; }
   .filter4 .v5, .filter4 .v6, .filter4 .v7, .filter4 .v8, .filter4 .v9
-  {  background: #444; width:8px;height: 300px; opacity:0.4;}
+  {  background: #444; width:10px;height: 240px; opacity:0.4;}
 
   .filter5 .v0, .filter5 .v1, .filter5 .v2, .filter5 .v3, .filter5 .v4, .filter5 .v5 
-  {  height: 300px; width:auto; }
+  {  height: 240px; width:auto; }
   .filter5 .v6, .filter5 .v7, .filter5 .v8, .filter5 .v9
-  {  background: #444; width:10px;height: 300px; opacity:0.4;}
+  {  background: #444; width:10px;height: 240px; opacity:0.4;}
 
   .filter6 .v0, .filter6 .v1, .filter6 .v2, .filter6 .v3, .filter6 .v4, .filter6 .v5, .filter6 .v6 
-  {  height: 150px; width: auto; }
+  {  height: 240px; width: auto; }
   .filter6 .v7, .filter6 .v8, .filter6 .v9
-  {  background: #444; width:10px;height: 150px; opacity:0.4;}
+  {  background: #444; width:10px;height: 240px; opacity:0.4;}
 
   .filter7 .v0, .filter7 .v1, .filter7 .v2, .filter7 .v3, .filter7 .v4, .filter7 .v5, .filter7 .v6, .filter7 .v7 
-  {  height: 150px; width: auto; }
+  {  height: 240px; width: auto; }
    .filter7 .v8, .filter7 .v9
-  {  background: #444; width:15px;height: 150px; opacity:0.4;}
+  {  background: #444; width:20px;height: 240px; opacity:0.4;}
 
   .filter8 .v0, .filter8 .v1, .filter8 .v2, .filter8 .v3, .filter8 .v4, .filter8 .v5, .filter8 .v6, .filter8 .v7, .filter8 .v8 
-  {  height: 150px; width: auto; }
+  {  height: 240px; width: auto; }
     .filter8 .v9
-  {  background: #444; width:20px;height: 150px; opacity:0.4;}
+  {  background: #444; width:20px;height: 240px; opacity:0.4;}
 
   .filter9 .v0, .filter9 .v1, .filter9 .v2, .filter9 .v3, .filter9 .v4, .filter9 .v5, .filter9 .v6, .filter9 .v7, .filter9 .v8, .filter9 .v9 
-  {  height: 150px; width: auto; }
+  {  height: 240px; width: auto; }
 
 
 
