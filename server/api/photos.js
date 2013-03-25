@@ -146,7 +146,7 @@ module.exports = function(app){
 
   app.get('/api/stats', function(req, res){
 
-    if (!req.user) return res.send(403, 'Login first');
+    if (!req.user) return res.send('Login first', null, 403);
 
     console.log(req.user._id);
 

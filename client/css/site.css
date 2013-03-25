@@ -9,9 +9,9 @@
     header.featurette{
       padding: 50px 500px;
       margin: -50px -500px;
-      background: url(/img/street.jpg);
-      background-repeat: no-repeat;
-      background-size: 100%;
+      background: url(/img/is099t8ft.jpg);
+      background-size: 1920px;
+
     }
 
     header .container {
@@ -202,10 +202,14 @@
     }
 
     .featurette-divider {
-      padding: 10px 0; /* Space out the Bootstrap <hr> more */
-      margin: 60px -150px; /* Space out the Bootstrap <hr> more */
-      background: -webkit-linear-gradient(90deg,  #ffffff 3%,#faf7f7 100%); /* W3C */
-      width: 150%;
+      padding: 0px 0px; /* Space out the Bootstrap <hr> more */
+      margin: 0px -450px; /* Space out the Bootstrap <hr> more */
+      background-size: 1920px;
+      width: 1920px;
+      left:0;
+      border:0;
+      height: 500px;
+      background-repeat: no-repeat;
     }
     .featurette {
       padding-top: 60px; /* Vertically center images part 1: add padding above and below text. */
@@ -213,13 +217,6 @@
     .featurette-image {
       margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
       height:400px;
-    }
-
-    .featurette img{
-      -webkit-filter: grayscale(30%);
-    }
-    .featurette:hover img{
-      -webkit-filter: grayscale(0);
     }
 
     /* Give some space on the sides of the floated elements so text doesn't run right into it. */
