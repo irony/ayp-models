@@ -8,7 +8,7 @@
 
     header.featurette{
       padding: 50px 500px;
-      margin: -50px -500px;
+      margin: -50px -500px 0;
       background: url(/img/is099t8ft.jpg);
       background-size: 1920px;
 
@@ -212,7 +212,7 @@
       background-repeat: no-repeat;
     }
     .featurette {
-      padding-top: 60px; /* Vertically center images part 1: add padding above and below text. */
+      padding: 60px; /* Vertically center images part 1: add padding above and below text. */
     }
     .featurette-image {
       margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
