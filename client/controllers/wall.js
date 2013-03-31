@@ -10,8 +10,10 @@ function WallController($scope, $http){
 
   $scope.scroll = function(){
     $scope.photosInView = $scope.photos.filter(function(photo){
-      return photo.top > $scope.scrollPosition - 500 && photo.top < $scope.scrollPosition + 1000;
+      return photo.top > $scope.scrollPosition - 1500 && photo.top < $scope.scrollPosition + 1500;
     });
+    $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
+    $('#wall').css({ perspectiveOrigin: $scope.scrollPercentage +'%' });
   };
 
   $scope.dblclick = function(photo){
@@ -139,8 +141,16 @@ function WallController($scope, $http){
           }
           return false;
         }, []);
-        $scope.photosInView = $scope.photos.slice(0, 100);
-      }, 300);
+        $scope.photosInView = $scope.photos.slice(0,100);
+        $scope.totalHeight = top + 300;
+
+        if($scope.photoInCenter){
+          console.log('center', $scope.photoInCenter);
+          $("html, body").animate({scrollTop: $scope.photoInCenter.top}, 100, function() {
+            location.hash = $scope.photoInCenter.taken;
+          });
+        }
+      }, 50);
     }
 
   });

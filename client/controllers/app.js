@@ -50,7 +50,7 @@ angular.module('app', [])
         var raw = document.body;
         window.onscroll = function(event) {
           appScope.loadingReverse = $(window).scrollTop() < 0;
-          appScope.scrollPercentage = $(window).scrollTop() / $(document).height();
+          appScope.scrollPercentage = $(window).scrollTop() / $(document).height() * 100;
           appScope.scrollPosition = $(window).scrollTop();
           scope.$apply(attr.whenScrolled);
         };

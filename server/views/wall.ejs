@@ -9,12 +9,12 @@
     <div ng-controller="WallController" >
 
       
-        <div id="wall" style="height:{{photos.length * 304}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
-              <img ng-repeat="photo in photosInView" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" src="img/dark_stripes.png" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+        <div id="wall" style="height:{{totalHeight}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" src="img/dark_stripes.png" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>
-              <label class="pull-center muted">{{photos.length}} photos</label>
+              <label class="pull-center muted">{{photos.length}} photos {{photoInCenter.taken}}</label>
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
           </div>
@@ -28,3 +28,49 @@
   <script type="text/javascript" src="/controllers/photo.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   
+
+
+    <script>
+      var zoomTimeout;
+
+      document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
+        if (event.target.tagName == "IMG") {
+          var target = event.target;
+          if (target.className.indexOf('selected') < 0 )
+            $('.selected').removeClass('selected');
+
+          $(target).toggleClass('selected');
+        }
+      } );
+
+      document.addEventListener( 'keydown', function( e ) {
+        var keyCode = e.keyCode || e.which,
+            arrow = {left: 37, up: 38, right: 39, down: 40 };
+
+        switch (keyCode) {
+          case arrow.left:
+            $('.selected').toggleClass('selected').prev().toggleClass('selected');
+            $("html, body").animate({scrollTop: $('.selected')[0].top}, 100)
+            
+          break;
+          case arrow.up:
+            //..
+          break;
+          case arrow.right:
+            $('.selected').toggleClass('selected').next().toggleClass('selected');
+            $("html, body").animate({scrollTop: $('.selected')[0].top}, 100)
+
+            
+          break;
+          case arrow.down:
+            //..
+          break;
+        }
+        e.preventDefault;
+      });
+
+      document.querySelector( '#wall' ).addEventListener( 'dblclick', function( event ) {
+          clearTimeout(zoomTimeout);
+      } );
+
+    </script>
