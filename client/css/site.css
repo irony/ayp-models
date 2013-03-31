@@ -209,7 +209,8 @@
       left:0;
       border:0;
       height: 500px;
-      background-repeat: no-repeat;
+      background-attachment: fixed !important;
+      z-index: 0;
     }
     .featurette {
       padding: 60px; /* Vertically center images part 1: add padding above and below text. */
@@ -670,7 +671,7 @@ only screen and (max-device-width : 599px){
   #wall img{
     margin: 2px;
     border: 0;
-    height:240px;
+    height: 300px;
     -webkit-transition: all 500ms cubic-bezier(0.000, 1, 0.670, 0.920); /* older webkit */
     -webkit-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 
        -moz-transition: all 500ms cubic-bezier(0.000, 1.375, 0.670, 0.920); 

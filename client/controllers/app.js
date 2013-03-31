@@ -6,20 +6,42 @@ function AppController($scope, $http)
     $scope.loadMore = null;
     $scope.loading = false;
     $scope.loadingReverse = false;
+    $scope.scrollPercentage = 0;
+
     appScope = $scope;
-    $scope.stats = localStorage && localStorage.getItem('stats');
+    $scope.stats = localStorage && localStorage.getObject('stats');
 
     $scope.$watch('stats', function(value){
       if (!value){
 
         $http.get('/api/stats', {params: null}).success(function(stats){
           $scope.stats = stats;
+
+          // TODO: add invalidation of library cache if size has changed
           console.log('stats', stats);
         }).error(function(err){
-          console.log('stats error', err);
+          console.log('stats error');
         });
       }
     });
+
+    $scope.library = localStorage && localStorage.getObject('library');
+
+    $scope.$watch('library', function(value){
+          console.log('loading library', value);
+      if (!value || typeof(value) !== "object"){
+
+        $http.get('/api/library', {params: null}).success(function(library){
+          $scope.library = library;
+          console.log('library', library);
+          if (localStorage) localStorage.setObject('library', library);
+          
+        }).error(function(err){
+          console.log('library error');
+        });
+      }
+    });
+
 }
 
 angular.module('app', [])
@@ -27,10 +49,10 @@ angular.module('app', [])
     return function(scope, elm, attr) {
         var raw = document.body;
         window.onscroll = function(event) {
-            if ($(window).scrollTop() + $(window).height() >= $(document).height() * 0.5 || $(window).scrollTop() < 0) {
-                appScope.loadingReverse = $(window).scrollTop() < 0;
-                scope.$apply(attr.whenScrolled);
-            }
+          appScope.loadingReverse = $(window).scrollTop() < 0;
+          appScope.scrollPercentage = $(window).scrollTop() / $(document).height();
+          appScope.scrollPosition = $(window).scrollTop();
+          scope.$apply(attr.whenScrolled);
         };
     }})
 .directive('slideshow', function() {
@@ -63,9 +85,8 @@ angular.module('app', [])
         });
     };
 })
-.directive('dragstart', function($parse) {
+/*.directive('dragstart', function($parse) {
   return function(scope, element, attr) {
-    console.log('dragstart');
     var fn = $parse(attr['dragstart']);
     element.bind('dragstart', function(event) {
       scope.$apply(function() {
@@ -73,7 +94,7 @@ angular.module('app', [])
       });
     });
   };
-})
+})*/
 .directive('dropzone', function(){
   return function(scope, element, attrs){
     var dropzone = element;
@@ -116,4 +137,12 @@ angular.module('app', [])
    };
 });
 
-;
+
+Storage.prototype.setObject = function(key, value) {
+    this.setItem(key, JSON.stringify(value));
+}
+
+Storage.prototype.getObject = function(key) {
+    var value = this.getItem(key);
+    return value && JSON.parse(value);
+}

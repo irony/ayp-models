@@ -24,7 +24,7 @@
           <p class="lead">Share all photos within a time range automatically and help completing your friends and family's photo albums automatically. Great for gathering all photos from holiday trips and weddings etc.</p>
         </div>
 
-        <hr class="featurette-divider" data-speed="5" data-offset="-200" style="background: url(/img/fotolia_45378847_s-e1361344580625.jpg);">
+        <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(/img/fotolia_45378847_s-e1361344580625.jpg);">
 
         <div class="featurette">
           <img class="featurette-image pull-right" src="http://smartmobilestudio.com/wp-content/uploads/2012/06/leather-book-preview.png">
@@ -33,7 +33,7 @@
           <p class="lead">Each photo contains many clues on how to organize them, such as dates, gps positions and faces. By carefully combining this information we make the job of organizing your library a breeze.</p>
         </div>
 
-        <hr class="featurette-divider" data-speed="3" data-offset="500" style="background: url(/img/camera-caroline-maria-friends-green-spring-Favim.com-227694.jpg); height: 800px">
+        <hr class="featurette-divider" data-speed="10" data-offset="500" style="background: url(/img/camera-caroline-maria-friends-green-spring-Favim.com-227694.jpg); height: 800px">
 
         <div class="featurette">
           
@@ -41,7 +41,7 @@
           <h2 class="featurette-heading">Quality <span class="muted">matters.</span></h2>
           <p class="lead">Your photos will stay untouched. Unlike other photo services you will get your original when viewing your photos which means crisp high quality images. </p>
         </div>
-        <hr class="featurette-divider" data-speed="5" data-offset="200" style="background: url(/img/Retina-macbook-pro-2.jpg); height: 500px">
+        <hr class="featurette-divider" data-speed="10" data-offset="200" style="background: url(/img/Retina-macbook-pro-2.jpg); height: 500px">
 
 
         <div class="featurette">
@@ -51,7 +51,7 @@
           <p class="lead">We believe you want to access not only the latest photos or the best ones when you are away from home. Sync your library and you get access all your photos from all your devices.</p>
         </div>
 
-        <hr class="featurette-divider" data-speed="3" data-offset="600" style="background: url(http://upload.wikimedia.org/wikipedia/commons/d/d7/CERN_Server_03.jpg); height: 500px">
+        <hr class="featurette-divider" data-speed="10" data-offset="600" style="background: url(http://upload.wikimedia.org/wikipedia/commons/d/d7/CERN_Server_03.jpg); height: 500px">
 
 
 <div class="featurette">
@@ -79,13 +79,12 @@
   
   <script>
     
-    $('#myCarousel .first').toggleClass('active'); // trigger ken-burns
     window.setInterval(function(){
 
       $('.featurette, .featurette-divider').css('backgroundPosition',  function(){
-        var position = Math.round(window.pageYOffset/($(this).data('speed')||5)) + $(this).data('offset');
+        var position = -Math.round(window.pageYOffset/($(this).data('speed')||5)) + $(this).data('offset');
         return '0px ' + position + 'px'
       });
-    }, 1);
+    }, 25);
 
   </script>

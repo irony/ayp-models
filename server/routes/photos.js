@@ -17,7 +17,7 @@ module.exports = function(app){
       return res.render('500.ejs', model);
     }
 
-    res.render('groups.ejs', model);
+    res.render('wall.ejs', model);
 
   });
 

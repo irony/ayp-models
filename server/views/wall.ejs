@@ -1,0 +1,30 @@
+  <header ng-show="loading && loadingReverse" class="loader pull-left">
+      <span></span>
+      <span></span>
+      <span></span>
+  </header>
+
+
+  <div id="photos" class="photos" >
+    <div ng-controller="WallController" >
+
+      
+        <div id="wall" style="height:{{photos.length * 304}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
+              <img ng-repeat="photo in photosInView" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" src="img/dark_stripes.png" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+          <div class="slider">
+              <label class="pull-right  muted">All your photos</label>
+              <label class="pull-left  muted">Only the best</label>
+              <label class="pull-center muted">{{photos.length}} photos</label>
+
+              <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript" src="/controllers/wall.js"></script>
+  <script type="text/javascript" src="/controllers/photo.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  

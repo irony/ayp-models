@@ -1,4 +1,4 @@
-function GroupsController($scope, $http){
+function WallController($scope, $http){
   
   var zoomTimeout = null;
   $scope.startDate = new Date();
@@ -9,18 +9,14 @@ function GroupsController($scope, $http){
   $scope.nrPhotos = undefined;
 
   $scope.scroll = function(){
-    if ( $scope.loadingReverse) // reverse scroll, TODO: send as parameter instead
-    {
-      //var firstDate = $scope.groups[0].photos[$scope.groups[0].photos.length-1].taken;
-      //if ($scope.groups.length && $scope.groups[0].photos) $scope.startDate = new Date(firstDate);
-      // $scope.counter = 0;
-    }
-    return $scope.loadMore();
+    $scope.photosInView = $scope.photos.filter(function(photo){
+      return photo.top > $scope.scrollPosition - 500 && photo.top < $scope.scrollPosition + 1000;
+    });
   };
 
   $scope.dblclick = function(photo){
     $scope.loadMore(photo.taken, $scope.zoomLevel+1, function(err){
-      $('#' + photo.taken)[0].scrollIntoView();
+      document.location = '#' + photo.taken;
     });
   };
 
@@ -32,7 +28,7 @@ function GroupsController($scope, $http){
       $scope.photos = [];
       $scope.endDate = null;
       $scope.startDate = new Date(resetDate);
-      //window.stop(); // cancel all image downloads
+      // window.stop(); // cancel all image downloads
       $scope.loading = false;
     }
 
@@ -109,40 +105,43 @@ function GroupsController($scope, $http){
       // alert somehow?
     });
   };
-/*
-  $scope.$watch('photos', function(value){
-    var groups = [],
-        lastPhoto = null,
-        group = null;
 
-    value.forEach(function(photo){
-
-      if (!lastPhoto || photo.taken.getTime() - lastPhoto.taken.getTime() > 24*60*60)
-      {
-        group = {photos : []};
-        groups.push(group);
-      }
-
-      group.photos.push(photo);
-      lastPhoto = photo;
-
-    });
-    console.log(groups);
-    $scope.groups = groups;
-  });*/
-
-  $scope.$watch('zoomLevel + (stats && stats.all)', function(value, oldValue){
+  $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
     
     if ($scope.zoomLevel > $scope.zoomLevel)
       $scope.startDate = new Date(); // reset the value when zooming out
 
-    clearTimeout(zoomTimeout);
+    $scope.nrPhotos = ($scope.stats && $scope.stats.all * $scope.zoomLevel / 10) || $scope.photos.length;
+    
+    if ($scope.zoomLevel && $scope.library && $scope.library.photos){
+      clearTimeout(zoomTimeout);
+      zoomTimeout = setTimeout(function(){
+        var totalWidth = 0;
+        var top = 0;
+        var left = 0;
+        var maxWidth = window.outerWidth * 1.2;
+        $scope.photos = ($scope.library.photos).filter(function(photo){
+          if (photo.vote <= $scope.zoomLevel ) {
+            photo.height = 300;
+            photo.width = photo.height * (photo.ratio || 1);
+            totalWidth += photo.width;
 
-    $scope.nrPhotos = $scope.stats && $scope.stats.all * $scope.zoomLevel / 10 || $scope.photos.length;
+            if (totalWidth % maxWidth < photo.width){
+              top += photo.height;
+              photo.left = left = 0;
+            } else {
+              photo.left = left;
+              left += photo.width;
+            }
 
-    zoomTimeout = setTimeout(function(){
-      $scope.loadMore($scope.startDate);
-    }, 100);
+            photo.top = top;
+            return true;
+          }
+          return false;
+        }, []);
+        $scope.photosInView = $scope.photos.slice(0, 100);
+      }, 300);
+    }
 
   });
 
@@ -152,11 +151,13 @@ function GroupsController($scope, $http){
       $("ul.nav li").on("activate", function(elm)
       {
           $scope.startDate = new Date(elm.target.attributes['data-date'].value);
-          document.location = '#' + $scope.startDate;
+          document.location.hash = '#' + $scope.startDate;
       });
     }, 100);
   });
   
   if (document.location.hash)
     $scope.startDate = new Date(document.location.hash.slice(1));
+
+  
 }
