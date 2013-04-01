@@ -64,7 +64,7 @@ var downloader = {
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken')
-    //.where('store.thumbnails.stored').exists(false)
+    .where('store.thumbnails.stored').exists(false)
     // .where('store.error').exists(false) // skip photos with previous download problems
     .sort('-taken');
 
@@ -72,7 +72,7 @@ var downloader = {
       console.log('[50]Found %d photos without downloaded images. Downloading...', photos && photos.length, err);
       
       async.mapSeries(photos, function(photo, done){
-        photo.store.thumbnails = null;  // force new thumbnail to be downloaded
+        // photo.store.thumbnails = null;  // force new thumbnail to be downloaded
         downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
           console.debug('Download photo done: ', photo.store);
           if (err) {

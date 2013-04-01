@@ -659,8 +659,11 @@ only screen and (max-device-width : 599px){
 
 .dropzone{
 
-  border:10px solid rgba(0,0,0,0.7);
+  border:10px solid rgba(0,0,0,0.2);
+  margin-bottom: 20px;
   border-radius: 5px;
+  height:300px;
+  background: #999;
 }
 
 
