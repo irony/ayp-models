@@ -1,212 +1,88 @@
 <div class="container">
   <h1>Upload your library here</h1>
 
-  <div class="hero-unit">
+  <div class="hero-unit" ng-controller="UploadController"> 
 
-    <h2>Select your photo library <small>(requires Chrome to upload folders)</small></h2>
-      <input type='file' webkitdirectory >
+    <h2>Select your photo library <small>(requires Chrome to select a whole folder)</small></h2>
+    <input type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
 
-    <h2>..or drop your photo folder below</h2>
+    <h2>..or drop your photos or folders below</h2>
     <div id="dropzone" class="dropzone" dropzone>
       <ul>
-        <li ng-repeat="file in droppedFiles">{{file}}</li>
+        <li ng-repeat="file in files">{{file.name}} : {{file.state}}</li>
       </ul>
 
     </div>
-    <button class="btn btn-success pull-right">Upload</button>
+    <a href="#" class="btn btn-success pull-right" ng-click="upload()">Upload</a>
   </div>
 
 </div>
 
 <script>
-  //HTML5 Upload by http://techslides.com
-//File, Directory, Archive, or External Image Uploader using Imgur API, HTML5 FormData, ZIPjs, and Cross-Domain XHR
+  //HTML5 Upload inspired by http://techslides.com
+function UploadController($scope, $http){
 
-            /* Traverse through files and directories */
-            function traverseFileTree(item, path) {
-              path = path || "";
-              if (item.isFile) {
-                // Get file
-                item.file(function(file) {
-                    if(file.type.match(/image.*/)){
-                        upload(file);
-                    }
-                });
-              } else if (item.isDirectory) {
-                // Get folder contents
-                var dirReader = item.createReader();
-                dirReader.readEntries(function(entries) {
-                  for (var i=0; i<entries.length; i++) {
-                    traverseFileTree(entries[i], path + item.name + "/");
-                  }
-                });
-              }
-            }
-
-            /* Main unzip function */
-            function unzip(zip){
-                model.getEntries(zip, function(entries) {
-                    entries.forEach(function(entry) {
-                        model.getEntryFile(entry, "Blob");
-                    });
-                });
-            }
-
-            /* Drag'n drop stuff */
-            var drag = document.getElementById("drag");
-            
-            drag.ondragover = function(e) {e.preventDefault()}
-            drag.ondrop = function(e) {
-                e.preventDefault();
-                  var length = e.dataTransfer.items.length;
-                  for (var i = 0; i < length; i++) {
-                    var entry = e.dataTransfer.items[i].webkitGetAsEntry();
-                    var file = e.dataTransfer.files[i];
-                    var zip = file.name.match(/\.zip/);
-                    if (entry.isFile) {
-                        if(zip){
-                            unzip(file);
-                        } else {
-                          var file = e.dataTransfer.files[i];
-
-                          if(file.type.match(/image.*/)){
-                            upload(file);
-                          } else {
-                            document.getElementById("error").innerHTML = file.name+" is not an image.";
-                          }                       
-                        }
+  $scope.state = null;
+  $scope.files = [];
+  /* Drag'n drop stuff */
 
 
-                    } else if (entry.isDirectory) {
-                     traverseFileTree(entry);
-                    }
-                  }
-            }
+  //process files
+  $scope.fileChange = function (e) {
+    var files = e.target.files;
+    for(i=0; i<files.length; i++) {
+        var file = files[i];
+        if(file.type.match(/image.*/)){
+            $scope.files.push(file);
+        }
+    }
+  };
 
-            var files = document.getElementById("filesinput");
-            var directory = document.getElementById("directoryinput");
-            var zipinput = document.getElementById("zipinput");
-            var external = document.getElementById("external");
-            var fbutton = document.getElementById("fbutton");
-            var dbutton = document.getElementById("dbutton");
-            var zbutton = document.getElementById("zbutton");
+  $scope.upload = function(){
+    console.log('upload');
+    $scope.files.forEach(function(file){
+        queue(file);
+    });
+  };
 
-            //process files
-            files.addEventListener("change", function (e) {
-                var files = e.target.files;
-                for(i=0; i<files.length; i++) {
-                    var file = files[i];
-                    if(file.type.match(/image.*/)){
-                        upload(file);
-                    }
-                }
-            }, false);
+  /* main upload function that sends images to imgur.com */
+  function queue(file) {
+    console.log('queued', file)
+      file.state = 'Queued';
+      /* Lets build a FormData object*/
+      var fd = new FormData();
+      
+      fd.append(file.name, file);
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/upload", true);
 
-            //process directory
-            directory.addEventListener("change", function (e) {
-                var files = e.target.files;
-                for (var i=0; i<files.length; i++) {
-                    var file = files[i];
-                    if(file.type.match(/image.*/)){
-                        upload(file);
-                    }
-                }            
-            }, false);
+      xhr.onload = function() {
+        if(this.status>200){
+          $scope.state = "error";
+          file.state = 'Error';
+          file.error = xhr.responseText;
+        } else {
+            var response = JSON.parse(xhr.responseText);
+            file.response = response;
+            file.state = 'Uploaded';
+        }
+      }
 
-            //process zip archive
-            zipinput.addEventListener('change', function() {
-                unzip(zipinput.files[0]);
-            }, false);
+      // Listen to the upload progress.
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+          file.progress = (e.loaded / e.total) * 100;
+        }
+      };
 
 
-            external.addEventListener("click", function (e) {
-                var einput = document.getElementById("einput");
-                var file = einput.value;
-                //matching for ending here is not ideal since lots of image are auto generated via some other url
-                //if (file.match(/\.jpg|\.gif|\.jpeg|\.png/)){
-                    upload(file);
-                //}
-            }, false);
+      xhr.send(fd);
+  }
 
-            fbutton.addEventListener("click", function() {
-                document.getElementById('filesinput').click();
-            }, false);
 
-            dbutton.addEventListener("click", function() {
-                document.getElementById('directoryinput').click()
-            }, false);
+  
 
-            zbutton.addEventListener("click", function() {
-                document.getElementById('zipinput').click()
-            }, false);
-
-            /* main upload function that sends images to imgur.com */
-            function upload(file) {
-
-                document.body.className = "uploading";
-
-                /* Lets build a FormData object*/
-                var fd = new FormData();
-                
-                fd.append("image", file);
-                fd.append("key", "6528448c258cff474ca9701c5bab6927");
-                var xhr = new XMLHttpRequest();
-                var output = document.getElementById("output");
-
-                xhr.open("POST", "http://api.imgur.com/2/upload.json");
-                xhr.onload = function() {
-
-                    if(this.status==400){
-                       document.getElementById("error").innerHTML = JSON.parse(xhr.responseText).error.message;
-                    } else {
-                        var links = JSON.parse(xhr.responseText).upload.links;
-                        var dimage = links.small_square;
-                        var dlink = links.imgur_page;
-
-                        var a = document.createElement("a");
-                        a.href = dlink;
-
-                        var img = document.createElement("img");
-                        img.src = dimage;
-
-                        a.appendChild(img);
-                        output.appendChild(a);
-
-                        document.body.className = "uploaded";
-                    }
-
-                }
-
-                xhr.send(fd);
-            }
-
-            //model for zip.js
-            var model = (function() {
-
-                return {
-                    getEntries : function(file, onend) {
-                        zip.createReader(new zip.BlobReader(file), function(zipReader) {
-                            zipReader.getEntries(onend);
-                        }, onerror);
-                    },
-                    getEntryFile : function(entry, creationMethod, onend, onprogress) {
-                        var writer, zipFileEntry;
-
-                        function getData() {
-                            entry.getData(writer, function(blob) {
-
-                            //read the blob, grab the base64 data, send to upload function
-                            oFReader = new FileReader()
-                            oFReader.onloadend = function(e) {
-                              upload(this.result.split(',')[1]);    
-                            };
-                            oFReader.readAsDataURL(blob);
-                         
-                            }, onprogress);
-                        }
-                            writer = new zip.BlobWriter();
-                            getData();
-                    }
-                };
-            })();
+  
+}
+ 
 </script>

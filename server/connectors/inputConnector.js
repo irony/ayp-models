@@ -1,11 +1,11 @@
-function InputConnector(){
-  
+function InputConnector(name){
+  this.name = name;
 }
 
 var ImageHeaders = require("image-headers");
 var Photo = require("../../models/photo");
 
-var extractExif = function(data, done){
+InputConnector.prototype.extractExif = function(data, done){
 
   if (!done) throw new Error("Callback is mandatory");
 
@@ -56,7 +56,7 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
 
     });*/
 
-
+    var self = this;
     var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
     
     var req = global.s3.put(filename, {
@@ -72,7 +72,7 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
     req.on('response', function(res){
       if (200 === res.statusCode || 307 === res.statusCode) {
         console.debug('Extracting exif...');
-        extractExif(stream, function(err, headers){
+        self.extractExif(stream, function(err, headers){
         
           if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
           var setter = {$set : {}};
@@ -96,7 +96,11 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
       }
     });
 
-    return req.end(stream);
+    if (stream.pipe){
+      return stream.pipe(req);
+    } else {
+      return req.end(stream);
+    }
 
     /*
     console.log('save', filename)

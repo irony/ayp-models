@@ -1,11 +1,14 @@
 var Photo = require('../../models/photo');
 var Group = require('../../models/group');
 var User = require('../../models/user');
+var InputConnector = require('../connectors/inputConnector');
+var importer = require('../../jobs/importer');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
 var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('underscore');
+var formidable = require('formidable');
 
 module.exports = function(app){
 
@@ -81,16 +84,79 @@ module.exports = function(app){
     });
   });
 
+  app.post('/api/upload', function(req, res, next){
+    if (!req.user){
+      res.writeHead(403);
+      return res.json({error:'Login first'});
+    }
+
+    var form = new formidable.IncomingForm();
+    var uploadConnector = new InputConnector("UploadConnector");
+    var buffers = [];
+    var photo;
+
+    // Handle each part of the multi-part post
+    form.onPart = function (part) {
+      if (part.filename) {
+        photo = part;
+      }
+
+      // Handle each data chunk as data streams in
+      part.addListener('data', function (data) {
+        buffers.push(data);
+      });
+
+      // The part is done
+      part.addListener('end', function () {
+        var file = Buffer.concat(buffers);
+        uploadConnector.extractExif(file.toString('utf8'), function(err, headers){
+          console.log('headers', headers);
+          photo.source = 'upload';
+          photo.path = photo.filename;
+          // photo.client_mtime = part.modified; // todo exif?
+          photo.bytes = file.length;
+          photo.mime_type = part.mime;
+          console.log('saving...');
+          importer.savePhotos(req.user, [photo], file, function(err, photos){
+            console.log('uploading...');
+            uploadConnector.save('original', photos[0], file, function(err, result){
+              console.log('done...');
+              res.json(result);
+            });
+          });
+        });
+      });
+    };
+
+    // Multi-part form is totally done, redirect back to index
+    // and pass filename
+    form.addListener('end', function () {
+     res.end('OK');
+    });
+
+    // Do it
+    form.parse(req);
+
+    
+/*
+    importer.savePhotos(req.user, []);
+
+/*
+    photo.*/
+    //importer.save('original', photo, stream, done)
+
+  });
+
   app.post('/api/photoRange', function(req, res){
 
     var startDate = req.body.dateRange.split(' - ')[0],
-    stopDate = req.body.dateRange.split(' - ')[1],
-    model = new ViewModel(req.user);
+    stopDate = req.body.dateRange.split(' - ')[1];
 
     if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
+      res.writeHead(403);
+      return res.json({error:'Login first'});
     }
+    
 
     if (!req.body.dateRange){
       return res.end();
