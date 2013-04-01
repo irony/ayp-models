@@ -13,6 +13,7 @@ var spdy = require('spdy');
 require('./routes/connectors')(app);
 require('./routes/share')(app);
 require('./routes/photos')(app);
+require('./routes/import')(app);
 require('./routes/index')(app);
 require('./sockets/photos')(app);
 

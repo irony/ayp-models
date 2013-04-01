@@ -13,7 +13,7 @@ function WallController($scope, $http){
       return photo.top > $scope.scrollPosition - 1500 && photo.top < $scope.scrollPosition + 1500;
     });
     $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
-    $('#wall').css({ perspectiveOrigin: $scope.scrollPercentage +'%' });
+    $('#wall').css({ perspectiveOrigin: $scope.photoInCenter / $scope.scrollPercentage +'%' });
   };
 
   $scope.dblclick = function(photo){
@@ -141,13 +141,19 @@ function WallController($scope, $http){
           }
           return false;
         }, []);
+
+        // cancel all previous image requests
+        window.stop && window.stop();
+        
         $scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + 300;
 
         if($scope.photoInCenter){
-          console.log('center', $scope.photoInCenter);
-          $("html, body").animate({scrollTop: $scope.photoInCenter.top}, 100, function() {
-            location.hash = $scope.photoInCenter.taken;
+          console.log($scope.photoInCenter)
+          var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
+          console.log(newCenter)
+          $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
+            location.hash = newCenter.taken;
           });
         }
       }, 50);

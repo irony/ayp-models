@@ -14,7 +14,7 @@
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>
-              <label class="pull-center muted">{{photos.length}} photos {{photoInCenter.taken}}</label>
+              <label class="pull-center muted">{{photos.length}} photos {{photoInCenter.taken| date:'MMM yyyy'}}</label>
 
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
           </div>

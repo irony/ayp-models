@@ -61,7 +61,8 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
     
     var req = global.s3.put(filename, {
             'Content-Length': stream.length,
-            'Content-Type': photo.mimeType
+            'Content-Type': photo.mimeType,
+            'Cache-Control': 'public,max-age=31556926'
         });
 
     //console.log('saving %s to s3', folder, req);
