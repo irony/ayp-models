@@ -47,6 +47,7 @@ InputConnector.prototype.getClient = function(user){
 InputConnector.prototype.save = function(folder, photo, stream, done){
 
   if (!done) throw new Error("Callback is mandatory");
+  if (!photo.mimeType) throw new Error("Mimetype is mandatory");
 
   if (!stream) return done(new Error('No stream'));
 
@@ -67,7 +68,7 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
 
     //console.log('saving %s to s3', folder, req);
     req.on('error', function(err) {
-      console.debug('Request error when saving to S3: %s', err.toString().red);
+      console.debug('Request error when saving to S3: %s'.red, err);
     });
     req.on('response', function(res){
       if (200 === res.statusCode || 307 === res.statusCode) {
@@ -92,7 +93,7 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
         });
 
       } else {
-        return done(new Error('Error when saving to S3, code: ' + res.toString()));
+        return done(new Error('Error when saving to S3, code: '.red, res));
       }
     });
 

@@ -230,9 +230,14 @@ module.exports = function(app){
           .where('copies.' + req.user._id).exists(true)
           .count(done);
       },
-      imported: function countHowManyAreImported (done) {
+      originals: function countHowManyAreImported (done) {
         Photo.find({'owners': req.user._id})
           .where('store.originals.stored').exists(true)
+          .count(done);
+      },
+      thumbnails: function countHowManyAreImported (done) {
+        Photo.find({'owners': req.user._id})
+          .where('store.thumbnails.stored').exists(true)
           .count(done);
       },
       exif: function countHowManyHasExifExtracted (done) {

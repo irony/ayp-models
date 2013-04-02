@@ -16,6 +16,7 @@ var connector = new InputConnector();
 	connector.downloadThumbnail = function(user, photo, done){
 	
 	  if (!done) throw new Error("Callback is mandatory");
+	  if (!photo.path) throw new Error("Path is not set on photo.");
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done(null, null); // 'Not a dropbox user'
@@ -41,6 +42,7 @@ var connector = new InputConnector();
 					}
 
 					if(status === 404) {
+						console.log('[404]', photo.path); // ' received, removing photo. This is not a photo.');
 						// console.log('[404]'); //' received, it is not a photo?', photo.path);
 					}
 

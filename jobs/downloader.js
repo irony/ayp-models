@@ -20,13 +20,13 @@ var downloader = {
   downloadPhoto : function(user, photo, options, done){
 
     if (typeof(done) !== "function") throw new Error("Callback is mandatory" + JSON.stringify(done));
-    if (!photo.source || !photo.source.length) return done('No source connector found');
+    if (!photo.source || !photo.source.length) return done('No source connector found') && console.log('No source photo', photo);
     if (!options || (!options.thumbnail && !options.original)) return done('No downloader defined in options');
 
     var connector = require('../server/connectors/' + photo.source);
     if (connector.downloadOriginal && user.accounts[photo.source]) {
       
-      console.debug('Downloading original and thumbnails from %s', photo.source);
+      console.debug('Downloading %s %s from %s', options.thumbnail && "thumbnail", options.original && "and original" || "", photo.source);
       async.parallel({
         original : function(done){
           if (options.original && !photo.store || !photo.store.originals || !photo.store.originals.stored) {
@@ -48,8 +48,10 @@ var downloader = {
           return done();
         }
       }, function(result){
-        console.debug('Done both', result);
-        done(null, result);
+        if (!result || (!result.original && !result.thumbnail)){
+          return done(result);
+        }
+        return done(null, result);
       });
     }
 
@@ -63,7 +65,7 @@ var downloader = {
   downloadThumbnails : function(user, done){
     if (!done) throw new Error("Callback is mandatory");
 
-    var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken')
+    var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken source path mimeType')
     .where('store.thumbnails.stored').exists(false)
     // .where('store.error').exists(false) // skip photos with previous download problems
     .sort('-taken');
@@ -74,8 +76,8 @@ var downloader = {
       async.mapSeries(photos, function(photo, done){
         // photo.store.thumbnails = null;  // force new thumbnail to be downloaded
         downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
-          console.debug('Download photo done: ', photo.store);
           if (err) {
+            console.debug('Download photo error: ', err);
             photo.store = photo.store || {};
             photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
             photo.markModified('store');
@@ -83,8 +85,9 @@ var downloader = {
               return done(null, photo); // we have handled the error, we don't want to abort the operation
             });
           }
-
+          
           return done(null, photo);
+
         });
       }, function(err, photos){
         
