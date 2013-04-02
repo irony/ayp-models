@@ -92,24 +92,24 @@ module.exports = function(app){
 
     var form = new formidable.IncomingForm();
     var uploadConnector = new InputConnector("UploadConnector");
-    var buffers = [];
     var photo;
 
     // Handle each part of the multi-part post
     form.onPart = function (part) {
+      
+      var file = '';
       if (part.filename) {
         photo = part;
       }
 
       // Handle each data chunk as data streams in
       part.addListener('data', function (data) {
-        buffers.push(data);
+        file += data.toString('binary');
       });
 
       // The part is done
       part.addListener('end', function () {
-        var file = Buffer.concat(buffers);
-        uploadConnector.extractExif(file.toString('utf8'), function(err, headers){
+        uploadConnector.extractExif(file, function(err, headers){
           console.log('headers', headers);
           photo.source = 'upload';
           photo.path = photo.filename;

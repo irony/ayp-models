@@ -9,7 +9,7 @@
     <h2>..or drop your photos or folders below</h2>
     <div id="dropzone" class="dropzone" dropzone>
       <ul>
-        <li ng-repeat="file in files">{{file.name}} : {{file.state}}</li>
+        <li ng-repeat="file in files">{{file.name}} : {{file.progress || file.state}}</li>
       </ul>
 
     </div>
@@ -49,7 +49,7 @@ function UploadController($scope, $http){
   function queue(file) {
     console.log('queued', file)
       file.state = 'Queued';
-      /* Lets build a FormData object*/
+
       var fd = new FormData();
       
       fd.append(file.name, file);
