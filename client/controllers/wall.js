@@ -1,6 +1,7 @@
 function WallController($scope, $http){
   
   var zoomTimeout = null;
+  var scrollTimeout = null;
   $scope.startDate = new Date();
   $scope.zoomLevel = 5;
   $scope.photos = [];
@@ -9,11 +10,13 @@ function WallController($scope, $http){
   $scope.nrPhotos = undefined;
 
   $scope.scroll = function(){
-    $scope.photosInView = $scope.photos.filter(function(photo){
-      return photo.top > $scope.scrollPosition - 1500 && photo.top < $scope.scrollPosition + 1500;
-    });
-    $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
-    $('#wall').css({ perspectiveOrigin: $scope.photoInCenter / $scope.scrollPercentage +'%' });
+    scrollTimeout = setTimeout(function(){
+      $scope.photosInView = $scope.photos.filter(function(photo){
+          return photo.top > $scope.scrollPosition - 250 && photo.top < $scope.scrollPosition + 1900;
+      });
+      $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
+
+    }, 20);
   };
 
   $scope.dblclick = function(photo){
@@ -124,7 +127,7 @@ function WallController($scope, $http){
         var maxWidth = window.outerWidth * 1.2;
         $scope.photos = ($scope.library.photos).filter(function(photo){
           if (photo.vote <= $scope.zoomLevel ) {
-            photo.height = 300;
+            photo.height = 240;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
 
@@ -146,7 +149,7 @@ function WallController($scope, $http){
         window.stop && window.stop();
         
         $scope.photosInView = $scope.photos.slice(0,100);
-        $scope.totalHeight = top + 300;
+        $scope.totalHeight = top + 240;
 
         if($scope.photoInCenter){
           console.log($scope.photoInCenter)

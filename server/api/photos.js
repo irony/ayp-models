@@ -61,7 +61,7 @@ module.exports = function(app){
         if (photo.mimeType.split('/')[0] === 'video'){
           photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
         } else {
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
+          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
         }
         
         var vote = photo.mine.vote || (photo.mine.calculatedVote);
@@ -205,7 +205,7 @@ module.exports = function(app){
           if (photo.mimeType.split('/')[0] === 'video'){
             photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
           } else {
-            photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/loading.gif';
+            photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : 'Photos-icon.png';
           }
 
           return done(null, {taken:photo.taken.getTime(), src: photo.src, vote: Math.floor(vote), ratio: photo.ratio});
