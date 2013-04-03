@@ -1,6 +1,6 @@
 
     body{
-      font-family: "Gill Sans", Corbel, Consolas;
+      font-family: "Open Sans", Corbel, Consolas;
       background: #000;
     }
 
@@ -32,6 +32,26 @@
       width: 100%;
       padding-top: 50px;
       padding-bottom: 150px;
+    }
+
+    a.brand
+    {
+      font-family: "Pacifico", Corbel, Consolas;
+      color:#fff !important;
+      font-size: 20px !important;
+
+    }
+
+    a.brand small
+    {
+      font-family: "Open Sans", Corbel, Consolas;
+      text-transform: uppercase;
+      font-size: 7px;
+      color:#fff;
+      clear:both;
+      display: block;
+      margin-top:  -10px;
+      margin-left:  7px;
     }
 
     h1,h2,h3,h4,h5, a.brand

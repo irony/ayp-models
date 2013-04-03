@@ -15,7 +15,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
-
+    <link href="//fonts.googleapis.com/css?family=Pacifico|Open+Sans:700,300,400" rel="stylesheet">
     <script src="/js/jquery-1.7.1.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script src="/js/socket.io.js"></script>
@@ -40,10 +40,9 @@
             <span class="icon-bar"></span>
           </a>
           <a class="brand" href="/">
-            <%if (user && user.accounts.facebook) {%>
-              <img src="http://graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
-            <% }%>
-            <%= title %></a>
+            
+          Photos
+          </a>
           <div class="nav-collapse">
             <ul class="nav">
              <li class="active"><a href="/">Home</a></li>
@@ -73,6 +72,9 @@
             </ul>
             <ul class="nav pull-right">
              <%if (user) {%>  
+               <%if (user && user.accounts.facebook) {%>
+                <img src="http://graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
+               <% }%>
                <li class="pull-right"><a href="/logout">Logout</a></li>
              <%} else {%>
                <li class="pull-right"><a href="/auth/facebook">Login</a></li>
