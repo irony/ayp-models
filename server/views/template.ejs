@@ -7,8 +7,11 @@
 
         <header class="featurette">
             <div class="container">
-              <h2 class="featurette-heading"></i>Enjoy all your photos!</h2>
-              <p class="lead">Your growing photo library will finally get a home in the cloud. Use our fast upload to safely move your photos to be always accessible from all your devices and magically auto organized.</p>
+              <h2 class="featurette-heading"></i>Access your memories</h2>
+              <p class="lead">Upload your library and get a complete overview. Automatically organized based on your behaviour.
+                <br>
+-This you have to try!
+</p>
               <small>It's super fast, and is free to try..</small><br>
               <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
               <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a>
@@ -17,20 +20,26 @@
         </header>  
 
         <!-- START THE FEATURETTES -->
+        <div class="featurette">
+          <h2 class="featurette-heading">Easiest way to <span class="muted">upload</span></h2>
 
+          <p class="lead">Plug in a USB drive or SD card and just drag the photo folder to this site and you are on your way to your new home for all your photos. You can activate our social importers to automatically sync your photos from Facebook, Instagram and Dropbox. We will not alter your photos or spam your wall.</p>
+        </div>
+
+        <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(http://www.minhaserie.com.br//images/highlights/000/008/907/10320.jpg);">
 
         <div class="featurette">
-          <h2 class="featurette-heading"><span class="muted">Auto sharing</span> means less work</h2>
+          <h2 class="featurette-heading"><span class="muted">Share </span> with friends and family</h2>
           <p class="lead">Share all photos within a time range automatically and help completing your friends and family's photo albums automatically. Great for gathering all photos from holiday trips and weddings etc.</p>
         </div>
 
-        <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(/img/fotolia_45378847_s-e1361344580625.jpg);">
+        <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(/img/people-orange.jpg);">
 
         <div class="featurette">
           <img class="featurette-image pull-right" src="http://smartmobilestudio.com/wp-content/uploads/2012/06/leather-book-preview.png">
 
           <h2 class="featurette-heading">Auto <span class="muted">organize</span></h2>
-          <p class="lead">Each photo contains many clues on how to organize them, such as dates, gps positions and faces. By carefully combining this information we make the job of organizing your library a breeze.</p>
+          <p class="lead">We organize your photos, by combining information from the photos (such as date, location, faces etc) with your behavior (click patterns etc) and also information from Social media (likes etc)s. We make the job of organizing your library a breeze.</p>
         </div>
 
         <hr class="featurette-divider" data-speed="10" data-offset="500" style="background: url(/img/camera-caroline-maria-friends-green-spring-Favim.com-227694.jpg); height: 800px">
@@ -39,7 +48,7 @@
           
           <img class="featurette-image pull-left" src="/img/Aperture-icon.png">
           <h2 class="featurette-heading">Quality <span class="muted">matters.</span></h2>
-          <p class="lead">Your photos will stay untouched. Unlike other photo services you will get your original when viewing your photos which means crisp high quality images. </p>
+          <p class="lead">Your photos will stay untouched*. Unlike other photo services you will get your original when viewing your photos which means crisp high quality images. </p>
         </div>
         <hr class="featurette-divider" data-speed="10" data-offset="200" style="background: url(/img/Retina-macbook-pro-2.jpg); height: 500px">
 
@@ -47,8 +56,8 @@
         <div class="featurette">
            <img class="featurette-image pull-left" src="/img/ipad.png">
           
-          <h2 class="featurette-heading">Access all your photos<span class="muted">, everywhere</span></h2>
-          <p class="lead">We believe you want to access not only the latest photos or the best ones when you are away from home. Sync your library and you get access all your photos from all your devices.</p>
+          <h2 class="featurette-heading">Access all your photos,<span class="muted"> everywhere</span></h2>
+          <p class="lead">We believe you want to always have access not only the latest or best photos. Sync your library and you get access all your photos from all your devices.</p>
         </div>
 
         <hr class="featurette-divider" data-speed="10" data-offset="600" style="background: url(http://upload.wikimedia.org/wikipedia/commons/d/d7/CERN_Server_03.jpg); height: 500px">
@@ -57,8 +66,8 @@
 <div class="featurette">
           
           <img class="featurette-image pull-right" src="/img/guard.png">
-          <h2 class="featurette-heading">Your photos are <span class="muted">safe.</span></h2>
-          <p class="lead">We use state of the art cloud technology and ensure your photos will always be backed up and stored on at least two continents as long as you are a customer*.</p>
+          <h2 class="featurette-heading">You are <span class="muted">safe</span> with us</h2>
+          <p class="lead">We keep original, full resolution photos. You will never have to worry about photo backup again. Your photos are safe with us for years and years.</p>
         </div>
 
         <hr class="featurette-divider">
@@ -78,7 +87,7 @@
     </footer>
   
   <script>
-    
+    /*
     window.setInterval(function(){
 
       $('.featurette, .featurette-divider').css('backgroundPosition',  function(){
@@ -86,5 +95,5 @@
         return '0px ' + position + 'px'
       });
     }, 25);
-
+*/
   </script>
