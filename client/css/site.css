@@ -529,6 +529,24 @@ body .navbar-inner{
   transition            :all .3s ease-out-back;
 }
 
+.api-plan{text-align:center;float:right;width:24.4%;border-right:1px #d0d2d9 solid;padding:20px 0 15px;border-bottom:1px #d0d2d9 solid;border-top:1px #d0d2d9 solid;background-color:#f7f7f7;overflow:hidden;position:relative;}.api-plan:last-of-type{border-left:1px #d0d2d9 solid;padding-left:0;border-radius:3px 0 0 3px;}
+.api-plan:first-of-type{padding-right:0;border-radius:0 3px 3px 0;border-right-style:solid !important;}
+.api-plan h1{font-family:'Lato','Trebuchet MS',Helvetica,Arial,sans-serif;font-size:20px;text-transform:capitalize;}
+.api-plan h2{font-family:'Lato','Trebuchet MS',Helvetica,Arial,sans-serif;font-size:28px;color:#74b45c;padding:10px 0 0;margin:0 0 7px;}
+.api-plan em{font-style:normal;color:#797e96;}
+.api-plan .object,.api-plan .feature{background-color:#fff;border-bottom:1px #d0d2d9 dotted;}
+.api-plan .object h2,.api-plan .feature h2{font-family:'Lato','Trebuchet MS',Helvetica,Arial,sans-serif;font-size:14px;margin:0.3em 0 0.12em;color:#cc8809;}
+.api-plan .object p:first-child,.api-plan .feature p:first-child{margin:0 0 -1em;padding:1em 0 0;}
+.api-plan .object strong,.api-plan .feature strong{display:block;}
+.api-plan .object:first-of-type,.api-plan .feature:first-of-type{margin-top:15px;border-top:1px #d0d2d9 dotted;}
+.api-plan .object:last-of-type,.api-plan .feature:last-of-type{margin-bottom:15px;}
+.api-plan .feature{padding:0 12px;}.api-plan .feature h2{font-size:38px;line-height:1em;margin:0 0 -2px;}
+.api-plan .feature .no{color:#dddee5;}
+.api-plan .button{float:none;margin:0;}
+.api-plan .ribbon{position:absolute;top:5px;right:-31px;display:inline-block;font-size:12px;font-weight:bold;line-height:1.1em;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);-o-transform:rotate(45deg);transform:rotate(45deg);padding:3px 0;width:100px;text-align:center;background-color:#7ab1d7;color:#fff;}
+.api-plan.recommended{border-left:1px #d0d2d9 solid;border-color:#7ab1d7;border-radius:4px;box-shadow:0 0 6px #c9dfef;-webkit-transform:scale(1.02);-moz-transform:scale(1.02);-ms-transform:scale(1.02);-o-transform:scale(1.02);transform:scale(1.02);position:relative;z-index:50;}
+
+
 @media only screen and (max-width : 1199px),
 only screen and (max-device-width : 1199px){
     #wall .group {
