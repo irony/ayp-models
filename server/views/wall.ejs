@@ -40,6 +40,8 @@
           if (target.className.indexOf('selected') < 0 )
             $('.selected').removeClass('selected');
 
+          target.src = target.src.replace('thumbnails', "orginals");
+          
           $(target).toggleClass('selected');
         }
       } );
