@@ -6,7 +6,7 @@ var formidable = require('formidable');
 var connector = new InputConnector();
 
 /**
- * Parses and uploads the photo to S3 based on a request coming from a browser. 
+ * Parses and uploads the photo to S3 based on a request coming from a browser.
  * @param  {[type]}   req  [description]
  * @param  {Function} done [description]
  * @return {[type]}        [description]
@@ -32,6 +32,8 @@ connector.handleRequest = function(req, done){
     photo.mime_type = part.mime;
     console.debug('saving in database', photo);
     importer.savePhotos(req.user, [photo], function(err, photos){
+      if(err) return done(err);
+
       console.debug('uploading %d photos to s3', photos.length);
       return self.save('original', photos[0], part, function(err, result){
         console.debug('upload done', photos.length);

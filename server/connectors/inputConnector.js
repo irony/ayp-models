@@ -66,8 +66,6 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
             'Cache-Control': 'public,max-age=31556926'
         });
 
-    console.log(req);
-    
     //console.log('saving %s to s3', folder, req);
     req.on('error', function(err) {
       console.debug('Request error when saving to S3: %s'.red, err);
