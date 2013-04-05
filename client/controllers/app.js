@@ -111,10 +111,10 @@ angular.module('app', [])
             if(zip){
                 // unzip(file);
             } else {
-              if(file.type.match(/image\.*/)){
+              //if(file.type.match(/image\.*/)){
                 scope.files.push(file);
                 scope.$apply();
-              }
+              //}
             }
         } else if (entry.isDirectory) {
           traverseFileTree(entry, null, function(file){

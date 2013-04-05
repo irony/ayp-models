@@ -18,18 +18,28 @@ var importer = {
    * @param  {[type]} progress callback which will be called after save of whole collection with (err, photos)
    */
   savePhotos : function(user, photos, done){
+        console.debug('Saving %d photos', photos.length);
 
         async.map(photos, function(photo, next){
 
-          Photo.findOne({'source' : photo.source, 'taken' : photo.client_mtime}, function(err, dbPhoto){
+          console.debug('Saving photo %s', photo.path);
+
+          Photo.findOne({'owners' : user._id, 'taken' : photo.client_mtime}, function(err, dbPhoto){
+              console.log('found %d photos', dbPhoto ? "one" : "no", err);
+
 
             if (err) {
-              throw err;
+              console.log('Error saving photo', err);
+              return done(err);
             }
 
             if (!dbPhoto){
               dbPhoto = new Photo();
               dbPhoto.copies = {};
+              console.debug('Found no photo, creating new ');
+
+            } else {
+              console.debug('Found photo, ', dbPhoto);
             }
 
 
@@ -51,6 +61,9 @@ var importer = {
             dbPhoto.metadata = photo;
             dbPhoto.bytes = photo.bytes;
             dbPhoto.mimeType = photo.mime_type;
+
+            console.log('Updating photo, ', dbPhoto);
+
 
             dbPhoto.save(next);
 

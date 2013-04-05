@@ -2,13 +2,11 @@ var Photo = require('../../models/photo');
 var Group = require('../../models/group');
 var User = require('../../models/user');
 var InputConnector = require('../connectors/inputConnector');
-var importer = require('../../jobs/importer');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
 var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('underscore');
-var formidable = require('formidable');
 
 module.exports = function(app){
 
@@ -90,61 +88,14 @@ module.exports = function(app){
       return res.json({error:'Login first'});
     }
 
-    var form = new formidable.IncomingForm();
-    var uploadConnector = new InputConnector("UploadConnector");
-    var photo;
+    var uploadConnector = require('../connectors/upload.js');
+    uploadConnector.handleRequest(req, function(err, results){
+      if (err) return res.send(err, 500);
 
-    // Handle each part of the multi-part post
-    form.onPart = function (part) {
-      
-      var file = '';
-      if (part.filename) {
-        photo = part;
-      }
+      return res.json(results);
 
-      // Handle each data chunk as data streams in
-      part.addListener('data', function (data) {
-        file += data.toString('binary');
-      });
-
-      // The part is done
-      part.addListener('end', function () {
-        uploadConnector.extractExif(file, function(err, headers){
-          console.log('headers', headers);
-          photo.source = 'upload';
-          photo.path = photo.filename;
-          // photo.client_mtime = part.modified; // todo exif?
-          photo.bytes = file.length;
-          photo.mime_type = part.mime;
-          console.log('saving...');
-          importer.savePhotos(req.user, [photo], file, function(err, photos){
-            console.log('uploading...');
-            uploadConnector.save('original', photos[0], file, function(err, result){
-              console.log('done...');
-              res.json(result);
-            });
-          });
-        });
-      });
-    };
-
-    // Multi-part form is totally done, redirect back to index
-    // and pass filename
-    form.addListener('end', function () {
-     res.end('OK');
     });
-
-    // Do it
-    form.parse(req);
-
     
-/*
-    importer.savePhotos(req.user, []);
-
-/*
-    photo.*/
-    //importer.save('original', photo, stream, done)
-
   });
 
   app.post('/api/photoRange', function(req, res){
