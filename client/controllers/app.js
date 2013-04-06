@@ -103,27 +103,69 @@ angular.module('app', [])
       e.preventDefault();
       console.log(e, arguments);
       var length = e.dataTransfer.items.length;
+      var addFile = function(file){
+        if(file.type.match(/image\.*/)){
+          generateThumbnail(file, {width:640, height:480}, function(err, file){
+            scope.files.push(file);
+            scope.$apply();
+          });
+        }
+      };
+
       for (var i = 0; i < length; i++) {
         var entry = e.dataTransfer.items[i].webkitGetAsEntry();
         var file = e.dataTransfer.files[i];
         var zip = file.name.match(/\.zip/);
         if (entry.isFile) {
-            if(zip){
-                // unzip(file);
-            } else {
-              //if(file.type.match(/image\.*/)){
-                scope.files.push(file);
-                scope.$apply();
-              //}
-            }
+          addFile(file);
         } else if (entry.isDirectory) {
-          traverseFileTree(entry, null, function(file){
-            scope.files.push(file);
-            scope.$apply();
-          });
+          traverseFileTree(entry, null, addFile);
         }
       }
     });
+
+
+    function generateThumbnail(file, options, done){
+      options = options || {};
+      var img = document.createElement("img");
+      var reader = new FileReader();
+      
+      reader.readAsDataURL(file);
+      reader.onloadend = function() {
+        img.src = this.result;
+        var MAX_WIDTH = options.width || 640;
+        var MAX_HEIGHT = options.height || 480;
+     
+        img.onload = function(){
+
+          var width = img.width;
+          var height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          var canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0, width, height);
+
+          file.thumbnail = canvas.toDataURL("image/jpeg");
+          if (done) return done(null, file);
+        };
+      };
+    }
+
 
     /* Traverse through files and directories */
     function traverseFileTree(item, path, callback) {

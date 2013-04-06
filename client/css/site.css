@@ -36,7 +36,7 @@
 
     a.brand img
     {
-      width: 150px;
+      width: 120px;
       margin: -10px;
     }
 
@@ -689,8 +689,12 @@ only screen and (max-device-width : 599px){
 .dropzone{
 
   margin-bottom: 20px;
-  height:200px;
+  height:300px;
   overflow: scroll;
+  background: #f1f1f1;
+}
+
+.dropzone .instructions{
   padding: 100px;
 }
 
@@ -713,6 +717,10 @@ input[type=file]::-webkit-file-upload-button {
 
 .modal-header {
   padding: 30px;
+}
+
+.modal{
+  min-width: 50%;
 }
 
 .dropzone input{

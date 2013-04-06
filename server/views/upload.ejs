@@ -4,27 +4,29 @@
 
     <div class="modal-header">
       <h1>
-        Upload Photos to Your Library
+        Upload Photos to Your Timeline
         <a class="close" data-dismiss="modal" >&times;</a>
       </h1>
       <p class="lead">
-        It should be easy to start. Drag your SD card or USB drive below and wait a few minutes for the files to be scanned, then press Upload and you can soon view your timeline.
+        Just drag and drop your Photo folders below. If you have many folders, just add them all. If you get interrupted, try again and we will continue where you left off. 
       </p>
     </div>
     <div id="dropzone" class="dropzone media modal-body" >
     
-      <i class="icon-cloud-upload icon-4x pull-left" ng-show="!files.length"> </i>
-      <label ng-show="!files.length"> Drop your photo folder here or select one...
-        <input ng-show="!files.length" class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
-      </label>
-
+      <div class="instructions" ng-show="!files.length">
+        <i class="icon-cloud-upload icon-4x pull-left" > </i>
+        <label> Drop your photo folder here or press to select...
+          <input  class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
+        </label>
+      </div>
       <ul class="media-list">
-        <li class="media" ng-repeat="file in files">
+        <li class="media span2" ng-repeat="file in files">
+          <img src="{{file.thumbnail}}" ng-show="file.thumbnail" class="pull-left"/>
           <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-spinner' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
           <div class="media-body">
             <h4 class="media-heading">{{file.name}}</h4>
             <div class="progress progress-striped {{file.state == 'Uploading' && 'active' || ''}}">
-              <div class="bar {{file.state == 'Error' && 'bar-danger' || file.state == 'Done' && 'bar-success' || ''}}" style="width: {{file.progress || 0}}%;">{{file.state}}</div>
+              <div title="{{file.error}}" class="bar {{file.state == 'Error' && 'bar-danger' || file.state == 'Done' && 'bar-success' || ''}}" style="width: {{file.progress || 0}}%;">{{file.state}}</div>
             </div>
           </div>
         </li>
@@ -32,7 +34,7 @@
 
     </div>
     <div class="modal-footer">
-      <a href="#" class="btn btn-large btn-success pull-right " ng-click="upload()">Upload {{files.length && files.length + " photos" || ""}}</a>
+      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="upload()">Upload {{files.length && files.length + " photos" || ""}}</a>
     </div>
   </div>
 
@@ -59,10 +61,18 @@ function UploadController($scope, $http){
 
   $scope.upload = function(){
     console.log('upload');
-    $scope.files.filter(function(file){return !file.state}).slice(0,1).forEach(function(file){
+/*    $scope.files.filter(function(file){return !file.state}).slice(0,1).forEach(function(file){
         queue(file, $scope.upload);
-    });
+    });*/
   };
+
+  
+  $scope.$watch('files', function(files){
+    files.map(function(file){
+      if (!file.thumbnail) generateThumbnail(file, {width:640, height:480});
+    })
+  });
+
 
   function queue(file) {
     fr   = new FileReader;
@@ -73,11 +83,13 @@ function UploadController($scope, $http){
           if ($scope.library.photos.filter(function(photo){
             var taken = exif.DateTime ? exif.DateTime.slice(0,10).split(':').join('-') + exif.DateTime.slice(10) : null;
             return photo.taken == taken;
-          }).length) file.state = "Duplicate";
+          }).length) return file.state = "Duplicate";
         }
         
         if (!file.state) {
-          upload(file, exif);
+          upload(file, exif, function(err){
+            if (err) console.log('Error when uploading', err);
+          });
         }
     };
     fr.readAsBinaryString(file);
