@@ -33,7 +33,8 @@ var options = {
 
 // attach express handler function to TWO servers, one for http and one for https
 app.listen(process.env.PORT || 3000);
-http.globalAgent.maxSockets = 50;
+
+//http.globalAgent.maxSockets = 50;
 
 spdy.createServer(options, app.handle.bind(app)).listen(process.env.SSL_PORT || 8443);
 

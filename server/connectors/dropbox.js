@@ -49,7 +49,7 @@ var connector = new InputConnector();
 					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
-				return connector.save('thumbnails', photo, thumbnail, function(err){
+				return connector.upload('thumbnails', photo, thumbnail, function(err){
 					return done(err, thumbnail);
 				});
 
@@ -74,35 +74,10 @@ var connector = new InputConnector();
 
 		var client = this.getClient(user);
 		//client.media(photo.path, function(status, reply){
-		
-    // TODO: Replace the code below with the streamed version:
-		//
-		// return connector.save('originals', photo, client.stream(photo.path), function(err){
-		//	 console.log('saved returning...');
-		//	 return done(err, photo);
-		// });
 
-		client.get(photo.path, function(status, stream){
-
-			if (status !== 200){
-
-				if(status === 415) {
-					console.log('[415]'); //' received, removing photo. This is not a photo.', stream);
-					photo.remove();
-				}
-
-				if(status === 404) {
-					console.log('[404]'); //' received, removing photo. It is not found in dropbox.', stream);
-					photo.remove();
-				}
-
-				return done && done(new Error('Could not download original from dropbox, error nr ' + status));
-			}
-
-			return connector.save('originals', photo, stream, function(err){
+		var stream = client.stream(photo.path);
+		return connector.upload('originals', photo, stream, function(err){
 				return done(err, photo);
-			});
-
 		});
 	};
 

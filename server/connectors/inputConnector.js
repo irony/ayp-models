@@ -44,12 +44,12 @@ InputConnector.prototype.getClient = function(user){
   throw new Error('Not implemented');
 };
 
-InputConnector.prototype.save = function(folder, photo, stream, done){
+InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
 
-  if (!stream) return done(new Error('No stream'));
+  if (!stream || !stream.pipe) return done(new Error('No stream'));
 
   console.debug('saving...');
 /*    global.s3.putFile('/' + filename, stream, function(err, stream){
@@ -61,7 +61,7 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
   
-  var req = global.s3.put(filename, {
+  var req = global.s3.putStream(stream, filename, {
           //'Content-Length': stream.length,
           'Content-Type': photo.mimeType,
           'Cache-Control': 'public,max-age=31556926'
@@ -70,6 +70,9 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
   //console.log('saving %s to s3', folder, req);
   req.on('error', function(err) {
     console.debug('Request error when saving to S3: %s'.red, err);
+  });
+  req.on('progres', function(e){
+    console.debug('progress', e);
   });
   req.on('response', function(res){
     if (200 === res.statusCode || 307 === res.statusCode) {
@@ -99,12 +102,12 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
     }
   });
 
-  if (stream.pipe){
+  /*if (stream.pipe){
     console.log('Piping to s3');
     return stream.pipe(req);
   } else {
     return req.end(stream);
-  }
+  }*/
 
   /*
   console.log('save', filename)

@@ -6,13 +6,10 @@
 var config = require('../conf');
         
 
-// Profiler
-require('nodetime').profile(config.nodetime);
-
-
 
 var mongoose = require('mongoose');
 var _ = require('underscore');
+var colors = require('colors');
 var http = require('http');
 var express = require('express');
 var util = require('util');
@@ -20,8 +17,26 @@ var passport = require('./auth/passport');
 var knox      = require('knox');
 // var MongoStore = require('connect-mongo')(express);
 var RedisStore = require('connect-redis')(express);
+var db;
 
-mongoose.connect(config.mongoUrl);
+
+mongoose.connection.on("open", function(ref) {
+  return console.log("Connected to mongo server!".green);
+});
+
+mongoose.connection.on("error", function(err) {
+  console.log("Could not connect to mongo server!".yellow);
+  return console.log(err.message.red);
+});
+
+try {
+  mongoose.connect(config.mongoUrl);
+  db = mongoose.connection;
+  console.log("Started connection on " + config.mongoUrl.cyan + ", waiting for it to open...".grey);
+} catch (err) {
+  console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
+}
+
 // store the s3 client globally so we can use it from both jobs and routes without passing it as parameters
 // TODO: move to connectors
 global.s3 = knox.createClient(config.aws);

@@ -16,7 +16,7 @@ function WallController($scope, $http){
       });
       $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
 
-    }, 20);
+    }, 100);
   };
 
   $scope.dblclick = function(photo){

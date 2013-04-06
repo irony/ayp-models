@@ -1,10 +1,12 @@
 
+var config = require('../conf');
 var mongoose = require('mongoose');
+mongoose.connect(config.mongoUrl);
 
 var should = require("should");
 var auth = require('../server/auth/auth');
 var async = require('async');
-var app = require('../server/app');
+// var app = require('../server/app');
 var User = require('../models/user');
 
 var addedUsers = [];
