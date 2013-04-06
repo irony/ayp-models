@@ -104,6 +104,7 @@ function UploadController($scope, $http){
     // fd.append('thumbnail|'+exif.DateTime, file.thumbnail);
 
     var xhr = new XMLHttpRequest();
+    xhr.timeout = 10 * 60 * 1000;
     xhr.open("POST", "/api/upload", true);
 
     xhr.onload = function() {
