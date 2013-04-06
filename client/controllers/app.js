@@ -116,7 +116,9 @@ return openDialog;})
         if (entry.isFile) {
           addFile(file);
         } else if (entry.isDirectory) {
-          traverseFileTree(entry, null, addFile);
+          setTimeout(function(){
+            traverseFileTree(entry, null, addFile);
+          }, 1);
         }
       }
     });

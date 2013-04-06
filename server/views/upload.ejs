@@ -100,8 +100,8 @@ function UploadController($scope, $http){
 
   function uploadFile(file, exif, done){
     var fd = new FormData();
-    fd.append('original|'+exif.DateTime+'|'+file.size, file);
-    // fd.append('thumbnail|'+exif.DateTime, file.thumbnail);
+    //fd.append('original|'+exif.DateTime+'|'+file.size, file);
+    fd.append('thumbnail|'+exif.DateTime, file.thumbnail);
 
     var xhr = new XMLHttpRequest();
     xhr.timeout = 10 * 60 * 1000;
@@ -177,13 +177,13 @@ function UploadController($scope, $http){
 
           var ctx = canvas.getContext("2d");
           ctx.drawImage(this, 0, 0, width, height);
-/*
+
           canvas.toBlob(function(blob){
             file.thumbnail = blob;
             if (done) return done(null, file);
           }, "image/jpeg");
-*/
-          file.thumbnail = canvas.toDataURL("image/jpeg");
+
+//          file.thumbnail = canvas.toDataURL("image/jpeg");
           if (done) return done(null, file);
         };
       };
