@@ -27,6 +27,7 @@
     , "connect-redis" : "*"
     , "image-headers" : "*"
     , "formidable" : "*"
+    , "mocha" : "*"
   },
   "scripts" :
   { 
