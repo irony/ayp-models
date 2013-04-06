@@ -702,6 +702,10 @@ only screen and (max-device-width : 599px){
   list-style-type: none;
 }
 
+.dropzone li a{
+  margin-top:-20px;
+}
+
 input[type=file] {
   -webkit-appearance: none;
   position: relative;

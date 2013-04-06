@@ -84,8 +84,7 @@ module.exports = function(app){
 
   app.post('/api/upload', function(req, res, next){
     if (!req.user){
-      res.writeHead(403);
-      return res.json({error:'Login first'});
+      return res.send('Login first', 403);
     }
 
     var uploadConnector = require('../connectors/upload.js');

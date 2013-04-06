@@ -61,12 +61,14 @@ function UploadController($scope, $http){
 
   $scope.upload = function(){
     console.log('upload');
-/*    $scope.files.filter(function(file){return !file.state}).slice(0,1).forEach(function(file){
-        queue(file, $scope.upload);
-    });*/
+    $scope.files.filter(function(file){return !file.state}).slice(0,3).forEach(function(file){
+      if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
+        if (!err) queue(file, $scope.upload);
+      });
+    });
   };
 
-  
+
   $scope.$watch('files', function(files){
     files.map(function(file){
       if (!file.thumbnail) generateThumbnail(file, {width:640, height:480});
@@ -132,6 +134,53 @@ function UploadController($scope, $http){
     file.progress = 1;
     xhr.send(fd);
   }
+
+
+  function generateThumbnail(file, options, done){
+    options = options || {};
+    var img = document.createElement("img");
+    var reader = new FileReader();
+    
+    try {
+      reader.readAsDataURL(file);
+      reader.onloadend = function() {
+        img.src = this.result;
+        var MAX_WIDTH = options.width || 640;
+        var MAX_HEIGHT = options.height || 480;
+
+        img.onload = function(){
+
+          var width = img.width;
+          var height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          var canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0, width, height);
+
+          file.thumbnail = canvas.toDataURL("image/jpeg");
+          if (done) return done(null, file);
+        };
+      };
+    } catch(err){
+      if (done) return done(err);
+    }
+  }
+
 }
  
 </script>
