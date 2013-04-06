@@ -17,7 +17,8 @@ connector.handleRequest = function(req, done){
   var self = this;
   // Handle each part of the multi-part post
   form.onPart = function (part) {
-    var taken = part.name;
+    var taken = part.name.split('|')[1];
+    var quality = part.name.split('|')[0];
     var photo = {};
     photo.source = 'upload';
     photo.path = part.filename;
@@ -35,7 +36,7 @@ connector.handleRequest = function(req, done){
       if(err) return done(err);
 
       console.debug('uploading %d photos to s3', photos.length);
-      return self.save('original', photos[0], part, function(err, result){
+      return self.save(quality + "s", photos[0], part, function(err, result){
         console.debug('upload done', photos.length);
         return done(err, result);
       });

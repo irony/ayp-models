@@ -51,72 +51,75 @@ InputConnector.prototype.save = function(folder, photo, stream, done){
 
   if (!stream) return done(new Error('No stream'));
 
+  console.debug('saving...');
 /*    global.s3.putFile('/' + filename, stream, function(err, stream){
       console.log('done', err, stream);
       if (done) done(err, stream);
 
     });*/
 
-    var self = this;
-    var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
-    
-    var req = global.s3.put(filename, {
-            'Content-Length': stream.length,
-            'Content-Type': photo.mimeType,
-            'Cache-Control': 'public,max-age=31556926'
-        });
+  var self = this;
+  var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
+  
+  var req = global.s3.put(filename, {
+          //'Content-Length': stream.length,
+          'Content-Type': photo.mimeType,
+          'Cache-Control': 'public,max-age=31556926'
+      });
 
-    //console.log('saving %s to s3', folder, req);
-    req.on('error', function(err) {
-      console.debug('Request error when saving to S3: %s'.red, err);
-    });
-    req.on('response', function(res){
-      if (200 === res.statusCode || 307 === res.statusCode) {
-        console.debug('Extracting exif...');
-        self.extractExif(stream, function(err, headers){
+  //console.log('saving %s to s3', folder, req);
+  req.on('error', function(err) {
+    console.debug('Request error when saving to S3: %s'.red, err);
+  });
+  req.on('response', function(res){
+    if (200 === res.statusCode || 307 === res.statusCode) {
+      console.debug('Extracting exif...');
+      self.extractExif(stream, function(err, headers){
+      
+        if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
+        var setter = {$set : {}};
+        setter.$set['store.' + folder] = {url:req.url, stored: new Date()};
+        if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
+        if (headers && headers.width && headers.height) {
+          setter.ratio = headers.width / headers.height;
+          setter.$set['store.' + folder].width = headers.width;
+          setter.$set['store.' + folder].height = headers.height;
+        }
         
-          if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
-          var setter = {$set : {}};
-          setter.$set['store.' + folder] = {url:req.url, stored: new Date()};
-          if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
-          if (headers && headers.width && headers.height) {
-            setter.ratio = headers.width / headers.height;
-            setter.$set['store.' + folder].width = headers.width;
-            setter.$set['store.' + folder].height = headers.height;
-          }
-          
-          console.debug('Saving %s to db...', folder);
-          return photo.update(setter, {upsert: true, safe:true}, function(err){
-            console.debug('Done saving to db...', err);
-            return done(err, photo);
-          });
+        console.debug('Saving %s to db...', folder);
+        return photo.update(setter, {upsert: true, safe:true}, function(err){
+          console.debug('Done saving to db...', err);
+          return done(err, photo);
         });
+      });
 
-      } else {
-        return done(new Error('Error when saving to S3, code: '.red, res));
-      }
-    });
-
-    if (stream.pipe){
-      return stream.pipe(req);
     } else {
-      return req.end(stream);
+      console.debug('Error saving to s3', res);
+      return done(new Error('Error when saving to S3, code: '.red, res));
     }
+  });
 
-    /*
-    console.log('save', filename)
-    var mkdirp = require('mkdirp'),
-        fs = require('fs'),
-        p = require('path'),
-        pathArray = filename.split('/');
+  if (stream.pipe){
+    console.log('Piping to s3');
+    return stream.pipe(req);
+  } else {
+    return req.end(stream);
+  }
 
-    pathArray.pop(); // remove file part
+  /*
+  console.log('save', filename)
+  var mkdirp = require('mkdirp'),
+      fs = require('fs'),
+      p = require('path'),
+      pathArray = filename.split('/');
 
-    mkdirp(pathArray.join('/'), function (err) {
-      if (err && done) done(err);
-    });
+  pathArray.pop(); // remove file part
 
-    fs.writeFile(filename, data, done);*/
-  };
+  mkdirp(pathArray.join('/'), function (err) {
+    if (err && done) done(err);
+  });
+
+  fs.writeFile(filename, data, done);*/
+};
 
 module.exports = InputConnector;

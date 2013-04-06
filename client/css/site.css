@@ -723,8 +723,14 @@ input[type=file]::-webkit-file-upload-button {
   padding: 30px;
 }
 
-.modal{
-  min-width: 50%;
+body .modal {
+  width: 80%; /* desired relative width */
+  left: 10%; /* (100%-width)/2 */
+  top: 120px;
+  margin: auto auto auto auto; /* place center */
+}
+body .modal.fade.in {
+  top: auto; /* fade in to correct spot */
 }
 
 .dropzone input{

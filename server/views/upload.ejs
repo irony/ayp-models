@@ -21,7 +21,7 @@
       </div>
       <ul class="media-list">
         <li class="media span2" ng-repeat="file in files">
-          <img src="{{file.thumbnail}}" ng-show="file.thumbnail" class="pull-left"/>
+          <img src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail" class="pull-left"/>
           <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-spinner' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
           <div class="media-body">
             <h4 class="media-heading">{{file.name}}</h4>
@@ -34,7 +34,7 @@
 
     </div>
     <div class="modal-footer">
-      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="upload()">Upload {{files.length && files.length + " photos" || ""}}</a>
+      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="startUpload()">Upload {{files.length && files.length + " photos" || ""}}</a>
     </div>
   </div>
 
@@ -59,24 +59,25 @@ function UploadController($scope, $http){
     }
   };
 
-  $scope.upload = function(){
+  var uploadInterval;
+  $scope.startUpload = function(){
     console.log('upload');
-    $scope.files.filter(function(file){return !file.state}).slice(0,3).forEach(function(file){
-      if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
-        if (!err) queue(file, $scope.upload);
+    
+    clearInterval(uploadInterval);
+
+    // check every interval for new files to process but don't add new if the current ones are in a processing state
+    uploadInterval = setInterval(function(){
+      $scope.files.filter(function(file){return !file.state || file.state === "Processing" || file.state === "Uploading" }).slice(0,1).forEach(function(file){
+        if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
+          if (!err) queueFile(file, $scope.upload);
+        });
       });
-    });
+      $scope.$apply();
+    }, 1000);
   };
 
-
-  $scope.$watch('files', function(files){
-    files.map(function(file){
-      if (!file.thumbnail) generateThumbnail(file, {width:640, height:480});
-    })
-  });
-
-
-  function queue(file) {
+  function queueFile(file) {
+    console.log('queue')
     fr   = new FileReader;
     fr.onloadend = function() {
         if ($scope.library && $scope.library.photos){
@@ -89,7 +90,7 @@ function UploadController($scope, $http){
         }
         
         if (!file.state) {
-          upload(file, exif, function(err){
+          uploadFile(file, exif, function(err){
             if (err) console.log('Error when uploading', err);
           });
         }
@@ -97,10 +98,10 @@ function UploadController($scope, $http){
     fr.readAsBinaryString(file);
   }
 
-  function upload(file, exif, done){
+  function uploadFile(file, exif, done){
     var fd = new FormData();
-    fd.append(exif.DateTime, file);
-    console.log('exif', exif);
+    fd.append('original|'+exif.DateTime, file);
+    // fd.append('thumbnail|'+exif.DateTime, file.thumbnail);
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/upload", true);
@@ -108,9 +109,9 @@ function UploadController($scope, $http){
     xhr.onload = function() {
       if(this.status>200){
         file.state = 'Error';
-        file.error = xhr.responseText;
-        file.progress = 100;
-        return done('error', file);
+        file.error = JSON.parse(xhr.responseText);
+        file.progress = 30;
+        return done(file.error, file);
       } else {
           var response = JSON.parse(xhr.responseText);
           console.log('Done', response);
@@ -123,13 +124,15 @@ function UploadController($scope, $http){
 
     // Listen to the upload progress.
     xhr.upload.onprogress = function(e) {
+        file.state = 'Uploading';
       if (e.lengthComputable) {
         file.progress = (e.loaded / e.total) * 100;
-        file.state = file.progress >= 100 ? 'Done' : 'Uploading';
       } else {
         file.progress = Math.min(file.progress++, 100);
       }
     };
+
+    xhr.onend
 
     file.progress = 1;
     xhr.send(fd);
@@ -137,6 +140,8 @@ function UploadController($scope, $http){
 
 
   function generateThumbnail(file, options, done){
+    file.thumbnail = null; 
+
     options = options || {};
     var img = document.createElement("img");
     var reader = new FileReader();
@@ -171,7 +176,12 @@ function UploadController($scope, $http){
 
           var ctx = canvas.getContext("2d");
           ctx.drawImage(this, 0, 0, width, height);
-
+/*
+          canvas.toBlob(function(blob){
+            file.thumbnail = blob;
+            if (done) return done(null, file);
+          }, "image/jpeg");
+*/
           file.thumbnail = canvas.toDataURL("image/jpeg");
           if (done) return done(null, file);
         };

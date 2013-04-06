@@ -101,7 +101,6 @@ return openDialog;})
     element.bind('drop', function(event) {
       var e = event.originalEvent;
       e.preventDefault();
-      console.log(e, arguments);
       var length = e.dataTransfer.items.length;
       var addFile = function(file){
         if(file.type.match(/image\.*/)){

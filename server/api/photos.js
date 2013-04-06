@@ -90,7 +90,7 @@ module.exports = function(app){
     var uploadConnector = require('../connectors/upload.js');
     uploadConnector.handleRequest(req, function(err, results){
       if (err) return res.send(err, 500);
-
+      console.debug('DONE upload', results);
       return res.json(results);
 
     });
