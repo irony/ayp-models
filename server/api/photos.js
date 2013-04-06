@@ -158,7 +158,7 @@ module.exports = function(app){
             photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : 'Photos-icon.png';
           }
 
-          return done(null, {taken:photo.taken.getTime(), src: photo.src, vote: Math.floor(vote), ratio: photo.ratio});
+          return done(null, {taken:photo.taken && photo.taken.getTime(), src: photo.src, vote: Math.floor(vote), ratio: photo.ratio});
         }, function(err, photos){
           return res.json({maxRank: user.maxRank, photos: photos});
         });
