@@ -36,10 +36,10 @@ var importer = {
             if (!dbPhoto){
               dbPhoto = new Photo();
               dbPhoto.copies = {};
-              console.debug('Found no photo, creating new ');
+              // console.debug('Found no photo, creating new ');
 
             } else {
-              console.debug('Found photo, ', dbPhoto);
+              // console.debug('Found photo, ', dbPhoto._id);
             }
 
 
@@ -62,7 +62,7 @@ var importer = {
             dbPhoto.bytes = photo.bytes;
             dbPhoto.mimeType = photo.mime_type;
 
-            console.log('Updating photo, ', dbPhoto);
+            // console.log('Updating photo, ', dbPhoto);
 
 
             dbPhoto.save(next);

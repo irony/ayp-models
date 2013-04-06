@@ -100,7 +100,7 @@ function UploadController($scope, $http){
 
   function uploadFile(file, exif, done){
     var fd = new FormData();
-    fd.append('original|'+exif.DateTime, file);
+    fd.append('original|'+exif.DateTime+'|'+file.size, file);
     // fd.append('thumbnail|'+exif.DateTime, file.thumbnail);
 
     var xhr = new XMLHttpRequest();

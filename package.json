@@ -26,7 +26,9 @@
     , "knox" : "*"
     , "connect-redis" : "*"
     , "image-headers" : "*"
-    , "formidable" : "*"
+    , "readable-stream" : "*"
+    , "multiparty" : "*"
+    , "batch" : "*"
     , "mocha" : "*"
   },
   "scripts" :

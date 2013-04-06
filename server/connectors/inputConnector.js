@@ -51,7 +51,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   if (!stream || !stream.pipe) return done(new Error('No stream'));
 
-  console.debug('saving...');
 /*    global.s3.putFile('/' + filename, stream, function(err, stream){
       console.log('done', err, stream);
       if (done) done(err, stream);
@@ -60,46 +59,53 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
-  
   var req = global.s3.putStream(stream, filename, {
-          //'Content-Length': stream.length,
+          'Content-Length': stream.length,
           'Content-Type': photo.mimeType,
           'Cache-Control': 'public,max-age=31556926'
+      }, function(err, res){
+        console.log('After %d bytes, got response s3', stream.length, res, err);
+
+        if (err) return done(err);
+
+        if (200 === res.statusCode || 307 === res.statusCode) {
+          console.debug('Extracting exif...');
+          self.extractExif(stream, function(err, headers){
+          
+            if (err) console.debug('ERROR: Could not read EXIF of photo %s', photo._id, err);
+            var setter = {$set : {}};
+            setter.$set['store.' + folder] = {url:req.url, stored: new Date()};
+            if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
+            if (headers && headers.width && headers.height) {
+              setter.ratio = headers.width / headers.height;
+              setter.$set['store.' + folder].width = headers.width;
+              setter.$set['store.' + folder].height = headers.height;
+            }
+            
+            console.debug('Saving %s to db...', folder);
+            return photo.update(setter, {upsert: true, safe:true}, function(err){
+              console.debug('Done saving to db...', err);
+              return done(err, photo);
+            });
+          });
+
+        } else {
+          res.on('data', function(chunk){
+            console.log(chunk.red);
+          });
+          return done(new Error('Error when saving to S3, code: '.red, res));
+        }
       });
 
   //console.log('saving %s to s3', folder, req);
+  req.on('data', function(data) {
+    console.debug('S3 Response: ', data.toString());
+  });
   req.on('error', function(err) {
     console.debug('Request error when saving to S3: %s'.red, err);
   });
-  req.on('progres', function(e){
+  req.on('progress', function(e){
     console.debug('progress', e);
-  });
-  req.on('response', function(res){
-    if (200 === res.statusCode || 307 === res.statusCode) {
-      console.debug('Extracting exif...');
-      self.extractExif(stream, function(err, headers){
-      
-        if (err) console.log('ERROR: Could not read EXIF of photo %s', photo._id, err);
-        var setter = {$set : {}};
-        setter.$set['store.' + folder] = {url:req.url, stored: new Date()};
-        if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
-        if (headers && headers.width && headers.height) {
-          setter.ratio = headers.width / headers.height;
-          setter.$set['store.' + folder].width = headers.width;
-          setter.$set['store.' + folder].height = headers.height;
-        }
-        
-        console.debug('Saving %s to db...', folder);
-        return photo.update(setter, {upsert: true, safe:true}, function(err){
-          console.debug('Done saving to db...', err);
-          return done(err, photo);
-        });
-      });
-
-    } else {
-      console.debug('Error saving to s3', res);
-      return done(new Error('Error when saving to S3, code: '.red, res));
-    }
   });
 
   /*if (stream.pipe){
