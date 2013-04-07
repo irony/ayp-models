@@ -25,7 +25,7 @@ function AppController($scope, $http)
       }
     });
 
-  $scope.library = localStorage && localStorage.getObject('library');
+  $scope.library = sessionStorage && sessionStorage.getObject('library');
 
   $scope.$watch('library', function(value){
     console.log('loading library', value);
@@ -34,7 +34,7 @@ function AppController($scope, $http)
       $http.get('/api/library', {params: null}).success(function(library){
         $scope.library = library;
         console.log('library', library);
-        if (localStorage) localStorage.setObject('library', library);
+        if (sessionStorage) sessionStorage.setObject('library', library);
 
       }).error(function(err){
         console.log('library error');
@@ -102,10 +102,16 @@ return openDialog;})
       var e = event.originalEvent;
       e.preventDefault();
       var length = e.dataTransfer.items.length;
+      var updateTimeout;
       var addFile = function(file){
         if(file.type.match(/image\.*/)){
           scope.files.push(file);
-          scope.$apply();
+
+          // wait until we have found all files before updating the view
+          clearTimeout(updateTimeout);
+          updateTimeout = setTimeout(function(){
+            scope.$apply();
+          }, 200);
         }
       };
 
@@ -119,6 +125,9 @@ return openDialog;})
           traverseFileTree(entry, null, addFile);
         }
       }
+      // initial binding
+      scope.$apply();
+
     });
 
 
@@ -137,9 +146,8 @@ return openDialog;})
         var dirReader = item.createReader();
         dirReader.readEntries(function(entries) {
           for (var i=0; i<entries.length; i++) {
-            setTimeout(function(){
-              traverseFileTree(entries[i], path + item.name + "/", callback);
-            }, 200);
+            var entry = entries[i];
+            traverseFileTree(entry, path + item.name + "/", callback);
           }
         });
       }

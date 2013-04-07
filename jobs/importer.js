@@ -24,7 +24,7 @@ var importer = {
 
           console.debug('Saving photo %s', photo.path);
 
-          Photo.findOne({'owners' : user._id, 'taken' : photo.client_mtime || photo.taken}, function(err, dbPhoto){
+          Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.client_mtime || photo.taken}, function(err, dbPhoto){
               console.log('found %d photos', dbPhoto ? "one" : "no", err);
 
 
