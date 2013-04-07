@@ -150,11 +150,11 @@ function UploadController($scope, $http){
     xhr.onload = function() {
       if(this.status !== 200){
         file.state = 'Error';
-        file.error = JSON.parse(xhr.responseText);
+        file.error = xhr.responseText;
         file.progress = 30;
         return done(file.error, file);
       } else {
-          var response = JSON.parse(xhr.responseText);
+          var response = xhr.responseText;
           console.log('Done', response);
           file.response = response;
           file.state = 'Done';
