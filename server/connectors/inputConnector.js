@@ -60,7 +60,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
   var headers = {
-          'Content-Length': stream.byteCount,
+          'Content-Length': stream.length,
           'Content-Type': photo.mimeType,
           'x-amz-acl': 'public-read',
           'Cache-Control': 'public,max-age=31556926'

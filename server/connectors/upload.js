@@ -19,6 +19,8 @@ connector.handleRequest = function(req, done){
   var i = 0;
   var photo = {};
 
+  form.pause();
+
   form.onPart = function (part) {
     if (!part.filename) return form.handlePart(part);
 
@@ -32,30 +34,14 @@ connector.handleRequest = function(req, done){
 
     var quality = part.name.split('|')[0];
     var taken = part.name.split('|')[1];
-    var length = part.name.split('|')[2]; // hack, should be set elsewhere?
+    part.length = part.name.split('|')[2]; // hack, should be set elsewhere?
     photo.source = 'upload';
-    photo.bytes = length;
+    photo.bytes = part.length;
     photo.path = part.filename;
-    photo.mimeType = part.mime;
 
-
-    var put = global.s3.putStream(part, '/thumbnails/upload/test' + Math.random() * 1000 +'.jpg', {'Content-Length':length}, function(err, res){
-      if (err) throw err;
-
-      console.log('response', res);
-      res.on('data', function(chunk){
-        console.log(chunk.toString().red);
-      });
-    });
-
-    put.on('progress', function(){
-      console.log('progress', arguments);
-    });
-    /*if (taken){
+    if (taken){
       // convert 2012:04:01 11:12:13 to ordinary datetime
-      taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
-
-      photo.client_mtime = taken;
+      photo.client_mtime = taken.slice(0,10).split(':').join('-') + taken.slice(10);
     }
 
     // photo.bytes = file.length;
@@ -65,11 +51,12 @@ connector.handleRequest = function(req, done){
       if(err) return done(err);
 
       console.debug('uploading %d photos to s3', photos.length);
+      form.resume();
       return self.upload(quality + "s", photos[0], part, function(err, result){
         console.debug('upload done', err, result);
         return done(err, result);
       });
-    });*/
+    });
   };
 
   form.parse(req);
