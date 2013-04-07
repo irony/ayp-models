@@ -2,8 +2,8 @@
 touch tmp/restart.txt
 echo "restarting All Your Photos after receiving push"
 
-sudo gem install mason 
-sudo gem install foreman 
+#sudo gem install mason 
+#sudo gem install foreman 
 
 
 export NODE_ENV=production 

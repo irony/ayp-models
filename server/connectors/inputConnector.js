@@ -59,13 +59,16 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
-  var req = global.s3.putStream(stream, filename, {
-          'Content-Length': stream.length,
+  var headers = {
+          'Content-Length': stream.byteCount,
           'Content-Type': photo.mimeType,
+          'x-amz-acl': 'public-read',
           'Cache-Control': 'public,max-age=31556926'
-      }, function(err, res){
-        console.log('After %d bytes, got response s3', stream.length, res, err);
+      };
 
+  console.debug('uploading ', headers);
+
+  var req = global.s3.putStream(stream, filename, headers, function(err, res){
         if (err) return done(err);
 
         if (200 === res.statusCode || 307 === res.statusCode) {
@@ -91,7 +94,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
         } else {
           res.on('data', function(chunk){
-            console.log(chunk.red);
+            console.log(chunk.toString().red);
           });
           return done(new Error('Error when saving to S3, code: '.red, res));
         }

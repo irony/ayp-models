@@ -1,25 +1,8 @@
 var passport = require('passport');
 var InputConnector = require('./inputConnector');
 var importer = require('../../jobs/importer');
-var multiparty = require('multiparty');
-var async = require('async');
+var formidable = require('formidable');
 var util = require('util');
-
-/**
- * Writable stream with byte counter
- * @type {[type]}
- */
-var Writable = require('readable-stream').Writable;
-util.inherits(ByteCounter, Writable);
-function ByteCounter(options) {
-  Writable.call(this, options);
-  this.bytes = 0;
-}
-ByteCounter.prototype._write = function(chunk, encoding, done) {
-  this.bytes += chunk.length;
-  done();
-};
-
 
 var connector = new InputConnector();
 
@@ -31,25 +14,44 @@ var connector = new InputConnector();
  */
 connector.handleRequest = function(req, done){
 
-  var form = new multiparty.Form();
+  var form = new formidable.IncomingForm();
   var self = this;
   var i = 0;
   var photo = {};
 
-  form.on('part', function (part) {
+  form.onPart = function (part) {
+    if (!part.filename) return form.handlePart(part);
+
+    part.pause = function() {
+      form.pause();
+    };
+
+    part.resume = function() {
+      form.resume();
+    };
+
     var quality = part.name.split('|')[0];
     var taken = part.name.split('|')[1];
-    part.length = part.byteCount || part.name.split('|')[2]; // hack, should be set elsewhere?
+    var length = part.name.split('|')[2]; // hack, should be set elsewhere?
     photo.source = 'upload';
-
-    var counter = new ByteCounter();
-    part.pipe(counter); // need this until knox upgrades to streams2
-    part.on('end',function(){
-      console.log('part end, size %d', counter.bytes);
-    });
-    photo.bytes = part.length;
+    photo.bytes = length;
     photo.path = part.filename;
-    if (taken){
+    photo.mimeType = part.mime;
+
+
+    var put = global.s3.putStream(part, '/thumbnails/upload/test' + Math.random() * 1000 +'.jpg', {'Content-Length':length}, function(err, res){
+      if (err) throw err;
+
+      console.log('response', res);
+      res.on('data', function(chunk){
+        console.log(chunk.toString().red);
+      });
+    });
+
+    put.on('progress', function(){
+      console.log('progress', arguments);
+    });
+    /*if (taken){
       // convert 2012:04:01 11:12:13 to ordinary datetime
       taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
 
@@ -64,17 +66,12 @@ connector.handleRequest = function(req, done){
 
       console.debug('uploading %d photos to s3', photos.length);
       return self.upload(quality + "s", photos[0], part, function(err, result){
-        console.debug('upload done', photos.length);
+        console.debug('upload done', err, result);
         return done(err, result);
       });
-    });
-  });
+    });*/
+  };
 
-  form.on('close', function () {
-    // we need to have a callback here to activate the parsing..
-  });
-
-  // Do it
   form.parse(req);
 };
 
