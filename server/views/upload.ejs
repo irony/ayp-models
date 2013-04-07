@@ -40,7 +40,10 @@
       <div class="span4 pull-left alert" ng-show="!uploading">
         You need Google Chrome to use this feature.
       </div>
-      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="startUpload()">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
+      <a href="#" class="btn btn-large btn-success pull-right" ng-disabled="!files.length" ng-click="startUpload()">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
+      <div class="span4 pull-right progress progress-striped active" ng-show="uploading">
+        <div style="width: {{queue.length / files.length }}%;">Uploading {{queue.length}} / {{files.length}}</div>
+      </div>
     </div>
   </div>
 
@@ -65,8 +68,20 @@ function UploadController($scope, $http){
     }
   };
 
-  var uploadInterval;
+/*
+  $scope.$watch('files', function(files){
+    $scope.files = files
+    .sort(function(a,b){
+      return b.modified - a.modified
+    })
+    .reduce(function(a,b){
+      if (a.slice(-1).modified != b.modified) a.push(b);
+      return a;
+    },[]);
+  })
+*/
 
+  var uploadInterval;
   $scope.$watch('uploading', function(on){
     clearInterval(uploadInterval);
 
@@ -88,9 +103,13 @@ function UploadController($scope, $http){
   });
 
   $scope.startUpload = function(){
-    console.log('upload');
-    $scope.uploading = true;
+    $scope.uploading = !$scope.uploading;
     
+    $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
+      file.state = ''; // restart the current uploading files and try again
+      file.progress = 0;
+      window.stop();
+    });
   };
 
   function queueFile(file) {
@@ -120,7 +139,8 @@ function UploadController($scope, $http){
     var fd = new FormData();
     var blob = dataURItoBlob(file.thumbnail);
     //blob.filename = file.filename;
-    //fd.append('original|'+exif.DateTime+'|'+file.size, file);
+    fd.append('exif', exif);
+    fd.append('original|'+exif.DateTime+'|'+file.size, file);
     fd.append('thumbnail' + '|' + exif.DateTime+ '|' + blob.size, blob);
 
     var xhr = new XMLHttpRequest();
@@ -147,7 +167,6 @@ function UploadController($scope, $http){
     xhr.upload.onprogress = function(e) {
         file.state = 'Uploading';
       if (e.lengthComputable) {
-        console.log('progress', e);
         file.progress = (e.loaded / e.total) * 100;
       } else {
         file.progress = Math.min(file.progress++, 100);

@@ -19,6 +19,11 @@ connector.handleRequest = function(req, done){
   var i = 0;
   var photo = new Photo();
 
+  form.onField = function (field) {
+    if (field.name === "exif")
+      photo.exif = field.value;
+  };
+
   form.onPart = function (part) {
     if (!part.filename) return form.handlePart(part);
 
@@ -58,6 +63,8 @@ connector.handleRequest = function(req, done){
       
     });
   };
+
+  form.on('error', done);
 
   form.parse(req);
 };

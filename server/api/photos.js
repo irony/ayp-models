@@ -82,17 +82,15 @@ module.exports = function(app){
     });
   });
 
-  app.post('/api/upload', function(req, res, next){
+  app.post('/api/upload', function(req, res){
     if (!req.user){
       return res.send('Login first', 403);
     }
 
     var uploadConnector = require('../connectors/upload.js');
     uploadConnector.handleRequest(req, function(err, results){
-      if (err) return res.send(err, 500);
-      console.debug('DONE upload', results);
-      return res.json(results);
-
+      if (err) return res.end(new Error(err));
+      return res.send('OK');
     });
     
   });

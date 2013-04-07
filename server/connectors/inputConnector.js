@@ -62,12 +62,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   var exifReader = new ImageHeaders();
 
-  stream.on('data', function(chunk){
+  put.on('data', function(chunk){
     if (!exifReader.finished) exifReader.add_bytes(chunk);
   });
 
   stream.on('end', function(){
     exifReader.finish(function(err, exif){
+      console.debug('found exif', exif);
+      
       if (err || !exif) return console.debug('ERROR: Could not read EXIF of photo %s', photo.taken.getTime(), err);
       
       var setter = {$set : {}};
