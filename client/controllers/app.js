@@ -116,9 +116,7 @@ return openDialog;})
         if (entry.isFile) {
           addFile(file);
         } else if (entry.isDirectory) {
-          setTimeout(function(){
-            traverseFileTree(entry, null, addFile);
-          }, 1);
+          traverseFileTree(entry, null, addFile);
         }
       }
     });
@@ -139,7 +137,9 @@ return openDialog;})
         var dirReader = item.createReader();
         dirReader.readEntries(function(entries) {
           for (var i=0; i<entries.length; i++) {
-            traverseFileTree(entries[i], path + item.name + "/", callback);
+            setTimeout(function(){
+              traverseFileTree(entries[i], path + item.name + "/", callback);
+            }, 200);
           }
         });
       }

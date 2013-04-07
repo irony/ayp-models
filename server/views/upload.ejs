@@ -15,14 +15,14 @@
     
       <div class="instructions" ng-show="!files.length">
         <i class="icon-cloud-upload icon-4x pull-left" > </i>
-        <label> Drop your photo folder here or press to select...
-          <input  class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
+        <label> Drag and drop your photo folder or SD card here...
+          <input ng-show="false" class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
         </label>
       </div>
       <ul class="media-list">
-        <li class="media span2" ng-repeat="file in files">
+        <li class="media span2 {{file.state}}" ng-repeat="file in files">
           <img src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail" class="pull-left"/>
-          <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-spinner' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
+          <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-circle-arrow-up' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
           <div class="media-body">
             <h4 class="media-heading">{{file.name}}</h4>
             <div class="progress progress-striped {{file.state == 'Uploading' && 'active' || ''}}">
@@ -34,7 +34,13 @@
 
     </div>
     <div class="modal-footer">
-      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="startUpload()">Upload {{files.length && files.length + " photos" || ""}}</a>
+      <div class="span2 pull-left" ng-show="uploading"><input type="range" min="1" max="10" ng-model="channels"> 
+        {{channels}} upload channels
+      </div>
+      <div class="span4 pull-left alert" ng-show="!uploading">
+        You need Google Chrome to use this feature.
+      </div>
+      <a href="#" class="btn btn-large btn-success pull-right " ng-disabled="!files.length" ng-click="startUpload()">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
     </div>
   </div>
 
@@ -45,35 +51,46 @@ function UploadController($scope, $http){
 
   $scope.state = null;
   $scope.files = [];
-  /* Drag'n drop stuff */
-
+  $scope.channels = 2;
+  $scope.queue = [];
 
   //process files
   $scope.fileChange = function (e) {
     var files = e.target.files;
     for(i=0; i<files.length; i++) {
         var file = files[i];
-        if(file.type.match(/image.*/)){
+        if(file.type.match(/image\.*/)){
             $scope.files.push(file);
         }
     }
   };
 
   var uploadInterval;
-  $scope.startUpload = function(){
-    console.log('upload');
-    
+
+  $scope.$watch('uploading', function(on){
     clearInterval(uploadInterval);
 
-    // check every interval for new files to process but don't add new if the current ones are in a processing state
-    uploadInterval = setInterval(function(){
-      $scope.files.filter(function(file){return !file.state || file.state === "Processing" || file.state === "Uploading" }).slice(0,1).forEach(function(file){
-        if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
-          if (!err) queueFile(file, $scope.upload);
+    if (on){
+      // check every interval for new files to process but don't add new if the current ones are in a processing state
+      uploadInterval = setInterval(function(){
+        $scope.queue = $scope.files.filter(function(file){return !file.state || file.state === "Processing" || file.state === "Uploading" });
+        $scope.queue.slice(0,$scope.channels).forEach(function(file){
+          if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
+            if (!err) queueFile(file, $scope.upload);
+          });
         });
-      });
-      $scope.$apply();
-    }, 1000);
+        if ($scope.queue.length === 0){
+          $scope.uploading = false;
+        }
+        $scope.$apply();
+      }, 500);
+    }
+  });
+
+  $scope.startUpload = function(){
+    console.log('upload');
+    $scope.uploading = true;
+    
   };
 
   function queueFile(file) {
@@ -91,7 +108,8 @@ function UploadController($scope, $http){
         
         if (!file.state) {
           uploadFile(file, exif, function(err){
-            if (err) console.log('Error when uploading', err);
+            if (err) return console.log('Error when uploading', err);
+            // TODO: remove from collection to save memory
           });
         }
     };
@@ -129,6 +147,7 @@ function UploadController($scope, $http){
     xhr.upload.onprogress = function(e) {
         file.state = 'Uploading';
       if (e.lengthComputable) {
+        console.log('progress', e);
         file.progress = (e.loaded / e.total) * 100;
       } else {
         file.progress = Math.min(file.progress++, 100);

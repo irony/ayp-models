@@ -705,7 +705,15 @@ only screen and (max-device-width : 599px){
 }
 
 .dropzone .instructions{
-  padding: 100px;
+  padding: 150px;
+}
+
+.dropzone .media.Done, .dropzone .media.Duplicate{
+  -webkit-transition: 2s ease-out;
+  opacity: 0;
+  -webkit-transform: scale(0,0);
+  position:absolute;
+  top: 30px;
 }
 
 .dropzone li{
@@ -713,7 +721,6 @@ only screen and (max-device-width : 599px){
 }
 
 .dropzone li a{
-  margin-top:-20px;
 }
 
 input[type=file] {
