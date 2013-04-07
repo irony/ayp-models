@@ -140,7 +140,7 @@ function UploadController($scope, $http){
     var blob = dataURItoBlob(file.thumbnail);
     //blob.filename = file.filename;
     fd.append('exif', exif);
-    fd.append('original|'+exif.DateTime+'|'+file.size, file);
+    //fd.append('original|'+exif.DateTime+'|'+file.size, file);
     fd.append('thumbnail' + '|' + exif.DateTime+ '|' + blob.size, blob);
 
     var xhr = new XMLHttpRequest();
