@@ -3,6 +3,7 @@ var InputConnector = require('./inputConnector');
 var importer = require('../../jobs/importer');
 var formidable = require('formidable');
 var util = require('util');
+var Photo = require('../../models/photo');
 
 var connector = new InputConnector();
 
@@ -13,13 +14,10 @@ var connector = new InputConnector();
  * @return {[type]}        [description]
  */
 connector.handleRequest = function(req, done){
-
   var form = new formidable.IncomingForm();
   var self = this;
   var i = 0;
-  var photo = {};
-
-  form.pause();
+  var photo = new Photo();
 
   form.onPart = function (part) {
     if (!part.filename) return form.handlePart(part);
@@ -41,21 +39,23 @@ connector.handleRequest = function(req, done){
 
     if (taken){
       // convert 2012:04:01 11:12:13 to ordinary datetime
-      photo.client_mtime = taken.slice(0,10).split(':').join('-') + taken.slice(10);
+      photo.taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
     }
 
     // photo.bytes = file.length;
-    photo.mime_type = part.mime || 'image/jpeg';
+    photo.mimeType = part.mime || 'image/jpeg';
     console.debug('saving in database', photo);
-    importer.savePhotos(req.user, [photo], function(err, photos){
+
+    self.upload(quality + "s", photo, part, function(err, result){
+      console.debug('upload done', err, result);
+      return done(err, result);
+    });
+
+    importer.savePhotos(req.user, photo, function(err, photos){
       if(err) return done(err);
 
       console.debug('uploading %d photos to s3', photos.length);
-      form.resume();
-      return self.upload(quality + "s", photos[0], part, function(err, result){
-        console.debug('upload done', err, result);
-        return done(err, result);
-      });
+      
     });
   };
 
