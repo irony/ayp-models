@@ -69,7 +69,8 @@ exports.init = function() {
       app.use(express.bodyParser());
       app.use(express.methodOverride());
 
-      app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
+      // app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
+      app.use(express.session({ secret: 'a2988-438674-f234a'}));
 
       
       // Initialize Passport!  Also use passport.session() middleware, to support

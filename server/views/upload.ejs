@@ -90,7 +90,7 @@ function UploadController($scope, $http){
       uploadInterval = setInterval(function(){
         $scope.queue = $scope.files.filter(function(file){return !file.state || file.state === "Processing" || file.state === "Uploading" });
         $scope.queue.slice(0,$scope.channels).forEach(function(file){
-          if (file.thumbnail === undefined) generateThumbnail(file, {width:640, height:480}, function(err, file){
+          if (file.thumbnail === undefined) generateThumbnail(file, {width:1800, height:1200}, function(err, file){
             if (!err) queueFile(file, $scope.upload);
           });
         });
@@ -159,6 +159,8 @@ function UploadController($scope, $http){
           file.response = response;
           file.state = 'Done';
           file.progress = 100;
+          delete file.thumnail; // save memory
+          delete file.exif; 
           return done(null, file);
       }
     }

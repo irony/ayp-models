@@ -49,7 +49,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       var setter = {$set : {}};
       setter.$set['store.' + folder] = {url:put.url, stored: new Date()};
       return photo.update(setter, {upsert: true, safe:true}, function(err, photo){
-        console.debug('Done saving to db...', err);
         return done(err, photo);
       });
     } else {
@@ -62,15 +61,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   var exifReader = new ImageHeaders();
 
-  put.on('data', function(chunk){
+  stream.on('data', function(chunk){
     if (!exifReader.finished) exifReader.add_bytes(chunk);
   });
 
   stream.on('end', function(){
     exifReader.finish(function(err, exif){
-      console.debug('found exif', exif);
       
-      if (err || !exif) return console.debug('ERROR: Could not read EXIF of photo %s', photo.taken.getTime(), err);
+      if (err || !exif || !exif.DateTime) return console.debug('ERROR: Could not read EXIF of photo %s', photo.taken.getTime(), err);
       
       var setter = {$set : {}};
       if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;

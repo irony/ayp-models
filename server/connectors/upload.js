@@ -3,6 +3,7 @@ var InputConnector = require('./inputConnector');
 var importer = require('../../jobs/importer');
 var formidable = require('formidable');
 var util = require('util');
+var async = require('async');
 var Photo = require('../../models/photo');
 
 var connector = new InputConnector();
@@ -20,12 +21,16 @@ connector.handleRequest = function(req, done){
   var photo = new Photo();
 
   form.onField = function (field) {
+    console.log('field', field);
     if (field.name === "exif")
       photo.exif = field.value;
   };
 
   form.onPart = function (part) {
-    if (!part.filename) return form.handlePart(part);
+    if (!part.filename) {
+      console.log('PART', part);
+      return form.handlePart(part);
+    }
 
     part.pause = function() {
       form.pause();
@@ -51,16 +56,16 @@ connector.handleRequest = function(req, done){
     photo.mimeType = part.mime || 'image/jpeg';
     console.debug('saving in database', photo);
 
-    self.upload(quality + "s", photo, part, function(err, result){
-      console.debug('upload done', err, result);
-      return done(err, result);
-    });
-
-    importer.savePhotos(req.user, photo, function(err, photos){
-      if(err) return done(err);
-
-      console.debug('uploading %d photos to s3', photos.length);
-      
+    async.parallel({
+      upload: function(next){
+        return self.upload(quality + "s", photo, part, next);
+      },
+      save : function(next){
+        return importer.savePhotos(req.user, [photo], next);
+      }
+    }, function(err, result){
+      console.log('upload done', result);
+      return done(result);
     });
   };
 

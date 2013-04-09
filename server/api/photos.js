@@ -150,7 +150,7 @@ module.exports = function(app){
 
           var vote = mine.vote || (mine.calculatedVote);
 
-          if (photo.mimeType.split('/')[0] === 'video'){
+          if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
             photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
           } else {
             photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : 'Photos-icon.png';

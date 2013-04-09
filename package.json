@@ -30,6 +30,7 @@
     , "multiparty" : "*"
     , "batch" : "*"
     , "mocha" : "*"
+    , "should" : "*"
   },
   "scripts" :
   { 
