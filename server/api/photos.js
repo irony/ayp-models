@@ -91,8 +91,8 @@ module.exports = function(app){
     console.debug('received upload request')
     var uploadConnector = require('../connectors/upload.js');
     uploadConnector.handleRequest(req, function(err, results){
-      if (err) return res.end(new Error(err));
-      return res.send('OK');
+      if (err) return res.end(new Error(err).toString());
+      return res.end('OK');
     });
     
   });
@@ -109,7 +109,8 @@ module.exports = function(app){
     
 
     if (!req.body.dateRange){
-      return res.end();
+      res.writeHead(500);
+      return res.json("No daterange");
     }
 
     Photo.find({'owners': req.user._id})

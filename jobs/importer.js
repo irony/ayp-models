@@ -22,10 +22,10 @@ var importer = {
 
         async.map(photos, function(photo, next){
 
-          console.debug('Saving photo %s', photo.path, photo.taken, photo.bytes);
+          console.debug('Saving photo %s', photo.path, photo.client_mtime, photo.taken, photo.bytes);
 
           Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.client_mtime || photo.taken}, function(err, dbPhoto){
-              console.log('found %s photos', dbPhoto ? "one" : "no", err);
+            console.log('found %s photos', dbPhoto ? "one" : "no", err);
 
 
             if (err) {
@@ -56,7 +56,7 @@ var importer = {
             dbPhoto.source = photo.source;
             dbPhoto.path = photo.path;
             dbPhoto.modified = photo.modified;
-            dbPhoto.taken = photo.client_mtime;
+            dbPhoto.taken = photo.taken || photo.client_mtime;
             // dbPhoto.interestingness = dbPhoto.interestingness || 50;
             dbPhoto.metadata = photo;
             dbPhoto.bytes = photo.bytes;

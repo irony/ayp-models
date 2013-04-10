@@ -22,27 +22,23 @@ connector.handleRequest = function(req, done){
   var photo = new Photo();
 
   form.on('field', function (field) {
-    console.log('field', field);
     if (field.name === "exif")
       photo.exif = field.value;
   });
 
   form.onPart = function (part) {
     if (!part.filename) {
-      console.log('PART', part);
       return form.handlePart(part);
     }
 
-    console.debug('got part upload, parsing...');
-
-    part.pause = function() {
+/*    part.pause = function() {
       form.pause();
     };
 
     part.resume = function() {
       form.resume();
     };
-
+*/
     var quality = part.name.split('|')[0];
     var taken = part.name.split('|')[1];
     part.length = part.name.split('|')[2]; // hack, should be set elsewhere?
@@ -55,9 +51,11 @@ connector.handleRequest = function(req, done){
       photo.taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
     }
 
+    console.log('%s taken:', quality, photo.taken);
+
     // photo.bytes = file.length;
     photo.mimeType = part.mime || 'image/jpeg';
-    console.debug('saving in database', photo);
+    // console.debug('saving in database', photo);
 
     async.parallel({
       upload: function(next){
@@ -69,7 +67,7 @@ connector.handleRequest = function(req, done){
         return importer.savePhotos(req.user, [photo], next);
       }
     }, function(err, result){
-      console.log('upload done', result);
+      console.log(result.save[0]);
       return done(result);
     });
   };

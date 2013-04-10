@@ -68,7 +68,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   stream.on('end', function(){
     exifReader.finish(function(err, exif){
       
-      if (err || !exif || !exif.DateTime) return console.debug('ERROR: Could not read EXIF of photo %s', photo.taken.getTime(), err);
+      if (err || !exif || !exif.DateTime) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
       
       var setter = {$set : {}};
       if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
@@ -83,10 +83,12 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
     });
   });
 
+/*
+
   put.on('progress', function(e){
     console.debug('progress', e);
   });
-
+*/
   /*if (stream.pipe){
     console.log('Piping to s3');
     return stream.pipe(req);

@@ -101,7 +101,6 @@ return openDialog;})
     element.bind('drop', function(event) {
       var e = event.originalEvent;
       e.preventDefault();
-      var length = e.dataTransfer.items.length;
       var updateTimeout;
       var addFile = function(file){
         if(file.type.match(/image\.*/)){
@@ -115,6 +114,7 @@ return openDialog;})
         }
       };
 
+      var length = e.dataTransfer && e.dataTransfer.items.length;
       for (var i = 0; i < length; i++) {
         var entry = e.dataTransfer.items[i].webkitGetAsEntry();
         var file = e.dataTransfer.files[i];

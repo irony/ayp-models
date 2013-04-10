@@ -5,7 +5,7 @@
 
 var config = require('../conf');
         
-
+require('nodetime');
 
 var mongoose = require('mongoose');
 var _ = require('underscore');
@@ -31,7 +31,7 @@ mongoose.connection.on("error", function(err) {
 try {
   mongoose.connect(config.mongoUrl);
   db = mongoose.connection;
-  console.log("Started connection on " + config.mongoUrl.cyan + ", waiting for it to open...".grey);
+  console.log("Started connection on " + config.mongoUrl.split('@')[1].cyan + ", waiting for it to open...".grey);
 } catch (err) {
   console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
 }
@@ -68,8 +68,8 @@ exports.init = function() {
       app.use(express.bodyParser());
       app.use(express.methodOverride());
 
-      //app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
-      app.use(express.session({ secret: 'a2988-438674-f234a'}));
+      app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
+      //app.use(express.session({ secret: 'a2988-438674-f234a'}));
 
       
       // Initialize Passport!  Also use passport.session() middleware, to support
