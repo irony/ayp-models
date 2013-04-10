@@ -35,7 +35,10 @@ module.exports = function(app){
     res.render('about.ejs', model);
   });
 
-  app.get('/upload', function(req,res){
+  app.get('/me/upload', function(req,res){
+
+    if(!req.user)
+      return res.redirect("/");
 
     var model = new ViewModel(req.user);
 

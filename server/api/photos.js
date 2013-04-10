@@ -11,11 +11,12 @@ var _ = require('underscore');
 module.exports = function(app){
 
   app.get('/api/photoFeed', function(req, res){
+    if (!req.user){
+      return res.send('Login first', 403);
+    }
 
     var reverse = req.query.reverse === 'true',
         filter = (reverse) ? {$gte : req.query.startDate || new Date()} : {$lte : req.query.startDate || new Date()};
-
-    if (!req.user) res.send(403, 'Login first');
 
     console.log('searching photos:', req.query);
 
@@ -87,6 +88,7 @@ module.exports = function(app){
       return res.send('Login first', 403);
     }
 
+    console.debug('received upload request')
     var uploadConnector = require('../connectors/upload.js');
     uploadConnector.handleRequest(req, function(err, results){
       if (err) return res.end(new Error(err));

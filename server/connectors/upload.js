@@ -15,22 +15,25 @@ var connector = new InputConnector();
  * @return {[type]}        [description]
  */
 connector.handleRequest = function(req, done){
+    console.debug('got upload request...');
   var form = new formidable.IncomingForm();
   var self = this;
   var i = 0;
   var photo = new Photo();
 
-  form.onField = function (field) {
+  form.on('field', function (field) {
     console.log('field', field);
     if (field.name === "exif")
       photo.exif = field.value;
-  };
+  });
 
   form.onPart = function (part) {
     if (!part.filename) {
       console.log('PART', part);
       return form.handlePart(part);
     }
+
+    console.debug('got part upload, parsing...');
 
     part.pause = function() {
       form.pause();
@@ -58,9 +61,11 @@ connector.handleRequest = function(req, done){
 
     async.parallel({
       upload: function(next){
+        console.debug('upload..');
         return self.upload(quality + "s", photo, part, next);
       },
       save : function(next){
+        console.debug('save..');
         return importer.savePhotos(req.user, [photo], next);
       }
     }, function(err, result){

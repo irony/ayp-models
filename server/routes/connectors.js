@@ -25,7 +25,7 @@ module.exports = function (app) {
     app.get('/auth/' + connectorName + '/callback', passport.authenticate(connectorName, { failureRedirect: '/' }),
       function(req, res) {
         // connector.connect();
-        res.redirect('/wall');
+        res.redirect('/me/wall');
       });
   });
 

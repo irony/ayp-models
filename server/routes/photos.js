@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 module.exports = function(app){
 
-  app.get('/wall', function(req, res){
+  app.get('/me/wall', function(req, res){
     var model = new ViewModel(req.user);
 
     if (!req.user){
@@ -21,7 +21,7 @@ module.exports = function(app){
 
   });
 
-  app.get('/photos/random/:id', function(req, res){
+  app.get('/me/photos/random/:id', function(req, res){
     if (!req.user){
       return res.redirect('http://lorempixel.com/1723/900/people/' + req.params.id);
     }
@@ -44,7 +44,7 @@ module.exports = function(app){
   });
 
 
-  app.get('/library', function(req, res){
+  app.get('/me/library', function(req, res){
     var model = new ViewModel(req.user);
 
     if (!req.user){

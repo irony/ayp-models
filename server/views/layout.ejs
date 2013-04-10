@@ -21,7 +21,7 @@
 
   </head>
 
-  <body data-offset="400" data-spy="scroll" onload="window.top.scrollTo(0, 1);" ng-controller="AppController" class="{{loading}} {{loadingReverse == 'true' && 'loadingReverse'}}">
+  <body data-offset="400" data-spy="scroll" onload="window.top.scrollTo(0, 1);" ng-controller="AppController">
 
 
 
@@ -46,7 +46,7 @@
              <li class="active"><a href="/">Home</a></li>
 
              <%if (user) {%>
-               <li><a href="/wall">Photo wall</a></li>
+               <li><a href="/me/wall">Photo wall</a></li>
 
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import more photos<b class="caret"></b>
@@ -56,7 +56,7 @@
                   <li><a href="/auth/instagram">Instagram</a></li>
                   <li><a href="/auth/flickr">Flickr</a></li>
                   <li><a href="/auth/facebook">Facebook</a></li>
-                  <li><a href="/upload">Manual upload</a></li>
+                  <li><a href="/me/upload">Manual upload</a></li>
                 </ul> 
               </li>
 

@@ -19,7 +19,6 @@ var knox      = require('knox');
 var RedisStore = require('connect-redis')(express);
 var db;
 
-
 mongoose.connection.on("open", function(ref) {
   return console.log("Connected to mongo server!".green);
 });
@@ -69,7 +68,7 @@ exports.init = function() {
       app.use(express.bodyParser());
       app.use(express.methodOverride());
 
-      // app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
+      //app.use(express.session({ secret: 'a2988-438674-f234a', store: new RedisStore()}));
       app.use(express.session({ secret: 'a2988-438674-f234a'}));
 
       
@@ -84,12 +83,11 @@ exports.init = function() {
     });
 
 
+    app.all("/me/*", ensureAuthenticated, function(req, res, next) {
+      if (!req.user)
+        return res.redirect("/login");
 
-    // default is 5 and we need download in parallell from s3
-    // http.globalAgent.maxSockets = 50;
-
-    app.get('/account', ensureAuthenticated, function(req, res){
-      res.render('account', { user: req.user });
+      next(); // if the middleware allowed us to get here,
     });
 
     app.get('/logout', function(req, res){
