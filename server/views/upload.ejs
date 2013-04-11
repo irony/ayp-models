@@ -159,6 +159,8 @@ function UploadController($scope, $http){
           file.response = response;
           file.state = 'Done';
           file.progress = 100;
+          $scope.library = null;
+
           delete file.thumnail; // save memory
           delete file.exif; 
           return done(null, file);
