@@ -58,21 +58,10 @@ connector.handleRequest = function(req, done){
     photo.mimeType = part.mime || 'image/jpeg';
     // console.debug('saving in database', photo);
 
-    async.parallel({
-      upload: function(next){
-        console.debug('upload..');
-        return self.upload(quality + "s", photo, part, function(err, result){
-          done(err, result); // let the client upload the next photo while the photo is being uploaded
-          next(err, result);
-        });
-      },
-      save : function(next){
-        console.debug('save..');
-        return importer.savePhotos(req.user, [photo], next);
-      }
-    }, function(err, result){
-      console.log("Done with upload and save", result);
+    return self.upload(quality + "s", photo, part, function(err, result){
+      done(err, result); // let the client upload the next photo while the photo is being uploaded
     });
+    return importer.savePhotos(req.user, [photo]);
   };
 
   form.on('error', done);
