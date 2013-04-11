@@ -28,7 +28,6 @@ InputConnector.prototype.getClient = function(user){
 };
 
 InputConnector.prototype.upload = function(folder, photo, stream, done){
-
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
   if (!stream || !stream.pipe) return done(new Error('No stream'));
@@ -46,6 +45,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
+
       var setter = {$set : {}};
       setter.$set['store.' + folder] = {url:put.url, stored: new Date()};
       return photo.update(setter, {upsert: true, safe:true}, function(err, photo){

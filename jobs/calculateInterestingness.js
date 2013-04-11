@@ -64,6 +64,18 @@ module.exports = function(done){
 
     // console.log(stats);
 
+/*
+var kmeans = require('kmeans');
+var km = kmeans.create([
+  [1, 2],
+  [5, 4],
+  [2, 5],
+  [8, 4]
+], 3);
+*/
+
+var result = km.process();
+
     // Query the results
     model.find(function(err, photos){
       if (err || !photos || !photos.length) return done(err, photos);

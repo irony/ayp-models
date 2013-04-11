@@ -45,6 +45,7 @@ connector.handleRequest = function(req, done){
     photo.source = 'upload';
     photo.bytes = part.length;
     photo.path = part.filename;
+    photo.modified = new Date();
 
     if (taken){
       // convert 2012:04:01 11:12:13 to ordinary datetime
@@ -60,15 +61,17 @@ connector.handleRequest = function(req, done){
     async.parallel({
       upload: function(next){
         console.debug('upload..');
-        return self.upload(quality + "s", photo, part, next);
+        return self.upload(quality + "s", photo, part, function(err, result){
+          done(err, result); // let the client upload the next photo while the photo is being uploaded
+          next(err, result);
+        });
       },
       save : function(next){
         console.debug('save..');
         return importer.savePhotos(req.user, [photo], next);
       }
     }, function(err, result){
-      console.log(result.save[0]);
-      return done(result);
+      console.log("Done with upload and save", result);
     });
   };
 

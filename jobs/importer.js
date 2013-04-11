@@ -34,16 +34,20 @@ var importer = {
             }
 
             if (!dbPhoto){
-              dbPhoto = new Photo();
-              dbPhoto.copies = {};
+              if (photo._id) {
+                dbPhoto = photo;
+              } else{
+                dbPhoto = new Photo();
+              }
               // console.debug('Found no photo, creating new ');
-
             } else {
               // console.debug('Found photo, ', dbPhoto._id);
             }
 
 
             dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
+
+            if (!dbPhoto.copies) dbPhoto.copies = {};
 
             var photoCopy = dbPhoto.copies[user._id];
 
