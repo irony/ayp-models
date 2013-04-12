@@ -83,7 +83,7 @@ module.exports = function(app){
     });
   });
 
-  app.post('/api/upload', function(req, res){
+  app.post('/api/upload', function(req, res, next){
     if (!req.user){
       return res.send('Login first', 403);
     }
@@ -156,7 +156,7 @@ module.exports = function(app){
           if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
             photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
           } else {
-            photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : 'Photos-icon.png';
+            photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
           }
 
           return done(null, {taken:photo.taken && photo.taken.getTime(), src: photo.src, vote: Math.floor(vote), ratio: photo.ratio});

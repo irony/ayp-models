@@ -20,10 +20,11 @@ connector.handleRequest = function(req, done){
   var self = this;
   var i = 0;
   var photo = new Photo();
+  var exif;
 
   form.on('field', function (field) {
     if (field.name === "exif")
-      photo.exif = field.value;
+      exif = field.value;
   });
 
   form.onPart = function (part) {
@@ -55,13 +56,16 @@ connector.handleRequest = function(req, done){
     console.log('%s taken:', quality, photo.taken);
 
     // photo.bytes = file.length;
-    photo.mimeType = part.mime || 'image/jpeg';
-    // console.debug('saving in database', photo);
+    photo.mimeType = part.mimeType || 'image/jpeg';
+    console.debug('saving in database', photo);
 
-    return self.upload(quality + "s", photo, part, function(err, result){
-      done(err, result); // let the client upload the next photo while the photo is being uploaded
+    self.upload(quality + "s", photo, part, function(err, photo){
+      console.log('upload done', err);
+      photo.exif = photo.exif || exif;
     });
-    return importer.savePhotos(req.user, [photo]);
+    importer.savePhotos(req.user, [photo], function(err, photos){
+      console.log('save');
+    });
   };
 
   form.on('error', done);

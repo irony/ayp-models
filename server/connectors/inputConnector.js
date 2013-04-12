@@ -46,9 +46,17 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
     if (200 === res.statusCode || 307 === res.statusCode) {
 
-      var setter = {$set : {}};
-      setter.$set['store.' + folder] = {url:put.url, stored: new Date()};
-      return photo.update(setter, {upsert: true, safe:true}, function(err, photo){
+      photo.store = photo.store || {};
+      photo.store[folder] = photo.store[folder] || {};
+
+      photo.store[folder].url = put.url;
+      photo.store[folder].stored = new Date();
+      photo.markModified('store');
+
+
+
+      return photo.save({upsert: true, safe:true}, function(err, result){
+        if (!err) console.log('Photo saved');
         return done(err, photo);
       });
     } else {

@@ -64,7 +64,7 @@ var importer = {
             // dbPhoto.interestingness = dbPhoto.interestingness || 50;
             dbPhoto.metadata = photo;
             dbPhoto.bytes = photo.bytes;
-            dbPhoto.mimeType = photo.mime_type;
+            dbPhoto.mimeType = dbPhoto.mimeType || photo.mime_type;
 
             // console.log('Updating photo, ', dbPhoto);
 
