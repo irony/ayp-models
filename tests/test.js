@@ -13,22 +13,10 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-var stop = true;
-//mongoose.connect(config.db.test, function (err) {
-mongoose.connect(conf.mongoUrl, function(err){
-  stop = false;
-});
-
-while(stop) {
-  process.nextTick(function(){
-    // wait
-  });
-}
-
-require('nodetime');
+mongoose.createConnection(conf.mongoUrl);
 
 // disgard debug output
-console.debug = function(){};
+//console.debug = function(){};
 /*
 describe("worker", function(){
 
@@ -213,10 +201,10 @@ describe("app", function(){
     var size = Math.floor(Math.random()*30000);
 
     userA.save(function(err, userA){
-      should.not.exist(err, "Error when saving user A");
+      should.not.exist(err, "Error when saving user A", err);
       userB.save(function(err, userB){
 
-        should.not.exist(err, "Error when saving user B");
+        should.not.exist(err, "Error when saving user B", err);
 
         var photoA = new Photo({
           taken : taken,
@@ -228,9 +216,9 @@ describe("app", function(){
 
         photoA.save(function(err, photo){
 
-          should.not.exist(err, "error when saving photoA");
+          should.not.exist(err, "error when saving photoA", err);
 
-          photo.owners.should.include(userA._id, "UserA does not exist");
+          photo.owners.should.include(userA._id, "UserA does not exist", err);
 
           var photoB = new Photo({
             taken : taken,
@@ -281,7 +269,7 @@ describe("app", function(){
 
       photoA.save(function(err, photo){
 
-        should.not.exist(err, "error when saving photoA");
+        should.not.exist(err, "error when saving photoA", err);
 
 
         var photoB = new Photo({
@@ -292,7 +280,7 @@ describe("app", function(){
       
         importer.findOrInitPhoto(userA, photoB, function(err, photo){
           if (err)
-          should.not.exist(err, "error when initing photo");
+          should.not.exist(err, "error when initing photo", err);
 
           photo.taken.toString().should.equal(photoA.taken.toString());
           
@@ -331,13 +319,16 @@ describe("app", function(){
       req.cookies = cookie;
       this.timeout(20000);
 
-      req.attach('thumbnail|2013:01:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+      req.attach('thumbnail|2013:01:01 03:00:00|35260', 'tests/fixture/couple.jpg')
       .expect(200)
       .end(function(err, res){
+        should.not.exist(err);
 
-        Photo.findOne({taken: new Date('2013-01-01 00:00:00'), bytes: 35260}, function(err, photo) {
+        console.log(res);
+
+        Photo.findOne({taken: new Date('2013-01-01 03:00:00'), bytes: 35260}, function(err, photo) {
           should.not.exist(err);
-          should.exist(photo);
+          should.exist(photo, "uploaded photo could not be found");
 
           photo.should.have.property('store');
           photo.store.should.have.property('thumbnails');
@@ -359,14 +350,14 @@ describe("app", function(){
       this.timeout(20000);
 
       req
-      .attach('original|2013:02:01 00:00:00|35260', 'tests/fixture/couple.jpg')
-      .attach('thumbnail|2013:02:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+      .attach('original|2013:02:01 01:00:00|35260', 'tests/fixture/couple.jpg')
+      .attach('thumbnail|2013:02:01 01:00:00|35260', 'tests/fixture/couple.jpg')
       .expect(200)
       .end(function(err, res){
 
-        Photo.findOne({taken: new Date('2013-01-01 00:00:00'), bytes: 35260}, function(err, photo) {
+        Photo.findOne({taken: new Date('2013-02-01 01:00:00'), bytes: 35260}, function(err, photo) {
           should.not.exist(err);
-          should.exist(photo);
+          should.exist(photo, "uploaded photo could not be found");
 
           photo.should.have.property('store');
           photo.store.should.have.property('thumbnails');

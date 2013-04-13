@@ -46,12 +46,21 @@ var importer = {
 
       photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
       dbPhoto.markModified('copies');
-      //dbPhoto.metadata = photo; // _.extend(dbPhoto.metadata || {}, photo);
+      // dbPhoto.metadata = _.extend(dbPhoto.metadata || {}, photo);
 
       if (photo.store)
-        dbPhoto.store = photo.store; // _.extend(dbPhoto.store || {}, photo.store);
+        dbPhoto.store = _.extend(dbPhoto.store || {}, photo.store);
+
+      if (photo.exif)
+        dbPhoto.exif = _.extend(dbPhoto.exif || {}, photo.exif);
 
       dbPhoto.taken = photo.taken;
+
+      if (photo.ratio)
+        dbPhoto.ratio = photo.ratio;
+
+      dbPhoto.mimeType = photo.mimeType;
+      dbPhoto.bytes = dbPhoto.bytes || photo.bytes;
 
       return done(null, dbPhoto);
     });
