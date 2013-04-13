@@ -60,12 +60,13 @@ connector.handleRequest = function(req, done){
     console.debug('saving in database', photo);
 
     self.upload(quality + "s", photo, part, function(err, photo){
-      console.log('upload done', err);
+      console.log('upload done, saving...', err);
       photo.exif = photo.exif || exif;
+      photo.save(done);
     });
-    importer.savePhotos(req.user, [photo], function(err, photos){
+    /*importer.savePhotos(req.user, [photo], function(err, photos){
       console.log('save');
-    });
+    });*/
   };
 
   form.on('error', done);

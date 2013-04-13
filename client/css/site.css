@@ -740,13 +740,16 @@ input[type=file]::-webkit-file-upload-button {
   padding: 25px 40px;
 }
 
-.modal-body {
+.login .modal-body {
   background-image: url(/img/is099t8ft.jpg);
   background-size:100%;
   text-align: center;
   padding:30px;
 }
 
+.modal-body .instructions i{
+  text-shadow: 1px #eee;
+}
 
 .modal.login {
   width: 50%; /* desired relative width */

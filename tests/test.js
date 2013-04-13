@@ -1,12 +1,12 @@
-
 var config = require('../conf');
 var should = require("should");
 var auth = require('../server/auth/auth');
 var async = require('async');
 var app = require('../server/app').init();
 var User = require('../models/user');
+var User = require('../models/user');
 var request = require('supertest');
-
+var importer = require('../jobs/importer');
 
 var addedUsers = [];
 var addedPhotos = [];
@@ -47,34 +47,6 @@ describe("worker", function(){
 
 });*/
 
-
-describe("importer", function(){
-  var cookie;
-
-  beforeEach(function(done) {
-    request(app)
-      .post('/login')
-      .send({username: 'test', password:'test'})
-      .expect(200)
-      .end(function(err, res) {
-        cookie = res.headers['set-cookie'];
-        done();
-      });
-  });
-
-  it("should be able to upload a photo", function(done) {
-    var req = request(app)
-    .post('/api/upload');
-    
-    req.cookies = cookie;
-
-    req.attach('thumbnail|2013:01:01 00:00:00|35260', 'tests/fixture/couple.jpg')
-    .expect(200)
-    .end(function(err, res){
-      done(err);
-    });
-  });
-});
 
 
 describe("app", function(){
@@ -130,8 +102,8 @@ describe("app", function(){
     userA.save(function(err, userA){
       userB.save(function(err, userB){
         var shareSpan = new ShareSpan({
-          startDate: new Date(new Date().getTime()-1000),
-          stopDate: new Date(new Date().getTime()+1000),
+          startDate: new Date(new Date().getTime()-50000),
+          stopDate: new Date(new Date().getTime()+50000),
           members : [userA, userB]
         });
     
@@ -231,7 +203,7 @@ describe("app", function(){
     userA.save(function(err, userA){
       userB.save(function(err, userB){
 
-        console.log('both saved');
+        console.log('both users are saved');
 
         var photoA = new Photo({
           taken : taken,
@@ -253,22 +225,26 @@ describe("app", function(){
             owners : [userB] // only one user
           });
         
-          addedPhotos.push(photoB);
-          console.log('saving photoB');
+          importer.findOrInitPhoto(userB, photoB, function(err, photoB){
 
-          photoB.save(function(err, savedPhoto){
+            addedPhotos.push(photoB);
+            console.log('saving photoB');
 
-            console.log('finding photoA again');
+            photoB.save(function(err, savedPhoto){
 
-            // since we already have a photo with this taken date we will add users to it
-            Photo.findOne({_id: photoA._id}, function(err, photo) {
-              photo.owners.should.include(userA._id, "UserA does not exist");
-              photo.owners.should.include(userB._id, "UserB does not exist");
-              should.not.exist(err);
-              should.exist(photo);
-              done();
+              console.log('finding photoA again');
+
+              // since we already have a photo with this taken date we will add users to it
+              Photo.findOne({_id: photoA._id}, function(err, photo) {
+                photo.owners.should.include(userA._id, "UserA does not exist");
+                photo.owners.should.include(userB._id, "UserB does not exist");
+                should.not.exist(err);
+                should.exist(photo);
+                done();
+              });
             });
           });
+
         });
       });
 
@@ -276,6 +252,37 @@ describe("app", function(){
 
 
   });
+
+
+  describe("importer", function(){
+    var cookie;
+
+    beforeEach(function(done) {
+      request(app)
+        .post('/login')
+        .send({username: 'test', password:'test'})
+        .expect(200)
+        .end(function(err, res) {
+          cookie = res.headers['set-cookie'];
+          done();
+        });
+    });
+
+    it("should be able to upload a photo", function(done) {
+      var req = request(app)
+      .post('/api/upload');
+      
+      req.cookies = cookie;
+      this.timeout(20000);
+
+      req.attach('thumbnail|2013:01:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+      .expect(200)
+      .end(function(err, res){
+        done(err);
+      });
+    });
+  });
+
   
   after(function(){
 

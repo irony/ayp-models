@@ -137,14 +137,14 @@
             <a class="close" data-dismiss="modal" href="/me/wall" >&times;</a>
           </h1>
           <p class="lead">
-            Just drag and drop your Photo folders below. If you have many folders, just add them all. If you get interrupted, try again and we will continue where you left off. 
+            Drag and drop your Photos folders below. If you have many folders, just add them all. If you get interrupted, try again and we will continue where you left off. 
           </p>
         </div>
         <div id="dropzone" class="dropzone media modal-body" >
         
           <div class="instructions" ng-show="!files.length">
-            <i class="icon-cloud-upload icon-4x pull-left" > </i>
-            <label> Drag and drop your photo folder or SD card here...
+            <i class="icon-folder-open icon-4x pull-left" > </i>
+            <label> Drag and drop a photo folder or SD card here...
               <input ng-show="false" class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
             </label>
           </div>

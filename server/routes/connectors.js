@@ -19,7 +19,7 @@ module.exports = function (app) {
     var connectorName = file.split('.')[0],
         connector = require('../connectors/' + connectorName);
 
-    console.log('setting up connector ', connectorName);
+    console.debug('setting up connector ', connectorName);
 
     app.get('/auth/' + connectorName, passport.authenticate(connectorName, {scope : connector.scope}));
     app.get('/auth/' + connectorName + '/callback', passport.authenticate(connectorName, { failureRedirect: '/' }),

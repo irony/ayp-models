@@ -12,67 +12,66 @@ var async = require('async');
 var importer = {
 
   /**
+   * Tries to find a photo in the database and return a reference to it or initializes the given photo record with the appropriate values
+   * @param  {[type]}   user  [description]
+   * @param  {[type]}   photo [description]
+   * @param  {Function} done  [description]
+   * @return {[type]}         [description]
+   */
+  findOrInitPhoto : function(user, photo, done){
+    
+    Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.taken}, function(err, dbPhoto){
+      console.log('found %s', dbPhoto ? "one photo" : "no photos", err);
+
+      if (err) {
+        console.log('Error finding photo', err);
+        return done(err);
+      }
+
+      if (!dbPhoto){
+        if (photo._id) {
+          dbPhoto = photo;
+        } else{
+          dbPhoto = new Photo(photo);
+        }
+      }
+
+      dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
+
+      if (!dbPhoto.copies) dbPhoto.copies = {};
+
+      var photoCopy = dbPhoto.copies[user._id];
+
+      if (!photoCopy)
+        dbPhoto.copies[user._id] = photoCopy = new PhotoCopy();
+
+      photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
+      dbPhoto.markModified('copies');
+      dbPhoto.metadata = dbPhoto.metadata || photo;
+
+      return done(null, dbPhoto);
+    });
+
+  },
+
+  /**
    * Save an array of photos fetched elsewhere to the database
    * @param  {[type]} user     a mongoose user model
    * @param  {[type]} photos   array of photos
    * @param  {[type]} progress callback which will be called after save of whole collection with (err, photos)
    */
   savePhotos : function(user, photos, done){
-        console.debug('Saving %d photos', photos.length);
+    console.debug('Saving %d photos', photos.length);
 
-        async.map(photos, function(photo, next){
+    async.map(photos, function(photo, next){
 
-          console.debug('Saving photo %s', photo.path, photo.client_mtime, photo.taken, photo.bytes);
+      console.debug('Saving photo %s', photo.path, photo.client_mtime, photo.taken, photo.bytes);
 
-          Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.client_mtime || photo.taken}, function(err, dbPhoto){
-            console.log('found %s', dbPhoto ? "one photo" : "no photos", err);
+      importer.findOrInitPhoto(user, photo, function(err, photo){
+        photo.save(next);
+      });
 
-
-            if (err) {
-              console.log('Error saving photo', err);
-              return done(err);
-            }
-
-            if (!dbPhoto){
-              if (photo._id) {
-                dbPhoto = photo;
-              } else{
-                dbPhoto = new Photo();
-              }
-              // console.debug('Found no photo, creating new ');
-            } else {
-              // console.debug('Found photo, ', dbPhoto._id);
-            }
-
-
-            dbPhoto.set('owners', _.uniq(_.union([user._id], dbPhoto.owners)));
-
-            if (!dbPhoto.copies) dbPhoto.copies = {};
-
-            var photoCopy = dbPhoto.copies[user._id];
-
-            if (!photoCopy)
-              dbPhoto.copies[user._id] = photoCopy = new PhotoCopy();
-
-            photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
-            dbPhoto.markModified('copies');
-
-            dbPhoto.source = photo.source;
-            dbPhoto.path = photo.path;
-            dbPhoto.modified = photo.modified;
-            dbPhoto.taken = photo.taken || photo.client_mtime;
-            // dbPhoto.interestingness = dbPhoto.interestingness || 50;
-            dbPhoto.metadata = photo;
-            dbPhoto.bytes = photo.bytes;
-            dbPhoto.mimeType = dbPhoto.mimeType || photo.mime_type;
-
-            // console.log('Updating photo, ', dbPhoto);
-
-
-            dbPhoto.save(next);
-
-          });
-        }, done);
+    }, done);
   },
   
   /**

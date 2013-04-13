@@ -27,6 +27,14 @@ InputConnector.prototype.getClient = function(user){
   throw new Error('Not implemented');
 };
 
+/**
+ * Upload a photo to s3 and returns an updated Photo record
+ * @param  {[type]}   folder thumbnail, original or other folder at s3
+ * @param  {[type]}   photo  photo db record
+ * @param  {[type]}   stream request stream with photo
+ * @param  {Function} done   callback after upload is complete, will return err and photo object as parameters
+ * @return {[type]}          [description]
+ */
 InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
@@ -54,16 +62,12 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       photo.markModified('store');
 
 
-
-      return photo.save({upsert: true, safe:true}, function(err, result){
-        if (!err) console.log('Photo saved');
-        return done(err, photo);
-      });
+      done(null, photo);
     } else {
       res.on('data', function(chunk){
         console.log(chunk.toString().red);
       });
-      return done(new Error('Error when saving to S3, code: '.red, res));
+      return done(new Error('Error when saving to S3, code: '.red, null));
     }
   });
 

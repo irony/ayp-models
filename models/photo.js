@@ -29,26 +29,32 @@ var PhotoSchema = new mongoose.Schema({
 
       store : {type:Schema.Types.Mixed},
 
-      originalDownloaded : { type: Boolean, default: false},
       owners : [{ type: Schema.Types.ObjectId, ref: 'User' }]
     });
+/*
 
 PhotoSchema.pre('save', function (next) {
-  console.log('presave', this);
+  var photo = this;
+  
+  Photo.findOne({taken : photo.taken, bytes: photo.bytes}, function(err, existingPhoto){
+    if (existingPhoto) console.log('existingPhoto found')
+    next(existingPhoto ? new Error("This photo is already in the database, please use the importer to initialize correct values") : null);
+  });
+});
+*/
+
+PhotoSchema.pre('save', function (next) {
   var photo = this,
       _ = require('underscore'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
-
-  //photo.interestingness = photo.hidden ? 0 : photo.clicks * 10 + photo.views;
-
-  // only on create
   ShareSpan.find({
     startDate: { $lte : photo.taken },
     stopDate: { $gte : photo.taken },
     members : { $in : photo.owners }
   }, function(err, spans){
-
+    console.debug('found %d share spans for this photo', spans.length);
     (spans || []).forEach(function(span){
+
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
       //photo.save();
     });
@@ -58,4 +64,4 @@ PhotoSchema.pre('save', function (next) {
 });
 
 
-module.exports = mongoose.model('Photo', PhotoSchema);
+var Photo = module.exports = mongoose.model('Photo', PhotoSchema);
