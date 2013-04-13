@@ -23,6 +23,20 @@ connector.handleRequest = function(req, done){
   var exif;
 
 
+  var q = async.queue(function(photoPart, next){
+    self.upload(photoPart.quality + "s", photoPart.photo, photoPart.part, function(err, uploadedPhoto){
+      importer.findOrInitPhoto(req.user, uploadedPhoto, function(err, importedPhoto){
+        if (err) return done(err);
+
+        photo.exif = photo.exif || exif;
+        photo.save(done);
+      });
+    });
+  }, 4); // how many parts can be handled in paralllel?
+
+  //q.drain = done; // when all files have been handled and saved, give our callback
+
+
   form.on('field', function (field) {
     if (field.name === "exif")
       exif = field.value;
@@ -57,14 +71,7 @@ connector.handleRequest = function(req, done){
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
 
-    self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
-      importer.findOrInitPhoto(req.user, uploadedPhoto, function(err, importedPhoto){
-        if (err) return done(err);
-
-        photo.exif = photo.exif || exif;
-        photo.save(done);
-      });
-    });
+    q.push({photo: photo, part: part, quality : quality});
 
     /*importer.savePhotos(req.user, [photo], function(err, photos){
       console.log('save');
