@@ -72,9 +72,9 @@ var km = kmeans.create([
   [2, 5],
   [8, 4]
 ], 3);
-*/
 
 var result = km.process();
+*/
 
     // Query the results
     model.find(function(err, photos){

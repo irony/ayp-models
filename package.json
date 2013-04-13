@@ -14,8 +14,10 @@
     , "connect-mongo": "*"
     , "passport-facebook" : "*"
     , "passport-dropbox" : "*"
+    , "passport-local" : "*"
     , "passport-flickr" : "*"
     , "passport-instagram" : "*"
+    , "passport-local-mongoose" : "*"
     , "socket.io" : "*"
     , "nodetime" : "*"
     , "mongoose": "*"
@@ -30,10 +32,12 @@
     , "multiparty" : "*"
     , "batch" : "*"
     , "mocha" : "*"
+    , "supertest" : "*"
     , "should" : "*"
   },
   "scripts" :
   { 
-    "test" : "mocha tests/*"
+    "start"  : "nodemon server/server.js",
+    "test" : "mocha -w -R spec tests/* "
   }
 }

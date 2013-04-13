@@ -1,23 +1,20 @@
 
 var config = require('../conf');
-var mongoose = require('mongoose');
-mongoose.connect(config.mongoUrl);
-
 var should = require("should");
 var auth = require('../server/auth/auth');
 var async = require('async');
-// var app = require('../server/app');
+var app = require('../server/app').init();
 var User = require('../models/user');
+var request = require('supertest');
+
 
 var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-require('nodetime');
-
 // disgard debug output
 console.debug = function(){};
-
+/*
 describe("worker", function(){
 
   var id = Math.floor((Math.random()*10000000)+1).toString();
@@ -48,7 +45,37 @@ describe("worker", function(){
     });
   });
 
+});*/
+
+
+describe("importer", function(){
+  var cookie;
+
+  beforeEach(function(done) {
+    request(app)
+      .post('/login')
+      .send({username: 'test', password:'test'})
+      .expect(200)
+      .end(function(err, res) {
+        cookie = res.headers['set-cookie'];
+        done();
+      });
+  });
+
+  it("should be able to upload a photo", function(done) {
+    var req = request(app)
+    .post('/api/upload');
+    
+    req.cookies = cookie;
+
+    req.attach('thumbnail|2013:01:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+    .expect(200)
+    .end(function(err, res){
+      done(err);
+    });
+  });
 });
+
 
 describe("app", function(){
 

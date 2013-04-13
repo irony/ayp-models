@@ -44,17 +44,6 @@ global.s3 = knox.createClient(config.aws);
 // more logs
 // require('longjohn');
 
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-}
-
-
 exports.init = function() {
   
     var app = express.createServer();
@@ -82,20 +71,6 @@ exports.init = function() {
       app.use(app.router);
     });
 
-
-    app.all("/me/*", ensureAuthenticated, function(req, res, next) {
-      if (!req.user)
-        return res.redirect("/login");
-
-      next(); // if the middleware allowed us to get here,
-    });
-
-    app.get('/logout', function(req, res){
-      req.logout();
-      res.redirect('/');
-    });
-
-
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
@@ -112,6 +87,21 @@ exports.init = function() {
     app.error(function(err, req, res, next){
         res.render('500.ejs', { locals: { error: err },status: 500 });
     });
+
+    require('./routes/user')(app);
+    require('./routes/connectors')(app);
+    require('./routes/share')(app);
+    require('./routes/photos')(app);
+    require('./routes/import')(app);
+    require('./routes/index')(app);
+    require('./sockets/photos')(app);
+
+    // Api methods
+    require('./api/photos')(app);
+
+
+    /* The 404 Route (ALWAYS Keep this as the last route) */
+    require('./routes/404')(app);
 
 
     return app;

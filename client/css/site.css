@@ -740,12 +740,29 @@ input[type=file]::-webkit-file-upload-button {
   padding: 25px 40px;
 }
 
-body .modal {
+.modal-body {
+  background-image: url(/img/is099t8ft.jpg);
+  background-size:100%;
+  text-align: center;
+  padding:30px;
+}
+
+
+.modal.login {
+  width: 50%; /* desired relative width */
+  left: 25%; /* (100%-width)/2 */
+  top: 120px;
+  margin: auto auto auto auto; /* place center */
+
+}
+
+body .modal.upload {
   width: 80%; /* desired relative width */
   left: 10%; /* (100%-width)/2 */
   top: 120px;
   margin: auto auto auto auto; /* place center */
 }
+
 body .modal.fade.in {
   top: auto; /* fade in to correct spot */
 }

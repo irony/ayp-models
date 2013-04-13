@@ -5,6 +5,7 @@ var conf = require('../../conf'),
     FlickrStrategy = require('passport-flickr').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
+    LocalStrategy = require('passport-local').Strategy,
     User = require('../../models/user.js'),
     auth = require('./auth.js');
 
@@ -17,6 +18,8 @@ var conf = require('../../conf'),
       done(null, user);
 //      User.findById(user._id, done);
   });
+
+  passport.use(new LocalStrategy(User.authenticate()));
 
   // Use the InstagramStrategy within Passport.
   //   Strategies in Passport require a `verify` function, which accept
