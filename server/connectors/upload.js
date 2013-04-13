@@ -5,6 +5,7 @@ var formidable = require('formidable');
 var util = require('util');
 var async = require('async');
 var Photo = require('../../models/photo');
+var Batch = require('batch');
 
 var connector = new InputConnector();
 
@@ -21,21 +22,7 @@ connector.handleRequest = function(req, done){
   var i = 0;
   var photo = new Photo();
   var exif;
-
-
-  var q = async.queue(function(photoPart, next){
-    self.upload(photoPart.quality + "s", photoPart.photo, photoPart.part, function(err, uploadedPhoto){
-      importer.findOrInitPhoto(req.user, uploadedPhoto, function(err, importedPhoto){
-        if (err) return done(err);
-
-        photo.exif = photo.exif || exif;
-        photo.save(done);
-      });
-    });
-  }, 4); // how many parts can be handled in paralllel?
-
-  //q.drain = done; // when all files have been handled and saved, give our callback
-
+  var batch = new Batch();
 
   form.on('field', function (field) {
     if (field.name === "exif")
@@ -47,14 +34,6 @@ connector.handleRequest = function(req, done){
       return form.handlePart(part);
     }
 
-/*    part.pause = function() {
-      form.pause();
-    };
-
-    part.resume = function() {
-      form.resume();
-    };
-*/
     var quality = part.name.split('|')[0];
     var taken = part.name.split('|')[1];
     part.length = part.name.split('|')[2]; // hack, should be set elsewhere?
@@ -71,7 +50,16 @@ connector.handleRequest = function(req, done){
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
 
-    q.push({photo: photo, part: part, quality : quality});
+    batch.push(function(next){
+      self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
+        importer.findOrInitPhoto(req.user, uploadedPhoto, function(err, importedPhoto){
+          if (err) return done(err);
+
+          photo.exif = photo.exif || exif;
+          photo.save(next);
+        });
+      });
+    });
 
     /*importer.savePhotos(req.user, [photo], function(err, photos){
       console.log('save');

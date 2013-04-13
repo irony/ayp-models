@@ -88,7 +88,6 @@ module.exports = function(app){
       return res.send('Login first', 403);
     }
 
-    console.debug('received upload request')
     var uploadConnector = require('../connectors/upload.js');
     uploadConnector.handleRequest(req, function(err, results){
       console.debug('got response', err, results);
@@ -96,7 +95,7 @@ module.exports = function(app){
         res.writeHead(500);
         return res.json(new Error(err).toString());
       }
-      return res.send(results);
+      res.send(results);
     });
     
   });
