@@ -1,16 +1,31 @@
-var config = require('../conf');
+var conf = require('../conf');
 var should = require("should");
+var mongoose = require('mongoose');
 var auth = require('../server/auth/auth');
 var async = require('async');
 var app = require('../server/app').init();
 var User = require('../models/user');
-var User = require('../models/user');
+var Photo = require('../models/photo');
 var request = require('supertest');
 var importer = require('../jobs/importer');
 
 var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
+
+var stop = true;
+//mongoose.connect(config.db.test, function (err) {
+mongoose.connect(conf.mongoUrl, function(err){
+  stop = false;
+});
+
+while(stop) {
+  process.nextTick(function(){
+    // wait
+  });
+}
+
+require('nodetime');
 
 // disgard debug output
 console.debug = function(){};
@@ -51,6 +66,7 @@ describe("worker", function(){
 
 describe("app", function(){
 
+
   var id = Math.floor((Math.random()*10000000)+1).toString();
 
   it("should be possible to create a user ", function(done) {
@@ -84,8 +100,6 @@ describe("app", function(){
     		done();
       });
   });
-
-
 
   it("should be possible to add a span, and find it with a date", function(done){
 
@@ -198,12 +212,11 @@ describe("app", function(){
     var taken = new Date();
     var size = Math.floor(Math.random()*30000);
 
-    console.log('saving users');
-
     userA.save(function(err, userA){
+      should.not.exist(err, "Error when saving user A");
       userB.save(function(err, userB){
 
-        console.log('both users are saved');
+        should.not.exist(err, "Error when saving user B");
 
         var photoA = new Photo({
           taken : taken,
@@ -213,9 +226,9 @@ describe("app", function(){
 
         addedPhotos.push(photoA);
 
-        console.log('saving photoA');
         photoA.save(function(err, photo){
 
+          should.not.exist(err, "error when saving photoA");
 
           photo.owners.should.include(userA._id, "UserA does not exist");
 
@@ -227,12 +240,15 @@ describe("app", function(){
         
           importer.findOrInitPhoto(userB, photoB, function(err, photoB){
 
+
+            photoB.taken.should.equal(taken);
+
             addedPhotos.push(photoB);
-            console.log('saving photoB');
+            should.not.exist(err);
 
             photoB.save(function(err, savedPhoto){
 
-              console.log('finding photoA again');
+              should.not.exist(err, "error when saving photoB");
 
               // since we already have a photo with this taken date we will add users to it
               Photo.findOne({_id: photoA._id}, function(err, photo) {
@@ -250,11 +266,49 @@ describe("app", function(){
 
     });
 
+    it('should be able to import new properties to an existing photo', function(done){
+      
+      var taken = new Date();
+      var size = Math.floor(Math.random()*30000);
+      var userA = new User();
+
+      var photoA = new Photo({
+        taken : taken,
+        bytes: size
+      });
+
+      addedPhotos.push(photoA);
+
+      photoA.save(function(err, photo){
+
+        should.not.exist(err, "error when saving photoA");
+
+
+        var photoB = new Photo({
+          taken : taken,
+          bytes: size,
+          store : {thumbnails : {url:'test'}}
+        });
+      
+        importer.findOrInitPhoto(userA, photoB, function(err, photo){
+          if (err)
+          should.not.exist(err, "error when initing photo");
+
+          photo.taken.toString().should.equal(photoA.taken.toString());
+          
+          photo.should.have.property('store');
+          photo.store.should.have.property('thumbnails');
+          photo.store.thumbnails.should.have.property('url');
+
+        });
+      });
+    });
+
 
   });
 
 
-  describe("importer", function(){
+  describe("uploader", function(){
     var cookie;
 
     beforeEach(function(done) {
@@ -263,11 +317,13 @@ describe("app", function(){
         .send({username: 'test', password:'test'})
         .expect(200)
         .end(function(err, res) {
+          res.headers.should.have.property('set-cookie');
           cookie = res.headers['set-cookie'];
           done();
         });
     });
 
+   
     it("should be able to upload a photo", function(done) {
       var req = request(app)
       .post('/api/upload');
@@ -278,9 +334,55 @@ describe("app", function(){
       req.attach('thumbnail|2013:01:01 00:00:00|35260', 'tests/fixture/couple.jpg')
       .expect(200)
       .end(function(err, res){
-        done(err);
+
+        Photo.findOne({taken: new Date('2013-01-01 00:00:00'), bytes: 35260}, function(err, photo) {
+          should.not.exist(err);
+          should.exist(photo);
+
+          photo.should.have.property('store');
+          photo.store.should.have.property('thumbnails');
+          photo.store.thumbnails.should.have.property('url');
+
+          addedPhotos.push(photo);
+
+          done(err);
+        });
       });
     });
+    
+
+    it("should be able to upload a photo with both original and thumbnail", function(done) {
+      var req = request(app)
+      .post('/api/upload');
+      
+      req.cookies = cookie;
+      this.timeout(20000);
+
+      req
+      .attach('original|2013:02:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+      .attach('thumbnail|2013:02:01 00:00:00|35260', 'tests/fixture/couple.jpg')
+      .expect(200)
+      .end(function(err, res){
+
+        Photo.findOne({taken: new Date('2013-01-01 00:00:00'), bytes: 35260}, function(err, photo) {
+          should.not.exist(err);
+          should.exist(photo);
+
+          photo.should.have.property('store');
+          photo.store.should.have.property('thumbnails');
+          photo.store.thumbnails.should.have.property('url');
+
+          photo.store.should.have.property('originals');
+          photo.store.originals.should.have.property('url');
+
+          addedPhotos.push(photo);
+
+          done(err);
+        });
+      });
+    });
+
+
   });
 
   

@@ -19,9 +19,8 @@ var importer = {
    * @return {[type]}         [description]
    */
   findOrInitPhoto : function(user, photo, done){
-    
     Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.taken}, function(err, dbPhoto){
-      console.log('found %s', dbPhoto ? "one photo" : "no photos", err);
+      // console.debug('found %s', dbPhoto ? "one photo" : "no photos", err);
 
       if (err) {
         console.log('Error finding photo', err);
@@ -47,7 +46,12 @@ var importer = {
 
       photoCopy.interestingness = photoCopy.interestingness || Math.random() * 100; // dummy value now. TODO: change to real one
       dbPhoto.markModified('copies');
-      dbPhoto.metadata = dbPhoto.metadata || photo;
+      //dbPhoto.metadata = photo; // _.extend(dbPhoto.metadata || {}, photo);
+
+      if (photo.store)
+        dbPhoto.store = photo.store; // _.extend(dbPhoto.store || {}, photo.store);
+
+      dbPhoto.taken = photo.taken;
 
       return done(null, dbPhoto);
     });

@@ -21,4 +21,4 @@ var PhotoCopy = new mongoose.Schema({
       rank : { type: Number, default: 50}
     });
 
-module.exports = mongoose.model('PhotoCopy', PhotoCopy);
+module.exports = mongoose.models['PhotoCopy'] || mongoose.model('PhotoCopy', PhotoCopy);

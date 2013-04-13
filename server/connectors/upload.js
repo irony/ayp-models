@@ -22,6 +22,21 @@ connector.handleRequest = function(req, done){
   var photo = new Photo();
   var exif;
 
+
+  var q = async.queue(function(photoPart, next){
+    importer.findOrInitPhoto(req.user, photoPart.photo, function(err, importedPhoto){
+      self.upload(photoPart.quality + "s", importedPhoto, photoPart.part, function(err, photo){
+        if (err) return done(err);
+
+        photo.exif = photo.exif || exif;
+        photo.save(next);
+      });
+    });
+  }, 4); // how many parts can be handled in paralllel?
+
+  q.drain = done; // when all files have been handled and saved, give our callback
+
+
   form.on('field', function (field) {
     if (field.name === "exif")
       exif = field.value;
@@ -53,23 +68,18 @@ connector.handleRequest = function(req, done){
       photo.taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
     }
 
-    console.log('%s taken:', quality, photo.taken);
-
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
-    console.debug('saving in database', photo);
 
-    self.upload(quality + "s", photo, part, function(err, photo){
-      console.log('upload done, saving...', err);
-      photo.exif = photo.exif || exif;
-      photo.save(done);
-    });
+    q.push({photo: photo, part: part, quality : quality});
+
     /*importer.savePhotos(req.user, [photo], function(err, photos){
       console.log('save');
     });*/
   };
 
   form.on('error', done);
+  form.on('end', done);
 
   form.parse(req);
 };
