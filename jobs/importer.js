@@ -19,7 +19,18 @@ var importer = {
    * @return {[type]}         [description]
    */
   findOrInitPhoto : function(user, photo, done){
-    Photo.findOne({'bytes' : photo.bytes, 'taken' : photo.taken}, function(err, dbPhoto){
+    Photo.find({'taken' : photo.taken}, function(err, photos){
+
+      var dbPhoto = photos.filter(function(existingPhoto){
+        // ok, so we found a photo at the exact same time but before assuming it is the same we want to do some checks
+        var found = _.some(existingPhoto.owners, function(item){return item === user._id}) ||
+        existingPhoto.path === photo.path || // or same filename
+        photo.bytes > 100000 && existingPhoto.bytes === photo.bytes; // or same file size
+
+        return found;
+      }).pop();
+
+      if (photo.taken)
       // console.debug('found %s', dbPhoto ? "one photo" : "no photos", err);
 
       if (err) {

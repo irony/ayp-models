@@ -1,11 +1,12 @@
 var passport = require('passport');
 var InputConnector = require('./inputConnector');
 var importer = require('../../jobs/importer');
-var formidable = require('formidable');
+var multiparty = require('multiparty');
 var util = require('util');
 var async = require('async');
 var Photo = require('../../models/photo');
 var Batch = require('batch');
+var _ = require('underscore');
 
 var connector = new InputConnector();
 
@@ -16,24 +17,22 @@ var connector = new InputConnector();
  * @return {[type]}        [description]
  */
 connector.handleRequest = function(req, done){
-    console.debug('got upload request...');
-  var form = new formidable.IncomingForm();
+  var form = new multiparty.Form();
   var self = this;
   var i = 0;
   var photo = new Photo();
-  var exif;
-  var batch = new Batch();
+  var parts = 0;
 
   form.on('field', function (field) {
     if (field.name === "exif")
-      exif = field.value;
+      photo.exif = field.value;
   });
 
-  form.onPart = function (part) {
+  form.on('part', function (part) {
     if (!part.filename) {
       return form.handlePart(part);
     }
-
+    // console.log('part name', part.name);
     var quality = part.name.split('|')[0];
     var taken = part.name.split('|')[1];
     part.length = part.name.split('|')[2]; // hack, should be set elsewhere?
@@ -41,34 +40,44 @@ connector.handleRequest = function(req, done){
     photo.bytes = part.length;
     photo.path = part.filename;
     photo.modified = new Date();
+    photo.owners = [req.user._id];
+    photo.store = {};
+    
+    parts++; // keep track on how many parts we have to handle
 
     if (taken){
       // convert 2012:04:01 11:12:13 to ordinary datetime
-      photo.taken = taken.slice(0,10).split(':').join('-') + taken.slice(10);
+      photo.taken = new Date(taken.slice(0,10).split(':').join('-') + taken.slice(10));
+    } else {
+      // photo.taken = photo.modified;
     }
 
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
+    self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
+      photo.store = _.extend(photo.store, uploadedPhoto.store);
+      photo.markModified('store');
+      if (uploadedPhoto.exif)
+        photo.exif = uploadedPhoto.exif;
 
-    batch.push(function(next){
-      self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
-        importer.findOrInitPhoto(req.user, uploadedPhoto, function(err, importedPhoto){
+      parts--;
+      if (parts === 0){
+        importer.findOrInitPhoto(req.user, photo, function(err, importedPhoto){
           if (err) return done(err);
-
-          photo.exif = photo.exif || exif;
-          photo.save(next);
+          importedPhoto.save(done);
         });
-      });
+      }
+
     });
 
     /*importer.savePhotos(req.user, [photo], function(err, photos){
       console.log('save');
     });*/
-  };
+  });
 
   form.on('error', done);
   //form.on('end', function(){done});
-
+  //
   form.parse(req);
 };
 

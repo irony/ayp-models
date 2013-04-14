@@ -52,6 +52,7 @@ PhotoSchema.pre('save', function (next) {
     stopDate: { $gte : photo.taken },
     members : { $in : photo.owners }
   }, function(err, spans){
+    if (err) throw err;
     console.debug('found %d share spans for this photo', spans.length);
     (spans || []).forEach(function(span){
 

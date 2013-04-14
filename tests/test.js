@@ -1,4 +1,5 @@
 var conf = require('../conf');
+conf.mongoUrl = 'mongodb://localhost/allyourphotos_test';
 var should = require("should");
 var mongoose = require('mongoose');
 var auth = require('../server/auth/auth');
@@ -13,10 +14,9 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-mongoose.createConnection(conf.mongoUrl);
 
 // disgard debug output
-//console.debug = function(){};
+console.debug = function(){};
 /*
 describe("worker", function(){
 
@@ -52,7 +52,7 @@ describe("worker", function(){
 
 
 
-describe("app", function(){
+describe("account", function(){
 
 
   var id = Math.floor((Math.random()*10000000)+1).toString();
@@ -88,6 +88,10 @@ describe("app", function(){
     		done();
       });
   });
+
+});
+
+describe("share", function(){
 
   it("should be possible to add a span, and find it with a date", function(done){
 
@@ -186,6 +190,54 @@ describe("app", function(){
     });
 
   });
+});
+
+
+describe("importer", function(){
+
+
+  it('should be able to import new properties to an existing photo', function(done){
+    
+    var taken = new Date();
+    var size = Math.floor(Math.random()*30000);
+    var userA = new User();
+
+    var photoA = new Photo({
+      taken : taken,
+      bytes: size,
+      ratio : 1.5,
+      owners : [userA]
+    });
+
+    addedPhotos.push(photoA);
+
+    photoA.save(function(err, photoAsaved){
+
+      should.not.exist(err, "error when saving photoA", err);
+
+
+      var photoB = new Photo({
+        taken : taken,
+        bytes: size,
+        store : {thumbnails : {url:'test'}}
+      });
+    
+      importer.findOrInitPhoto(userA, photoB, function(err, photo){
+        if (err)
+        should.not.exist(err, "error when initing photo", err);
+
+        photo.taken.toString().should.equal(photoA.taken.toString());
+        
+        photo.should.have.property('store');
+        photo.should.have.property('ratio', 1.5);
+        photo.store.should.have.property('thumbnails');
+        photo.store.thumbnails.should.have.property('url');
+        // TODO: check thhat owners are not changed
+        done();
+      });
+    });
+  });
+
 
   it("should be possible to add a new photo which already exists and resulting in two owners of the existing photo.", function(done){
 
@@ -237,6 +289,8 @@ describe("app", function(){
             photoB.save(function(err, savedPhoto){
 
               should.not.exist(err, "error when saving photoB");
+              savedPhoto.owners.should.include(userA._id, "UserA does not exist before saving");
+              savedPhoto.owners.should.include(userB._id, "UserB does not exist before saving");
 
               // since we already have a photo with this taken date we will add users to it
               Photo.findOne({_id: photoA._id}, function(err, photo) {
@@ -254,43 +308,6 @@ describe("app", function(){
 
     });
 
-    it('should be able to import new properties to an existing photo', function(done){
-      
-      var taken = new Date();
-      var size = Math.floor(Math.random()*30000);
-      var userA = new User();
-
-      var photoA = new Photo({
-        taken : taken,
-        bytes: size
-      });
-
-      addedPhotos.push(photoA);
-
-      photoA.save(function(err, photo){
-
-        should.not.exist(err, "error when saving photoA", err);
-
-
-        var photoB = new Photo({
-          taken : taken,
-          bytes: size,
-          store : {thumbnails : {url:'test'}}
-        });
-      
-        importer.findOrInitPhoto(userA, photoB, function(err, photo){
-          if (err)
-          should.not.exist(err, "error when initing photo", err);
-
-          photo.taken.toString().should.equal(photoA.taken.toString());
-          
-          photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails');
-          photo.store.thumbnails.should.have.property('url');
-
-        });
-      });
-    });
 
 
   });
@@ -299,19 +316,31 @@ describe("app", function(){
   describe("uploader", function(){
     var cookie;
 
+    var d = new Date().toISOString().replace('T', ' ').slice(0, -5);
+    // weird dates in exif standards..
+    var taken = d.slice(0, 10).split('-').join(':') + ' ' + d.slice(11);
+
     beforeEach(function(done) {
+      var random = Math.random() * 1000000;
       request(app)
+      .post('/register')
+      .send({username: 'test' + random, password:'test'})
+      .expect(200)
+      .end(function(err, res) {
+        request(app)
         .post('/login')
-        .send({username: 'test', password:'test'})
+        .send({username: 'test' + random, password:'test'})
         .expect(200)
         .end(function(err, res) {
           res.headers.should.have.property('set-cookie');
           cookie = res.headers['set-cookie'];
           done();
         });
+      });
     });
 
    
+
     it("should be able to upload a photo", function(done) {
       var req = request(app)
       .post('/api/upload');
@@ -319,19 +348,18 @@ describe("app", function(){
       req.cookies = cookie;
       this.timeout(20000);
 
-      req.attach('thumbnail|2013:01:01 03:00:00|35260', 'tests/fixture/couple.jpg')
+      req.attach('thumbnail|' + taken + '|35260', 'tests/fixture/couple.jpg')
       .expect(200)
       .end(function(err, res){
         should.not.exist(err);
 
-        console.log(res);
-
-        Photo.findOne({taken: new Date('2013-01-01 03:00:00'), bytes: 35260}, function(err, photo) {
+        Photo.findOne({taken: d, bytes: 35260}, function(err, photo) {
           should.not.exist(err);
-          should.exist(photo, "uploaded photo could not be found");
+          should.exist(photo, "uploaded photo could not be found" + d + ' ' + taken);
 
+          photo.should.have.property('ratio', 1.5, 'ratio was not set');
           photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails');
+          photo.store.should.have.property('thumbnails', 'thumbnail was not stored');
           photo.store.thumbnails.should.have.property('url');
 
           addedPhotos.push(photo);
@@ -350,17 +378,18 @@ describe("app", function(){
       this.timeout(20000);
 
       req
-      .attach('original|2013:02:01 01:00:00|35260', 'tests/fixture/couple.jpg')
-      .attach('thumbnail|2013:02:01 01:00:00|35260', 'tests/fixture/couple.jpg')
+      .attach('original|' + taken + '|35260', 'tests/fixture/couple.jpg')
+      .attach('thumbnail|' + taken + '|35260', 'tests/fixture/couple.jpg')
       .expect(200)
       .end(function(err, res){
 
-        Photo.findOne({taken: new Date('2013-02-01 01:00:00'), bytes: 35260}, function(err, photo) {
+        Photo.findOne({taken: d, bytes: 35260}, function(err, photo) {
           should.not.exist(err);
-          should.exist(photo, "uploaded photo could not be found");
+          should.exist(photo, "uploaded photo could not be found" + d.toString() + ' ' + taken);
 
+          photo.should.have.property('ratio', 1.5, 'ratio was not correct');
           photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails');
+          photo.store.should.have.property('thumbnails', 'thumbnail was not stored');
           photo.store.thumbnails.should.have.property('url');
 
           photo.store.should.have.property('originals');
@@ -384,7 +413,8 @@ describe("app", function(){
     addedSpans.map(function(item){return item.remove()});
 
     User.find({$exists: 'accounts.test'}).limit(1000).remove();
-    //User.find({emails: {$size : 0}}).limit(1000).remove();
+    User.find({emails: {$size : 0}}).limit(1000).remove();
+    User.find({displayName: 'Test Landgren'}).limit(1000).remove();
 
     //console.log("after step")
   });

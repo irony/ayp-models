@@ -81,17 +81,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
     exifReader.finish(function(err, exif){
       
       if (err || !exif || !exif.DateTime) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
-      
-      var setter = {$set : {}};
-      if (headers && headers.exif_data) setter.$set.exif = headers.exif_data;
+
+      if (headers && headers.exif_data) photo.exif = headers.exif_data;
       if (headers && headers.width && headers.height) {
-        setter.ratio = headers.width / headers.height;
-        setter.$set['store.' + folder].width = headers.width;
-        setter.$set['store.' + folder].height = headers.height;
+        photo.ratio = headers.width / headers.height;
+        photo.store[folder].width = headers.width;
+        photo.store[folder].height = headers.height;
       }
-      
-      console.debug('Saving exif to db...');
-      return photo.update(setter, {upsert: true, safe:true});
+      //return photo.update(setter, {upsert: true, safe:true});
     });
   });
 
