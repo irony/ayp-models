@@ -78,7 +78,7 @@ connector.handleRequest = function(req, done){
     });*/
   });
 
-  form.on('error', done);
+  //form.on('error', done);
   //form.on('end', function(){done});
   //
   form.parse(req);

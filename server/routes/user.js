@@ -1,4 +1,4 @@
-var User = require('../../models/User');
+var User = require('../../models/user');
 var fs = require('fs');
 var passport = require('passport');
 var async = require('async');
