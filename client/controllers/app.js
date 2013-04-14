@@ -97,8 +97,10 @@ return openDialog;})
 })*/
 .directive('dropzone', function($parse){
   return function(scope, element, attr){
-    element.bind('dragover', function(e){e.preventDefault()});
-    element.bind('drop', function(event) {
+    $(document).bind('dragover', function(e){e.preventDefault()});
+    $(document).bind('drop', function(event) {
+      $('#upload').modal();
+
       var e = event.originalEvent;
       e.preventDefault();
       var updateTimeout;

@@ -6,6 +6,8 @@
 var config = require('../conf');
         
 require('nodetime');
+console.debug = console.log;
+
 
 var mongoose = require('mongoose');
 var _ = require('underscore');
@@ -74,7 +76,6 @@ exports.init = function() {
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
-        console.debug = console.log;
         // app.use(express.logger({ format: ':method :url' }));
     });
 

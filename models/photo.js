@@ -53,7 +53,9 @@ PhotoSchema.pre('save', function (next) {
     members : { $in : photo.owners }
   }, function(err, spans){
     if (err) throw err;
-    console.debug('found %d share spans for this photo', spans.length);
+
+    if (spans.length) console.debug('found %d share spans for this photo', spans.length);
+    
     (spans || []).forEach(function(span){
 
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));

@@ -30,7 +30,7 @@ connector.handleRequest = function(req, done){
 
   form.on('part', function (part) {
     if (!part.filename) {
-      return form.handlePart(part);
+      return;
     }
     // console.log('part name', part.name);
     var quality = part.name.split('|')[0];

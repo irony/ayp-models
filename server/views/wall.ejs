@@ -11,7 +11,7 @@
       
         <div id="wall" style="height:{{totalHeight}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
             <label id="date">{{photoInCenter.taken| date:'MMM yyyy'}}</label>
-              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" src="img/dark_stripes.png" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" src="/img/dark_stripes.png" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>

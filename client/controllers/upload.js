@@ -56,6 +56,7 @@ function UploadController($scope, $http){
     $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
       file.state = ''; // restart the current uploading files and try again
       file.progress = 0;
+      file.thumbnail = null;
       window.stop();
     });
   };
