@@ -841,52 +841,52 @@ body .modal.fade.in {
   }
 
   .filter0 .v0
-  {  width: auto; /*width:inherit*/; }
+  {  opacity:1; /*width:inherit*/; }
   .filter0 .v1, .filter0 .v2, .filter0 .v3, .filter0 .v4, .filter0 .v5, .filter0 .v6, .filter0 .v7, .filter0 .v8, .filter0 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4; width:0; height:0;}
 
   .filter1 .v0,.filter1 .v1  
-  {  width: auto; /*width:inherit*/; }
+  {  opacity:1; /*width:inherit*/; }
   .filter1 .v2, .filter1 .v3, .filter1 .v4, .filter1 .v5, .filter1 .v6, .filter1 .v7, .filter1 .v8, .filter1 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter2 .v0, .filter2 .v1, .filter2 .v2 
-  {  /*width:inherit*/; }
+  {  opacity:1;/*width:inherit*/; }
   .filter2 .v3, .filter2 .v4, .filter2 .v5, .filter2 .v6, .filter2 .v7, .filter2 .v8, .filter2 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
  
   .filter4 .v0, .filter3 .v1, .filter3 .v2, .filter3 .v3 
-  {  /*width:inherit*/; }
+  {  opacity:1;/*width:inherit*/; }
   .filter3 .v4, .filter3 .v5, .filter3 .v6, .filter3 .v7, .filter3 .v8, .filter3 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter4 .v0, .filter4 .v1, .filter4 .v2, .filter4 .v3, .filter4 .v4 
-  {  /*width:inherit*/; }
+  {  opacity:1;/*width:inherit*/; }
   .filter4 .v5, .filter4 .v6, .filter4 .v7, .filter4 .v8, .filter4 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter5 .v0, .filter5 .v1, .filter5 .v2, .filter5 .v3, .filter5 .v4, .filter5 .v5 
-  {  width:auto; }
+  {  opacity:1; }
   .filter5 .v6, .filter5 .v7, .filter5 .v8, .filter5 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter6 .v0, .filter6 .v1, .filter6 .v2, .filter6 .v3, .filter6 .v4, .filter6 .v5, .filter6 .v6 
-  {  width: auto; }
+  {  opacity:1; }
   .filter6 .v7, .filter6 .v8, .filter6 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter7 .v0, .filter7 .v1, .filter7 .v2, .filter7 .v3, .filter7 .v4, .filter7 .v5, .filter7 .v6, .filter7 .v7 
-  {  width: auto; }
+  {  opacity:1; }
    .filter7 .v8, .filter7 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter8 .v0, .filter8 .v1, .filter8 .v2, .filter8 .v3, .filter8 .v4, .filter8 .v5, .filter8 .v6, .filter8 .v7, .filter8 .v8 
-  {  width: auto; }
+  {  opacity:1; }
     .filter8 .v9
-  {  background: #444; opacity:0.4;}
+  {  opacity:0.4;}
 
   .filter9 .v0, .filter9 .v1, .filter9 .v2, .filter9 .v3, .filter9 .v4, .filter9 .v5, .filter9 .v6, .filter9 .v7, .filter9 .v8, .filter9 .v9 
-  {  width: auto; }
+  {  opacity:1; }
 
 
 

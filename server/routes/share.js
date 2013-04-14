@@ -17,8 +17,8 @@ module.exports = function(app){
   app.get('/share', function(req,res){
 
       var model = new ViewModel(req.user);
-      model.fromDate = req.query.fromDate || req.query.date.toString().split('T')[0] || new Date().split('T')[0];
-      model.toDate = req.query.toDate || req.query.date.toString().split('T')[0] || new Date().split('T')[0] + " 23:59:59";
+      model.fromDate = req.query.fromDate || req.query.date && req.query.date.toString().split('T')[0] || new Date().toISOString().split('T')[0];
+      model.toDate = req.query.toDate || req.query.date && req.query.date.toString().split('T')[0] || new Date().toISOString().split('T')[0] + " 23:59:59";
       model.description = 'Share photos';
       model.author = req.user.displayName;
 

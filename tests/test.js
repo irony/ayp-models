@@ -85,7 +85,8 @@ describe("app", function(){
         auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
           should.ok(!err);
       		savedUser.should.have.property('accounts');
-      		savedUser.accounts.should.have.property(profile.provider);
+          savedUser.accounts.should.have.property('test');
+      		savedUser.accounts.should.have.property('test2');
       		done();
         });
     });
@@ -424,7 +425,8 @@ describe("app", function(){
     addedSpans.map(function(item){return item.remove()});
 
     User.find({$exists: 'accounts.test'}).limit(1000).remove();
-    User.find({emails: {$size : 0}}).limit(1000).remove();
+
+    User.find({emails: 'test@stil.nu'}).limit(1000).remove();
     User.find({displayName: 'Test Landgren'}).limit(1000).remove();
 
     //console.log("after step")

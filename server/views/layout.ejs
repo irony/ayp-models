@@ -12,10 +12,11 @@
     <meta name="apple-mobile-web-app-title" content="Photos">
     <!-- Le styles -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-switch.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
-    <link href="//fonts.googleapis.com/css?family=Pacifico|Open+Sans:700,300,400" rel="stylesheet">
     <script src="/js/jquery-1.7.1.min.js"></script>
+    <script src="/js/piecon.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script src="/js/socket.io.js"></script>
 
@@ -167,9 +168,12 @@
             {{channels}} upload channels
           </div>
           <div class="span4 pull-left alert" ng-show="!uploading">
-            You need Google Chrome to use this feature.
+            You may need <a href="http://google.com/chrome">Google Chrome</a> to use this feature.
           </div>
-          <a href="#" class="btn btn-large btn-success pull-right" ng-disabled="!files.length" ng-click="startUpload()">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
+          <div class="switch pull-right" data-on="Uploading" data-off="Off">
+              <input ng-disabled="!files.length"  ng-model="uploading" type="checkbox" />
+          </div>
+          <label class="label pull-right">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
           <div class="span4 pull-right progress progress-striped active" ng-show="uploading">
             <div style="width: {{queue.length / files.length }}%;">Uploading {{queue.length}} / {{files.length}}</div>
           </div>

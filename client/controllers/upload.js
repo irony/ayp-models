@@ -1,33 +1,38 @@
 function UploadController($scope, $http){
 
   $scope.state = null;
-  $scope.files = [];
   $scope.channels = 2;
   $scope.queue = [];
+  $scope.uploading = false;
 
-  //process files
-  $scope.fileChange = function (e) {
-    var files = e.target.files;
-    for(i=0; i<files.length; i++) {
-        var file = files[i];
-        if(file.type.match(/image\.*/)){
-            $scope.files.push(file);
-        }
-    }
-  };
 
-/*
-  $scope.$watch('files', function(files){
-    $scope.files = files
+  $scope.$watch('uploading', function(uploading){
+    $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
+      file.state = ''; // restart the current uploading files and try again
+      file.progress = 0;
+      file.thumbnail = null;
+    });
+  });
+
+  $scope.$watch('allSize - doneSize', function(left){
+    Piecon.setProgress(left / $scope.allSize);
+  });
+
+  $scope.$watch('files.length', function(files){
+    console.log(files);
+    $scope.allSize = 0;
+    $scope.files = $scope.files
     .sort(function(a,b){
-      return b.modified - a.modified
+      return b.modified - a.modified;
     })
     .reduce(function(a,b){
-      if (a.slice(-1).modified != b.modified) a.push(b);
+      if (a.slice(-1).modified !== b.modified) {
+        a.push(b);
+        $scope.allSize += b.size;
+      }
       return a;
     },[]);
-  })
-*/
+  });
 
   var uploadInterval;
   $scope.$watch('uploading', function(on){
@@ -44,26 +49,16 @@ function UploadController($scope, $http){
         });
         if ($scope.queue.length === 0){
           $scope.uploading = false;
+          $scope.library = null; // force reloading of library
+          clearInterval(uploadInterval);
         }
         $scope.$apply();
       }, 500);
     }
   });
 
-  $scope.startUpload = function(){
-    $scope.uploading = !$scope.uploading;
-    
-    $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
-      file.state = ''; // restart the current uploading files and try again
-      file.progress = 0;
-      file.thumbnail = null;
-      window.stop();
-    });
-  };
-
   function queueFile(file) {
-    console.log('queue')
-    fr   = new FileReader;
+    var fr   = new FileReader;
     fr.onloadend = function() {
         if ($scope.library && $scope.library.photos){
           var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
@@ -75,9 +70,12 @@ function UploadController($scope, $http){
         }
         
         if (!file.state) {
-          uploadFile(file, exif, function(err){
+          uploadFile(file, exif, function(err, file, photo){
             if (err) return console.log('Error when uploading', err);
+            $scope.library.photos.push(photo);
+            $scope.uploading = true;
             // TODO: remove from collection to save memory
+            
           });
         }
     };
@@ -101,18 +99,20 @@ function UploadController($scope, $http){
         file.state = 'Error';
         file.error = xhr.responseText;
         file.progress = 30;
+        $scope.errorSize += file.size;
         return done(file.error, file);
       } else {
           var response = xhr.responseText;
-          console.log('Done', response);
           file.response = response;
           file.state = 'Done';
           file.progress = 100;
           $scope.library = null;
+          $scope.doneSize += file.size;
+          var photo = JSON.parse(response);
 
           delete file.thumnail; // save memory
           delete file.exif;
-          return done(null, file);
+          return done(null, file, photo);
       }
     };
 
@@ -132,7 +132,7 @@ function UploadController($scope, $http){
 
 
   function generateThumbnail(file, options, done){
-    file.thumbnail = null; 
+    file.thumbnail = null;
 
     options = options || {};
     var img = document.createElement("img");

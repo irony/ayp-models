@@ -99,7 +99,7 @@ return openDialog;})
   return function(scope, element, attr){
     $(document).bind('dragover', function(e){e.preventDefault()});
     $(document).bind('drop', function(event) {
-      $('#upload').modal();
+      element.modal();
 
       var e = event.originalEvent;
       e.preventDefault();
@@ -115,18 +115,19 @@ return openDialog;})
           }, 200);
         }
       };
-
-      var length = e.dataTransfer && e.dataTransfer.items.length;
-      for (var i = 0; i < length; i++) {
-        var entry = e.dataTransfer.items[i].webkitGetAsEntry();
+      var i = 0;
+      angular.forEach(e.dataTransfer.items, function(item){
+        var entry = item.webkitGetAsEntry();
         var file = e.dataTransfer.files[i];
-        var zip = file.name.match(/\.zip/);
+        i++;
         if (entry.isFile) {
           addFile(file);
         } else if (entry.isDirectory) {
           traverseFileTree(entry, null, addFile);
         }
-      }
+
+
+      });
       // initial binding
       scope.$apply();
 
@@ -134,7 +135,7 @@ return openDialog;})
 
 
     /* Traverse through files and directories */
-    function traverseFileTree(item, path, callback) {
+    function traverseFileTree(item, path, callback, done) {
       path = path || "";
       if (item.isFile) {
         // Get file
@@ -147,11 +148,13 @@ return openDialog;})
         // Get folder contents
         var dirReader = item.createReader();
         dirReader.readEntries(function(entries) {
-          for (var i=0; i<entries.length; i++) {
-            var entry = entries[i];
-            traverseFileTree(entry, path + item.name + "/", callback);
-          }
+          angular.forEach(entries, function(entry){
+            setTimeout(function(){
+              traverseFileTree(entry, path + item.name + "/", callback, scope.$apply);
+            },20);
+          });
         });
+        if (done) done();
       }
     }
     /* Main unzip function */

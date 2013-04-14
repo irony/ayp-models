@@ -21,7 +21,7 @@ var updateProfile = function(user, profile, done){
 
   user.updated = new Date();
 
-  user.set('emails', _.union(emails, profile.emails.map(function(item){return item.value;})));
+  user.set('emails', _.uniq(_.union(emails, profile.emails)));
 
   user.displayName = profile.displayName;
 //   user.set('emails', emails);
@@ -71,7 +71,7 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
           User.findOne({emails : {$in : profile.emails}})
           .sort({'maxRank' : -1})
           .exec(function(err, emailUser){
-//            console.log('found user via email', emailUser);
+            // console.log('found user via email', profile.emails,emailUser);
             return updateProfile(emailUser || new User(), profile, done);
           });
 

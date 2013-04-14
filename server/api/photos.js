@@ -139,6 +139,14 @@ module.exports = function(app){
 
     console.log('user', typeof(req.user._id));
 
+    async.parallel({
+      photos : function(done){
+
+      }, 
+    }, function(){
+
+    });
+
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
@@ -174,39 +182,51 @@ module.exports = function(app){
     if (!req.user) return res.send('Login first', null, 403);
 
     async.parallel({
-      all: function countAllPhotos (done) {
+      all: function  (done) {
         Photo.find({'owners': req.user._id})
           .count(done);
       },
-      copies: function countAllPhotos (done) {
+      copies: function  (done) {
         Photo.find()
           .where('copies.' + req.user._id).exists(true)
           .count(done);
       },
-      originals: function countHowManyAreImported (done) {
+      originals: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('store.originals.stored').exists(true)
           .count(done);
       },
-      thumbnails: function countHowManyAreImported (done) {
+      thumbnails: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('store.thumbnails.stored').exists(true)
           .count(done);
       },
-      exif: function countHowManyHasExifExtracted (done) {
+      exif: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('exif').exists(true)
           .count(done);
       },
-      interesting: function countHowManyAreInteresting (done) {
+      interesting: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('copies.' + req.user._id + '.interestingness').gte(100)
           .count(done);
       },
-      dropbox: function countHowManyAreImportedFromDropbox (done) {
+      dropbox: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('source').equals('dropbox')
           .count(done);
+      },
+      manual: function  (done) {
+        Photo.find({'owners': req.user._id})
+          .where('source').equals('manual')
+          .count(done);
+      },
+      modified: function  (done) {
+        Photo.findOne({'owners': req.user._id}, 'modified')
+          .sort({'modified': -1})
+          .exec(function(err, photo){
+            done(err, photo && photo.modified);
+          });
       }
 
     }, function (err, result) {
