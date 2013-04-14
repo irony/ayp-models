@@ -111,10 +111,10 @@ function UploadController($scope, $http){
           $scope.library = null;
 
           delete file.thumnail; // save memory
-          delete file.exif; 
+          delete file.exif;
           return done(null, file);
       }
-    }
+    };
 
     // Listen to the upload progress.
     xhr.upload.onprogress = function(e) {
@@ -125,8 +125,6 @@ function UploadController($scope, $http){
         file.progress = Math.min(file.progress++, 100);
       }
     };
-
-    xhr.onend
 
     file.progress = 1;
     xhr.send(fd);

@@ -751,7 +751,7 @@ input[type=file]::-webkit-file-upload-button {
   text-shadow: 1px #eee;
 }
 
-.modal.login {
+.modal#login {
   width: 50%; /* desired relative width */
   left: 25%; /* (100%-width)/2 */
   top: 120px;
@@ -759,7 +759,7 @@ input[type=file]::-webkit-file-upload-button {
 
 }
 
-body .modal.upload {
+.modal#upload {
   width: 80%; /* desired relative width */
   left: 10%; /* (100%-width)/2 */
   top: 120px;
