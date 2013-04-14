@@ -20,18 +20,18 @@ var RedisStore = require('connect-redis')(express);
 var db;
 
 mongoose.connection.on("open", function(ref) {
-  return console.log("Connected to mongo server!".green);
+  return console.debug("Connected to mongo server!".green);
 });
 
 mongoose.connection.on("error", function(err) {
-  console.log("Could not connect to mongo server!".yellow);
+  console.debug("Could not connect to mongo server!".yellow);
   return console.log(err.message.red);
 });
 
 try {
   mongoose.connect(config.mongoUrl);
   db = mongoose.connection;
-  console.log("Started connection on " + config.mongoUrl.split('@')[1].cyan + ", waiting for it to open...".grey);
+  console.debug("Started connection on " + config.mongoUrl.split('@')[1].cyan + ", waiting for it to open...".grey);
 } catch (err) {
   console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
 }
