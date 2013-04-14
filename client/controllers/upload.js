@@ -3,10 +3,15 @@ function UploadController($scope, $http){
   $scope.state = null;
   $scope.channels = 2;
   $scope.queue = [];
-  $scope.uploading = false;
+  $scope.uploading = true;
+  $scope.files = [];
 
+  $scope.$watch('channels + queue.length', function(channels){
+    $scope.uploading = channels > 0 && $scope.queue.length > 0;
+  });
 
   $scope.$watch('uploading', function(uploading){
+    console.log('uploading', uploading)
     $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
       file.state = ''; // restart the current uploading files and try again
       file.progress = 0;
@@ -14,24 +19,22 @@ function UploadController($scope, $http){
     });
   });
 
-  $scope.$watch('allSize - doneSize', function(left){
-    Piecon.setProgress(left / $scope.allSize);
+  $scope.$watch('files.length - queue.length', function(left){
+    Piecon.setProgress(left / $scope.files.length);
   });
 
   $scope.$watch('files.length', function(files){
-    console.log(files);
+    if (!$scope.files) return;
+
     $scope.allSize = 0;
-    $scope.files = $scope.files
+    $scope.files
     .sort(function(a,b){
       return b.modified - a.modified;
-    })
-    .reduce(function(a,b){
-      if (a.slice(-1).modified !== b.modified) {
-        a.push(b);
-        $scope.allSize += b.size;
-      }
-      return a;
-    },[]);
+    })    //.reduce(function(a,b){a.slice(-1).modified !== b.modified && a.push(b); return a}, [])
+    .forEach(function(photo){
+      $scope.allSize += photo.size;
+    });
+    console.log($scope.allSize);
   });
 
   var uploadInterval;
