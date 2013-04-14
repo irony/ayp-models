@@ -62,7 +62,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       photo.markModified('store');
 
 
-      done(null, photo);
     } else {
       res.on('data', function(chunk){
         console.log(chunk.toString().red);
@@ -80,8 +79,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   stream.on('end', function(){
     exifReader.finish(function(err, exif){
       
-      if (err || !exif) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
-
       if (headers && headers.exif_data) photo.exif = headers.exif_data;
       if (headers && headers.width && headers.height) {
         photo.ratio = headers.width / headers.height;
@@ -89,6 +86,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
         photo.store[folder].height = headers.height;
       }
       console.debug('EXIF finished of photo', headers, err);
+      return done(null, photo);
       //return photo.update(setter, {upsert: true, safe:true});
     });
   });
