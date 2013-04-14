@@ -22,7 +22,8 @@ var importer = {
     Photo.find({'taken' : photo.taken}, function(err, photos){
 
       var dbPhoto = photos.filter(function(existingPhoto){
-        // ok, so we found a photo at the exact same time but before assuming it is the same we want to do some checks
+        // We found a set of photos at the exact same time but before assuming
+        // it is the same we want to do some checks to find our own
         var found = _.some(existingPhoto.owners, function(item){return item === user._id}) ||
         existingPhoto.path === photo.path || // or same filename
         photo.bytes > 100000 && existingPhoto.bytes === photo.bytes; // or same file size

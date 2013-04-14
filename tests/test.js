@@ -16,7 +16,7 @@ var addedSpans = [];
 
 
 // disgard debug output
-console.debug = function(){};
+ console.debug = function(){};
 /*
 describe("worker", function(){
 
@@ -348,24 +348,29 @@ describe("importer", function(){
       req.cookies = cookie;
       this.timeout(20000);
 
-      req.attach('thumbnail|' + taken + '|35260', 'tests/fixture/couple.jpg')
+      req
+      .attach('thumbnail|' + taken + '|35260', 'tests/fixtures/couple.jpg')
       .expect(200)
       .end(function(err, res){
         should.not.exist(err);
 
-        Photo.findOne({taken: d, bytes: 35260}, function(err, photo) {
+        var photo = res.body;
+        should.not.exist(err);
+        should.exist(photo, "uploaded photo could not be found" + d + ' ' + taken);
+
+        // photo.should.have.property('ratio', 1.5, 'ratio was not set');
+        photo.should.have.property('store');
+        photo.store.should.have.property('thumbnails');
+        photo.store.thumbnails.should.have.property('url');
+
+
+        Photo.findOne({_id : photo._id}, function(err,photo){
+          should.exist(photo, "uploaded photo could not be found in database");
           should.not.exist(err);
-          should.exist(photo, "uploaded photo could not be found" + d + ' ' + taken);
-
-          photo.should.have.property('ratio', 1.5, 'ratio was not set');
-          photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails', 'thumbnail was not stored');
-          photo.store.thumbnails.should.have.property('url');
-
           addedPhotos.push(photo);
-
           done(err);
         });
+
       });
     });
     
@@ -378,27 +383,32 @@ describe("importer", function(){
       this.timeout(20000);
 
       req
-      .attach('original|' + taken + '|35260', 'tests/fixture/couple.jpg')
-      .attach('thumbnail|' + taken + '|35260', 'tests/fixture/couple.jpg')
+      .attach('original|' + taken + '|198184', 'tests/fixtures/IMG_3298.JPG')
+      .attach('thumbnail|' + taken + '|78443', 'tests/fixtures/IMG_3298_thumbnail.jpg')
       .expect(200)
       .end(function(err, res){
 
-        Photo.findOne({taken: d, bytes: 35260}, function(err, photo) {
+        var photo = res.body;
+        should.not.exist(err);
+        should.exist(photo, "uploaded photo could not be found");
+
+        photo.should.have.property('exif');
+        photo.should.have.property('ratio', 1.5, 'ratio was not correct');
+        photo.should.have.property('store');
+        photo.store.should.have.property('thumbnails');
+        photo.store.thumbnails.should.have.property('url');
+
+        photo.store.should.have.property('originals');
+        photo.store.originals.should.have.property('url');
+
+
+        Photo.findOne({_id : photo._id}, function(err,photo){
+          should.exist(photo, "uploaded photo could not be found in database");
           should.not.exist(err);
-          should.exist(photo, "uploaded photo could not be found" + d.toString() + ' ' + taken);
-
-          photo.should.have.property('ratio', 1.5, 'ratio was not correct');
-          photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails', 'thumbnail was not stored');
-          photo.store.thumbnails.should.have.property('url');
-
-          photo.store.should.have.property('originals');
-          photo.store.originals.should.have.property('url');
-
           addedPhotos.push(photo);
-
           done(err);
         });
+
       });
     });
 

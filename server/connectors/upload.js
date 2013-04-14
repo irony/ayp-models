@@ -57,8 +57,11 @@ connector.handleRequest = function(req, done){
     self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
       photo.store = _.extend(photo.store, uploadedPhoto.store);
       photo.markModified('store');
-      if (uploadedPhoto.exif)
+      if (uploadedPhoto.exif){
         photo.exif = uploadedPhoto.exif;
+        photo.markModified('exif');
+        photo.markModified('ratio');
+      }
 
       parts--;
       if (parts === 0){
