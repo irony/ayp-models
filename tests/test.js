@@ -1,5 +1,5 @@
 var conf = require('../conf');
-conf.mongoUrl = 'mongodb://localhost/allyourphotos_test';
+conf.mongoUrl = process.env.MONGOHQ_URL || 'mongodb://localhost/allyourphotos_test';
 var should = require("should");
 var mongoose = require('mongoose');
 var auth = require('../server/auth/auth');
