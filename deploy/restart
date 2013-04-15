@@ -15,12 +15,12 @@ export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazo
 
 npm install
 npm test
-mason build .
+#mason build app
 
 #sudo stop app
 #sudo pkill "node"
 
-sudo nf export -u ec2-user -a app
+sudo nf export -u ec2-user -a app -o /etc/init
 sudo stop app-web
 sudo start app-web
 sudo chmod 700 deploy/monit
