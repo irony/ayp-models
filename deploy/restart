@@ -21,5 +21,5 @@ sudo pkill "node"
 
 sudo foreman export upstart /etc/init -u ec2-user
 sudo start app-web
-monit -d 60 -c ./monit
+monit -d 60 -c deploy/monit
 #foreman start web=1
