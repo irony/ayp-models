@@ -20,5 +20,5 @@ mason build .
 sudo pkill "node"
 
 sudo foreman export upstart /etc/init -u ec2-user
-sudo start app-web-1
+sudo start app-web
 #foreman start web=1
