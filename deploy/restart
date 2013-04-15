@@ -7,10 +7,11 @@ echo "restarting All Your Photos after receiving push"
 #sudo gem install foreman 
 #sudo npm install -g foreman
 
-echo NODE_ENV=production >.env
-echo SSL_PORT=443 >>.env
-echo HOST=www.allyourphotos.org>>.env
-echo MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos>>.env
+export NODE_ENV=production
+export SSL_PORT=443
+export HOST=www.allyourphotos.org
+export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos
+
 
 npm install
 npm test
@@ -19,7 +20,7 @@ mason build .
 #sudo stop app
 #sudo pkill "node"
 
-sudo nf export upstart /etc/init -u ec2-user
+sudo nf export /etc/init -u ec2-user -a app
 sudo stop app-web
 sudo start app-web
 sudo chmod 700 deploy/monit
