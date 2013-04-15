@@ -39,6 +39,6 @@
   "scripts" :
   { 
     "start"  : "nodemon server/server.js",
-    "test" : "mocha -w -R spec tests/* "
+    "test" : "mocha -R spec tests/* "
   }
 }
