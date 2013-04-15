@@ -22,5 +22,6 @@ mason build .
 sudo foreman export upstart /etc/init -u ec2-user
 sudo start app-web
 sudo chmod 700 deploy/monit
+sudo chown deploy/monit
 sudo monit -d 60 -c deploy/monit
 #foreman start web=1
