@@ -20,7 +20,7 @@ mason build .
 #sudo stop app
 #sudo pkill "node"
 
-sudo nf export /etc/init -u ec2-user -a app
+sudo nf export -u ec2-user -a app
 sudo stop app-web
 sudo start app-web
 sudo chmod 700 deploy/monit
