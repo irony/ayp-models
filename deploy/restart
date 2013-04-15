@@ -7,7 +7,6 @@ echo "restarting All Your Photos after receiving push"
 
 
 export NODE_ENV=production 
-export PORT=3000
 export SSL_PORT=443
 export HOST=www.allyourphotos.org
 export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos
@@ -19,7 +18,7 @@ mason build .
 #sudo stop app
 #sudo pkill "node"
 
-sudo foreman export upstart /etc/init -u ec2-user -p 3000
+sudo foreman export upstart /etc/init -u ec2-user
 sudo stop app-web
 sudo start app-web
 sudo chmod 700 deploy/monit
