@@ -3,6 +3,7 @@ var conf = require('../../conf'),
     passport = require('passport'),
     InstagramStrategy = require('passport-instagram').Strategy,
     FlickrStrategy = require('passport-flickr').Strategy,
+    TwitterStrategy = require('passport-twitter').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
     LocalStrategy = require('passport-local').Strategy,
@@ -20,6 +21,26 @@ var conf = require('../../conf'),
   });
 
   passport.use(new LocalStrategy(User.authenticate()));
+
+  // Use the InstagramStrategy within Passport.
+  //   Strategies in Passport require a `verify` function, which accept
+  //   credentials (in this case, an accessToken, refreshToken, and Instagram
+  //   profile), and invoke a callback with a user object.
+  passport.use(new TwitterStrategy({
+      consumerKey: conf.twitter.consumerKey,
+      consumerSecret: conf.twitter.consumerSecret,
+      clientSecret: conf.instagram.clientSecret,
+      callbackURL: callbackBaseUrl + "/auth/twitter/callback",
+      passReqToCallback: true
+    },
+    function(req, accessToken, refreshToken, profile, done) {
+
+      profile.accessToken = accessToken;
+      profile.refreshToken = refreshToken;
+      
+      return auth.findOrCreateAndUpdateUser(req.user, profile, done);
+    }
+  ));
 
   // Use the InstagramStrategy within Passport.
   //   Strategies in Passport require a `verify` function, which accept

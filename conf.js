@@ -9,9 +9,9 @@
         appId: '509552485736388'
       , appSecret: 'f4f302039147fae5d118b42d2a6a0205'
     }
-  , twit: {
-        consumerKey: ''
-      , consumerSecret: ''
+  , twitter: {
+        consumerKey: 'LExZl9x9kUAHURF03bu3Yw'
+      , consumerSecret: 'F9bGeYRb4BMVerSJjciyuurLKAn9NsID4TgVaP8J0w'
     }
   , github: {
         appId: ''

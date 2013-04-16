@@ -35,6 +35,7 @@
     , "supertest" : "*"
     , "should" : "*"
     , "multiparty" : "*"
+    , "passport-twitter" : "*"
   },
   "scripts" :
   { 

@@ -34,7 +34,7 @@ function UploadController($scope, $http){
     .forEach(function(photo){
       $scope.allSize += photo.size;
     });
-    console.log($scope.allSize);
+//     console.log($scope.allSize);
   });
 
   var uploadInterval;
@@ -75,7 +75,7 @@ function UploadController($scope, $http){
         if (!file.state) {
           uploadFile(file, exif, function(err, file, photo){
             if (err) return console.log('Error when uploading', err);
-            $scope.library.photos.push(photo);
+            if (!$scope.library.photos) $scope.library.photos.push(photo);
             $scope.uploading = true;
             // TODO: remove from collection to save memory
             
