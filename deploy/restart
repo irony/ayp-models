@@ -17,9 +17,9 @@ npm test
 #sudo stop app
 #sudo pkill "node"
 
-sudo nf export -a app -u ec2-user -o /etc/init
-restart app
+sudo nf export -a app -o /etc/init
+sudo restart app
 sudo chmod 700 deploy/monit
 sudo chown ec2-user deploy/monit
-monit -d 60 -c deploy/monit
+sudo monit -d 60 -c deploy/monit
 #foreman start web=1
