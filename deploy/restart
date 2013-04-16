@@ -6,6 +6,7 @@ echo "restarting All Your Photos after receiving push"
 #sudo gem install mason 
 #sudo gem install foreman 
 #sudo npm install -g foreman
+#sudo nf export -a app -o /etc/init
 
 export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos
 
@@ -17,7 +18,6 @@ npm test
 #sudo stop app
 #sudo pkill "node"
 
-sudo nf export -a app -o /etc/init
 sudo restart app
 sudo chmod 700 deploy/monit
 sudo chown root deploy/monit
