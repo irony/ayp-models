@@ -47,6 +47,10 @@ PhotoSchema.pre('save', function (next) {
   var photo = this,
       _ = require('underscore'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
+
+  if (!photo.taken && !photo.owners)
+    return next("no date defined");
+
   ShareSpan.find({
     startDate: { $lte : photo.taken },
     stopDate: { $gte : photo.taken },
