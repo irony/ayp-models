@@ -96,7 +96,7 @@ module.exports = function(app){
         return res.end();
       }
       try{
-        res.json(200, results);
+        res.json(results);
       } catch (err){
         console.log('Error: Could not send response: '.red, err);
         res.end();

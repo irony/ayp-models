@@ -25,3 +25,4 @@ module.exports = function () {
 };
 
 module.exports.prototype = InputConnector.prototype; //inherit from InputConnector base
+// test
