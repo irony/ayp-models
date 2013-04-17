@@ -1,45 +1,45 @@
 {
-    "name": "AllYourPhotos"
-  , "version": "0.0.2"
-  , "private": true
-  , "engines": {
+  "name": "AllYourPhotos",
+  "version": "0.0.2",
+  "private": true,
+  "engines": {
     "node": "0.8.x",
-    "npm":  "1.1.x"
-  }
-  , "dependencies": {
-      "express": "2.5.0"
-    , "dbox": "*"
-    , "ejs" : "*"
-    , "passport": "*"
-    , "connect-mongo": "*"
-    , "passport-facebook" : "*"
-    , "passport-dropbox" : "*"
-    , "passport-local" : "*"
-    , "passport-flickr" : "*"
-    , "passport-instagram" : "*"
-    , "passport-local-mongoose" : "*"
-    , "socket.io" : "*"
-    , "nodetime" : "*"
-    , "mongoose": "*"
-    , "async" : "*"
-    , "colors" : "*"
-    , "underscore" : "*"
-    , "spdy" : "*"
-    , "knox" : "*"
-    , "connect-redis" : "*"
-    , "image-headers" : "*"
-    , "readable-stream" : "*"
-    , "multiparty" : "*"
-    , "batch" : "*"
-    , "mocha" : "*"
-    , "supertest" : "*"
-    , "should" : "*"
-    , "multiparty" : "*"
-    , "passport-twitter" : "*"
+    "npm": "1.1.x"
   },
-  "scripts" :
-  { 
-    "start"  : "nodemon server/server.js",
-    "test" : "mocha -R spec tests/* "
+  "dependencies": {
+    "express": "2.5.0",
+    "dbox": "*",
+    "ejs": "*",
+    "passport": "*",
+    "connect-mongo": "*",
+    "passport-facebook": "*",
+    "passport-dropbox": "*",
+    "passport-local": "*",
+    "passport-flickr": "*",
+    "passport-instagram": "*",
+    "passport-local-mongoose": "*",
+    "socket.io": "*",
+    "nodetime": "*",
+    "mongoose": "*",
+    "async": "*",
+    "colors": "*",
+    "underscore": "*",
+    "spdy": "*",
+    "knox": "*",
+    "connect-redis": "*",
+    "image-headers": "*",
+    "readable-stream": "*",
+    "multiparty": "*",
+    "batch": "*",
+    "mocha": "*",
+    "supertest": "*",
+    "should": "*",
+    "passport-twitter": "*",
+    "socket.io-client": "~0.9.11",
+    "passport.socketio": "~1.0.1"
+  },
+  "scripts": {
+    "start": "nodemon server/server.js",
+    "test": "mocha -R spec tests/* "
   }
 }

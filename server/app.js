@@ -20,8 +20,6 @@ var io          = require('socket.io');
 var sio         = io.listen(app, { log:false });
 
 mongoose.connection.on("open", function(ref) {
-  //sio.set("authorization", passportsio.authorize({secret:config.sessionSecret,store:redisStore}));
-
   return console.debug("Connected to mongo server!".green);
 });
 
@@ -39,6 +37,7 @@ try {
 
 // store the s3 client and socket io globally so we can use them from both jobs and routes without passing it as parameters
 global.s3 = knox.createClient(config.aws);
+app.io = sio;
 
 
 exports.init = function() {
@@ -52,9 +51,10 @@ exports.init = function() {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
+    
+      //sio.set("authorization", passportsio.authorize( { secret:config.sessionSecret, store:redisStore }));
 
-      //app.io = sio;
-      //app.use(express.session({ secret: config.sessionSecret, store: redisStore}));
+      app.use(express.session({ secret: config.sessionSecret, store: redisStore }));
       app.use(passport.initialize());
       app.use(passport.session());
       app.use(express.static(__dirname + '/../client'));

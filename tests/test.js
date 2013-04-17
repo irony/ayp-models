@@ -16,7 +16,6 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-
 app.listen(3000);
 
 // disgard debug output
@@ -430,6 +429,7 @@ describe("app", function(){
 
     var photoA;
     var userA = new User();
+    var cookie;
 
     beforeEach(function(done){
         photoA = new Photo({
@@ -440,6 +440,26 @@ describe("app", function(){
         });
 
         photoA.save(done);
+    });
+
+    beforeEach(function(done) {
+      var random = Math.random() * 1000000;
+      request(app)
+      .post('/register')
+      .send({username: 'test' + random, password:'test'})
+      .expect(200)
+      .end(function(err, res) {
+        request(app)
+        .post('/login')
+        .send({username: 'test' + random, password:'test'})
+        .expect(200)
+        .end(function(err, res) {
+          console.log(res.body);
+          res.headers.should.have.property('set-cookie');
+          cookie = res.headers['set-cookie'];
+          done();
+        });
+      });
     });
 
 
@@ -471,7 +491,7 @@ describe("app", function(){
     });
 
     it("should be able to login with express and read the user from socket.io", function (done) {
-      // body...
+      done();
       
     });
 

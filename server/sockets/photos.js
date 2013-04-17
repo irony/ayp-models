@@ -5,15 +5,12 @@
 // * Clicks
 // * Hide or show
 // * Star / heart
-// 
 // TODO: Add session management / authentication with express - socket.io
 
 module.exports = function(app){
-  var io = require('socket.io').listen(app);
   var Photo = require('../../models/photo');
   
-
-  io.of('/photos').on('connection', function (socket) {
+  app.io.of('/photos').on('connection', function (socket) {
     socket.on('views', function (photoId) {
       Photo.update({_id : photoId}, {$inc : {views: 1}, $set : {modified : new Date()}}, function(err, photo){
         console.log('views', photoId, photo);
@@ -33,9 +30,11 @@ module.exports = function(app){
     });
 
     socket.on('star', function (photoId) {
+      console.log('star');
+      console.log("user connected: ", socket.handshake.user);
 
       Photo.update({_id : photoId}, {$inc : {starred: 1}, $set : {modified : new Date()}}, function(err, photo){
-        console.log('starred', photo);
+        socket.broadcast.emit('starred', photoId);
       });
 
       /*Photo.findById(photoId, function(err, photo){
