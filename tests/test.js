@@ -9,11 +9,15 @@ var User = require('../models/user');
 var Photo = require('../models/photo');
 var request = require('supertest');
 var importer = require('../jobs/importer');
+var io = require('socket.io-client');
+var socketURL = 'http://0.0.0.0:3000/photos';
 
 var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
+
+app.listen(3000);
 
 // disgard debug output
  console.debug = function(){};
@@ -418,6 +422,62 @@ describe("app", function(){
     });
   });
   
+  describe("socket communication", function(){
+    var options ={
+      transports: ['websocket'],
+      'force new connection': true
+    };
+
+    var photoA;
+    var userA = new User();
+
+    beforeEach(function(done){
+        photoA = new Photo({
+          taken : new Date(),
+          bytes: 1337,
+          ratio : 1.5,
+          owners : [userA]
+        });
+
+        photoA.save(done);
+    });
+
+
+    it("should be possible to connect to socket io",function(done){
+        var client1 = io.connect(socketURL, options);
+        client1.on('connect', function(data){
+          done();
+        });
+    });
+
+    it("should be possible to vote on a photo",function(done){
+        var client1 = io.connect(socketURL, options);
+
+        client1.on('connect', function(data){
+          should.not.exist(data);
+          /* Since first client is connected, we connect
+          the second client. */
+          var client2 = io.connect(socketURL, options);
+
+          client2.on('connect', function(){
+            console.log('client2 connected');
+            client2.on('starred', function(photoId){
+              photoA._id.toString().should.eql(photoId);
+              done();
+            });
+            client1.emit('star', photoA._id);
+          });
+        });
+    });
+
+    it("should be able to login with express and read the user from socket.io", function (done) {
+      // body...
+      
+    });
+
+
+  });
+
   after(function(){
 
     addedUsers.map(function(item){return item.remove()});
