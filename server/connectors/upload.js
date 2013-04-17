@@ -55,6 +55,8 @@ connector.handleRequest = function(req, done){
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
     self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
+      if(err) return done(err);
+
       photo.store = _.extend(photo.store, uploadedPhoto.store);
       photo.markModified('store');
       if (uploadedPhoto.exif){
@@ -64,10 +66,13 @@ connector.handleRequest = function(req, done){
       }
 
       parts--;
+      // the last part is parsed
       if (parts === 0){
         importer.findOrInitPhoto(req.user, photo, function(err, importedPhoto){
           if (err) return done(err);
-          importedPhoto.save(done);
+          importedPhoto.save(function(err, photo){
+            if (done) return done(err, photo);
+          });
         });
       }
 
@@ -79,7 +84,7 @@ connector.handleRequest = function(req, done){
   });
 
   form.on('error', function(err){
-    console.log('upload error', err);
+    return done(err);
   });
   //form.on('end', function(){done});
   //

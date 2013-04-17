@@ -62,7 +62,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       photo.markModified('store');
 
 
-      done(null, photo);
+      return done(null, photo);
     } else {
       res.on('data', function(chunk){
         console.log(chunk.toString().red);

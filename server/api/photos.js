@@ -89,14 +89,18 @@ module.exports = function(app){
     }
 
     var uploadConnector = require('../connectors/upload.js');
-    uploadConnector.handleRequest(req, function(err, results){
+    uploadConnector.handleRequest(req, function(err, results, next){
       if (err) {
-        try{
-          res.writeHead(500);
-          return res.json(new Error(err).toString());
-        } catch(err){}
+        console.log('Error: upload aborted: '.red, err);
+        res.status(500).json(new Error(err).toString());
+        return res.end();
       }
-      res.json(results);
+      try{
+        res.json(200, results);
+      } catch (err){
+        console.log('Error: Could not send response: '.red, err);
+        res.end();
+      }
     });
     
   });
