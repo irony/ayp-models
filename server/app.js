@@ -12,21 +12,14 @@ var express     = require('express');
 var util        = require('util');
 var passport    = require('./auth/passport');
 var knox        = require('knox');
-var redisStore  = require('connect-redis')(express)();
+var RedisStore  = require('connect-redis')(express);
 var SocketIo    = require('socket.io');
 var passportsio = require("passport.socketio");
-var app         = express.createServer();
 var io          = require('socket.io');
+
+var app         = express.createServer();
 var sio         = io.listen(app, { log:false });
-
-mongoose.connection.on("open", function(ref) {
-  return console.debug("Connected to mongo server!".green);
-});
-
-mongoose.connection.on("error", function(err) {
-  console.debug("Could not connect to mongo server!".yellow);
-  return console.log(err.message.red);
-});
+var store       = new RedisStore();
 
 try {
   mongoose.connect(config.mongoUrl);
@@ -45,20 +38,23 @@ exports.init = function() {
 
     // configure Express
     app.configure(function() {
+
+      var sessionOptions = { secret: config.sessionSecret, store: store };
+
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');
       // app.use(express.logger());
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
-    
-      //sio.set("authorization", passportsio.authorize( { secret:config.sessionSecret, store:redisStore }));
-
-      app.use(express.session({ secret: config.sessionSecret, store: redisStore }));
+      app.use(express.session(sessionOptions));
       app.use(passport.initialize());
       app.use(passport.session());
       app.use(express.static(__dirname + '/../client'));
       app.use(app.router);
+
+
+      sio.set("authorization", passportsio.authorize(sessionOptions));
     });
 
     app.configure('development', function(){

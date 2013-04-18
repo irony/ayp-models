@@ -11,39 +11,43 @@ module.exports = function(app){
   var Photo = require('../../models/photo');
   
   app.io.of('/photos').on('connection', function (socket) {
+    var user = socket.handshake.user;
     socket.on('views', function (photoId) {
-      Photo.update({_id : photoId}, {$inc : {views: 1}, $set : {modified : new Date()}}, function(err, photo){
+      var setter = {$set : {modified : new Date()}, $inc : {}};
+      setter.$inc['copies.' + user._id + '.views'] = 1;
+
+      Photo.update({_id : photoId}, setter, function(err, photo){
         console.log('views', photoId, photo);
       });
     });
 
     socket.on('click', function (photoId, seconds) {
-      Photo.update({_id : photoId}, {$inc : {clicks: seconds}, $set : {modified : new Date()}}, function(err, photo){
-        console.log('click', photoId, photo);
+      var setter = {$set : {modified : new Date()}, $inc : {}};
+      setter.$inc['copies.' + user._id + '.clicks'] = 1;
+
+      Photo.update({_id : photoId}, setter, function(err, photo){
+        socket.broadcast.emit('click', photoId);
       });
     });
 
     socket.on('hide', function (photoId, seconds) {
-      Photo.update({_id : photoId}, {$set : {modified : new Date(), hidden : true}}, function(err, photo){
-        console.log('hide', photoId, photo);
+      var setter = {$set : {modified : new Date()}};
+      setter.$set['copies.' + user._id + '.hidden'] = true;
+
+      Photo.update({_id : photoId}, setter, function(err, photo){
+        socket.broadcast.emit('hide', photoId);
       });
     });
 
-    socket.on('star', function (photoId) {
-      console.log('star');
-      console.log("user connected: ", socket.handshake.user);
+    socket.on('vote', function (photoId, value) {
+      var setter = {$set : {modified : new Date()}};
+      setter.$set['copies.' + user._id + '.vote'] = value;
+      setter.$set['copies.' + user._id + '.hidden'] = false;
 
-      Photo.update({_id : photoId}, {$inc : {starred: 1}, $set : {modified : new Date()}}, function(err, photo){
-        socket.broadcast.emit('starred', photoId);
+      Photo.update({_id : photoId}, setter, function(err, photo){
+        socket.broadcast.emit('vote', photoId, value);
       });
 
-      /*Photo.findById(photoId, function(err, photo){
-        if (photo){
-          photo.starredBy = (photo.starredBy || []).push(userId);
-          console.log('starred by ', photo);
-          photo.save();
-        }
-      });*/
     });
 
   });

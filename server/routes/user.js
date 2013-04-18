@@ -30,6 +30,7 @@ module.exports = function(app){
     });
 
     app.post('/login', passport.authenticate('local'), function(req, res) {
+        res.setHeader('user-id', req.user._id);
         res.redirect('/');
     });
 

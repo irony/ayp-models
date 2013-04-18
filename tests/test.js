@@ -384,7 +384,7 @@ describe("app", function(){
         var req = request(app)
         .post('/api/upload');
         
-        req.cookies = cookie;
+        req.cookies = [cookie];
         this.timeout(20000);
 
         req
@@ -428,21 +428,18 @@ describe("app", function(){
     };
 
     var photoA;
-    var userA = new User();
+    var userId;
     var cookie;
 
     beforeEach(function(done){
-        photoA = new Photo({
-          taken : new Date(),
-          bytes: 1337,
-          ratio : 1.5,
-          owners : [userA]
-        });
+      photoA = new Photo({
+        taken : new Date(),
+        bytes: 1337,
+        ratio : 1.5
+      });
 
-        photoA.save(done);
-    });
+      addedPhotos.push(photoA);
 
-    beforeEach(function(done) {
       var random = Math.random() * 1000000;
       request(app)
       .post('/register')
@@ -454,10 +451,29 @@ describe("app", function(){
         .send({username: 'test' + random, password:'test'})
         .expect(200)
         .end(function(err, res) {
-          console.log(res.body);
           res.headers.should.have.property('set-cookie');
           cookie = res.headers['set-cookie'];
-          done();
+          res.headers.should.have.property('user-id');
+          userId = res.headers['user-id'];
+
+          /*
+           *  First we will patch the xmlhttprequest library that socket.io-client uses
+           *  internally so we can monkey-patch in our own session-cookie
+           */
+          var originalRequest = require('xmlhttprequest').XMLHttpRequest;
+          require('socket.io-client/node_modules/xmlhttprequest').XMLHttpRequest = function(){
+            originalRequest.apply(this, arguments);
+            this.setDisableHeaderCheck(true);
+            var stdOpen = this.open;
+            this.open = function() {
+              stdOpen.apply(this, arguments);
+              this.setRequestHeader('cookie', cookie);
+            };
+          };
+
+          photoA.owners = [userId];
+          photoA.save(done);
+
         });
       });
     });
@@ -480,12 +496,16 @@ describe("app", function(){
           var client2 = io.connect(socketURL, options);
 
           client2.on('connect', function(){
-            console.log('client2 connected');
-            client2.on('starred', function(photoId){
+            client2.on('vote', function(photoId, value){
               photoA._id.toString().should.eql(photoId);
-              done();
+              value.should.eql(5);
+              Photo.findById(photoId, function(err, photo){
+                photo.copies.should.have.property(userId);
+                photo.copies[userId].vote.should.eql(value);
+                done();
+              });
             });
-            client1.emit('star', photoA._id);
+            client1.emit('vote', photoA._id, 5);
           });
         });
     });
