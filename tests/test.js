@@ -10,7 +10,6 @@ var Photo = require('../models/photo');
 var request = require('supertest');
 var importer = require('../jobs/importer');
 var io = require('socket.io-client');
-var socketURL = 'http://0.0.0.0:3000/photos';
 
 var addedUsers = [];
 var addedPhotos = [];
@@ -428,14 +427,23 @@ describe("app", function(){
     };
 
     var photoA;
+    var photoB;
     var userId;
     var cookie;
+    var socketURL;
 
     beforeEach(function(done){
       photoA = new Photo({
         taken : new Date(),
         bytes: 1337,
         ratio : 1.5
+      });
+
+      photoB = new Photo({
+        taken : new Date(),
+        bytes: 1331,
+        ratio : 1.5,
+        owners : [new User()._id]
       });
 
       addedPhotos.push(photoA);
@@ -455,6 +463,7 @@ describe("app", function(){
           cookie = res.headers['set-cookie'];
           res.headers.should.have.property('user-id');
           userId = res.headers['user-id'];
+          socketURL = 'http://0.0.0.0:3000/';
 
           /*
            *  First we will patch the xmlhttprequest library that socket.io-client uses
@@ -473,6 +482,7 @@ describe("app", function(){
 
           photoA.owners = [userId];
           photoA.save(done);
+          photoB.save();
 
         });
       });
@@ -510,7 +520,20 @@ describe("app", function(){
         });
     });
 
+
+    it("should not be possible to affect another user's photo",function(done){
+        var client1 = io.connect(socketURL, options);
+
+        client1.on('connect', function(data){
+          client1.on('error', function(err){
+            done();
+          });
+          client1.emit('click', photoB._id);
+        });
+    });
+
     it("should be able to login with express and read the user from socket.io", function (done) {
+      
       done();
       
     });
