@@ -43,6 +43,20 @@ PhotoSchema.pre('save', function (next) {
 });
 */
 
+PhotoSchema.post('save', function (next) {
+  var redis = require('redis');
+  var client = redis.createClient();
+  var photo = this;
+  photo.owners.map(function(userId){
+    var trigger = {
+      action: 'save',
+      type: 'photo',
+      item: photo
+    };
+    client.publish(userId, JSON.stringify(trigger));
+  });
+});
+
 PhotoSchema.pre('save', function (next) {
   var photo = this,
       _ = require('underscore'),

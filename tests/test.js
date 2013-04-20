@@ -493,6 +493,7 @@ describe("app", function(){
         var client1 = io.connect(socketURL, options);
         client1.on('connect', function(data){
           done();
+          client1.disconnect();
         });
     });
 
@@ -513,6 +514,8 @@ describe("app", function(){
                 photo.copies.should.have.property(userId);
                 photo.copies[userId].vote.should.eql(value);
                 done();
+                client1.disconnect();
+                client2.disconnect();
               });
             });
             client1.emit('vote', photoA._id, 5);
@@ -527,17 +530,78 @@ describe("app", function(){
         client1.on('connect', function(data){
           client1.on('error', function(err){
             done();
+            client1.disconnect();
           });
           client1.emit('click', photoB._id);
         });
     });
 
-    it("should be able to login with express and read the user from socket.io", function (done) {
+    it("should be able to add a photo and receive notification", function (done) {
       
-      done();
-      
+       // create a new photo
+      var photo = new Photo({
+        taken : new Date(),
+        bytes : Math.round(Math.random()*1000000),
+        owners : [userId]
+      });
+
+      addedPhotos.push(photo);
+
+      // listen to new changes
+      var client1 = io.connect(socketURL, options);
+      client1.on('connect', function(data){
+        client1.on('trigger', function(trigger){
+          if(trigger.item.bytes !== photo.bytes) return;
+
+          trigger.type.should.eql("photo");
+          trigger.action.should.eql("save");
+          trigger.item.bytes.should.eql(photo.bytes);
+          done();
+          client1.disconnect();
+        });
+      });
+
+      // save it
+      photo.save();
+
+     
+
+
     });
 
+
+    it("should be able to add a photo to another user and not receive a notification", function (done) {
+      
+       // create a new photo
+      var photo = new Photo({
+        taken : new Date(),
+        bytes : Math.round(Math.random()*1000000),
+        owners : [new User()._id] // someone else
+      });
+
+      addedPhotos.push(photo);
+      this.timeout = 200;
+
+      // listen to new changes
+      var client1 = io.connect(socketURL, options);
+      client1.on('connect', function(data){
+        var triggered = false;
+        client1.on('trigger', function(trigger){
+          triggered = true;
+        });
+        setTimeout(function () {
+          triggered.should.be.false;
+          done();
+        }, 500);
+      });
+
+      // save it
+      photo.save();
+
+     
+
+
+    });
 
   });
 

@@ -21,8 +21,8 @@ module.exports = function(app){
     client.subscribe(user._id); //    listen to messages from channel pubsub
 
 
-    client.on(user._id, function(channel, message) {
-        client.send(message);
+    client.on('message', function(channel, message) {
+        socket.emit('trigger', JSON.parse(message));
     });
 
     socket.on('views', function (photoId) {
