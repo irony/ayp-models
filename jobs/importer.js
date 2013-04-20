@@ -18,6 +18,7 @@ var importer = {
    * @param  {Function} done  [description]
    * @return {[type]}         [description]
    */
+  
   findOrInitPhoto : function(user, photo, done){
     Photo.find({'taken' : photo.taken}, function(err, photos){
 
@@ -31,7 +32,7 @@ var importer = {
         return found;
       }).pop();
 
-      if (photo.taken)
+      if (!photo.taken) photo.taken = photo.modified;
       // console.debug('found %s', dbPhoto ? "one photo" : "no photos", err);
 
       if (err) {

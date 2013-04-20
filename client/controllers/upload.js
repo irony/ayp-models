@@ -52,11 +52,10 @@ function UploadController($scope, $http){
         });
         if ($scope.queue.length === 0){
           $scope.uploading = false;
-          $scope.library = null; // force reloading of library
           clearInterval(uploadInterval);
         }
         $scope.$apply();
-      }, 500);
+      }, 200);
     }
   });
 
@@ -109,7 +108,6 @@ function UploadController($scope, $http){
           file.response = response;
           file.state = 'Done';
           file.progress = 100;
-          $scope.library = null;
           $scope.doneSize += file.size;
           var photo = JSON.parse(response);
 

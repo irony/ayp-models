@@ -20,7 +20,7 @@ module.exports = function(app){
 
     console.log('searching photos:', req.query);
 
-    Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store mimeType')
+    Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store mimeType src')
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
     .where('store.thumbnails.stored').exists()
@@ -56,13 +56,6 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.mine = photo.copies[req.user._id]; // only use this user's personal settings
-
-        if (photo.mimeType.split('/')[0] === 'video'){
-          photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
-        } else {
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
-        }
-        
         var vote = photo.mine.vote || (photo.mine.calculatedVote);
         /*
         if (res.push){

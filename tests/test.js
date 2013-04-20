@@ -196,6 +196,19 @@ describe("app", function(){
     });
   });
 
+/*
+  describe("library", function(){
+
+    before(function(){
+
+    });
+
+    it('should be able to get the correct amount of total numbers of photos', function(){
+      it('should be able to get all photos in the library');
+
+    });
+  });
+*/
 
   describe("importer", function(){
 
@@ -234,8 +247,10 @@ describe("app", function(){
           
           photo.should.have.property('store');
           photo.should.have.property('ratio', 1.5);
+          photo.should.have.property('src');
           photo.store.should.have.property('thumbnails');
           photo.store.thumbnails.should.have.property('url');
+          photo.src.should.equal(photo.store.thumbnails.url);
           // TODO: check thhat owners are not changed
           done();
         });

@@ -22,7 +22,7 @@ module.exports = function(app){
 
 
     client.on('message', function(channel, message) {
-        socket.emit('trigger', JSON.parse(message));
+        socket.emit('trigger', JSON.parse(message)) ;
     });
 
     socket.on('views', function (photoId) {

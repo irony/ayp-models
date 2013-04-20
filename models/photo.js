@@ -25,8 +25,6 @@ var PhotoSchema = new mongoose.Schema({
       mine : { type:  Schema.Types.Mixed},
       exif : {},
       ratio : {type:Number},
-      src : {type:String},
-
       store : {type:Schema.Types.Mixed},
 
       owners : [{ type: Schema.Types.ObjectId, ref: 'User' }]
@@ -42,6 +40,15 @@ PhotoSchema.pre('save', function (next) {
   });
 });
 */
+
+PhotoSchema.virtual('src').get(function (done) {
+  var photo = this;
+  if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
+    return '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
+  } else {
+    return photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
+  }
+});
 
 PhotoSchema.post('save', function (next) {
   var redis = require('redis');

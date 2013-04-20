@@ -3,6 +3,8 @@ var appScope;
 
 function AppController($scope, $http)
 {
+  var socket = io.connect();
+
   $scope.loadMore = null;
   $scope.loading = false;
   $scope.loadingReverse = false;
@@ -10,6 +12,22 @@ function AppController($scope, $http)
 
   appScope = $scope;
   $scope.stats = localStorage && localStorage.getObject('stats');
+
+  socket.on('connect', function(data){
+    socket.on('trigger', function(trigger){
+      var photo = $scope.library.photos.filter(function (item) {
+        return item.taken === new Date(trigger.item.taken).getTime();
+      }).pop();
+
+      if (photo){
+        angular.extend(photo, trigger.item); // update existing
+      }
+      else{
+        $scope.library.photos.push(trigger.item); // add
+      }
+
+    });
+  });
 
   $scope.$watch('stats', function(value){
     if (!value){
@@ -24,6 +42,8 @@ function AppController($scope, $http)
         });
       }
     });
+
+
 
   $scope.library = sessionStorage && sessionStorage.getObject('library');
 

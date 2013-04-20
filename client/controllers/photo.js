@@ -1,13 +1,13 @@
-var socket = io.connect('/photos');
-var activePhoto = null;
 
 function PhotoController ($scope, $http){
+  var socket = io.connect();
+  var activePhoto = null;
   
   $scope.mouseMove = function(photo){
       socket.emit('views', photo._id);
       activePhoto = photo;
 
-      photo.src = photo.src.replace('thumbnails', 'originals');
+      // photo.src = photo.src.replace('thumbnails', 'originals');
 
       setTimeout(function(){
         if (activePhoto === photo)
