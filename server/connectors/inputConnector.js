@@ -38,7 +38,9 @@ InputConnector.prototype.getClient = function(user){
 InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
-  if (!stream || !stream.pipe) return done(new Error('No stream'));
+  if (!stream || !stream.pipe) throw new Error('No stream');
+
+  stream.pause();
 
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;

@@ -9,7 +9,7 @@ var Photo = require('../../models/photo');
 var User = require('../../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
-
+var Stream = require('stream');
 
 var connector = new InputConnector();
 
@@ -49,9 +49,13 @@ var connector = new InputConnector();
 					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
-				return connector.upload('thumbnails', photo, thumbnail, function(err){
+				var stream = new Stream.Readable();
+				connector.upload('thumbnails', photo, stream, function(err){
 					return done(err, thumbnail);
 				});
+				console.log('push')
+				return stream.push(thumbnail);
+
 
 			});
 		} catch(err){
@@ -102,7 +106,9 @@ var connector = new InputConnector();
 	  if (!done) throw new Error("Callback is mandatory");
 
 		if (!user || !user._id || user.accounts.dropbox === undefined){
+
 			return done(new Error('Not a valid dropbox user'));
+
 		}
 		var client = this.getClient(user);
 
@@ -128,11 +134,18 @@ var connector = new InputConnector();
 						return done && done(status);
 
 			    var photos = (reply.entries || []).map(function(photoRow){
+
 						var photo = photoRow[1];
+						photo.mimeType = photo.mime_type;
+						photo.taken = photo.client_mtime;
+
 						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
+			    
 			    }).reduce(function(a,b){
+
 						if (b) {a.push(b)} // remove empty rows
 						return a;
+
 			    }, []);
 
 					_.forEach(photos, function(photo){
@@ -140,8 +153,10 @@ var connector = new InputConnector();
 						// connector.downloadThumbnail(photo, client, user, done);
 					});
 					if (reply.has_more) {
+
 						console.log('found more');
 						return loadDelta(reply.cursor);
+
 					} else {
 						
 						user.accounts.dropbox.cursor = reply.cursor;

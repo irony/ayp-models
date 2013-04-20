@@ -139,40 +139,30 @@ module.exports = function(app){
     console.log('user', typeof(req.user._id));
 
     async.parallel({
+      total : function(done){
+        Photo.find({'owners': req.user._id}).count(done);
+      },
       photos : function(done){
-
-      }, 
-    }, function(){
-
-    });
-
-    // Get an updated user record for an updated user maxRank.
-    User.findOne({_id : req.user._id}, function(err, user){
-      Photo.find({'owners': user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
-      .limit(5000)
-//      .sort('-copies.' + req.user._id + '.interestingness')
-      .sort('-taken')
-      .exec(function(err, photos){
         // return all photos with just bare minimum information for local caching
-        console.log(photos && photos.length, err);
-        async.map((photos || []), function(photo, done){
-          var mine = photo.copies[req.user._id] || {};
+        Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
+    //      .sort('-copies.' + req.user._id + '.interestingness')
+        .sort('-taken')
+        .exec(function(err, photos){
+          async.map((photos || []), function(photo, next){
+            var mine = photo.copies[req.user._id] || {};
+            var vote = mine.vote || (mine.calculatedVote);
+            return next(null, {
+              taken:photo.taken && photo.taken.getTime(),
+              src: photo.src,
+              vote: Math.floor(vote),
+              ratio: photo.ratio
+            });
 
-          // if (!mine) return done(); // unranked images are not welcome here
-
-          var vote = mine.vote || (mine.calculatedVote);
-
-          if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
-            photo.src = '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
-          } else {
-            photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
-          }
-
-          return done(null, {taken:photo.taken && photo.taken.getTime(), src: photo.src, vote: Math.floor(vote), ratio: photo.ratio});
-        }, function(err, photos){
-          return res.json({maxRank: user.maxRank, photos: photos});
+          }, done);
         });
-      });
+      }
+    }, function(err, results){
+        res.json(results);
     });
   });
 

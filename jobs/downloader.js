@@ -30,6 +30,7 @@ var downloader = {
       async.parallel({
         original : function(done){
           if (options.original && !photo.store || !photo.store.originals || !photo.store.originals.stored) {
+            photo.mimeType = photo.mimeType || 'image/jpeg';
             return connector.downloadOriginal(user, photo, function(err, result){
               console.debug('Done original');
               done(err, result);

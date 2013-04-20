@@ -11,7 +11,6 @@ function UploadController($scope, $http){
   });
 
   $scope.$watch('uploading', function(uploading){
-    console.log('uploading', uploading)
     $scope.files.filter(function(file){return file.state === "Processing" || file.state === "Uploading" }).map(function(file){
       file.state = ''; // restart the current uploading files and try again
       file.progress = 0;
@@ -20,7 +19,9 @@ function UploadController($scope, $http){
   });
 
   $scope.$watch('files.length - queue.length', function(left){
-    Piecon.setProgress(left / $scope.files.length);
+    var progress = $scope.doneSize / $scope.allSize;
+    console.log('progress', progress, $scope.doneSize, $scope.allSize);
+    Piecon.setProgress(progress * 100);
   });
 
   $scope.$watch('files.length', function(files){
@@ -44,77 +45,116 @@ function UploadController($scope, $http){
     if (on){
       // check every interval for new files to process but don't add new if the current ones are in a processing state
       uploadInterval = setInterval(function(){
-        $scope.queue = $scope.files.filter(function(file){return !file.state || file.state === "Processing" || file.state === "Uploading" });
-        $scope.queue.slice(0,$scope.channels).forEach(function(file){
-          if (file.thumbnail === undefined) generateThumbnail(file, {width:1800, height:1200}, function(err, file){
-            if (!err) queueFile(file, $scope.upload);
-          });
+
+        // rebuild the queue
+        $scope.queue = $scope.files.filter(function(file){
+          return !file.state || file.state === "Processing" || file.state === "Uploading";
         });
+
+        // remove duplicates and read exif
+        $scope.queue.slice(0, $scope.channels * 2).forEach(function(file){
+          if (file.exif === undefined){
+            readExif(file, function(err, exif){
+              if (err)
+                return file.status = "Error";
+
+              file.exif = exif;
+              file.taken = exif && exif.DateTime ? exif.DateTime.slice(0,10).split(':').join('-') + exif.DateTime.slice(10) : null;
+              var exists = exif && ($scope.library.photos.filter(function(photo){
+                return photo.taken === new Date(file.taken).getTime();
+              }).length);
+
+              if (exists) return file.state = "Duplicate";
+            });
+          }
+        });
+
+        // of the processed files in the queue, start processing a few
+        $scope.queue.filter(function(file){ return !!file.exif})
+        .slice(0,$scope.channels + 1).forEach(function(file){
+          if (!file.started){
+            file.started = true;
+
+            // TODO: replace these to calls to worker instead
+            generateThumbnail(file, {
+              width:640,
+              height:480
+            },
+            function(err, thumbnail){
+              if (err) return file.state = 'Error';
+              file.thumbnail = thumbnail;
+              uploadFile(file, function(err, file, photo){
+                if (err) {
+                  file.state = 'Error';
+                  file.error = err;
+                  file.progress = 30;
+                  console.log('Error:', file.error);
+                } else {
+                  $scope.doneSize += file.size;
+                  file.state = 'Done';
+                  file.progress = 100;
+                }
+              });
+            });
+          }
+        });
+
         if ($scope.queue.length === 0){
           $scope.uploading = false;
           clearInterval(uploadInterval);
         }
+
         $scope.$apply();
-      }, 200);
+      }, 500);
     }
   });
 
-  function queueFile(file) {
+
+  // TODO: move these to a worker instead
+  function readExif(file, done){
+    if(!done) throw "Callback required";
+
     var fr   = new FileReader;
     fr.onloadend = function() {
-        if ($scope.library && $scope.library.photos){
-          var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
-
-          if ($scope.library.photos.filter(function(photo){
-            var taken = exif.DateTime ? exif.DateTime.slice(0,10).split(':').join('-') + exif.DateTime.slice(10) : null;
-            return photo.taken == taken;
-          }).length) return file.state = "Duplicate";
-        }
-        
-        if (!file.state) {
-          uploadFile(file, exif, function(err, file, photo){
-            if (err) return console.log('Error when uploading', err);
-            if ($scope.library && $scope.library.photos) $scope.library.photos.push(photo);
-            $scope.uploading = true;
-            // TODO: remove from collection to save memory
-            
-          });
-        }
+      try{
+        var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
+        done(null, exif);
+      } catch(err){
+        done(err);
+      }
     };
     fr.readAsBinaryString(file);
   }
 
-  function uploadFile(file, exif, done){
+  function uploadFile(file, done){
     var fd = new FormData();
-    var blob = dataURItoBlob(file.thumbnail);
-    //blob.filename = file.filename;
-    fd.append('exif', exif);
-    //fd.append('original|'+ (exif && exif.DateTime) +'|'+file.size, file);
-    fd.append('thumbnail' + '|' + (exif && exif.DateTime) + '|' + blob.size, blob);
+    var thumbnail = dataURItoBlob(file.thumbnail);
+    
+    if (file.exif)
+      fd.append('exif', JSON.stringify(file.exif));
 
+    // fd.append('original|' + file.taken + '|' + file.size, file);
+    fd.append('thumbnail' + '|' + file.taken + '|' + thumbnail.size, thumbnail);
+    console.log('uploading...', file.taken, thumbnail.size);
     var xhr = new XMLHttpRequest();
-    xhr.timeout = 10 * 60 * 1000;
+    xhr.timeout = 2 * 60 * 1000;
     xhr.open("POST", "/api/upload", true);
 
     xhr.onload = function() {
       if(this.status !== 200){
-        file.state = 'Error';
-        file.error = xhr.responseText;
-        file.progress = 30;
-        $scope.errorSize += file.size;
-        return done(file.error, file);
+        return done(new Error(xhr.responseText), file);
       } else {
           var response = xhr.responseText;
-          file.response = response;
-          file.state = 'Done';
-          file.progress = 100;
-          $scope.doneSize += file.size;
           var photo = JSON.parse(response);
 
-          delete file.thumnail; // save memory
+          delete file.thumbnail; // save memory
           delete file.exif;
           return done(null, file, photo);
       }
+    };
+
+    xhr.ontimeout = function(){
+      file.state = 'Error';
     };
 
     // Listen to the upload progress.
@@ -127,13 +167,21 @@ function UploadController($scope, $http){
       }
     };
 
+    xhr.onreadystatechange=function(){
+      if (xhr.status > 200)
+        done(xhr.status);
+    };
+
     file.progress = 1;
-    xhr.send(fd);
+    try{
+      xhr.send(fd);
+    } catch(err){
+      done(err);
+    }
   }
 
 
   function generateThumbnail(file, options, done){
-    file.thumbnail = null;
 
     options = options || {};
     var img = document.createElement("img");
@@ -170,17 +218,15 @@ function UploadController($scope, $http){
           var ctx = canvas.getContext("2d");
           ctx.drawImage(this, 0, 0, width, height);
 
-          file.thumbnail = canvas.toDataURL('image/jpeg');
-          if (done) return done(null, file);
-
-//          file.thumbnail = canvas.toDataURL("image/jpeg");
-          if (done) return done(null, file);
+          var thumbnail = canvas.toDataURL('image/jpeg');
+          if (done) return done(null, thumbnail);
         };
       };
     } catch(err){
       if (done) return done(err);
     }
   }
+
   function dataURItoBlob(dataURI) {
       var binary = atob(dataURI.split(',')[1]);
       var array = [];
