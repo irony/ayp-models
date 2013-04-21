@@ -5,6 +5,7 @@ function UploadController($scope, $http){
   $scope.queue = [];
   $scope.uploading = true;
   $scope.files = [];
+  $scope.doneSize = 0;
 
   $scope.$watch('channels + queue.length', function(channels){
     $scope.uploading = channels > 0 && $scope.queue.length > 0;
