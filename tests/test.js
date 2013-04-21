@@ -236,7 +236,7 @@ describe("app", function(){
         var photoB = new Photo({
           taken : taken,
           bytes: size,
-          store : {thumbnails : {url:'test'}}
+          store : {thumbnail : {url:'test'}}
         });
       
         importer.findOrInitPhoto(userA, photoB, function(err, photo){
@@ -248,9 +248,9 @@ describe("app", function(){
           photo.should.have.property('store');
           photo.should.have.property('ratio', 1.5);
           photo.should.have.property('src');
-          photo.store.should.have.property('thumbnails');
-          photo.store.thumbnails.should.have.property('url');
-          photo.src.should.equal(photo.store.thumbnails.url);
+          photo.store.should.have.property('thumbnail');
+          photo.store.thumbnail.should.have.property('url');
+          photo.src.should.equal(photo.store.thumbnail.url);
           // TODO: check thhat owners are not changed
           done();
         });
@@ -379,8 +379,8 @@ describe("app", function(){
 
           // photo.should.have.property('ratio', 1.5, 'ratio was not set');
           photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails');
-          photo.store.thumbnails.should.have.property('url');
+          photo.store.should.have.property('thumbnail');
+          photo.store.thumbnail.should.have.property('url');
 
 
           Photo.findOne({_id : photo._id}, function(err,photo){
@@ -414,11 +414,12 @@ describe("app", function(){
           photo.should.have.property('exif');
           photo.should.have.property('ratio', 1.4988290398126465, 'ratio was not correct');
           photo.should.have.property('store');
-          photo.store.should.have.property('thumbnails');
-          photo.store.thumbnails.should.have.property('url');
+          photo.should.have.property('path');
+          photo.store.should.have.property('thumbnail');
+          photo.store.thumbnail.should.have.property('url');
 
-          photo.store.should.have.property('originals');
-          photo.store.originals.should.have.property('url');
+          photo.store.should.have.property('original');
+          photo.store.original.should.have.property('url');
 
           console.log('saving...');
           
@@ -651,7 +652,8 @@ describe("app", function(){
     addedSpans.map(function(item){return item.remove()});
 
     User.find({$exists: 'accounts.test'}).limit(1000).remove();
-
+    Photo.update({$rename : {'store.originals':'store.original'}});
+    Photo.update({$rename : {'store.thumbnails': 'store.thumbnail'}});
     User.find({emails: 'test@stil.nu'}).limit(1000).remove();
     User.find({displayName: 'Test Landgren'}).limit(1000).remove();
 

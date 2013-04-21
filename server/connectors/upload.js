@@ -26,6 +26,8 @@ connector.handleRequest = function(req, done){
   form.on('field', function (field) {
     if (field.name === "exif")
       photo.exif = field.value;
+    if (field.name === "path")
+      photo.path = field.value;
   });
 
   form.on('part', function (part) {
@@ -38,7 +40,7 @@ connector.handleRequest = function(req, done){
     part.length = part.name.split('|')[2]; // hack, should be set elsewhere?
     photo.source = 'upload';
     photo.bytes = part.length;
-    photo.path = part.filename;
+    photo.path = !photo.path && part.filename !== 'blob' && part.filename;
     photo.modified = new Date();
     photo.owners = [req.user._id];
     photo.store = {};
@@ -54,7 +56,7 @@ connector.handleRequest = function(req, done){
 
     // photo.bytes = file.length;
     photo.mimeType = part.mimeType || 'image/jpeg';
-    self.upload(quality + "s", photo, part, function(err, uploadedPhoto){
+    self.upload(quality, photo, part, function(err, uploadedPhoto){
       if(err) return done(err);
 
       photo.store = _.extend(photo.store, uploadedPhoto.store);

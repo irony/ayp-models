@@ -52,7 +52,7 @@ var connector = new InputConnector();
 				var stream = new stream.Transform();
 
 				stream.push(thumbnail);
-				connector.upload('thumbnails', photo, stream, function(err){
+				connector.upload('thumbnail', photo, stream, function(err){
 					return done(err, thumbnail);
 				});
 
@@ -80,7 +80,7 @@ var connector = new InputConnector();
 		//client.media(photo.path, function(status, reply){
 			console.log('path', photo.path)
 		var stream = client.stream(photo.path);
-		return connector.upload('originals', photo, stream, function(err){
+		return connector.upload('original', photo, stream, function(err){
 				return done(err, photo);
 		});
 	};

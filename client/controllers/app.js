@@ -126,8 +126,9 @@ return openDialog;})
       var e = event.originalEvent;
       e.preventDefault();
       var updateTimeout;
-      var addFile = function(file){
+      var addFile = function(file, path){
         if(file.type.match(/image\.*/)){
+          file.path = path;
           scope.files.push(file);
 
           // wait until we have found all files before updating the view
@@ -144,6 +145,7 @@ return openDialog;})
         i++;
         if (entry.isFile) {
           addFile(file);
+          console.log('file', file, entry);
         } else if (entry.isDirectory) {
           traverseFileTree(entry, null, addFile);
         }
@@ -163,7 +165,9 @@ return openDialog;})
         // Get file
         item.file(function(file) {
           if(file.type.match(/image\.*/)){
-            callback(file);
+            callback(file, path);
+          } else {
+            // TODO: identify iPhoto package and extract it
           }
         });
       } else if (item.isDirectory) {

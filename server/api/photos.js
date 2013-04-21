@@ -23,7 +23,7 @@ module.exports = function(app){
     Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store mimeType src')
     .where('taken', filter)
     .where('copies.' + req.user._id + '.hidden').ne(true)
-    .where('store.thumbnails.stored').exists()
+    .where('store.thumbnail.stored').exists()
     .where('copies.' + req.user._id + '.calculatedVote').lte(parseFloat(req.query.vote))
     .sort((reverse ? '':'-') + 'taken')
     .skip(req.query.skip || 0)
@@ -60,7 +60,7 @@ module.exports = function(app){
         /*
         if (res.push){
           // SPDY is supported
-          photo.src = '/thumbnails/' + photo.source + '/' + photo._id;
+          photo.src = '/thumbnail/' + photo.source + '/' + photo._id;
           global.s3.get(photo.src).on('response', function(_res){
             res.push(photo.src,{}, function(pushStream){
               _res.pipe(pushStream);
@@ -122,7 +122,7 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-        photo.src = photo.store && photo.store.thumbnails && photo.store.thumbnails.url || '/img/thumbnails/' + photo.source + '/' + photo._id;
+        photo.src = photo.store && photo.store.thumbnail && photo.store.thumbnail.url || '/img/thumbnail/' + photo.source + '/' + photo._id;
         return done(null, photo);
       }, function(err, photos){
         return res.json(photos);
@@ -182,12 +182,12 @@ module.exports = function(app){
       },
       originals: function  (done) {
         Photo.find({'owners': req.user._id})
-          .where('store.originals.stored').exists(true)
+          .where('store.original.stored').exists(true)
           .count(done);
       },
       thumbnails: function  (done) {
         Photo.find({'owners': req.user._id})
-          .where('store.thumbnails.stored').exists(true)
+          .where('store.thumbnail.stored').exists(true)
           .count(done);
       },
       exif: function  (done) {

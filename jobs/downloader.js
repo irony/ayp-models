@@ -29,7 +29,7 @@ var downloader = {
       console.debug('Downloading %s %s from %s', options.thumbnail && "thumbnail", options.original && "and original" || "", photo.source);
       async.parallel({
         original : function(done){
-          if (options.original && !photo.store || !photo.store.originals || !photo.store.originals.stored) {
+          if (options.original && !photo.store || !photo.store.original || !photo.store.original.stored) {
             photo.mimeType = photo.mimeType || 'image/jpeg';
             return connector.downloadOriginal(user, photo, function(err, result){
               console.debug('Done original');
@@ -40,7 +40,7 @@ var downloader = {
 
         },
         thumbnail : function(done){
-          if (options.thumbnail && !photo.store || !photo.store.thumbnails || !photo.store.thumbnails.stored) {
+          if (options.thumbnail && !photo.store || !photo.store.thumbnail || !photo.store.thumbnail.stored) {
             return connector.downloadThumbnail(user, photo, function(err, result){
               console.debug('Done thumbnail');
               return done(err, result);
@@ -59,7 +59,7 @@ var downloader = {
   },
 
 /**
-   * Download all new thumbnails photos for a user
+   * Download all new thumbnail photos for a user
    * @param  {[User]} user
    * @param  {Callback} done
    */
@@ -67,7 +67,7 @@ var downloader = {
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken source path mimeType')
-    .where('store.thumbnails.stored').exists(false)
+    .where('store.thumbnail.stored').exists(false)
     // .where('store.error').exists(false) // skip photos with previous download problems
     .sort('-taken');
 
@@ -75,7 +75,7 @@ var downloader = {
       console.log('[50]Found %d photos without downloaded images. Downloading...', photos && photos.length, err);
       
       async.mapSeries(photos, function(photo, done){
-        // photo.store.thumbnails = null;  // force new thumbnail to be downloaded
+        // photo.store.thumbnail = null;  // force new thumbnail to be downloaded
         downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
           if (err) {
             console.debug('Download photo error: ', err);
@@ -114,7 +114,7 @@ var downloader = {
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find()
-    .where('store.originals.stored').exists(false)
+    .where('store.original.stored').exists(false)
     .where('store.error').exists(false) // skip photos with previous download problems
     .sort('mimeType -taken') // images before videos
     .limit(3);

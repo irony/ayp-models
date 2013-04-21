@@ -30,7 +30,7 @@
   document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
     if (event.target.tagName == "IMG") {
       var target = event.target;
-      target.src = target.src.replace('thumbnails', 'originals');
+      target.src = target.src.replace('thumbnail', 'original');
       location.href = "#" + target.id;
       target.className = 'v' + Math.max(0, parseInt(target.className) - 1);
     }

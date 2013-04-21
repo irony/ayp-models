@@ -7,7 +7,7 @@ function PhotoController ($scope, $http){
       socket.emit('views', photo._id);
       activePhoto = photo;
 
-      // photo.src = photo.src.replace('thumbnails', 'originals');
+      // photo.src = photo.src.replace('thumbnail', 'original');
 
       setTimeout(function(){
         if (activePhoto === photo)
@@ -35,7 +35,7 @@ function PhotoController ($scope, $http){
           socket.emit('click', photo._id, 1);
           console.log("click", photo);
 
-          photo.src = photo.src.replace('thumbnails', 'originals');
+          photo.src = photo.src.replace('thumbnail', 'original');
 
         }, 300);
       }

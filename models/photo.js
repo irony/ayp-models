@@ -44,9 +44,9 @@ PhotoSchema.pre('save', function (next) {
 PhotoSchema.virtual('src').get(function (done) {
   var photo = this;
   if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
-    return '/img/novideo.jpg'; //photo.store && photo.store.originals ? photo.store.originals.url : '/img/novideo.mp4';
+    return '/img/novideo.jpg'; //photo.store && photo.store.original ? photo.store.original.url : '/img/novideo.mp4';
   } else {
-    return photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
+    return photo.store && photo.store.thumbnail ? photo.store.thumbnail.url : '/img/Photos-icon.png';
   }
 });
 
