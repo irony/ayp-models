@@ -412,7 +412,7 @@ describe("app", function(){
           should.exist(photo, "uploaded photo could not be found");
 
           photo.should.have.property('exif');
-          photo.should.have.property('ratio', 1.5, 'ratio was not correct');
+          photo.should.have.property('ratio', 1.4988290398126465, 'ratio was not correct');
           photo.should.have.property('store');
           photo.store.should.have.property('thumbnails');
           photo.store.thumbnails.should.have.property('url');
@@ -420,7 +420,8 @@ describe("app", function(){
           photo.store.should.have.property('originals');
           photo.store.originals.should.have.property('url');
 
-
+          console.log('saving...');
+          
           Photo.findOne({_id : photo._id}, function(err,photo){
             should.exist(photo, "uploaded photo could not be found in database");
             should.not.exist(err);

@@ -40,8 +40,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
   if (!stream || !stream.pipe) throw new Error('No stream');
 
-  stream.pause();
-
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
   var headers = {
@@ -52,6 +50,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       };
 
   var put = global.s3.putStream(stream, filename, headers, function(err, res){
+    
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
@@ -62,7 +61,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       photo.store[folder].url = put.url;
       photo.store[folder].stored = new Date();
       photo.markModified('store');
-
 
       return done(null, photo);
     } else {
@@ -96,12 +94,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
     });
   });
 
-/*
-
-  put.on('progress', function(e){
-    console.debug('progress', e);
-  });
-*/
   /*if (stream.pipe){
     console.log('Piping to s3');
     return stream.pipe(req);

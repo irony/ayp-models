@@ -9,7 +9,7 @@ var Photo = require('../../models/photo');
 var User = require('../../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
-var Stream = require('readable-stream');
+var stream = require("stream");
 
 var connector = new InputConnector();
 
@@ -49,12 +49,12 @@ var connector = new InputConnector();
 					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
-				var stream = new Stream();
+				var stream = new stream.Transform();
+
+				stream.push(thumbnail);
 				connector.upload('thumbnails', photo, stream, function(err){
 					return done(err, thumbnail);
 				});
-				console.log('push')
-				return stream.push(thumbnail);
 
 
 			});
@@ -78,7 +78,7 @@ var connector = new InputConnector();
 
 		var client = this.getClient(user);
 		//client.media(photo.path, function(status, reply){
-
+			console.log('path', photo.path)
 		var stream = client.stream(photo.path);
 		return connector.upload('originals', photo, stream, function(err){
 				return done(err, photo);

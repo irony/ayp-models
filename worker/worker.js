@@ -16,7 +16,7 @@ var colors = require('colors');
 console.debug = function(){ /* ignore debug messages*/};
 
 // more logs
-// require('longjohn');
+require('longjohn');
 
 
 var jobs = [
