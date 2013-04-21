@@ -170,14 +170,14 @@ function UploadController($scope, $http){
 
     xhr.onreadystatechange=function(){
       if (xhr.status > 200)
-        done(xhr.status);
+        done(xhr.status, file);
     };
 
     file.progress = 1;
     try{
       xhr.send(fd);
     } catch(err){
-      done(err);
+      done(err, file);
     }
   }
 
