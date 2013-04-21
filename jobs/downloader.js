@@ -33,7 +33,7 @@ var downloader = {
             photo.mimeType = photo.mimeType || 'image/jpeg';
             return connector.downloadOriginal(user, photo, function(err, result){
               console.debug('Done original');
-              done(err, result);
+              return done(err, result);
             });
           }
           return done();
@@ -43,7 +43,7 @@ var downloader = {
           if (options.thumbnail && !photo.store || !photo.store.thumbnails || !photo.store.thumbnails.stored) {
             return connector.downloadThumbnail(user, photo, function(err, result){
               console.debug('Done thumbnail');
-              done(err, result);
+              return done(err, result);
             });
           }
           return done();

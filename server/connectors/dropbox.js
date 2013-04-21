@@ -9,7 +9,7 @@ var Photo = require('../../models/photo');
 var User = require('../../models/user');
 var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
-var Stream = require('stream');
+var Stream = require('readable-stream');
 
 var connector = new InputConnector();
 
@@ -49,7 +49,7 @@ var connector = new InputConnector();
 					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
-				var stream = new Stream.Readable();
+				var stream = new Stream();
 				connector.upload('thumbnails', photo, stream, function(err){
 					return done(err, thumbnail);
 				});

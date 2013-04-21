@@ -14,6 +14,11 @@ var client = redis.createClient();
 module.exports = function(app){
   var Photo = require('../../models/photo');
   
+
+  app.io.on('disconnect', function(){
+    client.removeAllListeners('message');
+  });
+
   app.io.on('connection', function (socket) {
     var user = socket.handshake.user;
 
@@ -59,6 +64,7 @@ module.exports = function(app){
     socket.on('vote', function (photoId, value) {
       var setter = {$set : {modified : new Date()}};
       setter.$set['copies.' + user._id + '.vote'] = value;
+
       if (value > 0)
         setter.$set['copies.' + user._id + '.hidden'] = false;
 

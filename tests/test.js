@@ -506,7 +506,7 @@ describe("app", function(){
 
     it("should be possible to connect to socket io",function(done){
         var client1 = io.connect(socketURL, options);
-        client1.on('connect', function(data){
+        client1.once('connect', function(data){
           done();
           client1.disconnect();
         });
@@ -515,14 +515,15 @@ describe("app", function(){
     it("should be possible to vote on a photo",function(done){
         var client1 = io.connect(socketURL, options);
 
-        client1.on('connect', function(data){
+        client1.once('connect', function(data){
           should.not.exist(data);
-          /* Since first client is connected, we connect
-          the second client. */
+          console.log('connect');
           var client2 = io.connect(socketURL, options);
 
-          client2.on('connect', function(){
-            client2.on('vote', function(photoId, value){
+          client2.once('connect', function(){
+          console.log('connect2');
+            client2.once('vote', function(photoId, value){
+          console.log('vote');
               photoA._id.toString().should.eql(photoId);
               value.should.eql(5);
               Photo.findById(photoId, function(err, photo){
@@ -542,8 +543,8 @@ describe("app", function(){
     it("should not be possible to affect another user's photo",function(done){
         var client1 = io.connect(socketURL, options);
 
-        client1.on('connect', function(data){
-          client1.on('error', function(err){
+        client1.once('connect', function(data){
+          client1.once('error', function(err){
             done();
             client1.disconnect();
           });
@@ -564,8 +565,8 @@ describe("app", function(){
 
       // listen to new changes
       var client1 = io.connect(socketURL, options);
-      client1.on('connect', function(data){
-        client1.on('trigger', function(trigger){
+      client1.once('connect', function(data){
+        client1.once('trigger', function(trigger){
           if(trigger.item.bytes !== photo.bytes) return;
 
           trigger.type.should.eql("photo");
@@ -599,9 +600,9 @@ describe("app", function(){
 
       // listen to new changes
       var client1 = io.connect(socketURL, options);
-      client1.on('connect', function(data){
+      client1.once('connect', function(data){
         var triggered = false;
-        client1.on('trigger', function(trigger){
+        client1.once('trigger', function(trigger){
           triggered = true;
         });
         setTimeout(function () {
