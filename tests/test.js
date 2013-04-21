@@ -565,7 +565,7 @@ describe("app", function(){
       var client1 = io.connect(socketURL, options);
       client1.once('connect', function(data){
         client1.once('trigger', function(trigger){
-          if(trigger.item.bytes !== photo.bytes) return;
+          if (trigger.item.bytes !== photo.bytes) return;
 
           trigger.type.should.eql("photo");
           trigger.action.should.eql("save");
@@ -576,7 +576,9 @@ describe("app", function(){
       });
 
       // save it
-      photo.save();
+      photo.save(function(err, photo){
+        should.not.exist(err);
+      });
 
      
 

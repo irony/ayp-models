@@ -23,11 +23,9 @@ module.exports = function(app){
     var user = socket.handshake.user;
 
     socket.join(user._id);
-    client.subscribe(user._id); //    listen to messages from channel pubsub
-
-
+    client.subscribe(user._id); //    listen to messages from this user's pubsub channel
     client.on('message', function(channel, message) {
-        socket.emit('trigger', JSON.parse(message)) ;
+      socket.emit('trigger', JSON.parse(message)) ;
     });
 
     socket.on('views', function (photoId) {

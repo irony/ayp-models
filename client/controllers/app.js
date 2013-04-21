@@ -26,6 +26,8 @@ function AppController($scope, $http)
         $scope.library.photos.push(trigger.item); // add
       }
 
+      console.log('trigger', data.type + '/' + data.action);
+
     });
   });
 

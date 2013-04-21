@@ -133,7 +133,7 @@ function UploadController($scope, $http){
     if (file.exif)
       fd.append('exif', JSON.stringify(file.exif));
 
-    // fd.append('original|' + file.taken + '|' + file.size, file);
+    fd.append('original|' + file.taken + '|' + file.size, file);
     fd.append('thumbnail' + '|' + file.taken + '|' + thumbnail.size, thumbnail);
     console.log('uploading...', file.taken, thumbnail.size);
     var xhr = new XMLHttpRequest();
