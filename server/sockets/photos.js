@@ -8,12 +8,12 @@
 
 
 var redis = require('redis');
-var client = redis.createClient();
 
 
 module.exports = function(app){
   var Photo = require('../../models/photo');
   
+  var client = redis.createClient();
 
   app.io.on('disconnect', function(){
     client.removeAllListeners('message');

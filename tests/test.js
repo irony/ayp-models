@@ -435,6 +435,29 @@ describe("app", function(){
 
     });
   });
+
+  describe("redis pubsub", function(){
+    it("should be able to publish and subscribe to a user channel", function(done){
+      var redis = require('redis');
+      var client1 = redis.createClient();
+      var client2 = redis.createClient();
+
+      client1.subscribe(1337);
+      client1.on('message', function(channel, message){
+        var trigger = JSON.parse(message);
+        channel.should.equal("1337");
+        trigger.should.have.property('action', 'save');
+        trigger.should.have.property('type', 'photo');
+        trigger.item.should.have.property('_id');
+        done();
+      });
+      client2.publish(1337, JSON.stringify({action:'save', type:'photo', item : new Photo()}));
+      // verify that the next message isn't parsed by the first channel
+      client2.publish(1338, JSON.stringify({action:'save', type:'photo', item : new Photo()}));
+
+
+    });
+  });
   
   describe("socket communication", function(){
     var options ={
