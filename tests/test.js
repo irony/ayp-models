@@ -517,13 +517,10 @@ describe("app", function(){
 
         client1.once('connect', function(data){
           should.not.exist(data);
-          console.log('connect');
           var client2 = io.connect(socketURL, options);
 
           client2.once('connect', function(){
-          console.log('connect2');
             client2.once('vote', function(photoId, value){
-          console.log('vote');
               photoA._id.toString().should.eql(photoId);
               value.should.eql(5);
               Photo.findById(photoId, function(err, photo){
