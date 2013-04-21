@@ -172,7 +172,7 @@
           <div class="span4 pull-left alert" ng-show="!uploading">
             You may need <a href="http://google.com/chrome">Google Chrome</a> to use this feature.
           </div>
-          <a href="#" class="btn btn-large btn-success pull-right ng-binding" ng-disabled="!files.length" ng-click="uploading = true">Upload {{(queue.length || files.length) + " photos" || ""}}</a>
+          <a href="#" class="btn btn-large {{uploading && 'btn-danger' || 'btn-success'}} pull-right ng-binding" ng-disabled="!files.length" ng-click="uploading = !uploading">{{(queue.length && 'Uploading ' + files.length) + " photos..." || "Upload"}}</a>
         </div>
 
       </div>

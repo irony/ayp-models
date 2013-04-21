@@ -39,7 +39,8 @@
     "socket.io-client": "~0.9.11",
     "passport.socketio": "~1.0.1",
     "xmlhttprequest": "~1.5.0",
-    "redis": "~0.8.3"
+    "redis": "~0.8.3",
+    "longjohn" : "*"
   },
   "scripts": {
     "start": "nodemon server/server.js",
