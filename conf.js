@@ -30,19 +30,19 @@
         clientId: '224794776836-cp3a2v0elt955h9uqhgmskplhg85ljjm.apps.googleusercontent.com'
       , clientSecret: 'rxGFo1mBG_H3DX2ifDFawiMZ'
     }
-  , dropbox: {
-      consumerKey : '430zvvgwfjxnj4v',
-      consumerSecret : 'un2e5d75rkfdeml'
-  },
-  flickr: {
+  , flickr: {
     consumerKey : '246152862e1891230c664f9ef1c7e5f6',
     consumerSecret : 'b970658338c81152'
-  },
-  aws: {
+  }
+  , aws: {
     key: process.env.AWS_ACCESS_KEY_ID || 'AKIAJRS4YILKC25PPTEA',
     secret: process.env.AWS_SECRET_ACCESS_KEY || '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',
     bucket: process.env.AWS_S3_BUCKET || 'allyourphotos-eu'
-  },
-  dbox:
-  { "app_key": "430zvvgwfjxnj4v", "app_secret": "un2e5d75rkfdeml", root : 'dropbox'}
+  }
+  , dbox: { 
+    "app_key": "430zvvgwfjxnj4v", 
+    "app_secret": "un2e5d75rkfdeml", 
+    root : 'dropbox', 
+    scope : 'all'
+  }
 };

@@ -13,6 +13,8 @@ var stream = require("stream");
 
 var connector = new InputConnector();
 
+	connector.scope = '';
+
 	connector.downloadThumbnail = function(user, photo, done){
 	
 	  if (!done) throw new Error("Callback is mandatory");
@@ -93,7 +95,7 @@ var connector = new InputConnector();
 		
 		var access_token = {
 			"oauth_token_secret"	:  user.accounts.dropbox.tokenSecret,
-			"oauth_token"					:  user.accounts.dropbox.token
+			"oauth_token"					:  user.accounts.dropbox.token,
 		};
 
 		var client = dropbox.client(access_token);
@@ -128,7 +130,9 @@ var connector = new InputConnector();
 
 
 			var loadDelta = function(cursor){
+				console.log('loadDelta', cursor);
 				client.delta({cursor : cursor}, function(status, reply){
+					console.log('done loadDelta', status, reply);
 					
 					if (status !== 200 || !reply)
 						return done && done(status);
@@ -136,8 +140,11 @@ var connector = new InputConnector();
 			    var photos = (reply.entries || []).map(function(photoRow){
 
 						var photo = photoRow[1];
-						photo.mimeType = photo.mime_type;
-						photo.taken = photo.client_mtime;
+
+						photo.mimeType = photo && photo.mime_type;
+						photo.taken = photo && photo.client_mtime;
+
+						console.log('delta', photo);
 
 						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
 			    

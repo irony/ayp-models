@@ -15,7 +15,7 @@ module.exports = {
   extractExifFromNewPhotos : function(autoRestart){
 
     var photoQuery = Photo.find()
-    .where('store.originals.stored').exists()
+    .where('store.original.stored').exists()
     .where('exif').exists(false)
     .sort('-taken')
     .limit(50);
@@ -28,7 +28,7 @@ module.exports = {
       }, function(err, photos){
         
           var blitline = new Blitline(); // TODO: move app_id to conf
-          var job = blitline.addJob("5EUcAOhUpehEGs6uXQzz_Sg", photo.store.originals.url);
+          var job = blitline.addJob("5EUcAOhUpehEGs6uXQzz_Sg", photo.store.original.url);
 
           //blitline.callbackUrl = callbackBaseUrl + "/"; //TODO add callback here;
 

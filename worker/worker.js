@@ -1,6 +1,6 @@
 var config = require('../conf');
 
-require('nodetime').profile(config.nodetime);
+// require('nodetime').profile(config.nodetime);
 
 var app = require('../server/app');
 var express = require('express');

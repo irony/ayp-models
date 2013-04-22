@@ -1,7 +1,7 @@
 var conf = require('../conf');
 
 // run tests locally or with test collection
-conf.mongoUrl = process.env.MONGOHQ_URL + '_test' || 'mongodb://localhost/allyourphotos_test';
+conf.mongoUrl = (process.env.MONGOHQ_URL || 'mongodb://localhost/allyourphotos') + '_test';
 
 
 var should = require("should");
@@ -63,32 +63,35 @@ describe("app", function(){
 
 
     var id = Math.floor((Math.random()*10000000)+1).toString();
+    var email = Math.random()+'test@stil.nu';
+    var user;
 
-    it("should be possible to create a user ", function(done) {
-  	  var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test', id : id};
-  	  var user = null;
-      auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
-        should.ok(!err);
+    before(function(done) {
+  	  var profile = {displayName : 'Test Landgren', emails : [email], provider : 'test', id : id};
+      auth.findOrCreateAndUpdateUser(null, profile, function(err, savedUser){
+        should.not.exist(err, 'error save ' + err);
+        should.exist(savedUser);
   		  savedUser.should.have.property('accounts');
+        user = savedUser;
   		  done();
       });
     });
 
    it("should be possible to add new email to an existing user ", function(done) {
       var profile = {displayName : 'Test Landgren', emails : ['testing@stil.nu'], provider : 'test', id : id};
-      var user = null;
       
-      auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
+      auth.findOrCreateAndUpdateUser(null, profile, function(err, savedUser){
         should.ok(!err);
   		  savedUser.emails.should.have.length(2);
+        savedUser.emails[0].should.eql(email);
+        savedUser.emails[1].should.eql('testing@stil.nu');
   		  done();
       });
     });
 
     it("should be possible to add new account to an existing user ", function(done) {
-    	var profile = {displayName : 'Test Landgren', emails : ['test@stil.nu'], provider : 'test2', id : id};
-    	var user = null;
-        auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
+    	var profile = {displayName : 'Test Landgren', emails : [email], provider : 'test2', id : id};
+        auth.findOrCreateAndUpdateUser(null, profile, function(err, savedUser){
           should.ok(!err);
       		savedUser.should.have.property('accounts');
           savedUser.accounts.should.have.property('test');
@@ -97,6 +100,16 @@ describe("app", function(){
         });
     });
 
+    it("should be possible to add new account to a logged-in user ", function(done) {
+      var profile = {displayName : 'Test Landgren', emails : [], provider : 'test3', id : id+1};
+        auth.findOrCreateAndUpdateUser(user, profile, function(err, savedUser){
+          should.ok(!err);
+          savedUser.should.have.property('accounts');
+          savedUser.accounts.should.have.property('test');
+          savedUser.accounts.should.have.property('test3');
+          done();
+        });
+    });
   });
 
   describe("share", function(){

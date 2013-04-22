@@ -65,8 +65,8 @@ module.exports = function (app) {
 
       if ( err || !photo ) return res.send(403, err);
 
-      if (photo.store && photo.store.originals && photo.store.originals.url)
-        return res.redirect(photo.store.originals.url);
+      if (photo.store && photo.store.original && photo.store.original.url)
+        return res.redirect(photo.store.original.url);
 
       connector.downloadOriginal(req.user, photo, function(err, original){
         if (err || !original) {

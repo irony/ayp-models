@@ -152,8 +152,12 @@ var downloader = {
       }, function(err, photos){
         
         console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
-        return done(err, photos);
-
+        if (photos.length){
+          return done(err, photos);
+        }
+        else{
+          setTimeout(done, 10000); // wait longer before trying again if queue is empty
+        }
       });
     };
     

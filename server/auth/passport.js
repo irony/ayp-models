@@ -16,8 +16,8 @@ var conf = require('../../conf'),
   });
 
   passport.deserializeUser(function(user, done) {
-      done(null, user);
-//      User.findById(user._id, done);
+//      done(null, user);
+      User.findById(user._id, done);
   });
 
   passport.use(new LocalStrategy(User.authenticate()));
@@ -66,8 +66,8 @@ var conf = require('../../conf'),
   //   credentials (in this case, a token, tokenSecret, and Dropbox profile), and
   //   invoke a callback with a user object.
   passport.use(new DropboxStrategy({
-      consumerKey: conf.dropbox.consumerKey,
-      consumerSecret: conf.dropbox.consumerSecret,
+      consumerKey: conf.dbox.app_key,
+      consumerSecret: conf.dbox.app_secret,
       callbackURL: callbackBaseUrl + "/auth/dropbox/callback",
       passReqToCallback: true
     },

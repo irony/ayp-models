@@ -26,13 +26,11 @@ var updateProfile = function(user, profile, done){
   user.displayName = profile.displayName;
 //   user.set('emails', emails);
   user.set('accounts', accounts);
+  user.markModified('accounts');
 
-  // console.log('updated profile', user);
+  console.log('updated profile', user, profile);
 
-  return user.save(function(err, savedUser){
-    // console.debug('saved user', err);
-    done(err, savedUser);
-  });
+  return user.save(done);
 };
 
 var findOrCreateAndUpdateUser = function (user, profile, done)
@@ -41,7 +39,6 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
   // even if we have the serialized user object, we still want to use the db user so we can save and update it correctly
   if (user && user._id){
     return User.findById(user._id, function(err, foundUser){
-            console.log('finding existing user via id', user._id, profile);
 
       if (!foundUser){
         foundUser = new User(user);
