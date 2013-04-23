@@ -9,18 +9,7 @@ var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('underscore');
 
 module.exports = function(app){
-  app.get('/api/user', function(req, res){
-    async.parallel({
-      sessionUser: function(done){
-        done(null, req.user);
-      },
-      dbUser : function(done){
-        User.findById(req.user._id, done);
-      }
-    }, function(err, results){
-      res.json(results);
-    });
-  });
+
 
   app.get('/api/photoFeed', function(req, res){
     if (!req.user){

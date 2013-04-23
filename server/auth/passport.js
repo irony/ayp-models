@@ -12,12 +12,11 @@ var conf = require('../../conf'),
 
 
   passport.serializeUser(function(user, done) {
-    done(null, user.toJSON());
+    done(null, user._id);
   });
 
-  passport.deserializeUser(function(user, done) {
-//      done(null, user);
-      User.findById(user._id, done);
+  passport.deserializeUser(function(id, done) {
+      User.findById(id, done);
   });
 
   passport.use(new LocalStrategy(User.authenticate()));
