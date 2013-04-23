@@ -29,7 +29,10 @@ var downloader = {
       console.debug('Downloading %s %s from %s', options.thumbnail && "thumbnail", options.original && "and original" || "", photo.source);
       async.parallel({
         original : function(done){
-          if (options.original && !photo.store || !photo.store.original || !photo.store.original.stored) {
+
+          debugger;
+          //TODO: fix the bug here
+          if (options.original && (!photo.store || !photo.store.original || !photo.store.original.stored)) {
             photo.mimeType = photo.mimeType || 'image/jpeg';
             return connector.downloadOriginal(user, photo, function(err, result){
               console.debug('Done original');
@@ -40,7 +43,7 @@ var downloader = {
 
         },
         thumbnail : function(done){
-          if (options.thumbnail && !photo.store || !photo.store.thumbnail || !photo.store.thumbnail.stored) {
+          if (options.thumbnail && (!photo.store || !photo.store.thumbnail || !photo.store.thumbnail.stored)) {
             return connector.downloadThumbnail(user, photo, function(err, result){
               console.debug('Done thumbnail');
               return done(err, result);

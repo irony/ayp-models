@@ -43,6 +43,6 @@
     "app_key": "430zvvgwfjxnj4v", 
     "app_secret": "un2e5d75rkfdeml", 
     root : 'dropbox', 
-    scope : 'all'
+    scope : ''
   }
 };

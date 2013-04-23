@@ -12,6 +12,7 @@ var conf = require('../../conf'),
 
 
   passport.serializeUser(function(user, done) {
+
     done(null, user._id);
   });
 
@@ -19,7 +20,7 @@ var conf = require('../../conf'),
       User.findById(id, done);
   });
 
-  passport.use(new LocalStrategy(User.authenticate()));
+  passport.use( { usernameField: 'emails' }, new LocalStrategy(User.authenticate()));
 
   // Use the InstagramStrategy within Passport.
   //   Strategies in Passport require a `verify` function, which accept

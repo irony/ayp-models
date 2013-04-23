@@ -220,7 +220,7 @@
     .featurette-divider {
       padding: 0px 0px; /* Space out the Bootstrap <hr> more */
       margin: 0px -450px; /* Space out the Bootstrap <hr> more */
-      background-size: 1720px;
+      background-size: 1720px !important;
       width: 1920px;
       left:0;
       border:0;
