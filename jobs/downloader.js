@@ -30,7 +30,6 @@ var downloader = {
       async.parallel({
         original : function(done){
 
-          debugger;
           //TODO: fix the bug here
           if (options.original && (!photo.store || !photo.store.original || !photo.store.original.stored)) {
             photo.mimeType = photo.mimeType || 'image/jpeg';
