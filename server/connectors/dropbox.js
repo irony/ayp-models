@@ -39,10 +39,13 @@ var connector = new InputConnector();
 			var req = client.thumbnails(photo.path, {size: 'l'});
 
 			req.onResponse = function(res){
+				if(res.statusCode >= 400)
+					return done(res.statusCode);
+
 				connector.upload('thumbnail', photo, res, done);
 			};
 		} catch(err){
-			done(err, null);
+			done(err);
 		}
 
 	};
@@ -66,6 +69,9 @@ var connector = new InputConnector();
 		req.onResponse = function(res){
 			//res.length = photo.bytes;
 			
+			if(res.statusCode >= 400)
+				return done(res.statusCode);
+
 			connector.upload('original', photo, res, done);
 		};
 
