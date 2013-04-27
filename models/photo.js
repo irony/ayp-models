@@ -10,6 +10,14 @@ var mongoose = require('mongoose'),
 
     Schema = mongoose.Schema;
 
+var redis = require('redis');
+var client = redis.createClient();
+client.on('error', function(err){
+  // ignore errors
+  console.debug('error redis', err);
+});
+
+
 var PhotoSchema = new mongoose.Schema({
       path : { type: String},
       taken : { type: Date},
@@ -51,8 +59,7 @@ PhotoSchema.virtual('src').get(function (done) {
 });
 
 
-var redis = require('redis');
-var client = redis.createClient();
+
 
 PhotoSchema.post('save', function (next) {
   var photo = this;

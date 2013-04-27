@@ -14,6 +14,10 @@ module.exports = function(app){
   var Photo = require('../../models/photo');
   
   var client = redis.createClient();
+  client.on('error', function(err){
+    // ignore errors
+    console.debug('error redis', err);
+  });
 
   app.io.on('disconnect', function(){
     client.removeAllListeners('message');
