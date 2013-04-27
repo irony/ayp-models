@@ -49,14 +49,11 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
           'x-amz-acl': 'public-read',
           'Cache-Control': 'public,max-age=31556926'
       };
-    console.log('init putstream');
 
   var put = global.s3.putStream(stream, filename, headers, function(err, res){
-    console.log('resp putstream', err);
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
-    console.log('done putstream', err);
 
       photo.store = photo.store || {};
       photo.store[folder] = photo.store[folder] || {};
@@ -67,7 +64,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
       return done(null, photo);
     } else {
-    console.log('err putstream', err);
       res.on('data', function(chunk){
         console.log(chunk.toString().red);
       });
@@ -78,12 +74,10 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   var exifReader = new ImageHeaders();
 
   stream.on('data', function(chunk){
-    console.log('data putstream');
     if (!exifReader.finished) exifReader.add_bytes(chunk);
   });
 
   stream.on('end', function(){
-    console.log('end putstream');
     exifReader.finish(function(err, headers){
       
       if (err || !headers) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
