@@ -36,7 +36,7 @@ var connector = new InputConnector();
 		try {
 			var client = this.getClient(user);
 
-			var req = client.thumbnails(photo.path, {size: 'l'});
+			var req = client.thumbnails(photo.path, {size: 'l'}, function(){});
 
 			req.onResponse = function(res){
 				if(!res || res.statusCode >= 400){
