@@ -14,6 +14,7 @@ var Photo = require('../models/photo');
 var request = require('supertest');
 var importer = require('../jobs/importer');
 var io = require('socket.io-client');
+var fs = require('fs');
 
 var addedUsers = [];
 var addedPhotos = [];
@@ -21,7 +22,9 @@ var addedSpans = [];
 
 var port = 3001;
 var host = 'http://0.0.0.0:' + port;
-app.listen(port);
+// app.listen(port);
+
+
 
 // disgard debug output
  console.debug = function(){};
@@ -59,6 +62,14 @@ describe("worker", function(){
 });*/
 
 describe("app", function(){
+
+  before(function(){
+    conf.mongoUrl.slice(-4).should.eql('test');
+
+    User.find().remove();
+    Photo.find().remove();
+
+  });
 
 
   describe("account", function(){
@@ -228,6 +239,97 @@ describe("app", function(){
     });
   });
 */
+
+  describe("connectors", function(){
+    var user = new User(JSON.parse(fs.readFileSync(__dirname + '/fixtures/testUser.json')));
+    
+    before(function(done){
+      user.save(done);
+    });
+
+    describe("dropbox", function(){
+      var connector = require('../server/connectors/dropbox');
+      var client = connector.getClient(user);
+      var testPhoto = fs.readFileSync(__dirname + '/fixtures/couple.jpg');
+      
+      this.timeout(10000);
+
+
+      it("should be able to upload test file manually", function(done){
+
+        client.put("fixtures/couple.jpg", testPhoto, function(status, reply){
+          status.should.eql(200);
+          reply.should.have.property("path", "/fixtures/couple.jpg");
+          done();
+        });
+
+      });
+
+      it("should be able to import all photos under fixtures", function(done){
+
+        client.put("fixtures/couple.jpg", testPhoto, function(status, reply){
+          status.should.eql(200);
+          reply.should.have.property("path", "/fixtures/couple.jpg");
+          done();
+        });
+
+      });
+
+      it("should import", function(done){
+
+        connector.importNewPhotos(user, function(err, photos){
+          if (err) throw err;
+          var photo = photos.pop();
+          importer.findOrInitPhoto(user, photo, function(err, photo){
+            should.not.exist(err);
+
+            async.series({
+              thumbnail: function(done){
+                connector.downloadThumbnail(user, photo, function(err, photo){
+                  should.not.exist(err);
+                  should.exist(photo);
+                  should.exist(photo.store);
+                  photo.store.should.have.property('thumbnail');
+                  photo.store.thumbnail.should.have.property('url');
+                  done();
+                });
+              },
+              original: function(done){
+                connector.downloadOriginal(user, photo, function(err, photo){
+                  should.not.exist(err);
+                  should.exist(photo);
+                  should.exist(photo.store);
+                  should.exist(photo.ratio);
+                  photo.store.should.have.property('original');
+                  photo.store.original.should.have.property('url');
+                  //photo.ratio.should.eql(1.57790262172284643);
+                  done();
+                });
+              }
+            }, function(err, result){
+              console.log('done', err);
+              done();
+            });
+                
+          });
+        });
+
+      });
+
+
+      after(function(done) {
+        client.rm("fixtures", function(status, reply){
+          status.should.eql(200);
+          reply.should.have.property("path", "/fixtures");
+          done();
+        });
+
+        user.remove();
+
+      });
+
+    });
+  });
 
   describe("importer", function(){
 

@@ -84,6 +84,8 @@ var cache = {};
     },
     function(req, token, tokenSecret, profile, done) {
 
+      console.log(profile);
+      
       profile.token = token;
       profile.tokenSecret = tokenSecret;
 

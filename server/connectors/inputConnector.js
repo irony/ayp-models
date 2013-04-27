@@ -39,6 +39,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
   if (!stream || !stream.pipe) throw new Error('No stream');
+  if (!stream.length) throw new Error('No stream length');
 
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
@@ -48,12 +49,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
           'x-amz-acl': 'public-read',
           'Cache-Control': 'public,max-age=31556926'
       };
+    console.log('init putstream');
 
   var put = global.s3.putStream(stream, filename, headers, function(err, res){
-    
+    console.log('resp putstream', err);
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
+    console.log('done putstream', err);
 
       photo.store = photo.store || {};
       photo.store[folder] = photo.store[folder] || {};
@@ -64,20 +67,23 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
       return done(null, photo);
     } else {
+    console.log('err putstream', err);
       res.on('data', function(chunk){
         console.log(chunk.toString().red);
       });
-      return done(new Error('Error when saving to S3, code: '.red, null));
+      return done(new Error('Error when saving to S3, code: '.red + res.statusCode, null));
     }
   });
 
   var exifReader = new ImageHeaders();
 
   stream.on('data', function(chunk){
+    console.log('data putstream');
     if (!exifReader.finished) exifReader.add_bytes(chunk);
   });
 
   stream.on('end', function(){
+    console.log('end putstream');
     exifReader.finish(function(err, headers){
       
       if (err || !headers) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
@@ -85,6 +91,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       if (headers.exif_data) photo.exif = headers.exif_data;
       if (headers.width && headers.height) {
         photo.ratio = headers.width / headers.height;
+        photo.store = photo.store || {};
         photo.store[folder] = photo.store[folder] || {};
         photo.store[folder].width = headers.width;
         photo.store[folder].height = headers.height;

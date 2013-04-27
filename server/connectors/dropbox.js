@@ -15,6 +15,8 @@ var connector = new InputConnector();
 
 	connector.scope = '';
 
+	
+
 	connector.downloadThumbnail = function(user, photo, done){
 	
 	  if (!done) throw new Error("Callback is mandatory");
@@ -51,11 +53,12 @@ var connector = new InputConnector();
 					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
 				}
 
-				var stream = new stream.Transform();
 
-				stream.push(thumbnail);
-				connector.upload('thumbnail', photo, stream, function(err){
-					return done(err, thumbnail);
+				var s = new stream.Transform();
+				s.length = thumbnail.length;
+				s.push(thumbnail);
+				connector.upload('thumbnail', photo, s, function(err, photo){
+					return done(err, photo);
 				});
 
 
@@ -68,7 +71,7 @@ var connector = new InputConnector();
 
 
 	connector.downloadOriginal = function(user, photo, done){
-  	if (!done) throw new Error("Callback is mandatory");
+		if (!done) throw new Error("Callback is mandatory");
 
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done(new Error('Not a dropbox user'), null); // not a dropbox user
@@ -79,12 +82,15 @@ var connector = new InputConnector();
 		}
 
 		var client = this.getClient(user);
-		//client.media(photo.path, function(status, reply){
-			console.log('path', photo.path)
-		var stream = client.stream(photo.path);
-		return connector.upload('original', photo, stream, function(err){
-				return done(err, photo);
-		});
+
+		var req = client.stream(photo.path);
+
+		req.onResponse = function(res){
+			res.length = photo.bytes;
+			connector.upload('original', photo, res, done);
+		};
+
+
 	};
 
 
@@ -130,9 +136,7 @@ var connector = new InputConnector();
 
 
 			var loadDelta = function(cursor){
-				console.log('loadDelta', cursor);
 				client.delta({cursor : cursor}, function(status, reply){
-					console.log('done loadDelta', status, reply);
 					
 					if (status !== 200 || !reply)
 						return done && done(status);
@@ -145,8 +149,6 @@ var connector = new InputConnector();
 
 						photo.mimeType = photo && photo.mime_type;
 						photo.taken = photo && photo.client_mtime;
-
-						console.log('delta', photo);
 
 						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
 			    
