@@ -39,8 +39,11 @@ var connector = new InputConnector();
 			var req = client.thumbnails(photo.path, {size: 'l'});
 
 			req.onResponse = function(res){
-				if(res.statusCode >= 400)
-					return done(res.statusCode);
+				if(!res || res.statusCode >= 400){
+					console.log('error thumbnail'.red, res);
+					return done("Error downloading thumbnail: " + res.statusCode);
+
+				}
 
 				connector.upload('thumbnail', photo, res, done);
 			};
@@ -69,8 +72,10 @@ var connector = new InputConnector();
 		req.onResponse = function(res){
 			//res.length = photo.bytes;
 			
-			if(res.statusCode >= 400)
-				return done(res.statusCode);
+			if(!res || res.statusCode >= 400){
+				console.log('error original'.red, res);
+				return done("Error downloading original: " + res.statusCode);
+			}
 
 			connector.upload('original', photo, res, done);
 		};
