@@ -19,7 +19,11 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-app.listen(3000);
+var port = 3000;
+var host = 'http://0.0.0.0:' + port;
+app.listen(port);
+console.log(host);
+
 
 // disgard debug output
  console.debug = function(){};
@@ -388,7 +392,6 @@ describe("app", function(){
         .end(function(err, res){
           if (err) done(err);
           
-          console.log('err', err, res);
           should.not.exist(err);
 
           var photo = res.body;
@@ -488,7 +491,7 @@ describe("app", function(){
     var photoB;
     var userId;
     var cookie;
-    var socketURL;
+    var socketURL = host;
 
     beforeEach(function(done){
       photoA = new Photo({
@@ -615,16 +618,12 @@ describe("app", function(){
           done();
           client1.disconnect();
         });
+
+        // save it
+        photo.save(function(err, photo){
+          should.not.exist(err);
+        });
       });
-
-      // save it
-      photo.save(function(err, photo){
-        should.not.exist(err);
-      });
-
-     
-
-
     });
 
 
