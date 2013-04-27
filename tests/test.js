@@ -356,7 +356,7 @@ describe("app", function(){
       // weird dates in exif standards..
       var taken = d.slice(0, 10).split('-').join(':') + ' ' + d.slice(11);
 
-      beforeEach(function(done) {
+      before(function(done) {
         var random = Math.random() * 1000000;
         request(app)
         .post('/register')
@@ -375,19 +375,20 @@ describe("app", function(){
         });
       });
 
-     
+      it("should exist a cookie", function(){
+        should.exist(cookie);
+      });
 
       it("should be able to upload a photo", function(done) {
         var req = request(app)
-        .post('/api/upload');
-        
-        req.cookies = cookie;
-        this.timeout(20000);
-
-        req
+        .post('/api/upload')
+        .set('cookie', cookie)
         .attach('thumbnail|' + taken + '|35260', 'tests/fixtures/couple.jpg')
         .expect(200)
         .end(function(err, res){
+          if (err) done(err);
+          
+          console.log('err', err, res);
           should.not.exist(err);
 
           var photo = res.body;

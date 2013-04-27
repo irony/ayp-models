@@ -9,17 +9,15 @@
             <div class="container">
               <h2 class="featurette-heading"></i>Access your memories</h2>
               <p class="lead">
-                Imagine if you could access every moment in your life wherever you are in the world, as easy as you are enjoying your favorite music. Imagine a beautiful timeline filled with all your photos organized automatically for you. 
+                You can access every photo taken in your life wherever you are in the world, as easy as you are enjoying your favorite music. Imagine a beautiful timeline filled with all your photos organized automatically for you. 
               </p>
-              <small>It's super fast, and is free to try..</small><br>
-              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.dropbox ? 'disabled': '' %>" href="auth/dropbox"><i class="icon <%= user && user.accounts && user.accounts.dropbox ? 'icon-check': 'icon-check-empty' %>"></i> Import from Dropbox</a>
-              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.instagram ? 'disabled': '' %>" href="auth/instagram"><i class="icon <%= user && user.accounts && user.accounts.instagram ? 'icon-check': 'icon-check-empty' %>"></i> Import from Instagram</a>
-              <a class="btn btn-confirm  btn-large <%= user && user.accounts && user.accounts.facebook ? 'disabled': '' %>" href="auth/facebook"><i class="icon <%= user && user.accounts && user.accounts.facebook ? 'icon-check': 'icon-check-empty' %>"></i> Import from Facebook</a><br>
+              <a href="#login" href="#login" role="button" data-toggle="modal" class="btn btn-large btn-success">Register account</a>
+              <a href="#learn" class="btn btn-large">Learn more</a>
             </div>
         </header>  
 
         <!-- START THE FEATURETTES -->
-        <div class="featurette">
+        <div class="featurette" id="learn">
           <h2 class="featurette-heading">Easiest way to <span class="muted">upload</span></h2>
 
           <p class="lead">Plug in your USB drive or SD card and just drag the photo folder to this site and within minutes you have a new home for all your photos. Activate our social importers and automatically sync your photos from Facebook, Instagram and Dropbox. We will not alter your photos or spam your wall.</p>
@@ -28,8 +26,8 @@
         <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(http://pcdn.500px.net/26276483/23045ef4bcf6cfe9aac33c42872f91fbf48db1ae/4.jpg);">
 
         <div class="featurette">
-          <h2 class="featurette-heading"><span class="muted">Could you </span> share me those photos?</h2>
-          <p class="lead">To share photos one by one is a thing of the past. With our timesharing feature you can share all photos within a time range and that way help completing your friends and family's photo albums automatically. Great for gathering all photos from holiday trips and weddings etc. As a bonus you will also get their photos from the same time period.</p>
+          <h2 class="featurette-heading">Could you please <span class="muted">share</span> me your photos from today?</h2>
+          <p class="lead">To share photos one by one is a tedious task. With our timesharing feature you can share all photos within a time range and that way help completing your friends and family's photo albums automatically. Great for gathering all photos from holiday trips and weddings etc. As a bonus you will also get their photos from the same time period.</p>
         </div>
 
         <hr class="featurette-divider" data-speed="15" data-offset="200" style="background: url(http://pcdn.500px.net/19369985/f598680d5372d406078de2a369b299c3486fbc3e/4.jpg);">
@@ -37,7 +35,7 @@
         <div class="featurette">
           <img class="featurette-image pull-right" src="http://aphotofolio.com/wp-content/themes/aphotofolio/images/features-iphone-hand@2x.png">
 
-          <h2 class="featurette-heading">Organize <span class="muted">on the road</span></h2>
+          <h2 class="featurette-heading"><span class="muted">Organize</span> on the road</h2>
           <p class="lead">We help you organize your photos by combining clues (such as date, location, faces etc) with your behavior (clicks, views, patterns etc). We make the job of organizing your library a breeze.</p>
         </div>
 
@@ -46,7 +44,7 @@
         <div class="featurette">
           
           <img class="featurette-image pull-left" src="/img/Aperture-icon.png">
-          <h2 class="featurette-heading">Quality <span class="muted">matters.</span></h2>
+          <h2 class="featurette-heading"><span class="muted">Quality</span> matters.</h2>
           <p class="lead">Your photos will stay untouched*. Unlike other photo services you will get your original when viewing your photos which means crisp high quality images. </p>
         </div>
         <hr class="featurette-divider" data-speed="10" data-offset="200" style="background: url(/img/Retina-macbook-pro-2.jpg); height: 500px">
@@ -55,7 +53,7 @@
         <div class="featurette">
            <img class="featurette-image pull-left" src="/img/ipad.png">
           
-          <h2 class="featurette-heading">Access all your photos,<span class="muted"> everywhere</span></h2>
+          <h2 class="featurette-heading"><span class="muted">Access</span> all your photos, everywhere</h2>
           <p class="lead">We believe you want to always have access not only the latest or best photos. Sync your library and you get access all your photos from all your devices.</p>
         </div>
 

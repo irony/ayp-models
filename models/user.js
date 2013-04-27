@@ -5,9 +5,7 @@ var passportLocalMongoose = require('passport-local-mongoose');
 
 
 
-if (mongoose.models['User'])
-  return module.exports = mongoose.models["User"];
-
+// if (mongoose.models.User) return module.exports = mongoose.models.User;
 
 var AccountSchema = new mongoose.Schema({
 	displayName : {type: String},
