@@ -39,12 +39,12 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!done) throw new Error("Callback is mandatory");
   if (!photo.mimeType) throw new Error("Mimetype is mandatory");
   if (!stream || !stream.pipe) throw new Error('No stream');
-  if (!stream.length) throw new Error('No stream length');
+  if (!stream.length && !stream.headers) throw new Error('No stream length or headers available');
 
   var self = this;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
   var headers = {
-          'Content-Length': stream.length,
+          'Content-Length': stream.headers && stream.headers['content-length'] || stream.length,
           'Content-Type': photo.mimeType,
           'x-amz-acl': 'public-read',
           'Cache-Control': 'public,max-age=31556926'
@@ -84,11 +84,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
       if (headers.exif_data) photo.exif = headers.exif_data;
       if (headers.width && headers.height) {
-        photo.ratio = headers.width / headers.height;
         photo.store = photo.store || {};
         photo.store[folder] = photo.store[folder] || {};
+        photo.store[folder].ratio = headers.width / headers.height;
         photo.store[folder].width = headers.width;
         photo.store[folder].height = headers.height;
+        if (folder === "original" || !photo.ratio){
+          photo.ratio = photo.store[folder].ratio;
+        }
       }
       //console.debug('EXIF finished of photo', headers, err);
       //return photo.update(setter, {upsert: true, safe:true});

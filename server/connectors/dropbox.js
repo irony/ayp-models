@@ -86,7 +86,7 @@ var connector = new InputConnector();
 		var req = client.stream(photo.path);
 
 		req.onResponse = function(res){
-			res.length = photo.bytes;
+			//res.length = photo.bytes;
 			connector.upload('original', photo, res, done);
 		};
 

@@ -20,7 +20,7 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-var port = 3001;
+var port = 3000;
 var host = 'http://0.0.0.0:' + port;
 // app.listen(port);
 
@@ -584,6 +584,8 @@ describe("app", function(){
       transports: ['websocket'],
       'force new connection': true
     };
+
+    app.listen(port);
 
     var photoA;
     var photoB;
