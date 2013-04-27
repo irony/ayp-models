@@ -41,7 +41,7 @@ var connector = new InputConnector();
 			req.onResponse = function(res){
 				if(!res || res.statusCode >= 400){
 					console.log('error thumbnail'.red, res);
-					return done("Error downloading thumbnail: " + res.statusCode);
+					return done("Error downloading thumbnail");
 
 				}
 
@@ -74,7 +74,7 @@ var connector = new InputConnector();
 			
 			if(!res || res.statusCode >= 400){
 				console.log('error original'.red, res);
-				return done("Error downloading original: " + res.statusCode);
+				return done("Error downloading original");
 			}
 
 			connector.upload('original', photo, res, done);
