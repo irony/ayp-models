@@ -50,9 +50,11 @@ PhotoSchema.virtual('src').get(function (done) {
   }
 });
 
+
+var redis = require('redis');
+var client = redis.createClient();
+
 PhotoSchema.post('save', function (next) {
-  var redis = require('redis');
-  var client = redis.createClient();
   var photo = this;
   photo.owners.map(function(userId){
     var trigger = {
@@ -60,7 +62,11 @@ PhotoSchema.post('save', function (next) {
       type: 'photo',
       item: photo
     };
-    client.publish(userId, JSON.stringify(trigger));
+    try{
+      client.publish(userId, JSON.stringify(trigger));
+    } catch(err){
+      console.log('Failed to save photo trigger to redis:'.red, err);
+    }
   });
 });
 
