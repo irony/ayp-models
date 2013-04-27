@@ -19,11 +19,9 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-var port = 3000;
+var port = 3001;
 var host = 'http://0.0.0.0:' + port;
 app.listen(port);
-console.log(host);
-
 
 // disgard debug output
  console.debug = function(){};
@@ -391,7 +389,7 @@ describe("app", function(){
         .expect(200)
         .end(function(err, res){
           if (err) done(err);
-          
+
           should.not.exist(err);
 
           var photo = res.body;
@@ -442,8 +440,6 @@ describe("app", function(){
           photo.store.should.have.property('original');
           photo.store.original.should.have.property('url');
 
-          console.log('saving...');
-          
           Photo.findOne({_id : photo._id}, function(err,photo){
             should.exist(photo, "uploaded photo could not be found in database");
             should.not.exist(err);

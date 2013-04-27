@@ -23,6 +23,8 @@ var cache = {};
 
     // since loading a fresh record of the user takes a while we will refresh the user record in the background for the next load
     User.findById(id, function(err, user){
+      if (err || !user) return done(err, false);
+
       cache[user._id] = user;
       if (!cachedUser) return done(err, user);
     });

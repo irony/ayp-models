@@ -28,8 +28,6 @@ var updateProfile = function(user, profile, done){
   user.set('accounts', accounts);
   user.markModified('accounts');
 
-  console.log('updated profile', user, profile);
-
   return user.save(done);
 };
 

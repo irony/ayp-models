@@ -140,6 +140,8 @@ var connector = new InputConnector();
 			    var photos = (reply.entries || []).map(function(photoRow){
 
 						var photo = photoRow[1];
+						if (!photo)
+							return null;
 
 						photo.mimeType = photo && photo.mime_type;
 						photo.taken = photo && photo.client_mtime;
