@@ -36,33 +36,11 @@ var connector = new InputConnector();
 		try {
 			var client = this.getClient(user);
 
-			return client.thumbnails(photo.path, {size: 'l'},function(status, thumbnail, metadata){
+			var req = client.thumbnails(photo.path, {size: 'l'});
 
-				if (status !== 200){
-
-					if(status === 415) {
-						console.log('[415]'); // ' received, removing photo. This is not a photo.');
-						photo.remove(console.log);
-					}
-
-					if(status === 404) {
-						console.log('[404]', photo.path); // ' received, removing photo. This is not a photo.');
-						// console.log('[404]'); //' received, it is not a photo?', photo.path);
-					}
-
-					return done && done(new Error('Could not download thumbnail from dropbox, error nr ' + status));
-				}
-
-
-				var s = new stream.Transform();
-				s.length = thumbnail.length;
-				s.push(thumbnail);
-				connector.upload('thumbnail', photo, s, function(err, photo){
-					return done(err, photo);
-				});
-
-
-			});
+			req.onResponse = function(res){
+				connector.upload('thumbnail', photo, res, done);
+			};
 		} catch(err){
 			done(err, null);
 		}
@@ -87,6 +65,7 @@ var connector = new InputConnector();
 
 		req.onResponse = function(res){
 			//res.length = photo.bytes;
+			
 			connector.upload('original', photo, res, done);
 		};
 
