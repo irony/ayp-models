@@ -40,7 +40,6 @@ var conf = require('../../conf'),
     }, 1);*/
   });
   passport.use(new LocalStrategy(User.authenticate()));
-/*
 
   // Use the InstagramStrategy within Passport.
   //   Strategies in Passport require a `verify` function, which accept
@@ -127,6 +126,5 @@ var conf = require('../../conf'),
 
   }
 ));
-*/
 
 module.exports = passport;
