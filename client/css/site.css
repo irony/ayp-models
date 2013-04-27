@@ -97,7 +97,6 @@
     /* Navbar links: increase padding for taller navbar */
     .navbar .nav > li > a {
       padding: 15px 20px;
-      text-transform: uppercase;
     }
 
     /* Offset the responsive button for proper vertical alignment */

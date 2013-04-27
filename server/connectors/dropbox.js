@@ -40,7 +40,7 @@ var connector = new InputConnector();
 
 			req.onResponse = function(res){
 				if(!res || res.statusCode >= 400){
-					console.log('error thumbnail'.red, res, photo.path);
+					console.log('error thumbnail'.red, res, photo.path, req);
 					return done("Error downloading thumbnail");
 
 				}
