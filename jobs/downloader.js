@@ -119,7 +119,7 @@ var downloader = {
     .where('store.original.stored').exists(false)
     .where('store.error').exists(false) // skip photos with previous download problems
     .sort('-taken') // todo: images before videos
-    .limit(20);
+    .limit(5);
 
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
