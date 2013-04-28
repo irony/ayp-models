@@ -69,8 +69,8 @@ var connector = new InputConnector();
 
 		var req = client.stream(photo.path);
 		req.timeout = 100000;
-		
-		req.onResponse = function(res){
+
+		req.on('response', function(res){
 			//res.length = photo.bytes;
 			
 			if(!res || res.statusCode >= 400){
@@ -79,7 +79,7 @@ var connector = new InputConnector();
 			}
 
 			connector.upload('original', photo, res, done);
-		};
+		});
 
 
 	};
