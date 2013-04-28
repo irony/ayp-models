@@ -118,7 +118,7 @@ var downloader = {
     var photoQuery = Photo.find()
     .where('store.original.stored').exists(false)
     .where('store.error').exists(false) // skip photos with previous download problems
-    .sort('mimeType -taken') // images before videos
+    .sort('-taken') // todo: images before videos
     .limit(3);
 
     var downloadAllResults = function downloadAllResults(err, photos){
