@@ -72,9 +72,13 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   });
 
   var exifReader = new ImageHeaders();
-
+  var lastTick;
   stream.on('data', function(chunk){
     if (!exifReader.finished) exifReader.add_bytes(chunk);
+    var now = (new Date()).getTime();
+    var diff = now-lastTick;
+    if (diff) console.log('kb/s:' + chunk.length / diff);
+    lastTick = now;
   });
 
   stream.on('end', function(){

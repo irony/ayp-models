@@ -94,7 +94,7 @@
 
       <div class="container">
 
-      <div id="login" class="modal hide login"> 
+      <div id="login" class="modal hide login container" ng-controller="LoginController"> 
 
           <div class="modal-header">
             <h1>
@@ -102,17 +102,20 @@
               <a class="close" data-dismiss="modal" href="/me/wall" >&times;</a>
             </h1>
             <p class="lead">
-              Login or create account manually or use any of our login services for automatic login.
+              It's supereasy to create an account, just enter email and choose a password or use our social buttons. We will NEVER spam your wall.
             </p>
           </div>
           <div class="row modal-body" >
 
             <div class="span4">
               <form class="well clearfix" action="/login" method="post">
-                <input class="span3" type="text" id="username" placeholder="Email">
-                <input class="span3" type="password" id="password" placeholder="Password">
-                <input type="submit" class="btn span3 pull-left btn-success" value="Login / Register">
-                <label ng-show="register"><input type="checkbox"> I agree with the terms &amp; conditions</a>
+                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="Email">
+                <input class="span3" type="password" required pattern=".{4,}" ng-model="password" id="password" placeholder="Password">
+                <input type="submit" class="btn span3 pull-left btn-success" value="Login" ng-show="!register" ng-click="submit">
+
+                <label ng-show="register"><input type="checkbox" ng-model="agree"> I agree with the terms &amp; conditions</a>
+                <input type="submit" class="btn span3 pull-left btn-success" value="Register" ng-show="register" ng-click="submit">
+
               </form>
 
             </div>
@@ -180,6 +183,7 @@
     </div>
 
     <script src="/controllers/upload.js"></script>
+    <script src="/controllers/user.js"></script>
 
     <script src="/js/binaryFile.js"></script>
     <script src="/js/exif.js"></script>

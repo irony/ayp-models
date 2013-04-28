@@ -34,12 +34,12 @@ var jobs = [
     title:'Group Photos',
     fn:require('../jobs/groupImages'),
     interval: 9 * 60 * 1000
-  },*/
+  },
   {
     title:'Tag Photos',
     fn:require('../jobs/tagPhotos'),
     interval: 9 * 60 * 1000
-  },
+  },*/
   {
     title:'Calculate Interestingness',
     fn:require('../jobs/calculateInterestingness'),

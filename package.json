@@ -20,7 +20,7 @@
     "passport-local-mongoose": "*",
     "socket.io": "*",
     "nodetime": "*",
-    "mongoose": "*",
+    "mongoose": "~3.6.8",
     "async": "*",
     "colors": "*",
     "underscore": "*",

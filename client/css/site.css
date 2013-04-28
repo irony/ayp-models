@@ -9,7 +9,9 @@
     header.featurette{
       padding: 50px 500px;
       margin: -50px -500px 0;
-      background: url(/img/is099t8ft.jpg);
+     /* background: url(/img/is099t8ft.jpg);*/
+/*      background: url(http://pcdn.500px.net/553621/ae6a6518619f0cc18dde75a15c4e648df70b0686/15.jpg);
+*/      background: url(http://www.johner.se/images/robertharding/sketch/serie0019/772-1267.jpg);
       background-size: 1920px;
 
     }
@@ -24,7 +26,7 @@
     }
 
     header h2, header p{
-      color: #fff;
+      color: #111;
     }
 
     body footer{
@@ -753,10 +755,7 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 .modal#login {
-  width: 50%; /* desired relative width */
-  left: 25%; /* (100%-width)/2 */
-  top: 120px;
-  margin: auto auto auto auto; /* place center */
+  min-width: 700px;
 
 }
 

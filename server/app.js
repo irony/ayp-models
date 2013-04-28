@@ -84,6 +84,7 @@ exports.init = function() {
 
     // Api methods
     require('./api/photos')(app);
+    require('./api/user')(app);
 
 
     /* The 404 Route (ALWAYS Keep this as the last route) */

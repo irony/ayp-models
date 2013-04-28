@@ -252,7 +252,7 @@ describe("app", function(){
       var client = connector.getClient(user);
       var testPhoto = fs.readFileSync(__dirname + '/fixtures/couple.jpg');
       
-      this.timeout(10000);
+      this.timeout(20000);
 
 
       it("should be able to upload test file manually", function(done){
@@ -260,6 +260,18 @@ describe("app", function(){
         client.put("fixtures/couple.jpg", testPhoto, function(status, reply){
           status.should.eql(200);
           reply.should.have.property("path", "/fixtures/couple.jpg");
+          done();
+        });
+
+      });
+
+
+      it("should be able to upload a large test file manually", function(done){
+        var largePhoto = fs.readFileSync(__dirname + '/fixtures/IMG_5501.JPG');
+
+        client.put("fixtures/IMG_5501.JPG", largePhoto, function(status, reply){
+          status.should.eql(200);
+          reply.should.have.property("path", "/fixtures/IMG_5501.JPG");
           done();
         });
 
