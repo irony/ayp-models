@@ -86,6 +86,9 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       
       if (err || !headers) return; // console.debug('ERROR: Could not read EXIF of photo %s', photo.taken, err);
 
+      if (headers.exif_data && headers.exif_data.image) delete headers.exif_data.image;
+      if (headers.exif_data && headers.exif_data.thumbnail) delete headers.exif_data.thumbnail;
+
       if (headers.exif_data) photo.exif = headers.exif_data;
       if (headers.width && headers.height) {
         photo.store = photo.store || {};
