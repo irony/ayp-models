@@ -89,11 +89,12 @@ var importer = {
   savePhotos : function(user, photos, done){
     console.debug('Saving %d photos', photos.length);
 
-    async.map(photos, function(photo, next){
+    async.mapSeries(photos, function(photo, next){
 
       console.debug('Saving photo %s', photo.path, photo.client_mtime, photo.taken, photo.bytes);
 
       importer.findOrInitPhoto(user, photo, function(err, photo){
+
         photo.save(next);
       });
 
