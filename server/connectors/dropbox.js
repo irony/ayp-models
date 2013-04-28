@@ -35,19 +35,22 @@ var connector = new InputConnector();
 
 		try {
 			var client = this.getClient(user);
-
 			var req = client.thumbnails(photo.path, {size: 'l'}, function(){});
-	
-			req.on('error', done);
+
+			var error;
+			req.on('error', function(err){
+				error = err;
+			});
 
 			req.on('response', function(res){
 				if(!res || res.statusCode >= 400){
 					console.log('error thumbnail'.red, res, photo.path);
 					return done("Error downloading thumbnail");
-
 				}
 
-				connector.upload('thumbnail', photo, res, done);
+				connector.upload('thumbnail', photo, res, function(err, photo){
+					done(err || error, photo);
+				});
 			});
 		} catch(err){
 			done(err);
@@ -72,7 +75,11 @@ var connector = new InputConnector();
 		var req = client.stream(photo.path);
 		req.timeout = 100000;
 
-		req.on('error', done);
+		var error;
+		
+		req.on('error', function(err){
+			error = err;
+		});
 
 
 		req.on('response', function(res){
@@ -83,7 +90,9 @@ var connector = new InputConnector();
 				return done("Error downloading original");
 			}
 
-			connector.upload('original', photo, res, done);
+			connector.upload('original', photo, res, function(err, photo){
+				done(err || error, photo);
+			});
 		});
 
 
