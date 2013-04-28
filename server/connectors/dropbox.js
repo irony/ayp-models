@@ -37,6 +37,8 @@ var connector = new InputConnector();
 			var client = this.getClient(user);
 
 			var req = client.thumbnails(photo.path, {size: 'l'}, function(){});
+	
+			req.on('error', done);
 
 			req.on('response', function(res){
 				if(!res || res.statusCode >= 400){
@@ -69,6 +71,9 @@ var connector = new InputConnector();
 
 		var req = client.stream(photo.path);
 		req.timeout = 100000;
+
+		req.on('error', done);
+
 
 		req.on('response', function(res){
 			//res.length = photo.bytes;
