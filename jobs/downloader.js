@@ -140,7 +140,8 @@ var downloader = {
                 
 
                 photo.store = photo.store || {};
-                photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
+                photo.store.error = {type:'Download error', details: err, action: 'skip', date: new Date()};
+                console.log('err', err);
                 photo.markModified('store');
                 return photo.save(function(){
                   return done(null, photo);  // We have handled the error, let's not abort the rest of the operation
