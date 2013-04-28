@@ -143,12 +143,12 @@ var downloader = {
                 photo.store.error = {type:'Download error', details: err, action: 'skip', date: new Date()};
                 console.log('err', err);
                 photo.markModified('store');
-                return photo.save(function(){
+                return photo.save(function(err, photo){
                   return done(null, photo);  // We have handled the error, let's not abort the rest of the operation
                 });
               }
 
-              return done(null, photo);
+              return photo.save(done);
             });
           }, done);
         });
