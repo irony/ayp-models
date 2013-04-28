@@ -70,7 +70,7 @@ var downloader = {
 
     var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken source path mimeType')
     .where('store.thumbnail.stored').exists(false)
-    // .where('store.error').exists(false) // skip photos with previous download problems
+    .where('store.error').exists(false) // skip photos with previous download problems
     .sort('-taken');
 
     var downloadAllResults = function downloadAllResults(err, photos){
@@ -89,7 +89,7 @@ var downloader = {
             });
           }
           
-          return done(null, photo);
+          return photo.save(done);
 
         });
       }, function(err, photos){
@@ -124,7 +124,7 @@ var downloader = {
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
-      async.mapSeries(photos, function(photo, done){
+      async.map(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
           if (!users || !users.length) {
