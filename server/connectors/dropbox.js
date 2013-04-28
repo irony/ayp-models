@@ -155,9 +155,6 @@ var connector = new InputConnector();
 						// connector.downloadThumbnail(photo, client, user, done);
 					});
 
-          connector.savePhotos(user, photos, done);
-
-
 					if (reply.has_more) {
 
 						console.log('found more');
