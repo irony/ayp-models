@@ -39,19 +39,24 @@ function WallController($scope, $http){
         var top = 0;
         var left = 0;
         var maxWidth = window.outerWidth * 1.2;
+        var lastPhoto;
+
         $scope.photos = ($scope.library.photos).filter(function(photo){
           if (photo.vote <= $scope.zoomLevel ) {
             photo.height = 240;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
+            var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
 
-            if (totalWidth % maxWidth < photo.width){
+            if (left + photo.width > maxWidth || gap){
               top += photo.height;
               photo.left = left = 0;
             } else {
               photo.left = left;
               left += photo.width;
             }
+
+            lastPhoto = photo;
 
             photo.top = top;
             return true;
@@ -64,6 +69,7 @@ function WallController($scope, $http){
         
         $scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + 240;
+        $scope.nrPhotos = $scope.photos.length;
 
         if($scope.photoInCenter){
           var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];

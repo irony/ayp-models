@@ -44,9 +44,10 @@
           if (target.className.indexOf('selected') < 0 )
             $('.selected').removeClass('selected');
 
-          target.src = target.src.replace('thumbnail', "original");
           
           $(target).toggleClass('selected');
+
+          target.src = $(target).hasClass('selected') && target.src.replace('thumbnail', "original") || target.src.replace('original', "thumbnail");
         }
       } );
 
@@ -66,12 +67,12 @@
               nine  : 57
             }
 
-        e.preventDefault();
 
         switch (keyCode) {
           case arrow.left:
             $('.selected').toggleClass('selected').prev().toggleClass('selected');
             $("html, body").animate({scrollTop: $('.selected')[0].top}, 100)
+            e.preventDefault();
             
           break;
           case arrow.up:
@@ -80,6 +81,7 @@
           case arrow.right:
             $('.selected').toggleClass('selected').next().toggleClass('selected');
             $("html, body").animate({scrollTop: $('.selected')[0].top}, 100)
+            e.preventDefault();
 
             
           break;
