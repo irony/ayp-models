@@ -5,7 +5,7 @@ function LoginController($http, $scope){
   $scope.password = undefined;
 
   $scope.$watch('username', function(val){
-    if (val.indexOf('@') && val.length > 4){
+    if (val && val.indexOf('@') && val.length > 4){
       $http.get('/api/user/exist', {params: {q:val}})
       .success(function(result){
         $scope.register = !JSON.parse(result);

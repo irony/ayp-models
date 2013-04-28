@@ -4,6 +4,7 @@ function PhotoController ($scope, $http){
   var activePhoto = null;
   
   $scope.mouseMove = function(photo){
+    console.log('move', photo._id);
       socket.emit('views', photo._id);
       activePhoto = photo;
 

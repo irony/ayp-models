@@ -153,6 +153,7 @@ module.exports = function(app){
             var mine = photo.copies[req.user._id] || {};
             var vote = mine.vote || (mine.calculatedVote);
             return next(null, {
+              _id : photo._id,
               taken:photo.taken && photo.taken.getTime(),
               src: photo.src,
               vote: Math.floor(vote),
