@@ -38,15 +38,15 @@ var connector = new InputConnector();
 
 			var req = client.thumbnails(photo.path, {size: 'l'}, function(){});
 
-			req.onResponse = function(res){
+			req.on('response', function(res){
 				if(!res || res.statusCode >= 400){
-					console.log('error thumbnail'.red, res, photo.path, req);
+					console.log('error thumbnail'.red, res, photo.path);
 					return done("Error downloading thumbnail");
 
 				}
 
 				connector.upload('thumbnail', photo, res, done);
-			};
+			});
 		} catch(err){
 			done(err);
 		}
