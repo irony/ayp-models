@@ -68,7 +68,8 @@ var connector = new InputConnector();
 		var client = this.getClient(user);
 
 		var req = client.stream(photo.path);
-
+		req.timeout = 100000;
+		
 		req.onResponse = function(res){
 			//res.length = photo.bytes;
 			
