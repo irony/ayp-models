@@ -63,18 +63,23 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.post('save', function (next) {
   var photo = this;
-  photo.owners.map(function(userId){
-    var trigger = {
-      action: 'save',
-      type: 'photo',
-      item: photo
-    };
-    try{
-      client.publish(userId, JSON.stringify(trigger));
-    } catch(err){
-      console.log('Failed to save photo trigger to redis:'.red, err);
-    }
-  });
+
+  // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
+  // info on the import step but rather at the download step
+  if(photo.stored && photo.stored.thumbnail){
+    photo.owners.map(function(userId){
+      var trigger = {
+        action: 'save',
+        type: 'photo',
+        item: photo
+      };
+      try{
+        client.publish(userId, JSON.stringify(trigger));
+      } catch(err){
+        console.log('Failed to save photo trigger to redis:'.red, err);
+      }
+    });
+  }
 });
 
 PhotoSchema.pre('save', function (next) {
