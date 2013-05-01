@@ -72,7 +72,7 @@
                
                <li class="pull-right"><a href="/logout">
                 <%if (user && user.accounts.facebook) {%>
-                <img src="http://graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
+                <img src="//graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
                <% }%>Logout</a></li>
              <%} else {%>
                <li class="pull-right"><a href="#login" role="button" data-toggle="modal">Login or register</a></li>
