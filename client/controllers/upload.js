@@ -33,6 +33,9 @@ function UploadController($scope, $http){
     .sort(function(a,b){
       return b.modified - a.modified;
     })    //.reduce(function(a,b){a.slice(-1).modified !== b.modified && a.push(b); return a}, [])
+    .filter(function(file){
+      return file.status !== "Error" && file.state !== "Duplicate";
+    })
     .forEach(function(photo){
       $scope.allSize += photo.size;
     });
@@ -66,7 +69,7 @@ function UploadController($scope, $http){
               }).length);
 
               if (exists) {
-                $scope.doneSize += file.size;
+                // $scope.doneSize += file.size;
                 return file.state = "Duplicate";
               }
             });
