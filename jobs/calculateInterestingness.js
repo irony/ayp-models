@@ -33,6 +33,10 @@ module.exports = function(done){
 
         if(mine.views) emit(group, 100 + mine.views * 5);
         
+
+        //if(self.exif && self.exif.) emit(group, 100 + 5);
+
+        
         if(mine.clicks) emit(group, 100 + mine.clicks * 10);
 
         if(mine.groups && mine.groups.length) emit(group, 100 + mine.groups.length * 10);

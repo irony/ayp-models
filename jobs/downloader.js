@@ -15,6 +15,7 @@ var downloader = {
    * download both original and thumbnail of photo from photos connector
    * @param  {[type]}   user  user
    * @param  {[type]}   photo photo
+   * @param  {[object]} options, {original: true, thumbnail:true}
    * @param  {Function} done  callback when both are done
    */
   downloadPhoto : function(user, photo, options, done){

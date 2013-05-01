@@ -16,13 +16,13 @@
 
     }
 
-    header .container {
-      margin: auto;
-    }
-
     header a.btn{
       width: 200px;
       margin-top:10px;
+    }
+
+    header a.btn{
+      border-radius: 0px;
     }
 
     header h2, header p{
@@ -246,7 +246,7 @@
       margin-right: 166px;
     }
     .featurette-image.pull-right {
-      margin-right: -200px;
+      margin-right: -330px;
       margin-top: -175px;
     }
 
@@ -290,7 +290,7 @@
       .featurette-image.pull-right {
         display: block;
         float: none;
-        max-width: 40%;
+        max-width: 20%;
         margin: 0 auto 20px;
       }
     }
