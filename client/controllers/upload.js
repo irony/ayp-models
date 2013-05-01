@@ -71,7 +71,7 @@ function UploadController($scope, $http){
         });
 
         // of the processed files in the queue, start processing a few
-        $scope.queue.filter(function(file){ return !!file.exif})
+        $scope.queue.filter(function(file){ return file.exif !== undefined})
         .slice(0,$scope.channels + 1).forEach(function(file){
           if (!file.started){
             file.started = true;
