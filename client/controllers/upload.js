@@ -65,7 +65,10 @@ function UploadController($scope, $http){
                 return photo.taken === new Date(file.taken).getTime();
               }).length);
 
-              if (exists) return file.state = "Duplicate";
+              if (exists) {
+                $scope.doneSize += file.size;
+                return file.state = "Duplicate";
+              }
             });
           }
         });
