@@ -15,11 +15,13 @@ var knox        = require('knox');
 var RedisStore  = require('connect-redis')(express);
 var SocketIo    = require('socket.io');
 var passportsio = require("passport.socketio");
+var fs          = require('fs');
 var io          = require('socket.io');
-
+var spdy        = require('spdy');
 var app         = express.createServer();
-var sio         = io.listen(app, { log:false });
 var store       = new RedisStore();
+
+console.debug = console.log;
 
 try {
   mongoose.connect(config.mongoUrl);
@@ -28,9 +30,17 @@ try {
   console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
 }
 
+
+var options = {
+    ca:   fs.readFileSync(__dirname + '/../ssl/sub.class1.server.ca.pem'),
+    key:  fs.readFileSync(__dirname + '/../ssl/ssl.key'),
+    cert: fs.readFileSync(__dirname + '/../ssl/ssl.crt')
+  };
+
 // store the s3 client and socket io globally so we can use them from both jobs and routes without passing it as parameters
 global.s3 = knox.createClient(config.aws);
-app.io = sio;
+app.spdy = spdy.createServer(options, app.handle.bind(app));
+app.io = io.listen(app.spdy);
 
 
 exports.init = function() {
@@ -54,13 +64,12 @@ exports.init = function() {
       app.use(app.router);
 
 
-      sio.set("authorization", passportsio.authorize(sessionOptions));
+      app.io.set("authorization", passportsio.authorize(sessionOptions));
     });
 
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
-        console.debug = console.log;
         // app.use(express.logger({ format: ':method :url' }));
     });
 
