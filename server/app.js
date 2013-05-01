@@ -17,7 +17,7 @@ var SocketIo    = require('socket.io');
 var passportsio = require("passport.socketio");
 var fs          = require('fs');
 var io          = require('socket.io');
-var spdy        = require('spdy');
+//var spdy        = require('spdy');
 var app         = express.createServer();
 var store       = new RedisStore();
 
@@ -39,8 +39,8 @@ var options = {
 
 // store the s3 client and socket io globally so we can use them from both jobs and routes without passing it as parameters
 global.s3 = knox.createClient(config.aws);
-app.spdy = spdy.createServer(options, app.handle.bind(app));
-app.io = io.listen(app.spdy);
+//app.spdy = spdy.createServer(options, app.handle.bind(app));
+app.io = io.listen(app);
 
 
 exports.init = function() {

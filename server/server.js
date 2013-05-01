@@ -16,7 +16,7 @@ app.listen(process.env.PORT || 3000);
 
 //http.globalAgent.maxSockets = 50;
 
-app.spdy.listen(process.env.SSL_PORT || 8443);
+// app.spdy.listen(process.env.SSL_PORT || 8443);
 
 console.log(process.env.HOST + ' started');
 
