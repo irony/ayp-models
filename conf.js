@@ -5,7 +5,7 @@
     },
     sessionSecret : 'a2988-438674-f234a',
     mongoUrl : process.env.MONGOHQ_URL || 'mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos', // 'mongodb://R:billion@alex.mongohq.com:10053/app6520692',
-    baseUrl : "http://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
+    baseUrl : "https://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
     facebook: {
         appId: '509552485736388'
       , appSecret: 'f4f302039147fae5d118b42d2a6a0205'

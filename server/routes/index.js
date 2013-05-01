@@ -19,8 +19,10 @@ module.exports = function(app){
           '/js/bootstrap.js',
           '/js/angular.min.js',
           '/js/jquery-1.7.1.min.js',
+          '/img/772-1267.jpg',
           //'/js/socket.io.js',
           '/controllers/app.js',
+          '/img/allyourphotos.png'
         ].map(function(file){pusher.pushFile(file)});
         res.end(data);
       });
