@@ -86,7 +86,7 @@ module.exports = function(app){
     uploadConnector.handleRequest(req, function(err, results, next){
       if (err) {
         console.log('Error: upload aborted: '.red, err);
-        res.status(500).json(new Error(err).toString());
+        res.status(500).json(err.toString());
         return res.end();
       }
       try{
