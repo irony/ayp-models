@@ -225,6 +225,17 @@
       margin-top: -150px;
     }
 
+    .featurette .mobile{
+      margin-right: -305px;
+      margin-top: -97px;
+      background: url(/img/mobile.png) 50% fixed;
+      height: 297px;
+      width: 194px;
+      display: inline-block;
+      background-size: 50% auto;
+
+    }
+
     .featurette-divider {
       padding: 0px 0px; /* Space out the Bootstrap <hr> more */
       margin: 0px -450px; /* Space out the Bootstrap <hr> more */

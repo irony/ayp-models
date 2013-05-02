@@ -40,7 +40,7 @@ var options = {
 // store the s3 client and socket io globally so we can use them from both jobs and routes without passing it as parameters
 global.s3 = knox.createClient(config.aws);
 //app.spdy = spdy.createServer(options, app.handle.bind(app));
-app.io = io.listen(app);
+app.io = io.listen(app, {log: false});
 
 
 exports.init = function() {
