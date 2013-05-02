@@ -281,6 +281,27 @@
 
     @media (max-width: 979px) {
 
+      .container{
+        width:auto;
+      }
+      .featurette{
+        width:90%;
+      }
+
+      .lead{
+        font-size: 17px;
+        line-height: 20px;
+      }
+
+      .modal#login{
+        top: 10px;
+        left: 10px;
+        margin: 0;
+        right: 10px;
+        bottom: 10px;
+        min-width: inherit;
+      }
+
       .container.navbar-wrapper {
         margin-bottom: 0;
         width: auto;
@@ -288,6 +309,10 @@
       .navbar-inner {
         border-radius: 0;
         margin: -20px 0;
+      }
+
+      .navbar-inner .brand{
+        display: none;
       }
 
       .carousel .item {
@@ -300,14 +325,20 @@
 
       .featurette {
         height: auto;
-        padding: 0;
+        padding: 50px 30px;
       }
       .featurette-image.pull-left,
       .featurette-image.pull-right {
-        display: block;
-        float: none;
         max-width: 20%;
+        height:auto;
         margin: 0 auto 20px;
+        display: none;
+      }
+
+
+      .featurette-divider {
+        margin: 0px -250px; /* Space out the Bootstrap <hr> more */
+        background-size: 979px !important;
       }
     }
 
@@ -355,6 +386,13 @@
         font-size: 18px;
         line-height: 1.5;
       }
+
+      .featurette-divider {
+        margin: 0px -150px; /* Space out the Bootstrap <hr> more */
+        background-size: 767px !important;
+        height:300px !important;
+      }
+
 
     }
 
@@ -770,9 +808,8 @@ input[type=file]::-webkit-file-upload-button {
   text-shadow: 1px #eee;
 }
 
-.modal#login {
+#login {
   min-width: 700px;
-
 }
 
 .modal#upload {
