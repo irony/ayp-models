@@ -390,9 +390,20 @@
       .featurette-divider {
         margin: 0px -150px; /* Space out the Bootstrap <hr> more */
         background-size: 767px !important;
-        height:300px !important;
+        background-position: 200px;
+        height:220px !important;
       }
 
+
+    }
+
+    @media (max-width: 479px) {
+
+      .featurette-divider {
+        margin: 0px -150px; /* Space out the Bootstrap <hr> more */
+        background-size: 500px !important;
+        height:240px !important;
+      }
 
     }
 
