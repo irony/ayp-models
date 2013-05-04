@@ -281,9 +281,17 @@
 
     @media (max-width: 979px) {
 
+      .container{
+        overflow: hidden;
+      }
+
+      body footer{
+        padding-top:0;
+      }
+
       header.featurette{
-        padding : 50px 100px 50px 180px;
-        margin:0;
+        padding : 100px 10px 50px 220px;
+        margin : -50px -10px 0px -180px;
         width:100%;
         height:auto;
         background-size: 100%;
@@ -352,6 +360,16 @@
 
 
     @media (max-width: 767px) {
+
+
+
+      header.featurette{
+        background-size: 120%;
+      }
+
+      header.featurette .lead{
+        font-size: 14px;
+      }
 
       .navbar-inner {
         margin: -20px;
