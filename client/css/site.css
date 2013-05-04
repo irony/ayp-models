@@ -281,6 +281,14 @@
 
     @media (max-width: 979px) {
 
+      header.featurette{
+        padding : 50px 100px 50px 180px;
+        margin:0;
+        width:100%;
+        height:auto;
+        background-size: 100%;
+      }
+
       .container{
         width:auto;
       }
