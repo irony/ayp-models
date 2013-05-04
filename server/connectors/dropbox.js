@@ -25,6 +25,8 @@ var connector = new InputConnector();
 		if (!user || !user.accounts || !user.accounts.dropbox)
 			return done(null, null); // 'Not a dropbox user'
 
+		if (photo.owners.indexOf(user._id) < 0)
+			return done(null, null); // not this users photo
 
 		if (!photo) {
 			return done(null, null);
@@ -44,7 +46,8 @@ var connector = new InputConnector();
 
 			req.on('response', function(res){
 				if(!res || res.statusCode >= 400){
-					console.log('error thumbnail'.red, res, photo.path);
+					console.log('owners', photo.owners);
+					console.log('error thumbnail'.red, photo.path);
 					return done("Error downloading thumbnail");
 				}
 
@@ -86,7 +89,7 @@ var connector = new InputConnector();
 			//res.length = photo.bytes;
 			
 			if(!res || res.statusCode >= 400){
-				console.log('error original'.red, res, photo.path);
+				console.log('error original'.red, user, photo.path);
 				return done("Error downloading original");
 			}
 

@@ -72,13 +72,14 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   });
 
   var exifReader = new ImageHeaders();
-  var lastTick;
+  var firstTick;
+  var bytes=0;
   stream.on('data', function(chunk){
     if (!exifReader.finished) exifReader.add_bytes(chunk);
+    bytes+=chunk.length;
+
     var now = (new Date()).getTime();
-    var diff = now-lastTick;
-    if (diff) console.log('kb/s:' + chunk.length / diff);
-    lastTick = now;
+    if (!firstTick) firstTick = now;
   });
 
   stream.on('end', function(){
@@ -96,6 +97,10 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
         photo.store[folder].ratio = headers.width / headers.height;
         photo.store[folder].width = headers.width;
         photo.store[folder].height = headers.height;
+
+        var now = (new Date()).getTime();
+        console.log(Math.round(bytes / (now-firstTick)) + " kb/s");
+
         if (folder === "original" || !photo.ratio){
           photo.ratio = photo.store[folder].ratio;
         }
