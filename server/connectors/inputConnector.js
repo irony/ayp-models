@@ -99,7 +99,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
         photo.store[folder].height = headers.height;
 
         var now = (new Date()).getTime();
-        console.log(Math.round(bytes / (now-firstTick)) + " kb/s");
+        console.debug("downloaded photo " + photo._id + " size:" + bytes / 1000 + " in " + Math.round(bytes / (now-firstTick)) + " kb/s");
 
         if (folder === "original" || !photo.ratio){
           photo.ratio = photo.store[folder].ratio;
