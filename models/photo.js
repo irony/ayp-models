@@ -66,7 +66,7 @@ PhotoSchema.post('save', function (next) {
 
   // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
   // info on the import step but rather at the download step
-  if(photo.stored && photo.stored.thumbnail){
+  if(photo.store && photo.store.thumbnail){
     photo.owners.map(function(userId){
       var trigger = {
         action: 'save',

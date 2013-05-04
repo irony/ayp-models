@@ -545,7 +545,7 @@ describe("app", function(){
           should.exist(photo, "uploaded photo could not be found");
 
           photo.should.have.property('exif');
-          photo.should.have.property('ratio', 1.4988290398126465, 'ratio was not correct');
+          photo.should.have.property('ratio', 1.5, 'ratio was not correct');
           photo.should.have.property('store');
           photo.should.have.property('path');
           photo.store.should.have.property('thumbnail');
@@ -713,6 +713,7 @@ describe("app", function(){
       var photo = new Photo({
         taken : new Date(),
         bytes : Math.round(Math.random()*1000000),
+        store : {thumbnail:{url:'http://placehold.it/100x100.jpg'}},
         owners : [userId]
       });
 
@@ -721,7 +722,7 @@ describe("app", function(){
       // listen to new changes
       var client1 = io.connect(socketURL, options);
       client1.once('connect', function(data){
-        client1.once('trigger', function(trigger){
+        client1.on('trigger', function(trigger){
           if (trigger.item.bytes !== photo.bytes) return;
 
           trigger.type.should.eql("photo");
@@ -745,6 +746,7 @@ describe("app", function(){
       var photo = new Photo({
         taken : new Date(),
         bytes : Math.round(Math.random()*1000000),
+        store : {thumbnail:{url:'http://placehold.it/100x100.jpg'}},
         owners : [new User()._id] // someone else
       });
 
