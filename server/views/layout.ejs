@@ -18,6 +18,7 @@
     <script src="/js/piecon.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script src="/js/bootstrap.js"></script>
+    <script src="/js/socket.io.min.js"></script>
 
   </head>
 
@@ -146,7 +147,7 @@
           <div class="instructions" ng-show="!files.length">
             <i class="icon-folder-open icon-4x pull-left" > </i>
             <label> Drag and drop a photo folder or SD card here...
-              <input ng-show="false" class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
+              <input ng-show="true" class="btn-large span3 btn-success" type="file" id="directoryinput" multiple webkitdirectory ng-model="selectedFolder" ng-change="fileChange">
             </label>
           </div>
           <ul class="media-list">
@@ -196,7 +197,6 @@
 
     <script src="//google-analytics.com/ga.js" async="true"></script>
     <script src="/controllers/app.js"></script>
-    <script src="/socket.io/socket.io.js" async="true"></script>
   </body>
 </html>
     
