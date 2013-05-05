@@ -134,6 +134,7 @@ module.exports = function(app){
   });
 
   app.get('/api/library', function(req, res){
+    console.log('loading library');
 
     if (!req.user) return res.send('Login first');
 
@@ -141,6 +142,7 @@ module.exports = function(app){
 
     async.parallel({
       total : function(done){
+        console.log('found total');
         Photo.find({'owners': req.user._id}).count(done);
       },
       photos : function(done){
@@ -153,6 +155,7 @@ module.exports = function(app){
         .skip(req.query.skip)
         .limit(2000)
         .exec(function(err, photos){
+          console.log('result', photos.length);
           async.map((photos || []), function(photo, next){
             var mine = photo.copies[req.user._id] || {};
             var vote = mine.vote || (mine.calculatedVote);
@@ -168,6 +171,7 @@ module.exports = function(app){
         });
       }
     }, function(err, results){
+        console.log('sending', results.length);
         res.json(results);
     });
   });
