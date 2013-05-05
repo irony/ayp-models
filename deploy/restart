@@ -22,4 +22,5 @@ sudo restart app
 sudo chmod 700 deploy/monit
 sudo chown root deploy/monit
 sudo monit -d 60 -c deploy/monit
+sudo service nginx restart # clear cache
 #foreman start web=1
