@@ -45,5 +45,11 @@
   "scripts": {
     "start": "nodemon server/server.js",
     "test": "mocha -R spec tests/* "
+  },
+  "devDependencies": {
+    "grunt-bower-concat": "~0.1.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "assemble": "~0.3.76",
+    "grunt-bowerful": "~0.2.3"
   }
 }

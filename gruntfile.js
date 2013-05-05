@@ -2,6 +2,9 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-bowerful');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('assemble');
 
   grunt.initConfig({
     simplemocha:{
@@ -14,6 +17,24 @@ module.exports = function(grunt) {
         }
       }
     },
+    bowerful: {
+      dist : {
+        store: 'components',
+        include : ['bootstrap', 'jquery', 'angular'],
+        dest : 'client/build',
+        packages: {
+            bootstrap: '',
+            jquery: '',
+            angular : ''
+        },
+      }
+    },
+    concat: {
+      dist: {
+        src: ['client/vendors/**/*.js', 'client/js/*.js'],
+        dest: 'client/build/script.js'
+      }
+    },
     watch:{
       all:{
         files:['server/*.js', 'models/*.js'],
@@ -23,8 +44,10 @@ module.exports = function(grunt) {
     all: { src: ['test/**/*.js'] }
   });
 
-  grunt.registerTask('default', 'simplemocha:dev');
+  grunt.registerTask('default', ['concat', 'bowerful']);
   grunt.registerTask('test', 'simplemocha:dev');
   grunt.registerTask('watch', 'test, watch:all');
+
+
 
 };
