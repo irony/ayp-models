@@ -153,7 +153,7 @@
           </div>
           <ul class="media-list">
             <li class="media span2 {{file.state}}" ng-repeat="file in files">
-              <img src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail" class="pull-left"/>
+              <img ng-src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail" class="pull-left"/>
               <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-circle-arrow-up' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
               <div class="media-body">
                 <h4 class="media-heading">{{file.name}}</h4>
