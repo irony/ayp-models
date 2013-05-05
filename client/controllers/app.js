@@ -121,10 +121,11 @@ return openDialog;})
   return function(scope, element, attr){
     $(document).bind('dragover', function(e){e.preventDefault()});
     $(document).bind('drop', function(event) {
-      element.modal();
-
       var e = event.originalEvent;
       e.preventDefault();
+
+      element.modal();
+      
       var updateTimeout;
       var addFile = function(file, path){
         if(file.type.match(/image\.*/)){

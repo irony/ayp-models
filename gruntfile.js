@@ -18,13 +18,13 @@ module.exports = function(grunt) {
       }
     },
     bowerful: {
-      dist : {
+      all : {
         store: 'components',
-        include : ['bootstrap', 'jquery', 'angular'],
+        include : ['jquery','bootstrap', 'angular', 'font-awesome'],
         dest : 'client/build',
         packages: {
-            bootstrap: '',
             jquery: '',
+            bootstrap: '',
             angular : ''
         },
       }
@@ -37,16 +37,15 @@ module.exports = function(grunt) {
     },
     watch:{
       all:{
-        files:['server/*.js', 'models/*.js', 'client/*.js', ],
+        files:['*.js','server/*.js', 'models/*.js', 'client/*.js'],
         tasks:['test', 'concat', 'bowerful']
       }
     },
     all: { src: ['test/**/*.js'] }
   });
 
-  grunt.registerTask('default', ['concat', 'bowerful']);
+  grunt.registerTask('default', ['concat', 'bowerful', 'watch']);
   grunt.registerTask('test', 'simplemocha:dev');
-  grunt.registerTask('watch', 'test, watch:all');
 
 
 

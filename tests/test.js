@@ -20,7 +20,7 @@ var addedUsers = [];
 var addedPhotos = [];
 var addedSpans = [];
 
-var port = 3000;
+var port = 3333;
 var host = 'http://0.0.0.0:' + port;
 // app.listen(port);
 
