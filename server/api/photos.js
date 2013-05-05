@@ -155,7 +155,7 @@ module.exports = function(app){
         .skip(req.query.skip)
         .limit(2000)
         .exec(function(err, photos){
-          console.log('result', photos.length);
+          console.log('result', err || photos && photos.length);
           async.map((photos || []), function(photo, next){
             var mine = photo.copies[req.user._id] || {};
             var vote = mine.vote || (mine.calculatedVote);
@@ -171,7 +171,7 @@ module.exports = function(app){
         });
       }
     }, function(err, results){
-        console.log('sending', results.length);
+        console.log('sending', err, results);
         res.json(results);
     });
   });
