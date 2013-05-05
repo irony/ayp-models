@@ -37,15 +37,20 @@ module.exports = function(grunt) {
     },
     watch:{
       all:{
-        files:['*.js','server/*.js', 'models/*.js', 'client/*.js'],
-        tasks:['test', 'concat', 'bowerful']
+        files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'client/js/*.js'],
+        tasks:['concat', 'bowerful']
+      },
+      test:{
+        files:['*.js','server/*.js', 'models/*.js'],
+        tasks:['simplemocha:dev']
+
       }
     },
     all: { src: ['test/**/*.js'] }
   });
 
-  grunt.registerTask('default', ['concat', 'bowerful', 'watch']);
-  grunt.registerTask('test', 'simplemocha:dev');
+  grunt.registerTask('default', ['concat', 'bowerful', 'watch:all']);
+  grunt.registerTask('test', ['watch:test', 'simplemocha:dev']);
 
 
 

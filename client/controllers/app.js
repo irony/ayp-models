@@ -47,16 +47,33 @@ function AppController($scope, $http)
 
 
 
-  $scope.library = sessionStorage && sessionStorage.getObject('library');
+  $scope.library = sessionStorage && sessionStorage.getObject('library') || null;
 
   $scope.$watch('library', function(value){
     console.log('loading library', value);
-    if (!value || typeof(value) !== "object"){
+      
+    if (!value){
 
       $http.get('/api/library', {params: null}).success(function(library){
         $scope.library = library;
         console.log('library', library);
         if (sessionStorage) sessionStorage.setObject('library', library);
+
+      }).error(function(err){
+        console.log('library error');
+      });
+    } else {
+      
+      if ($scope.library.photos.length >= $scope.library.total)
+        return;
+
+      /*var lastModifiedDate = value.photos.sort(function (a,b) {
+        return b.modified - a.modified;
+      });*/
+
+      $http.get('/api/library', {params: {taken:value.photos.slice(-1)[0].taken}}).success(function(library){
+        $scope.library.photos.concat(library.photos);
+        if (sessionStorage) sessionStorage.setObject('library', $scope.library);
 
       }).error(function(err){
         console.log('library error');

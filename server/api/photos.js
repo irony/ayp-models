@@ -148,6 +148,8 @@ module.exports = function(app){
         Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
         .sort('-taken')
+        .where('taken').lt(req.query.taken)
+        .where('modified').gt(req.query.modified || new Date(1900,0,1))
         .skip(req.query.skip)
         .limit(2000)
         .exec(function(err, photos){
