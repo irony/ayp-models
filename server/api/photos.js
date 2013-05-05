@@ -148,6 +148,8 @@ module.exports = function(app){
         Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
         .sort('-taken')
+        .skip(req.query.skip)
+        .limit(2000)
         .exec(function(err, photos){
           async.map((photos || []), function(photo, next){
             var mine = photo.copies[req.user._id] || {};
