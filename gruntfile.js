@@ -31,14 +31,14 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['client/vendors/**/*.js', 'client/js/*.js'],
+        src: ['client/js/*.js', 'client/controllers/*.js'],
         dest: 'client/build/script.js'
       }
     },
     watch:{
       all:{
-        files:['server/*.js', 'models/*.js'],
-        tasks:['test']
+        files:['server/*.js', 'models/*.js', 'client/*.js', ],
+        tasks:['test', 'concat', 'bowerful']
       }
     },
     all: { src: ['test/**/*.js'] }
