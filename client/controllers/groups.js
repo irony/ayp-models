@@ -138,7 +138,7 @@ function GroupsController($scope, $http){
 
     clearTimeout(zoomTimeout);
 
-    $scope.nrPhotos = $scope.stats && $scope.stats.all * $scope.zoomLevel / 10 || $scope.photos.length;
+    $scope.nrPhotos = $scope.stats && Math.round($scope.stats.all * $scope.zoomLevel / 10) || $scope.photos.length;
 
     zoomTimeout = setTimeout(function(){
       $scope.loadMore($scope.startDate);

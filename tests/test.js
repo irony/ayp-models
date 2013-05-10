@@ -233,12 +233,13 @@ describe("app", function(){
 
     });
 
-    it('should be able to get the correct amount of total numbers of photos', function(){
-      it('should be able to get all photos in the library');
-
+    it('should be able to get the correct amount of total numbers of photos', function(done){
     });
-  });
-*/
+
+    it('should be able to get all photos in the library');
+
+  });*/
+
 
   describe("connectors", function(){
     var user = new User(JSON.parse(fs.readFileSync(__dirname + '/fixtures/testUser.json')));

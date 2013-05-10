@@ -5,7 +5,7 @@
     },
     sessionSecret : 'a2988-438674-f234a',
     mongoUrl : process.env.MONGOHQ_URL || 'mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos', // 'mongodb://R:billion@alex.mongohq.com:10053/app6520692',
-    baseUrl : "https://" + (process.env.HOST || "dev.allyourphotos.org"),
+    baseUrl : "http://" + (process.env.HOST || "dev.allyourphotos.org:3000"),
     facebook: {
         appId: '509552485736388'
       , appSecret: 'f4f302039147fae5d118b42d2a6a0205'
@@ -39,10 +39,10 @@
     secret: process.env.AWS_SECRET_ACCESS_KEY || 'Wz2MFOL6vj9dVILF9aD29+ISldtzKxVtooJi7KG2',
     bucket: process.env.AWS_S3_BUCKET || 'allyourphotos-eu'
   }
-  , dbox: { 
-    "app_key": "430zvvgwfjxnj4v", 
-    "app_secret": "un2e5d75rkfdeml", 
-    root : 'dropbox', 
+  , dbox: {
+    "app_key": "430zvvgwfjxnj4v",
+    "app_secret": "un2e5d75rkfdeml",
+    root : 'dropbox',
     scope : ''
   }
 };

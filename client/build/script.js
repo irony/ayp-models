@@ -1060,40 +1060,42 @@ function AppController($scope, $http)
       }
     });
 
+  function loadMore(taken, done){
 
+    $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
+    .success(function(library){
 
-  $scope.library = sessionStorage && sessionStorage.getObject('library') || null;
+      $scope.library.photos = $scope.library.photos.concat(library.photos);
+
+      // next is a cursor to the next date in the library
+      if (library.next){
+        return loadMore(library.next, done);
+      } else{
+        console.log('done library', $scope.library.photos.length);
+        return done && done(null, $scope.library.photos);
+      }
+
+    })
+    .error(function(err){
+      console.log('library error', err);
+    });
+  }
+
+  $scope.library = sessionStorage && sessionStorage.getObject('library') || {photos:[]};
 
   $scope.$watch('library', function(value){
+
+    // we already have the whole library
+    if ($scope.stats && $scope.stats.all <= value.photos.length)
+      return;
+
     console.log('loading library', value);
-      
-    if (!value){
 
-      $http.get('/api/library', {params: null}).success(function(library){
-        $scope.library = library;
-        console.log('library', library);
-        if (sessionStorage) sessionStorage.setObject('library', library);
+    var lastPhoto = $scope.library.photos && $scope.library.photos.length && $scope.library.photos.slice(-1)[0];
+    loadMore(lastPhoto && lastPhoto.taken, function(){
+      if (sessionStorage) sessionStorage.setObject('library', $scope.library);
+    });
 
-      }).error(function(err){
-        console.log('library error');
-      });
-    } else {
-      
-      if ($scope.library.photos.length >= $scope.library.total)
-        return;
-
-      /*var lastModifiedDate = value.photos.sort(function (a,b) {
-        return b.modified - a.modified;
-      });*/
-
-      $http.get('/api/library', {params: {taken:value.photos.slice(-1)[0].taken}}).success(function(library){
-        $scope.library.photos.concat(library.photos);
-        if (sessionStorage) sessionStorage.setObject('library', $scope.library);
-
-      }).error(function(err){
-        console.log('library error');
-      });
-    }
   });
 
 }
@@ -1431,7 +1433,7 @@ function GroupsController($scope, $http){
 
     clearTimeout(zoomTimeout);
 
-    $scope.nrPhotos = $scope.stats && $scope.stats.all * $scope.zoomLevel / 10 || $scope.photos.length;
+    $scope.nrPhotos = $scope.stats && Math.round($scope.stats.all * $scope.zoomLevel / 10) || $scope.photos.length;
 
     zoomTimeout = setTimeout(function(){
       $scope.loadMore($scope.startDate);
