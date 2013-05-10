@@ -12,11 +12,17 @@ var Photo = require('../models/photo');
 var _ = require('underscore');
 var colors = require('colors');
 
+if (process.ENV === "production"){
+  console.debug = function(){ /* ignore debug messages*/};
+} else{
+  // more logs
+  //require('longjohn');
 
-console.debug = function(){ /* ignore debug messages*/};
-
-// more logs
-// require('longjohn');
+  require('nodetime').profile({
+    accountKey: 'a3163d6d8e01eee439e7c772f8fa6fad851aa1a5',
+    appName: 'All Your Photos Worker'
+  });
+}
 
 
 var jobs = [

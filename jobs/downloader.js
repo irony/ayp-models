@@ -142,7 +142,7 @@ var downloader = {
 
                 photo.store = photo.store || {};
                 photo.store.error = {type:'Download error', details: err, action: 'skip', date: new Date()};
-                console.log('err', err);
+                console.log('Error while downloading photo and uploading to s3'.red, err);
                 photo.markModified('store');
                 return photo.save(function(err, photo){
                   return done(null, photo);  // We have handled the error, let's not abort the rest of the operation
