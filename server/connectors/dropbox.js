@@ -69,7 +69,7 @@ var connector = new InputConnector();
 			return done(new Error('Not a dropbox user'), null); // not a dropbox user
 
 
-		if (!photo) {
+		if (!photo || photo.bytes > 10 * 1024 * 1024) {
 			return done(null, null);
 		}
 
