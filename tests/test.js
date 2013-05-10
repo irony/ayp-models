@@ -320,7 +320,6 @@ describe("app", function(){
                 });
               }
             }, function(err, result){
-              console.log('done', err);
               done();
             });
                 

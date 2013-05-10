@@ -140,7 +140,7 @@ var connector = new InputConnector();
 			var client = connector.getClient(user);
 			
 
-			if (!user.accounts.dropbox.cursor) console.log('Importing all photos for user', user._id);
+			if (!user.accounts.dropbox.cursor) console.debug('Importing all photos for user', user._id);
 
 
 			var loadDelta = function(cursor){
