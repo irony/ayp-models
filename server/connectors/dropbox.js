@@ -158,7 +158,7 @@ var connector = new InputConnector();
 						photo.mimeType = photo && photo.mime_type;
 						photo.taken = photo && photo.client_mtime;
 
-						return photo && photo.mime_type && photo.bytes > 4096 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
+						return photo && photo.mime_type && photo.bytes > 4096 && photo.bytes < 10*1024*1024 && ['image', 'video'].indexOf(photo.mime_type.split('/')[0]) >= 0 ? photo : null;
 			    
 			    }).reduce(function(a,b){
 

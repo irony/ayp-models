@@ -23,6 +23,7 @@ module.exports = function(done){
 
         var group = user + "/" + self._id;
         var mine = self.copies[user];
+
         if (!mine.interesting || mine.interesting === 50) emit(group, Math.floor(Math.random()*100));
 
         if(self.tags && self.tags.length) emit(group, 50 + (self.tags.length));
@@ -93,8 +94,9 @@ var result = km.process();
         
         setter.$set['copies.' + userId + '.interestingness'] = interestingness;
         setter.$set['copies.' + userId + '.calculated'] = new Date();
+        setter.$set['modified'] = new Date();
 
-        Photo.findOneAndUpdate({_id : new ObjectId(photoId)}, setter, {upsert:true, safe:true}, done);
+        Photo.update({_id : photoId}, setter, done);
 
       }, done);
 

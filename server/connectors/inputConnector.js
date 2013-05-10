@@ -42,6 +42,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   if (!stream.length && !stream.headers) throw new Error('No stream length or headers available');
 
   var self = this;
+  var error = null;
   var filename = '/' + folder + '/' + photo.source + '/' + photo._id;
   var headers = {
           'Content-Length': stream.headers && stream.headers['content-length'] || stream.length,
@@ -62,7 +63,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       photo.store[folder].stored = new Date();
       photo.markModified('store');
 
-      return done(null, photo);
+      return done(error, photo);
     } else {
       res.on('data', function(chunk){
         console.log(chunk.toString().red);
@@ -72,7 +73,8 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   });
 
   put.on('error', function(err){
-      console.log('unhandled exception while sending to S3: '.red, err.toString(), filename);
+    error = err;
+    console.log('unhandled exception while sending to S3: '.red, err.toString(), filename);
   });
 
   var exifReader = new ImageHeaders();
