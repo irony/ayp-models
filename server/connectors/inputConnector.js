@@ -52,6 +52,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       };
 
   var put = global.s3.putStream(stream, filename, headers, function(err, res){
+    console.log('response', res, err);
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
@@ -74,6 +75,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
 
   put.on('error', function(err){
     error = err;
+    console.log(bytes);
     console.log('unhandled exception while sending to S3: '.red, err.toString(), filename);
   });
 
