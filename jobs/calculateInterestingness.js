@@ -96,12 +96,13 @@ var result = km.process();
         setter.$set['copies.' + userId + '.calculated'] = new Date();
         setter.$set['modified'] = new Date();
 
-        Photo.update({_id : photoId}, setter, done);
+        Photo.update({_id : photoId}, setter, function(err, photo){
+          if (err) console.log('_id, err, setter ', photo._id, err,setter);
+          return done(err);
+        });
 
       }, done);
 
     });
   });
-
-
 };

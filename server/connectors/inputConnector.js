@@ -56,7 +56,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
-
       photo.store = photo.store || {};
       photo.store[folder] = photo.store[folder] || {};
 

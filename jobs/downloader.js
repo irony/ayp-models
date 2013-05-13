@@ -71,8 +71,9 @@ var downloader = {
 
     var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken source path mimeType')
     .where('store.thumbnail.stored').exists(false)
+    // .where('store.lastTry').gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
     .where('store.error').exists(false) // skip photos with previous download problems
-    .sort('-taken');
+    .sort({'taken': -1});
 
     var downloadAllResults = function downloadAllResults(err, photos){
       console.log('[50]Found %d photos without downloaded images. Downloading...', photos && photos.length, err);
@@ -89,7 +90,6 @@ var downloader = {
               return done(null, photo); // we have handled the error, we don't want to abort the operation
             });
           }
-          
           return photo.save(done);
 
         });
@@ -116,16 +116,15 @@ var downloader = {
   downloadNewPhotos : function(done){
     if (!done) throw new Error("Callback is mandatory");
 
-    var photoQuery = Photo.find()
-    .where('store.original.stored').exists(false)
-    .where('store.error').exists(false) // skip photos with previous download problems
-    .sort('-taken') // todo: images before videos
-    .limit(5);
+    var photoQuery = Photo.find({'store.lastTry' : { $exists: false }, 'store.error': {$exists : false}})
+    // .or({'store.lastTry' : {$lte : new Date()-24*60*60*1000}})
+    .sort({'bytes': 1, 'taken': -1})
+    .limit(500);
 
     var downloadAllResults = function downloadAllResults(err, photos){
       // console.log('[50]Found %d photos without downloaded images. Downloading...', photos.length);
 
-      async.map(photos, function(photo, done){
+      async.mapSeries(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
           if (!users || !users.length) {
@@ -135,7 +134,7 @@ var downloader = {
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
-            downloader.downloadPhoto(user, photo,  {original: true, thumbnail : !photo.store || !photo.store.thumbnail}, function(err){
+            downloader.downloadPhoto(user, photo,  {original: true, thumbnail : true}, function(err){
                 console.debug('Download photo done: ', photo.store);
               if (err) {
                 
@@ -149,7 +148,13 @@ var downloader = {
                 });
               }
 
-              return photo.save(done);
+              photo.store.lastTry = new Date();
+              photo.markModified('store');
+              return photo.save(function(err, photo){
+                if (err) throw err;
+
+                done(err, photo);
+              });
             });
           }, done);
         });
