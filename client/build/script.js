@@ -1068,14 +1068,14 @@ function AppController($scope, $http)
       library.photos.reduce(function(a,b){
         b.src=b.src.replace('$', library.baseUrl);
 
-        // look for this photo in the library and update if it wasn't found
+        // look for this photo in the library and update if it was found
         if (!b || a.some(function(existing){
-          var same = existing._id === b._id;
+          var same = existing && existing._id === b._id;
           if (same) existing = b;
           return same;
         })) return;
 
-        a.unshift(b);  // insert first
+        a.unshift(b);  // otherwise - insert it first
       }, $scope.library.photos);
 
       // next is a cursor to the next date in the library
