@@ -136,6 +136,7 @@ module.exports = function(app){
   app.get('/api/library', function(req, res){
     console.log('loading library');
     var limit = req.query.limit || 1000;
+    var baseUrl = 'https://allyourphotos-eu.s3.amazonaws.com/thumbnail';
 
     if (!req.user) return res.send('Login first');
 
@@ -147,6 +148,7 @@ module.exports = function(app){
         Photo.find({'owners': req.user._id}).count(done);
       },
       photos : function(done){
+
         // return all photos with just bare minimum information for local caching
         Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
@@ -154,16 +156,17 @@ module.exports = function(app){
         .where('taken').lt(req.query.taken || new Date())
         .where('modified').gt(req.query.modified || new Date(1900,0,1))
         .skip(req.query.skip)
-        .limit(limit +  1)
+        .limit(parseInt(limit,10) +  1)
         .exec(function(err, photos){
           console.log('result', err || photos && photos.length);
+
           async.map((photos || []), function(photo, next){
             var mine = photo.copies[req.user._id] || {};
             var vote = mine.vote || (mine.calculatedVote);
             return next(null, {
               _id : photo._id,
               taken:photo.taken && photo.taken.getTime(),
-              src: photo.src,
+              src: photo.src && photo.src.replace(baseUrl, '$') || null,
               vote: Math.floor(vote),
               ratio: photo.ratio
             });
@@ -174,7 +177,7 @@ module.exports = function(app){
     }, function(err, results){
         var taken = results.photos.length > limit && results.photos.pop().taken || null;
         results.next = taken; //(results.photos.length === limit) && last.taken || null;
-        console.log('sending', err);
+        results.baseUrl = baseUrl;
         res.json(results);
     });
   });

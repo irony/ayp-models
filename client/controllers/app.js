@@ -50,7 +50,10 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(library){
 
-      $scope.library.photos = $scope.library.photos.concat(library.photos);
+      library.photos.reduce(function(a,b){
+        b.src=b.src.replace('$', library.baseUrl);
+        a.push(b);
+      }, $scope.library.photos);
 
       // next is a cursor to the next date in the library
       if (library.next){
