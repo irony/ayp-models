@@ -1060,18 +1060,58 @@ function AppController($scope, $http)
       }
     });
 
+  function loadLatest(modified, done){
+
+    $http.get('/api/library', {params: {modified:modified}})
+    .success(function(library){
+
+      library.photos.reduce(function(a,b){
+        b.src=b.src.replace('$', library.baseUrl);
+
+        // look for this photo in the library and update if it wasn't found
+        if (!b || a.some(function(existing){
+          var same = existing._id === b._id;
+          if (same) existing = b;
+          return same;
+        })) return;
+
+        a.unshift(b);  // insert first
+      }, $scope.library.photos);
+
+      // next is a cursor to the next date in the library
+      if (library.next){
+        return loadLatest(library.next, done);
+      } else{
+        return done && done(null, $scope.library.photos);
+      }
+
+    })
+    .error(function(err){
+      console.log('library error', err);
+    });
+
+  }
+
+  //
   function loadMore(taken, done){
 
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(library){
 
-      $scope.library.photos = $scope.library.photos.concat(library.photos);
+      library.photos.reduce(function(a,b){
+        if (!b) return;
+
+        b.src=b.src.replace('$', library.baseUrl);
+        a.push(b);
+      }, $scope.library.photos);
 
       // next is a cursor to the next date in the library
       if (library.next){
         return loadMore(library.next, done);
       } else{
         console.log('done library', $scope.library.photos.length);
+        $scope.library.modified = library.modified;
+
         return done && done(null, $scope.library.photos);
       }
 
@@ -1089,10 +1129,16 @@ function AppController($scope, $http)
     if ($scope.stats && $scope.stats.all <= value.photos.length)
       return;
 
-    console.log('loading library', value);
-
+    // Fill up the library from the end...
     var lastPhoto = $scope.library.photos && $scope.library.photos.length && $scope.library.photos.slice(-1)[0];
-    loadMore(lastPhoto && lastPhoto.taken, function(){
+    loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
+      if (sessionStorage) sessionStorage.setObject('library', $scope.library);
+
+    });
+
+    // ... and from the beginning
+    var lastModifyDate = $scope.library.modified || $scope.library.photos.length && $scope.library.photos[0].modified;
+    loadLatest(modified, function(err, photos){
       if (sessionStorage) sessionStorage.setObject('library', $scope.library);
     });
 
@@ -2034,13 +2080,18 @@ function WallController($scope, $http){
     $scope.zoomLevel++;
   };
 
+  $scope.$watch('zoomLevel', function(){
+    if($scope.photoInCenter){
+      var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
+      $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
+        location.hash = newCenter.taken;
+      });
+    }
+  });
+
 
   $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
     
-    if ($scope.zoomLevel > $scope.zoomLevel)
-      $scope.startDate = new Date(); // reset the value when zooming out
-
-    $scope.nrPhotos = $scope.photos.length || ($scope.stats && $scope.stats.all * $scope.zoomLevel / 10);
     
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
       clearTimeout(zoomTimeout);
@@ -2050,10 +2101,11 @@ function WallController($scope, $http){
         var left = 0;
         var maxWidth = window.outerWidth * 1.2;
         var lastPhoto;
+        var height = $scope.zoomLevel > 6 && 120 || $scope.zoomLevel < 2 && 480 || 240;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
           if (photo.vote <= $scope.zoomLevel ) {
-            photo.height = 240;
+            photo.height = height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
             var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
@@ -2063,8 +2115,8 @@ function WallController($scope, $http){
               photo.left = left = 0;
             } else {
               photo.left = left;
-              left += photo.width;
             }
+            left += photo.width;
 
             lastPhoto = photo;
 
@@ -2074,19 +2126,15 @@ function WallController($scope, $http){
           return false;
         }, []);
 
+        $scope.nrPhotos = $scope.photos.length || Math.round(($scope.stats && $scope.stats.all * $scope.zoomLevel / 10));
+
         // cancel all previous image requests
         // if (window.stop) window.stop();
         
         $scope.photosInView = $scope.photos.slice(0,100);
-        $scope.totalHeight = top + 240;
+        $scope.totalHeight = top + height;
         $scope.nrPhotos = $scope.photos.length;
 
-        if($scope.photoInCenter){
-          var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
-          $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
-            location.hash = newCenter.taken;
-          });
-        }
       }, 50);
     }
 

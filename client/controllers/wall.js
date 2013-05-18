@@ -24,13 +24,18 @@ function WallController($scope, $http){
     $scope.zoomLevel++;
   };
 
+  $scope.$watch('zoomLevel', function(){
+    if($scope.photoInCenter){
+      var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
+      $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
+        location.hash = newCenter.taken;
+      });
+    }
+  });
+
 
   $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
     
-    if ($scope.zoomLevel > $scope.zoomLevel)
-      $scope.startDate = new Date(); // reset the value when zooming out
-
-    $scope.nrPhotos = $scope.photos.length || ($scope.stats && $scope.stats.all * $scope.zoomLevel / 10);
     
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
       clearTimeout(zoomTimeout);
@@ -40,10 +45,11 @@ function WallController($scope, $http){
         var left = 0;
         var maxWidth = window.outerWidth * 1.2;
         var lastPhoto;
+        var height = $scope.zoomLevel > 6 && 120 || $scope.zoomLevel < 2 && 480 || 240;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
           if (photo.vote <= $scope.zoomLevel ) {
-            photo.height = 240;
+            photo.height = height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
             var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
@@ -53,8 +59,8 @@ function WallController($scope, $http){
               photo.left = left = 0;
             } else {
               photo.left = left;
-              left += photo.width;
             }
+            left += photo.width;
 
             lastPhoto = photo;
 
@@ -64,19 +70,15 @@ function WallController($scope, $http){
           return false;
         }, []);
 
+        $scope.nrPhotos = $scope.photos.length || Math.round(($scope.stats && $scope.stats.all * $scope.zoomLevel / 10));
+
         // cancel all previous image requests
         // if (window.stop) window.stop();
         
         $scope.photosInView = $scope.photos.slice(0,100);
-        $scope.totalHeight = top + 240;
+        $scope.totalHeight = top + height;
         $scope.nrPhotos = $scope.photos.length;
 
-        if($scope.photoInCenter){
-          var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
-          $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
-            location.hash = newCenter.taken;
-          });
-        }
       }, 50);
     }
 
