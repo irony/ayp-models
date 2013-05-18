@@ -1138,7 +1138,7 @@ function AppController($scope, $http)
 
     // ... and from the beginning
     var lastModifyDate = $scope.library.modified || $scope.library.photos.length && $scope.library.photos[0].modified;
-    loadLatest(modified, function(err, photos){
+    loadLatest(lastModifyDate, function(err, photos){
       if (sessionStorage) sessionStorage.setObject('library', $scope.library);
     });
 
