@@ -135,7 +135,7 @@ module.exports = function(app){
 
   app.get('/api/library', function(req, res){
     console.log('loading library');
-    var limit = req.query.limit || 1000;
+    var limit = req.query.limit || 500;
     var baseUrl = 'https://allyourphotos-eu.s3.amazonaws.com/thumbnail';
 
     if (!req.user) return res.send('Login first');
