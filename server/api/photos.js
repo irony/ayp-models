@@ -135,7 +135,7 @@ module.exports = function(app){
 
   app.get('/api/library', function(req, res){
     console.log('loading library');
-    var limit = req.query.limit || 2000;
+    var limit = req.query.limit || 1000;
 
     if (!req.user) return res.send('Login first');
 
