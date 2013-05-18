@@ -51,6 +51,8 @@ function AppController($scope, $http)
     .success(function(library){
 
       library.photos.reduce(function(a,b){
+        if (!b) return;
+        
         b.src=b.src.replace('$', library.baseUrl);
         a.push(b);
       }, $scope.library.photos);
