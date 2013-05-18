@@ -45,6 +45,39 @@ function AppController($scope, $http)
       }
     });
 
+  function loadLatest(modified, done){
+
+    $http.get('/api/library', {params: {modified:modified}})
+    .success(function(library){
+
+      library.photos.reduce(function(a,b){
+        b.src=b.src.replace('$', library.baseUrl);
+
+        // look for this photo in the library and update if it wasn't found
+        if (!b || a.some(function(existing){
+          var same = existing._id === b._id;
+          if (same) existing = b;
+          return same;
+        })) return;
+
+        a.unshift(b);  // insert first
+      }, $scope.library.photos);
+
+      // next is a cursor to the next date in the library
+      if (library.next){
+        return loadLatest(library.next, done);
+      } else{
+        return done && done(null, $scope.library.photos);
+      }
+
+    })
+    .error(function(err){
+      console.log('library error', err);
+    });
+
+  }
+
+  //
   function loadMore(taken, done){
 
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
@@ -52,7 +85,7 @@ function AppController($scope, $http)
 
       library.photos.reduce(function(a,b){
         if (!b) return;
-        
+
         b.src=b.src.replace('$', library.baseUrl);
         a.push(b);
       }, $scope.library.photos);
@@ -62,6 +95,8 @@ function AppController($scope, $http)
         return loadMore(library.next, done);
       } else{
         console.log('done library', $scope.library.photos.length);
+        $scope.library.modified = library.modified;
+
         return done && done(null, $scope.library.photos);
       }
 
@@ -79,10 +114,16 @@ function AppController($scope, $http)
     if ($scope.stats && $scope.stats.all <= value.photos.length)
       return;
 
-    console.log('loading library', value);
-
+    // Fill up the library from the end...
     var lastPhoto = $scope.library.photos && $scope.library.photos.length && $scope.library.photos.slice(-1)[0];
-    loadMore(lastPhoto && lastPhoto.taken, function(){
+    loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
+      if (sessionStorage) sessionStorage.setObject('library', $scope.library);
+
+    });
+
+    // ... and from the beginning
+    var lastModifyDate = $scope.library.modified || $scope.library.photos.length && $scope.library.photos[0].modified;
+    loadLatest(modified, function(err, photos){
       if (sessionStorage) sessionStorage.setObject('library', $scope.library);
     });
 

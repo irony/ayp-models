@@ -147,12 +147,19 @@ module.exports = function(app){
         console.log('found total');
         Photo.find({'owners': req.user._id}).count(done);
       },
+      modified: function  (done) {
+        Photo.findOne({'owners': req.user._id}, 'modified')
+          .sort({'modified': -1})
+          .exec(function(err, photo){
+            done(err, photo && photo.modified);
+          });
+      },
       photos : function(done){
 
         // return all photos with just bare minimum information for local caching
         Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
-        .sort('-taken')
+        .sort(req.query.modified ? 'modified' : '-taken')
         .where('taken').lt(req.query.taken || new Date())
         .where('modified').gt(req.query.modified || new Date(1900,0,1))
         .skip(req.query.skip)
