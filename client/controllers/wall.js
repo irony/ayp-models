@@ -54,7 +54,7 @@ function WallController($scope, $http){
                         240;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
-          if (photo.vote <= $scope.zoomLevel ) {
+          if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
             photo.height = $scope.height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
