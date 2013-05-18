@@ -52,7 +52,6 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
       };
 
   var put = global.s3.putStream(stream, filename, headers, function(err, res){
-    console.log('response', res, err);
     if (err) return done(err);
 
     if (200 === res.statusCode || 307 === res.statusCode) {
@@ -82,7 +81,11 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
   var firstTick;
   var bytes=0;
   stream.on('data', function(chunk){
-    if (!exifReader.finished) exifReader.add_bytes(chunk);
+    try{
+      if (!exifReader.finished) exifReader.add_bytes(chunk);
+    } catch (err){
+      console.log('exif error:'.red, err);
+    }
     bytes+=chunk.length;
 
     var now = (new Date()).getTime();
@@ -106,7 +109,7 @@ InputConnector.prototype.upload = function(folder, photo, stream, done){
         photo.store[folder].height = headers.height;
 
         var now = (new Date()).getTime();
-        console.debug("downloaded photo " + photo._id + " size:" + bytes / 1000 + " in " + Math.round(bytes / (now-firstTick)) + " kb/s");
+        console.debug("Downloaded photo " + photo._id + " size:" + bytes / 1000 + " in " + Math.round(bytes / (now-firstTick)) + " kb/s");
 
         if (folder === "original" || !photo.ratio){
           photo.ratio = photo.store[folder].ratio;

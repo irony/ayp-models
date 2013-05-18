@@ -12,7 +12,7 @@ var Photo = require('../models/photo');
 var _ = require('underscore');
 var colors = require('colors');
 
-if (process.ENV === "production"){
+if (process.ENV === "production" || true){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs

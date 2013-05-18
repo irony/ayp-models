@@ -135,7 +135,6 @@ var downloader = {
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
             downloader.downloadPhoto(user, photo,  {original: true, thumbnail : true}, function(err){
-                console.debug('Download photo done: ', photo.store);
               if (err) {
                 
 
