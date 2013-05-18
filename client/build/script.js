@@ -2060,6 +2060,7 @@ function WallController($scope, $http){
   var scrollTimeout = null;
   $scope.startDate = new Date();
   $scope.zoomLevel = 5;
+  $scope.height = 240;
   $scope.photos = [];
   $scope.groups = [];
   $scope.counter = 0;
@@ -2068,7 +2069,7 @@ function WallController($scope, $http){
   $scope.scroll = function(){
     scrollTimeout = setTimeout(function(){
       $scope.photosInView = $scope.photos.filter(function(photo){
-          return photo.top > $scope.scrollPosition - 250 && photo.top < $scope.scrollPosition + 1900;
+          return photo.top > $scope.scrollPosition - ($scope.loadingReverse && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + 1900;
       });
       $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
 
@@ -2082,9 +2083,11 @@ function WallController($scope, $http){
 
   $scope.$watch('zoomLevel', function(){
     if($scope.photoInCenter){
-      var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-$scope.photoInCenter.taken) - Math.abs(b.taken-$scope.photoInCenter.taken)})[0];
-      $("html, body").animate({scrollTop: newCenter.top - 300 }, 100, function() {
-        location.hash = newCenter.taken;
+      var taken = $scope.photoInCenter;
+
+      var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-taken) - Math.abs(b.taken-taken)})[0];
+      $("html, body").animate({scrollTop: newCenter.top - 300 }, 500, function() {
+        //location.hash = newCenter.taken;
       });
     }
   });
@@ -2101,25 +2104,28 @@ function WallController($scope, $http){
         var left = 0;
         var maxWidth = window.outerWidth * 1.2;
         var lastPhoto;
-        var height = $scope.zoomLevel > 6 && 120 || $scope.zoomLevel < 2 && 480 || 240;
+        $scope.height = $scope.zoomLevel > 8 && 60 ||
+                        $scope.zoomLevel > 6 && 120 ||
+                        $scope.zoomLevel < 2 && 480 ||
+                        240;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
           if (photo.vote <= $scope.zoomLevel ) {
-            photo.height = height;
+            photo.height = $scope.height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
-            var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
+            // var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
 
-            if (left + photo.width > maxWidth || gap){
-              top += photo.height;
+            if (left + photo.width > maxWidth){
+              top += photo.height + 5;
               photo.left = left = 0;
             } else {
               photo.left = left;
             }
-            left += photo.width;
 
             lastPhoto = photo;
 
+            left += photo.width + 5;
             photo.top = top;
             return true;
           }
@@ -2132,7 +2138,7 @@ function WallController($scope, $http){
         // if (window.stop) window.stop();
         
         $scope.photosInView = $scope.photos.slice(0,100);
-        $scope.totalHeight = top + height;
+        $scope.totalHeight = top + $scope.height;
         $scope.nrPhotos = $scope.photos.length;
 
       }, 50);
