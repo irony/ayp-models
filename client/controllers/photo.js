@@ -25,7 +25,24 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-      $scope.startDate = photo.taken;
+
+      var target = event.target;
+      $scope.photoInCenter = photo;
+      
+      if ($scope.selectedPhoto && photo.class) {
+        var selectedPhoto = $scope.selectedPhoto;
+        selectedPhoto.src = selectedPhoto.src.replace('original', 'thumbnail');
+        selectedPhoto.class = '';
+        if (selectedPhoto === photo) return;
+      }
+
+      //document.location.hash = photo.taken;
+
+      $scope.selectedPhoto = photo;
+      photo.class="selected";
+      photo.src = photo.src.replace('thumbnail', 'original');
+
+
       // if someone views this image more than a few seconds - it will be counted as a click - otherwise it will be reverted
       if (photo.updateClick) {
         clearTimeout(photo.updateClick);
@@ -33,10 +50,6 @@ function PhotoController ($scope, $http){
       } else {
         photo.updateClick = setTimeout(function(){
           socket.emit('click', photo._id, 1);
-          console.log("click", photo);
-
-          photo.src = photo.src.replace('thumbnail', 'original');
-
         }, 300);
       }
 

@@ -1066,17 +1066,18 @@ function AppController($scope, $http)
     .success(function(library){
 
       library.photos.reduce(function(a,b){
-        b.src=b.src.replace('$', library.baseUrl);
+        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
 
         // look for this photo in the library and update if it was found
         if (!b || a.some(function(existing){
           var same = existing && existing._id === b._id;
           if (same) existing = b;
           return same;
-        })) return;
+        })) return a;
 
         a.unshift(b);  // otherwise - insert it first
-      }, $scope.library.photos);
+        return a;
+      }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
       if (library.next){
@@ -1101,9 +1102,10 @@ function AppController($scope, $http)
       library.photos.reduce(function(a,b){
         if (!b) return;
 
-        b.src=b.src.replace('$', library.baseUrl);
+        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
         a.push(b);
-      }, $scope.library.photos);
+        return a;
+      }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
       if (library.next){
@@ -1528,7 +1530,24 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-      $scope.startDate = photo.taken;
+
+      var target = event.target;
+      $scope.photoInCenter = photo;
+      
+      if ($scope.selectedPhoto && photo.class) {
+        var selectedPhoto = $scope.selectedPhoto;
+        selectedPhoto.src = selectedPhoto.src.replace('original', 'thumbnail');
+        selectedPhoto.class = '';
+        if (selectedPhoto === photo) return;
+      }
+
+      //document.location.hash = photo.taken;
+
+      $scope.selectedPhoto = photo;
+      photo.class="selected";
+      photo.src = photo.src.replace('thumbnail', 'original');
+
+
       // if someone views this image more than a few seconds - it will be counted as a click - otherwise it will be reverted
       if (photo.updateClick) {
         clearTimeout(photo.updateClick);
@@ -1536,10 +1555,6 @@ function PhotoController ($scope, $http){
       } else {
         photo.updateClick = setTimeout(function(){
           socket.emit('click', photo._id, 1);
-          console.log("click", photo);
-
-          photo.src = photo.src.replace('thumbnail', 'original');
-
         }, 300);
       }
 
@@ -2065,7 +2080,8 @@ function WallController($scope, $http){
   $scope.groups = [];
   $scope.counter = 0;
   $scope.nrPhotos = undefined;
-
+  $scope.selectedPhoto = null;
+   
   $scope.scroll = function(){
     scrollTimeout = setTimeout(function(){
       $scope.photosInView = $scope.photos.filter(function(photo){
@@ -2137,7 +2153,7 @@ function WallController($scope, $http){
         // cancel all previous image requests
         // if (window.stop) window.stop();
         
-        $scope.photosInView = $scope.photos.slice(0,100);
+        //$scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + $scope.height;
         $scope.nrPhotos = $scope.photos.length;
 

@@ -11,6 +11,9 @@
       
         <div id="wall" style="height:{{totalHeight}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
             <label id="date">{{photoInCenter.taken| date:'MMM yyyy'}}</label>
+
+
+            
               <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" height="{{photo.height}}" width="{{photo.width}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)" ng-mousemove="view(photo)">
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
@@ -33,18 +36,7 @@
         //$('#' + id).css('star'+value);
       }
 
-      document.querySelector( '#wall' ).addEventListener( 'click', function( event ) {
-        if (event.target.tagName == "IMG") {
-          var target = event.target;
-          if (target.className.indexOf('selected') < 0 )
-            $('.selected').removeClass('selected');
-
-          
-          $(target).toggleClass('selected');
-
-          target.src = $(target).hasClass('selected') && target.src.replace('thumbnail', "original") || target.src.replace('original', "thumbnail");
-        }
-      } );
+      var socket = io.connect();
 
       document.addEventListener( 'keydown', function( e ) {
         var keyCode = e.keyCode || e.which,

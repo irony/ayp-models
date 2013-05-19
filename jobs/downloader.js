@@ -118,7 +118,7 @@ var downloader = {
 
     var photoQuery = Photo.find({'store.lastTry' : { $exists: false }, 'store.error': {$exists : false}})
     // .or({'store.lastTry' : {$lte : new Date()-24*60*60*1000}})
-    .sort({'bytes': 1, 'taken': -1})
+    .sort({'taken': -1})
     .limit(500);
 
     var downloadAllResults = function downloadAllResults(err, photos){

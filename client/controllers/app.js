@@ -51,17 +51,18 @@ function AppController($scope, $http)
     .success(function(library){
 
       library.photos.reduce(function(a,b){
-        b.src=b.src.replace('$', library.baseUrl);
+        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
 
         // look for this photo in the library and update if it was found
         if (!b || a.some(function(existing){
           var same = existing && existing._id === b._id;
           if (same) existing = b;
           return same;
-        })) return;
+        })) return a;
 
         a.unshift(b);  // otherwise - insert it first
-      }, $scope.library.photos);
+        return a;
+      }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
       if (library.next){
@@ -86,9 +87,10 @@ function AppController($scope, $http)
       library.photos.reduce(function(a,b){
         if (!b) return;
 
-        b.src=b.src.replace('$', library.baseUrl);
+        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
         a.push(b);
-      }, $scope.library.photos);
+        return a;
+      }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
       if (library.next){

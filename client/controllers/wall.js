@@ -9,7 +9,8 @@ function WallController($scope, $http){
   $scope.groups = [];
   $scope.counter = 0;
   $scope.nrPhotos = undefined;
-
+  $scope.selectedPhoto = null;
+   
   $scope.scroll = function(){
     scrollTimeout = setTimeout(function(){
       $scope.photosInView = $scope.photos.filter(function(photo){
@@ -81,7 +82,7 @@ function WallController($scope, $http){
         // cancel all previous image requests
         // if (window.stop) window.stop();
         
-        $scope.photosInView = $scope.photos.slice(0,100);
+        //$scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + $scope.height;
         $scope.nrPhotos = $scope.photos.length;
 
