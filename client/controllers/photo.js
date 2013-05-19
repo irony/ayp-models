@@ -21,7 +21,18 @@ function PhotoController ($scope, $http){
   };
 
   $scope.rightclick = function(photo){
-    photo.class = 'flip';
+    var card = document.createElement('div');
+    var meta = document.createElement('div');
+    angular.copy(event.target.style, meta.style);
+    meta.class = 'meta flip';
+    meta.innerHTML= 'metadata goes here';
+
+    event.target.parentNode.appendChild(card);
+    card.appendChild(event.target);
+    card.appendChild(meta);
+
+    card.class = 'flip';
+    console.log(card);
   };
 
   $scope.click = function(photo){

@@ -935,6 +935,17 @@ body .modal.fade.in {
             transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
 }
 
+#wall img.flip{
+   -webkit-transform:rotateY(-180deg);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden; /* Chrome and Safari */
+  -moz-backface-visibility:hidden; /* Firefox */
+  -ms-backface-visibility:hidden; /* Internet Explorer */
+}
+
+#wall .meta{
+  background:rgba(0,0,0,0.5);
+}
 
   /* use css instead of javascript to use maximum power from the engine */
 

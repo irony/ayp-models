@@ -39,25 +39,52 @@ function WallController($scope, $http){
                         $scope.zoomLevel < 2 && 480 ||
                         240;
 
+        var row = [];
+        var group = [];
+        var groupNr = 0;
+
         $scope.photos = ($scope.library.photos).filter(function(photo){
+
+          // calculate group
+          var gap = lastPhoto && (lastPhoto.taken - photo.taken) / (8 * 60 * 60 * 1000);
+          if (gap > 1 && group.length >= 6) {
+            group = [];
+            groupNr++;
+          }
+
+          lastPhoto = photo;
+          group.push(photo);
+          
+          // filter out the photos in this view
           if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
             photo.height = $scope.height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
-            // var gap = lastPhoto && (lastPhoto.taken - photo.taken) / ($scope.zoomLevel * 1000) || 5; //> 24 * 60 * 60 * 1000;
 
+            // start new row
             if (left + photo.width > maxWidth){
+
+              // center the row
+              row.forEach(function(photo){
+                photo.left += (window.outerWidth - left) / row.length;
+              });
+
               top += photo.height + 5;
               photo.left = left = 0;
+              row = [];
             } else {
               photo.left = left;
             }
 
-            lastPhoto = photo;
 
             left += photo.width + 5;
             photo.top = top;
 
+            row.push(photo);
+            photo.groupNr = groupNr;
+
+
+            // optimize - if we find the current row directly, just scroll to it directly
             if (photo === $scope.photoInCenter) $(document).scrollTop(photo.top);
 
             return true;
@@ -77,6 +104,7 @@ function WallController($scope, $http){
       }, 150);
     }
     filterView();
+    $scope.$apply();
 
   });
 
@@ -96,7 +124,6 @@ function WallController($scope, $http){
         return photo.top > $scope.scrollPosition - ($scope.loadingReverse && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (!$scope.loadingReverse && $scope.height * 2 || $scope.height);
     });
     $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
-    $scope.$apply();
     findHash(); // initial load
   }
   

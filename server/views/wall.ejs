@@ -14,7 +14,7 @@
 
 
             
-              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" rightClick="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
           <div class="slider">
               <label class="pull-right  muted">All your photos</label>
@@ -30,8 +30,6 @@
 
 
     <script>
-      var zoomTimeout;
-
       function vote(id, value){
         alert('Star value ' + value);
         //$('#' + id).css('star'+value);
@@ -88,9 +86,5 @@
           case number.nine : vote($('.selected')[0].id, 9); break;
         }
       });
-
-      document.querySelector( '#wall' ).addEventListener( 'dblclick', function( event ) {
-          clearTimeout(zoomTimeout);
-      } );
 
     </script>

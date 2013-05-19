@@ -164,14 +164,11 @@ angular.module('app', [])
 };
 return openDialog;})
 .directive('rightClick', function($parse) {
-  console.log('rightclick');
   return function(scope, element, attr) {
-    console.log('rightclick');
     element.bind('contextmenu', function(event) {
       event.preventDefault();
       var fn = $parse(attr.rightClick);
       scope.$apply(function() {
-        console.log('rightclick');
         fn(scope, {
           $event: event
         });
