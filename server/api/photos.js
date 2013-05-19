@@ -135,7 +135,7 @@ module.exports = function(app){
 
   app.get('/api/library', function(req, res){
     console.log('loading library');
-    var limit = req.query.limit || 500;
+    var limit = req.query.limit || 2000;
     var baseUrl = 'https://allyourphotos-eu.s3.amazonaws.com/thumbnail';
 
     if (!req.user) return res.send('Login first');
@@ -159,9 +159,10 @@ module.exports = function(app){
         // return all photos with just bare minimum information for local caching
         Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
-        .sort(req.query.modified ? 'modified' : '-taken')
         .where('taken').lt(req.query.taken || new Date())
         .where('modified').gt(req.query.modified || new Date(1900,0,1))
+        .where('store.thumbnail').exists()
+        .sort(req.query.modified ? {'modified' : 1} : {'taken' : -1})
         .skip(req.query.skip)
         .limit(parseInt(limit,10) +  1)
         .exec(function(err, photos){
@@ -182,8 +183,8 @@ module.exports = function(app){
         });
       }
     }, function(err, results){
-        var taken = results.photos.length > limit && results.photos.pop().taken || null;
-        results.next = taken; //(results.photos.length === limit) && last.taken || null;
+        var next = results.photos.length > limit && results.photos.pop()[req.query.modified ? 'modified' : 'taken'] || null;
+        results.next = next; //(results.photos.length === limit) && last.taken || null;
         results.baseUrl = baseUrl;
         res.json(results);
     });

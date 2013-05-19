@@ -12,31 +12,14 @@ function WallController($scope, $http){
   $scope.selectedPhoto = null;
    
   $scope.scroll = function(){
-    scrollTimeout = setTimeout(function(){
-      $scope.photosInView = $scope.photos.filter(function(photo){
-          return photo.top > $scope.scrollPosition - ($scope.loadingReverse && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + 1900;
-      });
-      $scope.photoInCenter = $scope.photosInView[Math.floor($scope.photosInView.length * 0.75)];
-
-    }, 100);
+    filterView();
   };
 
   $scope.dblclick = function(photo){
+    document.location.hash.replace(photo.taken);
     $scope.photoInCenter = photo;
     $scope.zoomLevel++;
   };
-
-  $scope.$watch('zoomLevel', function(){
-    if($scope.photoInCenter){
-      var taken = $scope.photoInCenter;
-
-      var newCenter = $scope.photos.slice().sort(function(a,b){return Math.abs(a.taken-taken) - Math.abs(b.taken-taken)})[0];
-      $("html, body").animate({scrollTop: newCenter.top - 300 }, 500, function() {
-        //location.hash = newCenter.taken;
-      });
-    }
-  });
-
 
   $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
     
@@ -44,12 +27,14 @@ function WallController($scope, $http){
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
       clearTimeout(zoomTimeout);
       zoomTimeout = setTimeout(function(){
+
+
         var totalWidth = 0;
         var top = 0;
         var left = 0;
         var maxWidth = window.outerWidth * 1.2;
         var lastPhoto;
-        $scope.height = $scope.zoomLevel > 8 && 60 ||
+        $scope.height = $scope.zoomLevel > 8 && 120 ||
                         $scope.zoomLevel > 6 && 120 ||
                         $scope.zoomLevel < 2 && 480 ||
                         240;
@@ -59,7 +44,7 @@ function WallController($scope, $http){
             photo.height = $scope.height;
             photo.width = photo.height * (photo.ratio || 1);
             totalWidth += photo.width;
-            // var gap = lastPhoto && (lastPhoto.taken - photo.taken) > 24 * 60 * 60 * 1000;
+            // var gap = lastPhoto && (lastPhoto.taken - photo.taken) / ($scope.zoomLevel * 1000) || 5; //> 24 * 60 * 60 * 1000;
 
             if (left + photo.width > maxWidth){
               top += photo.height + 5;
@@ -72,6 +57,9 @@ function WallController($scope, $http){
 
             left += photo.width + 5;
             photo.top = top;
+
+            if (photo === $scope.photoInCenter) $(document).scrollTop(photo.top);
+
             return true;
           }
           return false;
@@ -84,10 +72,11 @@ function WallController($scope, $http){
         
         //$scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + $scope.height;
-        $scope.nrPhotos = $scope.photos.length;
+        filterView();
 
-      }, 50);
+      }, 150);
     }
+    filterView();
 
   });
 
@@ -101,10 +90,32 @@ function WallController($scope, $http){
       });
     }, 100);
   });
-  
-  if (document.location.hash)
-    $scope.startDate = new Date(document.location.hash.slice(1));
 
-  $scope.scroll(); // initial databind
+  function filterView(){
+    $scope.photosInView = $scope.photos.filter(function(photo){
+        return photo.top > $scope.scrollPosition - ($scope.loadingReverse && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (!$scope.loadingReverse && $scope.height * 2 || $scope.height);
+    });
+    $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
+    $scope.$apply();
+    findHash(); // initial load
+  }
+  
+  function findHash(){
+    if(document.location.hash && $scope.photos.length){
+      var taken = parseInt(document.location.hash.slice(1), 10);
+
+      var newCenter = null;
+      $scope.photos.some(function(a){
+        if (a.taken >= taken){
+          newCenter = a;
+          return a;
+        }
+        else return false;
+      });
+
+      if (newCenter) location.hash = newCenter.taken || "";
+    }
+  }
+
   
 }

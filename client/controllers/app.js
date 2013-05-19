@@ -64,10 +64,15 @@ function AppController($scope, $http)
         return a;
       }, $scope.library.photos || []);
 
+      $scope.library.photos.sort(function(a,b){
+        return b.taken - a.taken;
+      });
+
       // next is a cursor to the next date in the library
       if (library.next){
         return loadLatest(library.next, done);
       } else{
+        $scope.library.modified = library.modified;
         return done && done(null, $scope.library.photos);
       }
 
@@ -108,7 +113,7 @@ function AppController($scope, $http)
     });
   }
 
-  $scope.library = sessionStorage && sessionStorage.getObject('library') || {photos:[]};
+  $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
 
   $scope.$watch('library', function(value){
 
@@ -119,14 +124,15 @@ function AppController($scope, $http)
     // Fill up the library from the end...
     var lastPhoto = $scope.library.photos && $scope.library.photos.length && $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
-      if (sessionStorage) sessionStorage.setObject('library', $scope.library);
+      if (localStorage) localStorage.setObject('library', $scope.library);
 
     });
 
     // ... and from the beginning
-    var lastModifyDate = $scope.library.modified || $scope.library.photos.length && $scope.library.photos[0].modified;
+    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || $scope.library.photos.length && $scope.library.photos[0].taken;
     loadLatest(lastModifyDate, function(err, photos){
-      if (sessionStorage) sessionStorage.setObject('library', $scope.library);
+
+      if (localStorage) localStorage.setObject('library', $scope.library);
     });
 
   });
@@ -291,6 +297,22 @@ return openDialog;})
     })();
 */
 };
+})
+.directive('dateFormat', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attr, ngModelCtrl) {
+      ngModelCtrl.$formatters.unshift(function(valueFromModel) {
+        return valueFromModel && new Date(valueFromModel).toString('YYYY mm') || ''; // moment(valueFromModel).format('LL');
+        // return how data will be shown in input
+      });
+
+      ngModelCtrl.$parsers.push(function(valueFromInput) {
+        return Date.parse(valueFromInput);
+        // return how data should be stored in model
+      });
+    }
+  };
 })
 .directive('datepicker', function() {
  return function(scope, element, attrs) {

@@ -17,6 +17,7 @@ function PhotoController ($scope, $http){
 
   $scope.dragstart = function(photo){
     photo.class = 'clear';
+    event.preventDefault();
   };
 
   $scope.rightclick = function(photo){
@@ -28,22 +29,31 @@ function PhotoController ($scope, $http){
 
       var target = event.target;
       $scope.photoInCenter = photo;
+      document.location.hash.replace(photo.taken); // save the current focused one so we can find it later
       
-      if ($scope.selectedPhoto && photo.class) {
-        var selectedPhoto = $scope.selectedPhoto;
-        selectedPhoto.src = selectedPhoto.src.replace('original', 'thumbnail');
-        selectedPhoto.class = '';
-        if (selectedPhoto === photo) return;
+      // we already have a selected photo, lets restore that first
+      if ($scope.selectedPhoto) {
+        angular.copy($scope.selectedPhoto.original, $scope.selectedPhoto);
+        delete $scope.selectedPhoto.original;
+        $scope.selectedPhoto = null;
+        if ($scope.selectedPhoto._id === photo._id) return;
       }
 
       //document.location.hash = photo.taken;
-
+      
+      // store the original values so we can restore them all easily later
+      photo.original = angular.copy(photo);
+      console.log(photo)
       $scope.selectedPhoto = photo;
-      photo.class="selected";
+
       photo.src = photo.src.replace('thumbnail', 'original');
+      photo.class="selected";
+      photo.top = $(document).scrollTop();
+      photo.height = window.innerHeight;
+      photo.width = Math.round(photo.height * photo.ratio);
+      photo.left = Math.max(0,(window.innerWidth/2 - photo.width/2));
 
-
-      // if someone views this image more than a few seconds - it will be counted as a click - otherwise it will be reverted
+      // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
       if (photo.updateClick) {
         clearTimeout(photo.updateClick);
         socket.emit('click', photo._id, -1);

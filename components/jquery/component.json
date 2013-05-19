@@ -17,5 +17,6 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/components/jquery.git"
-  }
+  },
+  "main" : "./jquery.js"
 }
