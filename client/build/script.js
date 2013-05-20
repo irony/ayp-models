@@ -1065,6 +1065,8 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {modified:modified}})
     .success(function(library){
 
+      if (!library || !library.photos) reurn;
+
       library.photos.reduce(function(a,b){
         b.src=b.src && b.src.replace('$', library.baseUrl) || null;
 
@@ -1116,7 +1118,6 @@ function AppController($scope, $http)
       if (library.next){
         return loadMore(library.next, done);
       } else{
-        console.log('done library', $scope.library.photos.length);
         $scope.library.modified = library.modified;
 
         return done && done(null, $scope.library.photos);
@@ -1144,8 +1145,8 @@ function AppController($scope, $http)
     });
 
     // ... and from the beginning
-    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || $scope.library.photos.length && $scope.library.photos[0].taken;
-    loadLatest(lastModifyDate, function(err, photos){
+    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime();
+    if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
 
       if (localStorage) localStorage.setObject('library', $scope.library);
     });
