@@ -17,7 +17,7 @@ function WallController($scope, $http){
   $scope.scroll = function(){
     filterView($scope.scrollPosition - lastPosition);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition+$scope.height})[0];
   };
 
   $scope.dblclick = function(photo){
@@ -47,6 +47,7 @@ function WallController($scope, $http){
         var row = [];
         var group = [];
         var groupNr = 0;
+        var found = false;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
 
@@ -90,7 +91,10 @@ function WallController($scope, $http){
 
 
             // optimize - if we find the current row directly, just scroll to it directly
-            if (photo === $scope.photoInCenter) $('body,html').animate({scrollTop: photo.top}, 300);
+            if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
+              $('body,html').animate({scrollTop: photo.top}, 300);
+              found = true;
+            }
 
             return true;
           }
