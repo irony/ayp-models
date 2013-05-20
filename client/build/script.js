@@ -2255,5 +2255,53 @@ function WallController($scope, $http){
     }
   }
 
+
+
+  document.addEventListener( 'keydown', function( e ) {
+    var keyCode = e.keyCode || e.which,
+        arrow = {left: 37, up: 38, right: 39, down: 40 },
+        number = {
+          zero  : 48,
+          one   : 49,
+          two   : 50,
+          three : 51,
+          four  : 52,
+          five  : 53,
+          six   : 54,
+          seven : 55,
+          eight : 56,
+          nine  : 57
+        };
+
+    switch (keyCode) {
+      case arrow.left:
+        $('.selected').prev().click();
+        e.preventDefault();
+        
+      break;
+      case arrow.up:
+        //..
+      break;
+      case arrow.right:
+        $('.selected').next().click();
+        e.preventDefault();
+
+        
+      break;
+      case arrow.down:
+        //..
+      break;
+      case number.zero : vote($('.selected')[0].id, 0); break;
+      case number.one : vote($('.selected')[0].id, 1); break;
+      case number.two : vote($('.selected')[0].id, 2); break;
+      case number.three : vote($('.selected')[0].id, 3); break;
+      case number.four : vote($('.selected')[0].id, 4); break;
+      case number.five : vote($('.selected')[0].id, 5); break;
+      case number.sixe : vote($('.selected')[0].id, 6); break;
+      case number.seven : vote($('.selected')[0].id, 7); break;
+      case number.eight : vote($('.selected')[0].id, 8); break;
+      case number.nine : vote($('.selected')[0].id, 9); break;
+    }
+  });
   
 }

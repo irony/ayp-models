@@ -90,14 +90,14 @@
               <a class="close" data-dismiss="modal" href="/me/wall" >&times;</a>
             </h1>
             <p class="lead">
-              It's supereasy to create an account, just enter email and choose a password or use our social buttons. We will NEVER spam your wall.
+              Login if you have an account or use the same form to register a new account. We will not spam your wall.
             </p>
           </div>
           <div class="row modal-body" >
 
             <div class="span4">
               <form class="well clearfix" action="/login" method="post">
-                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="Email">
+                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="New or existing email">
                 <input class="span3" type="password" required pattern=".{4,}" ng-model="password" id="password" placeholder="Password">
                 <input type="submit" class="btn span3 pull-left btn-success" value="Login" ng-show="!register" ng-click="submit">
 

@@ -935,7 +935,7 @@ body .modal.fade.in {
             transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
 }
 
-#wall img.flip{
+#wall .flip{
    -webkit-transform:rotateY(-180deg);
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden; /* Chrome and Safari */

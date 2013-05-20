@@ -1,0 +1,10 @@
+{
+    "extra": {
+        "component": {
+            "scripts": [
+                "moment.js"
+            ]
+        }
+    },
+    "main" : "./moment.js"
+}
