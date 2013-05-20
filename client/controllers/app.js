@@ -50,7 +50,7 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {modified:modified}})
     .success(function(library){
 
-      if (!library || !library.photos) reurn;
+      if (!library || !library.photos) return;
 
       library.photos.reduce(function(a,b){
         b.src=b.src && b.src.replace('$', library.baseUrl) || null;
@@ -90,6 +90,8 @@ function AppController($scope, $http)
 
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(library){
+
+      if (!library || !library.photos) return;
 
       library.photos.reduce(function(a,b){
         if (!b) return;

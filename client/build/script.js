@@ -1065,7 +1065,7 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {modified:modified}})
     .success(function(library){
 
-      if (!library || !library.photos) reurn;
+      if (!library || !library.photos) return;
 
       library.photos.reduce(function(a,b){
         b.src=b.src && b.src.replace('$', library.baseUrl) || null;
@@ -1105,6 +1105,8 @@ function AppController($scope, $http)
 
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(library){
+
+      if (!library || !library.photos) return;
 
       library.photos.reduce(function(a,b){
         if (!b) return;
@@ -2129,7 +2131,7 @@ function WallController($scope, $http){
   $scope.scroll = function(){
     filterView($scope.scrollPosition - lastPosition);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
+    if (!waiting) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
   };
 
   $scope.dblclick = function(photo){
