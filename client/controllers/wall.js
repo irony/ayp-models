@@ -10,9 +10,12 @@ function WallController($scope, $http){
   $scope.counter = 0;
   $scope.nrPhotos = undefined;
   $scope.selectedPhoto = null;
+  var lastPosition = null;
+  var lastViewPosition = null;
    
   $scope.scroll = function(){
-    filterView();
+    filterView($scope.scrollPosition - lastPosition);
+    lastPosition = $scope.scrollPosition;
   };
 
   $scope.dblclick = function(photo){
@@ -101,47 +104,46 @@ function WallController($scope, $http){
         $scope.totalHeight = top + $scope.height;
         filterView();
 
+        var center = $scope.photoInCenter;
+        setTimeout(function(){
+          findCenter(center);
+          $scope.$apply();
+        }, 1000);
+
       }, 150);
     }
     filterView();
-    $scope.$apply();
 
   });
 
-  $scope.$watch('groups.length',function(){
-    setTimeout(function(){
-      var $spy = $(document.body).scrollspy('refresh');
-      $("ul.nav li").on("activate", function(elm)
-      {
-          $scope.startDate = new Date(elm.target.attributes['data-date'].value);
-          document.location.hash = '#' + $scope.startDate;
-      });
-    }, 100);
-  });
+  function filterView(delta){
+    if (Math.abs(delta) > $scope.height) return;
 
-  function filterView(){
+    if (Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return;
+
+    lastViewPosition = $scope.scrollPosition;
+
     $scope.photosInView = $scope.photos.filter(function(photo){
-        return photo.top > $scope.scrollPosition - ($scope.loadingReverse && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (!$scope.loadingReverse && $scope.height * 2 || $scope.height);
+        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     });
+
+
     $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition-$scope.height})[0];
-    findHash(); // initial load
   }
   
-  function findHash(){
-    if(document.location.hash && $scope.photos.length){
-      var taken = parseInt(document.location.hash.slice(1), 10);
+  function findCenter(center){
+    var taken = center && center.taken || $scope.photoInCenter.taken;
+    if (!$('#' + taken))
 
-      var newCenter = null;
-      $scope.photos.some(function(a){
-        if (a.taken >= taken){
-          newCenter = a;
-          return a;
-        }
-        else return false;
-      });
+    $scope.photos.some(function(a){
+      if (a.taken >= taken){
+        taken = a;
+        return true;
+      }
+      else return false;
+    });
 
-      if (newCenter) location.hash = newCenter.taken || "";
-    }
+    if (taken) location.hash = taken || "";
   }
 
 
@@ -180,7 +182,7 @@ function WallController($scope, $http){
       case arrow.down:
         //..
       break;
-      case number.zero : vote($('.selected')[0].id, 0); break;
+      case number.zero : $scope.vote(0); break;
       case number.one : vote($('.selected')[0].id, 1); break;
       case number.two : vote($('.selected')[0].id, 2); break;
       case number.three : vote($('.selected')[0].id, 3); break;

@@ -46,8 +46,8 @@ function PhotoController ($scope, $http){
       if ($scope.selectedPhoto) {
         angular.copy($scope.selectedPhoto.original, $scope.selectedPhoto);
         delete $scope.selectedPhoto.original;
-        $scope.selectedPhoto = null;
         if ($scope.selectedPhoto._id === photo._id) return;
+        $scope.selectedPhoto = null;
       }
 
       //document.location.hash = photo.taken;
