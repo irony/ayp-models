@@ -1205,6 +1205,23 @@ return openDialog;})
     });
   };
 })*/
+.directive('fullscreen', function(){
+
+  return function(scope, element, attr){
+    element.bind('click', function(event) {
+      var documentElement = document.documentElement;
+      if (documentElement.requestFullscreen) {
+        documentElement.requestFullscreen();
+      }
+      else if (documentElement.mozRequestFullScreen) {
+        documentElement.mozRequestFullScreen();
+      }
+      else if (documentElement.webkitRequestFullScreen) {
+        documentElement.webkitRequestFullScreen();
+      }
+    });
+  };
+})
 .directive('dropzone', function($parse){
   return function(scope, element, attr){
     $(document).bind('dragover', function(e){e.preventDefault()});
@@ -2140,7 +2157,7 @@ function WallController($scope, $http){
     $scope.zoomLevel++;
   };
 
-  $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
+  $scope.$watch('zoomLevel + (library && library.photos.length) + window.outerWidth', function(value, oldValue){
     
     
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){

@@ -26,7 +26,7 @@ function WallController($scope, $http){
     $scope.zoomLevel++;
   };
 
-  $scope.$watch('zoomLevel + (library && library.photos.length)', function(value, oldValue){
+  $scope.$watch('zoomLevel + (library && library.photos.length) + window.outerWidth', function(value, oldValue){
     
     
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
