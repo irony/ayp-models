@@ -17,7 +17,7 @@ var conf = require('../../conf'),
 
   passport.deserializeUser(function(id, done) {
     User.findById(id, function(err, user){
-      if (err || !user) return done(err, false);
+      return done(err, user);
     });
   });
   passport.use(new LocalStrategy(User.authenticate()));
