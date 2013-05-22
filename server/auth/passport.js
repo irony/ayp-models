@@ -11,25 +11,14 @@ var conf = require('../../conf'),
     auth = require('./auth.js');
 
 
-var cache = {};
-
   passport.serializeUser(function(user, done) {
-    cache[user._id] = user;
     done(null, user._id);
   });
 
   passport.deserializeUser(function(id, done) {
-    var cachedUser = cache[id];
-
-    // since loading a fresh record of the user takes a while we will refresh the user record in the background for the next load
     User.findById(id, function(err, user){
       if (err || !user) return done(err, false);
-
-      cache[user._id] = user;
-      if (!cachedUser) return done(err, user);
     });
-
-    if (cachedUser) return done(null, cachedUser);
   });
   passport.use(new LocalStrategy(User.authenticate()));
 
