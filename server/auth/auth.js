@@ -60,7 +60,7 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
       }
 
       if (!foundUser) {
-        //profile.emails = profile.emails && _.compact(profile.emails) || []; // remove empty rows
+        profile.emails = profile.emails && _.compact(profile.emails) || []; // remove empty rows
         if (profile.emails.length)
         {
           // if we can find this user by his email, we will connect the accounts together instead. Security issue.

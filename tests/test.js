@@ -116,14 +116,14 @@ describe("app", function(){
 
     it("should not be possible to login with empty email", function(done) {
 
-      var profile1 = {displayName : 'Test com', emails : [], provider : 'test', id : id+2};
+      var profile1 = {displayName : 'Test com', emails : [null], provider : 'test', id : id+2};
       
       auth.findOrCreateAndUpdateUser(null, profile1, function(err, savedUser){
         should.ok(!err);
         savedUser.emails.should.have.length(0);
         
-        
-        var profile2 = {displayName : 'Test com', emails : [], provider : 'test', id : id+3};
+
+        var profile2 = {displayName : 'Test com', emails : [null,null], provider : 'test', id : id+3};
         
         auth.findOrCreateAndUpdateUser(null, profile2, function(err, savedUser){
           should.ok(!err);
