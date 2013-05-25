@@ -1222,14 +1222,15 @@ return openDialog;})
     element.bind('click', function(event) {
       var documentElement = document.documentElement;
       if (documentElement.requestFullscreen) {
-        documentElement.requestFullscreen();
+        documentElement.requestFullscreen(scope.fullscreen);
       }
       else if (documentElement.mozRequestFullScreen) {
-        documentElement.mozRequestFullScreen();
+        documentElement.mozRequestFullScreen(scope.fullscreen);
       }
       else if (documentElement.webkitRequestFullScreen) {
-        documentElement.webkitRequestFullScreen();
+        documentElement.webkitRequestFullScreen(scope.fullscreen);
       }
+      scope.fullscreen = !scope.fullscreen;
     });
   };
 })
@@ -2163,6 +2164,8 @@ function WallController($scope, $http){
   $scope.nrPhotos = undefined;
   $scope.selectedPhoto = null;
   $scope.q = null;
+  $scope.fullscreen = false;
+
   var lastPosition = null;
   var lastViewPosition = null;
   var waiting = false;
@@ -2176,7 +2179,7 @@ function WallController($scope, $http){
   $scope.dblclick = function(photo){
     document.location.hash.replace(photo.taken);
     $scope.photoInCenter = photo;
-    $scope.zoomLevel++;
+    $scope.zoomLevel += 3;
   };
 
   $scope.$watch('photoInCenter', function(value){
@@ -2188,7 +2191,7 @@ function WallController($scope, $http){
     if (value) findCenter(value);
   });
 
-  $scope.$watch('zoomLevel + (library && library.photos.length) + window.outerWidth', function(value, oldValue){
+  $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
     
     
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
@@ -2268,7 +2271,7 @@ function WallController($scope, $http){
 
             // optimize - if we find the current row directly, just scroll to it directly
             if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
-              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 300);
+              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 100);
               found = true;
             }
 

@@ -38,7 +38,7 @@
 
     a.brand img
     {
-      width: 160px;
+      width: 120px;
       margin: -10px;
     }
 
@@ -421,6 +421,27 @@
       }
 
 
+      .modal-header, .modal-body h1 {
+       display: none;
+      }
+
+      .login .modal-body {
+        background-image: url(/img/is099t8ft.jpg);
+        background-size:200% !important;
+        text-align: center;
+        padding:30px;
+      }
+
+      #login {
+        min-width: 100%;
+      }
+
+      .fullscreen{
+        display:none;
+      }
+      .about{
+        display:none;
+      }
     }
 
     @media (max-width: 479px) {

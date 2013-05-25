@@ -201,14 +201,15 @@ return openDialog;})
     element.bind('click', function(event) {
       var documentElement = document.documentElement;
       if (documentElement.requestFullscreen) {
-        documentElement.requestFullscreen();
+        documentElement.requestFullscreen(scope.fullscreen);
       }
       else if (documentElement.mozRequestFullScreen) {
-        documentElement.mozRequestFullScreen();
+        documentElement.mozRequestFullScreen(scope.fullscreen);
       }
       else if (documentElement.webkitRequestFullScreen) {
-        documentElement.webkitRequestFullScreen();
+        documentElement.webkitRequestFullScreen(scope.fullscreen);
       }
+      scope.fullscreen = !scope.fullscreen;
     });
   };
 })

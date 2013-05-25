@@ -9,7 +9,7 @@
     <div ng-controller="WallController" >
 
       
-        <div id="wall" style="height:{{totalHeight}}px;" class="{{ 'filter' + zoomLevel }}" when-scrolled="scroll()">
+        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel  + ' ')}}" ng-class="{focus:photoInFocus}" when-scrolled="scroll()">
             <input id="date" ng-model="q" date-format></input>
 
 
@@ -24,7 +24,7 @@
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
 
           </div>
-          <label fullscreen class="fullscreen"><i class="icon-fullscreen"></i></label>
+          <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
 
         </div>
       </div>
