@@ -9,12 +9,16 @@ function AppController($scope, $http)
   $scope.loading = false;
   $scope.loadingReverse = false;
   $scope.scrollPercentage = 0;
+  $scope.scrollPosition = 0;
 
   appScope = $scope;
   $scope.stats = localStorage && localStorage.getObject('stats');
 
   socket.on('connect', function(data){
+    console.log('connect');
     socket.on('trigger', function(trigger){
+      console.log('trigger', trigger);
+
       var photo = $scope.library.photos.filter(function (item) {
         return item.taken === new Date(trigger.item.taken).getTime();
       }).pop();
@@ -26,7 +30,6 @@ function AppController($scope, $http)
         $scope.library.photos.push(trigger.item); // add
       }
 
-      console.log('trigger', data.type + '/' + data.action);
 
     });
   });
@@ -169,14 +172,16 @@ return openDialog;})
 .directive('rightClick', function($parse) {
   return function(scope, element, attr) {
     element.bind('contextmenu', function(event) {
-      event.preventDefault();
       var fn = $parse(attr.rightClick);
-      scope.$apply(function() {
-        fn(scope, {
-          $event: event
+      if (fn){
+        event.preventDefault();
+        scope.$apply(function() {
+          fn(scope, {
+            $event: event
+          });
         });
-      });
-      return false;
+        return false;
+      }
     });
   };
 })
@@ -320,13 +325,23 @@ return openDialog;})
     require: 'ngModel',
     link: function(scope, element, attr, ngModelCtrl) {
       ngModelCtrl.$formatters.unshift(function(valueFromModel) {
-        return valueFromModel && new Date(valueFromModel).toString('YYYY mm') || ''; // moment(valueFromModel).format('LL');
+        return valueFromModel && moment(valueFromModel).format('YYYY MMM');
         // return how data will be shown in input
       });
 
       ngModelCtrl.$parsers.push(function(valueFromInput) {
-        return Date.parse(valueFromInput);
+        var date = moment(valueFromInput);
+        console.log('date', date)
+        return date.isValid()? date.toDate().getTime() : null;
         // return how data should be stored in model
+      });
+
+      $(element).bind('mouseover', function(e){
+        this.select();
+      });
+
+      $(element).bind('mouseout', function(e){
+        window.getSelection().removeAllRanges();
       });
     }
   };

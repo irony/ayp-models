@@ -10,6 +10,7 @@ function WallController($scope, $http){
   $scope.counter = 0;
   $scope.nrPhotos = undefined;
   $scope.selectedPhoto = null;
+  $scope.q = null;
   var lastPosition = null;
   var lastViewPosition = null;
   var waiting = false;
@@ -17,7 +18,7 @@ function WallController($scope, $http){
   $scope.scroll = function(){
     filterView($scope.scrollPosition - lastPosition);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition+$scope.height})[0];
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2})[0];
   };
 
   $scope.dblclick = function(photo){
@@ -25,6 +26,15 @@ function WallController($scope, $http){
     $scope.photoInCenter = photo;
     $scope.zoomLevel++;
   };
+
+  $scope.$watch('photoInCenter', function(value){
+    $scope.q = value && value.taken;
+  });
+
+  $scope.$watch('q', function(value){
+    //$scope.q = value.taken;
+    if (value) findCenter(value);
+  });
 
   $scope.$watch('zoomLevel + (library && library.photos.length) + window.outerWidth', function(value, oldValue){
     
@@ -92,7 +102,7 @@ function WallController($scope, $http){
 
             // optimize - if we find the current row directly, just scroll to it directly
             if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
-              $('body,html').animate({scrollTop: photo.top}, 300);
+              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height / 2 }, 300);
               found = true;
             }
 
@@ -109,10 +119,10 @@ function WallController($scope, $http){
         //$scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + $scope.height;
         waiting = true;
-        filterView();
         $scope.$apply();
 
         setTimeout(function(){
+          filterView();
           waiting = false;
         }, 1000);
 
@@ -131,13 +141,9 @@ function WallController($scope, $http){
     $scope.photosInView = $scope.photos.filter(function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     });
-
-
   }
   
-  function findCenter(center){
-    var taken = center && center.taken || $scope.photoInCenter.taken;
-    if (!$('#' + taken))
+  function findCenter(taken){
 
     $scope.photos.some(function(a){
       if (a.taken >= taken){
@@ -150,7 +156,10 @@ function WallController($scope, $http){
     if (taken) location.hash = taken || "";
   }
 
+  filterView(); // initial view
 
+
+  /*
 
   document.addEventListener( 'keydown', function( e ) {
     var keyCode = e.keyCode || e.which,
@@ -198,5 +207,7 @@ function WallController($scope, $http){
       case number.nine : vote($('.selected')[0].id, 9); break;
     }
   });
+  
+  */
   
 }
