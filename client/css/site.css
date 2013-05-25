@@ -877,6 +877,22 @@ body .modal.fade.in {
     -webkit-transform-style: preserve-3d;*/
   }
 
+  #wall.fullscreen .fullscreen {
+    display: none;
+  }
+
+  #wall .fullscreen {
+    background: rgba(0,0,0,0.6);
+    color: #fff !important;
+    position: fixed !important;
+    bottom: 10px;
+    right: 10px;
+    z-index: 100;
+    padding: 10px;
+    border:none;
+    border-radius: 5px;
+  }
+
   #wall img.selected{
     z-index: 100;
     box-shadow: 0 0 85px #000;
@@ -892,8 +908,7 @@ body .modal.fade.in {
     left: 10px;
     z-index: 100;
     padding: 20px;
-    padding:15px;
-    width: 60px;
+    width: 65px;
     border:none;
     border-radius: 5px;
   }
