@@ -47,7 +47,7 @@ function WallController($scope, $http){
         var totalWidth = 0;
         var top = 0;
         var left = 0;
-        var maxWidth = window.outerWidth * 1.2;
+        var maxWidth = window.outerWidth;
         var lastPhoto;
         $scope.height = $scope.zoomLevel > 8 && 120 ||
                         $scope.zoomLevel > 6 && 120 ||
@@ -60,6 +60,7 @@ function WallController($scope, $http){
         var found = false;
 
         $scope.photos = ($scope.library.photos).filter(function(photo){
+          var height = $scope.height;
 
           // calculate group
           var gap = lastPhoto && (lastPhoto.taken - photo.taken) / (8 * 60 * 60 * 1000);
@@ -80,12 +81,25 @@ function WallController($scope, $http){
             // start new row
             if (left + photo.width > maxWidth){
 
-              // center the row
-              row.forEach(function(photo){
-                photo.left += (window.outerWidth - left) / row.length;
-              });
+              var percentageAdjustment = maxWidth / (left);
+              console.log(percentageAdjustment);
+              if (true){
+                // adjust height
+                row.forEach(function(photo){
+                  photo.left *= percentageAdjustment;
+                  photo.width *= percentageAdjustment;
+                  photo.height *= percentageAdjustment;
+                });
 
-              top += photo.height + 5;
+              } else {
+                // center the row
+                row.forEach(function(photo){
+                  photo.left += (window.outerWidth - left) / row.length;
+                });
+                percentageAdjustment = 1;
+              }
+
+              top += photo.height * percentageAdjustment + 5;
               photo.left = left = 0;
               row = [];
             } else {
@@ -102,7 +116,7 @@ function WallController($scope, $http){
 
             // optimize - if we find the current row directly, just scroll to it directly
             if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
-              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height / 2 }, 300);
+              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 300);
               found = true;
             }
 
