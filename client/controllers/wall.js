@@ -24,10 +24,16 @@ function WallController($scope, $http){
   };
 
   $scope.dblclick = function(photo){
-    document.location.hash.replace(photo.taken);
     $scope.photoInCenter = photo;
     $scope.zoomLevel += 3;
+      $scope.selectedPhoto = photo;
   };
+
+  $scope.select = function(photo){
+    $scope.photoInCenter = photo;
+    $scope.selectedPhoto = photo;
+  };
+
 
   $scope.$watch('fullscreen', function(value){
     console.log('fullscreen', window.innerWidth);
@@ -42,6 +48,32 @@ function WallController($scope, $http){
     if (value) findCenter(value && value.toDate().getTime());
   });
 */
+  $scope.$watch('selectedPhoto', function(photo, old){
+
+    if (old){
+      if (old.original) angular.copy(old.original, old);
+      delete old.original;
+      if (old._id === photo._id)
+      {
+        $scope.selectedPhoto = null;
+        return;
+      }
+    }
+    
+    if (!photo) return;
+
+    if (window.history.pushState) {
+      window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
+    }
+    photo.original = angular.copy(photo);
+    photo.src = photo.src.replace('thumbnail', 'original');
+    photo.class="selected";
+    photo.top = $(document).scrollTop();
+    photo.height = window.innerHeight;
+    photo.width = Math.round(photo.height * photo.ratio);
+    photo.left = Math.max(0,(window.innerWidth/2 - photo.width/2));
+
+  });
 
   $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
     

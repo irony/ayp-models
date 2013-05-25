@@ -37,34 +37,7 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-
-      var target = event.target;
-      $scope.photoInCenter = photo;
-      console.log(photo.taken);
-      //document.location.hash = photo.taken; // save the current focused one so we can find it later
-      if (window.history.pushState) window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
-
-      // we already have a selected photo, lets restore that first
-      if ($scope.selectedPhoto) {
-        angular.copy($scope.selectedPhoto.original, $scope.selectedPhoto);
-        delete $scope.selectedPhoto.original;
-        if ($scope.selectedPhoto._id === photo._id) return;
-        $scope.selectedPhoto = null;
-      }
-
-      //document.location.hash = photo.taken;
-      
-      // store the original values so we can restore them all easily later
-      photo.original = angular.copy(photo);
-      console.log(photo)
-      $scope.selectedPhoto = photo;
-
-      photo.src = photo.src.replace('thumbnail', 'original');
-      photo.class="selected";
-      photo.top = $(document).scrollTop();
-      photo.height = window.innerHeight;
-      photo.width = Math.round(photo.height * photo.ratio);
-      photo.left = Math.max(0,(window.innerWidth/2 - photo.width/2));
+      $scope.select(photo);
 
       // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
       if (photo.updateClick) {
