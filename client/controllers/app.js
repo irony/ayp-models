@@ -326,7 +326,7 @@ return openDialog;})
     require: 'ngModel',
     link: function(scope, element, attr, ngModelCtrl) {
       ngModelCtrl.$formatters.unshift(function(valueFromModel) {
-        return valueFromModel && moment(valueFromModel).format('YYYY MMM');
+        return valueFromModel && moment(valueFromModel).format('YYYY MMM DD');
         // return how data will be shown in input
       });
 

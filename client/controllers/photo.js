@@ -40,8 +40,10 @@ function PhotoController ($scope, $http){
 
       var target = event.target;
       $scope.photoInCenter = photo;
-      document.location.hash.replace(photo.taken); // save the current focused one so we can find it later
-      
+      console.log(photo.taken);
+      //document.location.hash = photo.taken; // save the current focused one so we can find it later
+      if (window.history.pushState) window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
+
       // we already have a selected photo, lets restore that first
       if ($scope.selectedPhoto) {
         angular.copy($scope.selectedPhoto.original, $scope.selectedPhoto);

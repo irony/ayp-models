@@ -596,7 +596,7 @@ body .navbar-inner{
   opacity:0.9;
 }
 
-.inactive .slider
+.focus .slider
 {
   opacity: 0;
 }
@@ -925,18 +925,19 @@ body .modal.fade.in {
     background: #000;
     color: #fff;
     position: fixed !important;
-    top: 20px;
+    top: 30px;
     left: 10px;
     z-index: 100;
     padding: 20px;
-    width: 65px;
+    width: 85px;
     border:none;
     border-radius: 5px;
   }
 
   #wall input#date:hover{
     width: 200px;
-    padding:14px;
+    padding: 19px;
+    opacity: 0.9;
     border: 1px inset;
 
     -webkit-transition: all 200ms cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */

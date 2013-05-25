@@ -29,14 +29,19 @@ function WallController($scope, $http){
     $scope.zoomLevel += 3;
   };
 
+  $scope.$watch('fullscreen', function(value){
+    console.log('fullscreen', window.innerWidth);
+  });
+
   $scope.$watch('photoInCenter', function(value){
     $scope.q = value && value.taken;
   });
-
+/*
   $scope.$watch('q', function(value){
     //$scope.q = value.taken;
-    if (value) findCenter(value);
+    if (value) findCenter(value && value.toDate().getTime());
   });
+*/
 
   $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
     
@@ -49,7 +54,7 @@ function WallController($scope, $http){
         var totalWidth = 0;
         var top = 0;
         var left = 0;
-        var maxWidth = window.outerWidth;
+        var maxWidth = window.innerWidth;
         var lastPhoto;
         $scope.height = $scope.zoomLevel > 8 && 120 ||
                         $scope.zoomLevel > 6 && 120 ||
@@ -84,7 +89,6 @@ function WallController($scope, $http){
             if (left + photo.width > maxWidth){
 
               var percentageAdjustment = maxWidth / (left);
-              console.log(percentageAdjustment);
               if (true){
                 // adjust height
                 row.forEach(function(photo){
@@ -135,12 +139,11 @@ function WallController($scope, $http){
         //$scope.photosInView = $scope.photos.slice(0,100);
         $scope.totalHeight = top + $scope.height;
         waiting = true;
-        $scope.$apply();
 
         setTimeout(function(){
           filterView();
           waiting = false;
-        }, 1000);
+        }, 500);
 
       }, 300);
     }
@@ -157,6 +160,7 @@ function WallController($scope, $http){
     $scope.photosInView = $scope.photos.filter(function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     });
+    $scope.$apply();
   }
   
   function findCenter(taken){

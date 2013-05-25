@@ -9,7 +9,7 @@
     <div ng-controller="WallController" >
 
       
-        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel  + ' ')}}" ng-class="{focus:photoInFocus}" when-scrolled="scroll()">
+        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (photoInFocus && 'focus')}}" when-scrolled="scroll()">
             <input id="date" ng-model="q" date-format></input>
 
 
