@@ -66,37 +66,55 @@ var downloader = {
    * @param  {[User]} user
    * @param  {Callback} done
    */
-  downloadThumbnails : function(user, done){
+  downloadThumbnails : function(done){
     if (!done) throw new Error("Callback is mandatory");
 
-    var photoQuery = Photo.find({'owners': user._id}, 'store updated src taken source path mimeType')
+    var photoQuery = Photo.find({}, 'store updated src taken source path mimeType')
     .where('store.thumbnail.stored').exists(false)
     // .where('store.lastTry').gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
     .where('store.error').exists(false) // skip photos with previous download problems
-    .sort({'taken': -1});
+    .sort({'taken': -1})
+    .limit(10);
 
     var downloadAllResults = function downloadAllResults(err, photos){
-      console.log('[50]Found %d photos without downloaded images. Downloading...', photos && photos.length, err);
+      console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
       
-      async.mapSeries(photos, function(photo, done){
-        // photo.store.thumbnail = null;  // force new thumbnail to be downloaded
-        downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
-          if (err) {
-            console.debug('Download photo error: ', err);
-            photo.store = photo.store || {};
-            photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
-            photo.markModified('store');
-            return photo.save(function(){
-              return done(null, photo); // we have handled the error, we don't want to abort the operation
-            });
+      async.map(photos, function(photo, done){
+        User.find().where('_id').in(photo.owners).exec(function(err, users){
+          if (!users || !users.length) {
+            // console.log("Didn't find any user records for any of the user ids:", photo.owners);
+            return photo.remove(done);
           }
-          return photo.save(done);
+          // We don't know which user this photo belongs to so we try to download them all
+          async.map(users, function(user, done){
+            console.debug('Downloading thumbnail for %s for user %s ...', photo._id, user._id, err);
 
+            // photo.store.thumbnail = null;  // force new thumbnail to be downloaded
+            downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
+              if (err) {
+                console.debug('Download photo error: ', err);
+                photo.store = photo.store || {};
+                photo.store.error = {type:'Download error', details: JSON.stringify(err), action: 'skip', date: new Date()};
+                photo.markModified('store');
+                return photo.save(function(){
+                  return done(null, photo); // we have handled the error, we don't want to abort the operation
+                });
+              }
+
+              return photo.save(done);
+            });
+          });
         });
       }, function(err, photos){
         
         console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
-        return done(err, photos);
+        
+        if (photos.length){
+          return done(err, photos);
+        }
+        else{
+          setTimeout(done, 10000); // wait longer before trying again if queue is empty
+        }
 
       });
     };
@@ -113,7 +131,7 @@ var downloader = {
    *                             autorestart : true // should this method be automatically restarted when all photos have been downloaded?
    *                          }
    */
-  downloadNewPhotos : function(done){
+  downloadOriginals : function(done){
     if (!done) throw new Error("Callback is mandatory");
 
     var photoQuery = Photo.find({'store.lastTry' : { $exists: false }, 'store.error': {$exists : false}})
@@ -128,13 +146,13 @@ var downloader = {
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
           if (!users || !users.length) {
-            // console.log("Didn't find any user records for any of the user ids:", photo.owners);
+            console.debug("Didn't find any user records for any of the user ids:", photo.owners);
             return photo.remove(done);
           }
 
           // We don't know which user this photo belongs to so we try to download them all
           async.map(users, function(user, done){
-            downloader.downloadPhoto(user, photo,  {original: true, thumbnail : true}, function(err){
+            downloader.downloadPhoto(user, photo,  {original: true}, function(err){
               if (err) {
                 
 

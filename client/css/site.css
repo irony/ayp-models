@@ -895,6 +895,7 @@ body .modal.fade.in {
     padding:15px;
     width: 80px;
     border:none;
+    border-radius: 5px;
   }
 
   #wall input#date:hover{

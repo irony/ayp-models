@@ -63,6 +63,9 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.post('save', function (next) {
   var photo = this;
+  
+  console.log('Post save photo'.white);
+
 
   // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
   // info on the import step but rather at the download step
@@ -74,6 +77,7 @@ PhotoSchema.post('save', function (next) {
         item: photo
       };
       try{
+        console.log('Sending trigger to redis:'.white);
         client.publish(userId, JSON.stringify(trigger));
       } catch(err){
         console.log('Failed to save photo trigger to redis:'.red, err);

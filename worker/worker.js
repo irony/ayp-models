@@ -13,10 +13,11 @@ var _ = require('underscore');
 var colors = require('colors');
 
 if (process.ENV === "production" || true){
-  console.debug = function(){ /* ignore debug messages*/};
+  // console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
-  //require('longjohn');
+    require('longjohn');
+    console.debug = console.log;
 
   require('nodetime').profile({
     accountKey: 'a3163d6d8e01eee439e7c772f8fa6fad851aa1a5',
@@ -32,9 +33,14 @@ var jobs = [
     interval: 1 * 60 * 1000
   },
   {
-    title: 'Download new photos',
-    fn:require('../jobs/downloader').downloadNewPhotos,
+    title: 'Download new thumbnails',
+    fn:require('../jobs/downloader').downloadThumbnails,
     interval: 10 // download as fast as possible
+  },
+  {
+    title: 'Download new photos',
+    fn:require('../jobs/downloader').downloadOriginals,
+    interval: 2000 // prioritize thumbnails
   },
   /*{
     title:'Group Photos',

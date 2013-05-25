@@ -31,6 +31,7 @@ module.exports = function(app){
     socket.join(user._id);
     client.subscribe(user._id); //    listen to messages from this user's pubsub channel
     client.on('message', function(channel, message) {
+      console.log('Receiving trigger to redis:'.white);
       socket.emit('trigger', JSON.parse(message)) ;
     });
 
