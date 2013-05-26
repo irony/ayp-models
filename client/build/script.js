@@ -1248,7 +1248,9 @@ return openDialog;})
         if(file.type.match(/image\.*/)){
           file.path = path;
           scope.files.push(file);
-
+          scope.files.sort(function(a,b){
+            return b.lastModifiedDate - a.lastModifiedDate;
+          });
           // wait until we have found all files before updating the view
           clearTimeout(updateTimeout);
           updateTimeout = setTimeout(function(){
@@ -1564,6 +1566,15 @@ function GroupsController($scope, $http){
   if (document.location.hash)
     $scope.startDate = new Date(document.location.hash.slice(1));
 }
+function MetadataCtrl($scope){
+  
+  $scope.star = function(photo){
+    socket.emit('star', photo._id);
+    photo.starred = !photo.starred;
+    console.log('star', photo);
+  };
+
+}
 
 function PhotoController ($scope, $http){
   var activePhoto = null;
@@ -1587,33 +1598,31 @@ function PhotoController ($scope, $http){
   };
 
   $scope.rightclick = function(photo){
-    var card = document.createElement('div');
-    var meta = document.createElement('div');
+    var meta = $('#meta')[0];
     angular.copy(event.target.style, meta.style);
-    meta.class = 'meta flip';
-    meta.innerHTML= 'metadata goes here';
+    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+      photo = fullPhoto;
+    });
 
-    event.target.parentNode.appendChild(card);
-    card.appendChild(event.target);
-    card.appendChild(meta);
-
-    card.class = 'flip';
-    console.log(card);
   };
 
   $scope.click = function(photo){
 
+    if ($scope.selectedPhoto === photo)
+      $scope.select(null);
+    else
       $scope.select(photo);
 
-      // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
-      if (photo.updateClick) {
-        clearTimeout(photo.updateClick);
-        socket.emit('click', photo._id, -1);
-      } else {
-        photo.updateClick = setTimeout(function(){
-          socket.emit('click', photo._id, 1);
-        }, 300);
-      }
+
+    // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
+    if (photo.updateClick) {
+      clearTimeout(photo.updateClick);
+      socket.emit('click', photo._id, -1);
+    } else {
+      photo.updateClick = setTimeout(function(){
+        socket.emit('click', photo._id, 1);
+      }, 300);
+    }
 
   };
 
@@ -1624,12 +1633,6 @@ function PhotoController ($scope, $http){
       if (group.photos[i]._id === photo._id)
         return delete group.photos[i];
     }
-  };
-
-  $scope.star = function(photo){
-    socket.emit('star', photo._id);
-    photo.starred = !photo.starred;
-    console.log('star', photo);
   };
 
 
@@ -2181,11 +2184,6 @@ function WallController($scope, $http){
     if (old){
       if (old.original) angular.copy(old.original, old);
       delete old.original;
-      if (old._id === photo._id)
-      {
-        $scope.selectedPhoto = null;
-        return;
-      }
     }
     
     if (!photo) return;

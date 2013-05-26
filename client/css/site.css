@@ -596,6 +596,28 @@ body .navbar-inner{
   opacity:0.9;
 }
 
+#wall #meta{
+}
+
+#wall #meta a:hover
+{
+  color: #eee !important;
+  text-decoration: none;
+}
+
+#wall #meta a{
+  width: 49%;
+  height: 49%;
+  text-align: center;
+  vertical-align: middle;
+  padding:0;
+  margin:0;
+  font-size: 30px;
+  color: #fff !important;
+  text-shadow:none;
+  background: rgba(0,0,0,0.3);
+}
+
 .focus .slider
 {
   opacity: 0;

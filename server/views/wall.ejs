@@ -26,6 +26,14 @@
           </div>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
 
+          <div id="meta" ng-controller="MetadataCtrl">
+            <a class="pull-left" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
+            <a class="pull-right" ng-click="hide(selectedPhoto)"><i class="icon-trash"></i></a>
+            <a>
+                {{selectedPhoto}}
+            </a>
+          </div>
+
         </div>
       </div>
     </div>

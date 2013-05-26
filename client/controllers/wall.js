@@ -53,11 +53,6 @@ function WallController($scope, $http){
     if (old){
       if (old.original) angular.copy(old.original, old);
       delete old.original;
-      if (old._id === photo._id)
-      {
-        $scope.selectedPhoto = null;
-        return;
-      }
     }
     
     if (!photo) return;

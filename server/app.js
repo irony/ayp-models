@@ -16,6 +16,7 @@ var RedisStore  = require('connect-redis')(express);
 var SocketIo    = require('socket.io');
 var passportsio = require("passport.socketio");
 var fs          = require('fs');
+var path          = require('path');
 var io          = require('socket.io');
 //var spdy        = require('spdy');
 var app         = express.createServer();
@@ -60,6 +61,7 @@ exports.init = function() {
       app.use(express.session(sessionOptions));
       app.use(passport.initialize());
       app.use(passport.session());
+      app.use('/vendor/', express.static(path.join(__dirname, '/../components')));
       app.use(express.static(__dirname + '/../client'));
       app.use(app.router);
 

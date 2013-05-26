@@ -20,10 +20,9 @@ module.exports = function(grunt) {
     bowerful: {
       all : {
         store: 'components',
-        include : ['jquery','bootstrap', 'angular', 'font-awesome', 'moment'],
+        include : ['jquery','bootstrap', 'angular', 'font-awesome'],
         dest : 'client/build',
         packages: {
-            moment: '',
             jquery: '',
             bootstrap: '',
             angular : ''

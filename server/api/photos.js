@@ -10,6 +10,16 @@ var _ = require('underscore');
 
 module.exports = function(app){
 
+  app.get('/api/photo/:id', function(req, res){
+    Photo.findOne({_id:req.params.id, owners : req.user._id}, function(err, photo){
+      if (err) return res.send('Error finding photo', 500);
+      if (!photo) return res.send('Could not find photo', 403);
+      photo.mine = photo.copies[req.user._id]; // only use this user's personal settings
+      photo.vote = photo.mine.vote || (photo.mine.calculatedVote);
+
+      res.json(photo);
+    });
+  });
 
   app.get('/api/photoFeed', function(req, res){
     if (!req.user){

@@ -227,7 +227,9 @@ return openDialog;})
         if(file.type.match(/image\.*/)){
           file.path = path;
           scope.files.push(file);
-
+          scope.files.sort(function(a,b){
+            return b.lastModifiedDate - a.lastModifiedDate;
+          });
           // wait until we have found all files before updating the view
           clearTimeout(updateTimeout);
           updateTimeout = setTimeout(function(){
