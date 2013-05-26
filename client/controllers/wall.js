@@ -30,7 +30,7 @@ function WallController($scope, $http){
   };
 
   $scope.select = function(photo){
-    $scope.photoInCenter = photo;
+    if (photo) $scope.photoInCenter = photo;
     $scope.selectedPhoto = photo;
   };
 
@@ -54,7 +54,7 @@ function WallController($scope, $http){
       if (old.original) angular.copy(old.original, old);
       delete old.original;
     }
-    
+
     if (!photo) return;
 
     if (window.history.pushState) {

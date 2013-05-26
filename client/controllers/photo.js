@@ -24,7 +24,7 @@ function PhotoController ($scope, $http){
     var meta = $('#meta')[0];
     angular.copy(event.target.style, meta.style);
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-      photo = fullPhoto;
+      photo.meta = fullPhoto;
     });
 
   };

@@ -1601,7 +1601,7 @@ function PhotoController ($scope, $http){
     var meta = $('#meta')[0];
     angular.copy(event.target.style, meta.style);
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-      photo = fullPhoto;
+      photo.meta = fullPhoto;
     });
 
   };
@@ -2161,7 +2161,7 @@ function WallController($scope, $http){
   };
 
   $scope.select = function(photo){
-    $scope.photoInCenter = photo;
+    if (photo) $scope.photoInCenter = photo;
     $scope.selectedPhoto = photo;
   };
 
@@ -2185,7 +2185,7 @@ function WallController($scope, $http){
       if (old.original) angular.copy(old.original, old);
       delete old.original;
     }
-    
+
     if (!photo) return;
 
     if (window.history.pushState) {

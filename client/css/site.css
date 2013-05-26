@@ -611,6 +611,7 @@ body .navbar-inner{
   text-align: center;
   vertical-align: middle;
   padding:0;
+  padding-top: 20px;
   margin:0;
   font-size: 30px;
   color: #fff !important;
