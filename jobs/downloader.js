@@ -81,6 +81,9 @@ var downloader = {
       
       async.map(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
+
+          if (err) return done(err);
+
           if (!users || !users.length) {
             // console.log("Didn't find any user records for any of the user ids:", photo.owners);
             return photo.remove(done);
@@ -145,6 +148,8 @@ var downloader = {
       async.mapSeries(photos, function(photo, done){
         User.find().where('_id').in(photo.owners).exec(function(err, users){
           
+          if (err) return done(err);
+
           if (!users || !users.length) {
             console.debug("Didn't find any user records for any of the user ids:", photo.owners);
             return photo.remove(done);
