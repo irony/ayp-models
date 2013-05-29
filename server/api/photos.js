@@ -224,6 +224,11 @@ module.exports = function(app){
           .where('store.thumbnail.stored').exists(true)
           .count(done);
       },
+      errors: function  (done) {
+        Photo.find({'owners': req.user._id})
+          .where('store.error').exists(true)
+          .count(done);
+      },
       exif: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('exif').exists(true)
