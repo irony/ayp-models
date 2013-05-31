@@ -117,7 +117,7 @@ var downloader = {
         });
       }, function(err, photos){
 
-        if (err) throw err;
+        // if (err) throw err;
         
         console.debug('Downloaded %d thumbnails: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
         
