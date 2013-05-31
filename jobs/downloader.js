@@ -71,21 +71,28 @@ var downloader = {
 
     var photoQuery = Photo.find({}, 'store updated src taken source path mimeType')
     .where('store.thumbnail.stored').exists(false)
-    // .where('store.lastTry').gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
+    .where('store.thumbnail.lastTry').exists(false)
+    // .gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
     .where('store.error').exists(false) // skip photos with previous download problems
     .sort({'taken': -1})
     .limit(10);
 
     var downloadAllResults = function downloadAllResults(err, photos){
+
+
       console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
       
       async.map(photos, function(photo, done){
+        if (!photo.owners) return done();
+
+        Photo.update({ _id: photo._id }, {'store.thumbnail.lastTry':new Date()});
+
         User.find().where('_id').in(photo.owners).exec(function(err, users){
 
           if (err) return done(err);
 
           if (!users || !users.length) {
-            // console.log("Didn't find any user records for any of the user ids:", photo.owners);
+            console.debug("Didn't find any user records for any of the user ids:", photo.owners);
             return photo.remove(done);
           }
           // We don't know which user this photo belongs to so we try to download them all
@@ -109,8 +116,10 @@ var downloader = {
           });
         });
       }, function(err, photos){
+
+        if (err) throw err;
         
-        console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
+        console.debug('Downloaded %d thumbnails: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
         
         if (photos.length){
           return done(err, photos);

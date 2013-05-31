@@ -224,6 +224,13 @@ module.exports = function(app){
           .where('store.thumbnail.stored').exists(true)
           .count(done);
       },
+      queuedThumbnails : function(done){
+        Photo.find()
+        .where('store.thumbnail.stored').exists(false)
+        // .where('store.lastTry').gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
+        .where('store.error').exists(false) // skip photos with previous download problems
+        .count(done);
+      },
       errors: function  (done) {
         Photo.find({'owners': req.user._id})
           .where('store.error').exists(true)
