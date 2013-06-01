@@ -69,7 +69,7 @@ var downloader = {
   downloadThumbnails : function(done){
     if (!done) throw new Error("Callback is mandatory");
 
-    var photoQuery = Photo.find({}, 'store updated src taken source path mimeType')
+    var photoQuery = Photo.find({}, 'store updated src taken source path mimeType owners')
     .where('store.thumbnail.stored').exists(false)
     .where('store.thumbnail.lastTry').exists(false)
     // .gte(new Date() - 24 * 60 * 60 * 1000) // skip photos with previous download problems
@@ -127,7 +127,7 @@ var downloader = {
 
         // if (err) throw err;
         
-        console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green, photos);
+        console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green);
         
         if (photos.length){
           return done(err, photos);
