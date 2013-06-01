@@ -83,13 +83,17 @@ var downloader = {
       console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
       
       async.map(photos, function(photo, done){
-        if (!photo.owners) return done();
 
         Photo.update({ _id: photo._id }, {'store.thumbnail.lastTry':new Date()});
 
+        if (!photo.owners) return done();
+
         User.find().where('_id').in(photo.owners).exec(function(err, users){
 
-          if (err) return done(err);
+          if (err) {
+            console.log('Error thumbnail:', err);
+            return done(err);
+          }
 
           if (!users || !users.length) {
             console.debug("Didn't find any user records for any of the user ids:", photo.owners);
@@ -101,6 +105,8 @@ var downloader = {
 
             // photo.store.thumbnail = null;  // force new thumbnail to be downloaded
             downloader.downloadPhoto(user, photo, {thumbnail : true}, function(err){
+              console.debug('one tumbnail done');
+
               if (err) {
                 console.debug('Download photo error: ', err);
                 photo.store = photo.store || {};
@@ -111,15 +117,17 @@ var downloader = {
                 });
               }
 
-              return photo.save(done);
+              return photo.save(function(err,photo){
+                return done(err,photo);
+              });
             });
-          });
+          }, done);
         });
       }, function(err, photos){
 
         // if (err) throw err;
         
-        console.debug('Downloaded %d thumbnails: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
+        console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green, photos);
         
         if (photos.length){
           return done(err, photos);
