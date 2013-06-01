@@ -116,6 +116,7 @@ var downloader = {
                   return done(null, photo); // we have handled the error, we don't want to abort the operation
                 });
               }
+              photo.modified = new Date();
 
               return photo.save(function(err,photo){
                 return done(err,photo);
