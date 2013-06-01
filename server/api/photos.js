@@ -167,7 +167,7 @@ module.exports = function(app){
       photos : function(done){
 
         // return all photos with just bare minimum information for local caching
-        Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken ratio store mimeType')
+        Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken source ratio store mimeType')
     //      .sort('-copies.' + req.user._id + '.interestingness')
         .where('taken').lt(req.query.taken || new Date())
         .where('modified').gt(req.query.modified || new Date(1900,0,1))
@@ -184,7 +184,10 @@ module.exports = function(app){
             return next(null, {
               _id : photo._id,
               taken:photo.taken && photo.taken.getTime(),
-              src: photo.src && photo.src.replace(baseUrl, '$') || null,
+              src: global.s3.signedUrl(
+                  '/thumbnail/' + photo.source + '/' + photo._id
+                , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              ) || null,
               vote: Math.floor(vote),
               ratio: photo.ratio
             });
