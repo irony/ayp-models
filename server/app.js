@@ -50,7 +50,7 @@ exports.init = function() {
     // configure Express
     app.configure(function() {
 
-      var sessionOptions = { secret: config.sessionSecret, store: store };
+      var sessionOptions = { secret: config.sessionSecret, store: store , cookie: { maxAge: 31536000, domain :'.allyourphotos.org' }};
 
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');

@@ -597,13 +597,24 @@ body .navbar-inner{
 }
 
 #wall #meta{
+  color:#eee;
 }
 
 #wall #meta a:hover
 {
-  color: #eee !important;
+  color: #fff !important;
   text-decoration: none;
 }
+
+#wall #meta a:hover i{
+  margin-top:-2px;
+  margin-left:-2px;
+}
+#wall #meta a:active i{
+  padding-top:5px;
+  padding-left:5px;
+}
+
 
 #wall #meta a{
   width: 49%;

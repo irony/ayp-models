@@ -12,7 +12,12 @@
         <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (photoInFocus && 'focus')}}" when-scrolled="scroll()">
             <input id="date" ng-model="q" date-format></input>
 
-
+              <div ng-show="!photosInView.length" class="container">
+                <h2 class="span6" ng-show="!stats.all">No photos are imported yet, please use the importers in the menu to add photos or just drag a folder here.</h2>
+                <h3>{{stats.all}} photos are imported</h3>
+                <h3>{{stats.thumbnails}} photos are ready</h3>
+                <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
+              </div>
             
               <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
