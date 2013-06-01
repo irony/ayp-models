@@ -86,7 +86,7 @@ var downloader = {
 
         Photo.update({ _id: photo._id }, {'store.thumbnail.lastTry':new Date()});
 
-        if (!photo.owners) return done();
+        if (!photo.owners) return photo.remove(done);
 
         User.find().where('_id').in(photo.owners).exec(function(err, users){
 
