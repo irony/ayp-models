@@ -40,8 +40,14 @@ function AppController($scope, $http)
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 
-          // TODO: add invalidation of library cache if size has changed
-          console.log('stats', stats);
+          if ($scope.stats.modified > $scope.library.modified)
+          {
+            $scope.loadLatest($scope.library.modified);
+          }
+          
+          setTimeout(function(){
+            $scope.stats = null; // fetch new every 30 seconds
+          }, 30000);
         }).error(function(err){
           console.log('stats error');
         });
