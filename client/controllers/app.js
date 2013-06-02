@@ -102,36 +102,36 @@ function AppController($scope, $http)
 
   // Load library based on photo taken, this will recurse until it reaches the end of the library
   function loadMore(taken, done){
-
+console.log('loadMore')
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
-    .success(function(library){
+    .success(function(page){
 
-      if (!library || !library.photos) return;
-
-      _.reduce(library.photos, function(a,b){
-        if (!b) return;
-
-        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
-        
-        _.find(a, {'taken' : b.taken}, function(existing){
-          if (existing) {
-            a = b; }
-          else {
-            a.push(b);
-          }
-        });
-
-        return a;
-      }, $scope.library.photos || []);
+      if (!page || !page.photos) return;
 
       // next is a cursor to the next date in the library
-      if (library.next){
-        return loadMore(library.next, done);
+      if (page.next){
+        return loadMore(page.next, done);
       } else{
-        $scope.library.modified = library.modified;
+        $scope.library.modified = page.modified;
 
         return done && done(null, $scope.library.photos);
       }
+
+
+      _($scope.library.photos)
+      .reduce(page.photos, function(a,b){
+        if (!b) return;
+
+        b.src=b.src && b.src.replace('$', page.baseUrl) || null;
+        
+        a.push(b);
+        return a;
+      }, $scope.library.photos)
+      .sort(function(a,b){
+        return b.taken - a.taken;
+      });
+
+      
 
     })
     .error(function(err){

@@ -51,7 +51,12 @@ function WallController($scope, $http){
   $scope.$watch('selectedPhoto', function(photo, old){
 
     if (old){
-      if (old.original) angular.copy(old.original, old);
+      if (old.original) {
+        old.src = old.original.src;
+        angular.copy(old.original, old);
+      }
+      old.src = old.src.replace('original', 'thumbnail').split('?')[0];
+
       delete old.original;
     }
 
