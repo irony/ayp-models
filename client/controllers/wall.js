@@ -61,7 +61,7 @@ function WallController($scope, $http){
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
     photo.original = angular.copy(photo);
-    photo.src = photo.src.replace('thumbnail', 'original');
+    photo.src = photo.src.replace('thumbnail', 'original').split('?')[0];
     photo.class="selected";
     photo.top = $(document).scrollTop();
     photo.height = window.innerHeight;

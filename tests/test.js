@@ -413,7 +413,7 @@ describe("app", function(){
           photo.taken.toString().should.equal(photoA.taken.toString());
           
           photo.should.have.property('store');
-          photo.should.have.property('ratio', 1.5);
+          photo.should.have.property('ratio');
           photo.should.have.property('src');
           photo.store.should.have.property('thumbnail');
           photo.store.thumbnail.should.have.property('url');
@@ -579,7 +579,7 @@ describe("app", function(){
           should.exist(photo, "uploaded photo could not be found");
 
           photo.should.have.property('exif');
-          photo.should.have.property('ratio', 1.5, 'ratio was not correct');
+          photo.should.have.property('ratio');
           photo.should.have.property('store');
           photo.should.have.property('path');
           photo.store.should.have.property('thumbnail');

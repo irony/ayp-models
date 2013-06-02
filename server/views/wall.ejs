@@ -9,10 +9,11 @@
     <div ng-controller="WallController" >
 
       
-        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (photoInFocus && 'focus')}}" when-scrolled="scroll()">
-            <input id="date" ng-model="q" date-format></input>
+        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus')}}" when-scrolled="scroll()">
+            <div id="shim"></div>
+            <input id="date" ng-model="q" ng-show="q" date-format></input>
 
-              <div ng-show="!photosInView.length" class="container" ng-cloak>
+              <div ng-show="stats && !photosInView.length" class="container" ng-cloak>
                 <h2 class="span6" ng-show="!stats.all">No photos are imported yet, please use the importers in the menu to add photos or just drag a folder here.</h2>
                 <h3>{{stats.all}} photos are imported</h3>
                 <h3>{{stats.thumbnails}} photos are ready</h3>
@@ -21,7 +22,7 @@
             
               <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
-          <div class="slider">
+          <div class="slider" ng-show="!selectedPhoto">
               <label class="pull-right  muted">All your photos</label>
               <label class="pull-left  muted">Only the best</label>
               <label class="pull-center muted">{{nrPhotos}} photos </label>
@@ -31,7 +32,7 @@
           </div>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
 
-          <div id="meta" class="row" ng-controller="MetadataCtrl" ng-cloack="true" ng-show="{{selectedPhoto}}">
+          <div id="meta" class="row" ng-controller="MetadataCtrl" ng-cloak="true" ng-show="{{selectedPhoto}}">
             <a class="span6" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
             <a class="span6" ng-click="hide(selectedPhoto)"><i class="icon-trash"></i></a>
             <div class="span12">

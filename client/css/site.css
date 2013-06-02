@@ -925,11 +925,31 @@ body .modal.fade.in {
 }
 
   #wall {
-    width:120%;
+    width:100%;
 /*    -webkit-perspective: 800px;
     -webkit-backface-visibility: hidden;
     -webkit-perspective-origin: top;
     -webkit-transform-style: preserve-3d;*/
+  }
+
+  #wall #shim{
+    z-index: 0;
+    opacity: 0;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    -webkit-transition:all 1s ease-in-out;
+
+    display: block;
+    background: black;
+  }
+
+  #wall.focus #shim{
+    opacity: 0.7;
+    z-index: 10;
+    display: block;
+    position: fixed;
   }
 
   #wall.fullscreen .fullscreen {

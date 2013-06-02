@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bowerful');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('assemble');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.initConfig({
     simplemocha:{
@@ -22,11 +23,23 @@ module.exports = function(grunt) {
         store: 'components',
         include : ['jquery','bootstrap', 'angular', 'font-awesome'],
         dest : 'client/build',
+        customtarget : {
+          lodash : 'dist/lodash.min.js'
+        },
         packages: {
             jquery: '',
             bootstrap: '',
             angular : ''
         },
+      }
+    },
+
+    copy: {
+      all: {
+        files: [
+          {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/', flatten: true},
+          {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/js/', flatten: true},
+        ]
       }
     },
     concat: {
@@ -38,7 +51,7 @@ module.exports = function(grunt) {
     watch:{
       all:{
         files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'client/js/*.js'],
-        tasks:['concat', 'bowerful']
+        tasks:['copy', 'concat', 'simplemocha']
       },
       test:{
         files:['*.js','server/*.js', 'models/*.js'],
@@ -49,7 +62,7 @@ module.exports = function(grunt) {
     all: { src: ['test/**/*.js'] }
   });
 
-  grunt.registerTask('default', ['concat', 'bowerful', 'watch:all']);
+  grunt.registerTask('default', ['copy', 'concat', 'bowerful', 'watch:all']);
   grunt.registerTask('test', ['watch:test', 'simplemocha:dev']);
 
 

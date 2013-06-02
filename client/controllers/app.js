@@ -40,13 +40,13 @@ function AppController($scope, $http)
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 
-        if ($scope.stats.modified > $scope.library.modified)
+        if ($scope.library.modified && $scope.stats.modified > $scope.library.modified)
         {
-          $scope.loadLatest($scope.library.modified);
+          loadLatest($scope.library.modified);
         }
 
-        setTimeout(function(){
-          $scope.stats = null; // fetch new every 30 seconds
+        setInterval(function(){
+          $scope.stats = null; // reset and load new every 30 seconds
         }, 30000);
       }).error(function(err){
         console.log('stats error');
@@ -54,36 +54,42 @@ function AppController($scope, $http)
     }
   });
 
+
+  // load all photos based on modify date. It means we can fill up the library on newly changed
+  // photos or recently added photos without loading the whole library again.
   function loadLatest(modified, done){
 
     $http.get('/api/library', {params: {modified:modified}})
-    .success(function(library){
+    .success(function(additions){
 
-      if (!library || !library.photos) return;
+      if (!additions || !additions.photos) return;
 
-      library.photos.reduce(function(a,b){
-        b.src=b.src && b.src.replace('$', library.baseUrl) || null;
+      // we want to replace the old ones with the new ones or insert the newest ones first
+      _.reduce(additions.photos, function(a,b){
+        b.src=b.src && b.src.replace('$', additions.baseUrl) || null;
 
+        _.find(a, {_id: b._id}, function(existing){
         // look for this photo in the library and update if it was found
-        if (!b || a.some(function(existing){
-          var same = existing && existing._id === b._id;
-          if (same) existing = b;
-          return same;
-        })) return a;
+          if (existing) {
+            existing = b;
+          } else {
+            a.unshift(b);  // otherwise - insert it first
+          }
+        });
 
-        a.unshift(b);  // otherwise - insert it first
         return a;
-      }, $scope.library.photos || []);
-
-      $scope.library.photos.sort(function(a,b){
+      }, $scope.library.photos || [])
+      .sort(function(a,b){
+        // and then sort the collection
         return b.taken - a.taken;
       });
 
       // next is a cursor to the next date in the library
-      if (library.next){
-        return loadLatest(library.next, done);
+      if (additions.next){
+        return loadLatest(additions.next, done);
       } else{
-        $scope.library.modified = library.modified;
+        // THE END
+        $scope.library.modified = additions.modified;
         return done && done(null, $scope.library.photos);
       }
 
@@ -94,7 +100,7 @@ function AppController($scope, $http)
 
   }
 
-  //
+  // Load library based on photo taken, this will recurse until it reaches the end of the library
   function loadMore(taken, done){
 
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
@@ -102,11 +108,19 @@ function AppController($scope, $http)
 
       if (!library || !library.photos) return;
 
-      library.photos.reduce(function(a,b){
+      _.reduce(library.photos, function(a,b){
         if (!b) return;
 
         b.src=b.src && b.src.replace('$', library.baseUrl) || null;
-        a.push(b);
+        
+        _.find(a, {'taken' : b.taken}, function(existing){
+          if (existing) {
+            a = b; }
+          else {
+            a.push(b);
+          }
+        });
+
         return a;
       }, $scope.library.photos || []);
 
@@ -133,15 +147,18 @@ function AppController($scope, $http)
     if ($scope.stats && $scope.stats.all <= value.photos.length)
       return;
 
+    // avoid problems on first load
+    if (!$scope.library.photos) $scope.library = {photos : []};
+
     // Fill up the library from the end...
-    var lastPhoto = $scope.library.photos && $scope.library.photos.length && $scope.library.photos.slice(-1)[0];
+    var lastPhoto = $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
       if (localStorage) localStorage.setObject('library', $scope.library);
 
     });
 
     // ... and from the beginning
-    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime();
+    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
     if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
 
       if (localStorage) localStorage.setObject('library', $scope.library);

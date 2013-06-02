@@ -146,7 +146,7 @@ module.exports = function(app){
   app.get('/api/library', function(req, res){
     console.log('loading library');
     var limit = req.query.limit || 2000;
-    var baseUrl = 'https://allyourphotos-eu.s3.amazonaws.com/thumbnail';
+    var baseUrl = 'https://allyourphotos-eu.s3-eu-west-1.amazonaws.com/thumbnail';
 
     if (!req.user) return res.send('Login first');
 
@@ -187,7 +187,7 @@ module.exports = function(app){
               src: global.s3.signedUrl(
                   '/thumbnail/' + photo.source + '/' + photo._id
                 , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              ) || null,
+              ).replace(baseUrl, '$') || null,
               vote: Math.floor(vote),
               ratio: photo.ratio
             });
