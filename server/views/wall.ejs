@@ -10,10 +10,11 @@
 
       
         <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus')}}" when-scrolled="scroll()">
-            <div id="shim"></div>
+            <div id="shim" ng-click="select(null)"></div>
             <input id="date" ng-model="q" ng-show="q" date-format></input>
 
-              <div ng-show="stats && !photosInView.length" class="container" ng-cloak>
+              <div ng-show="stats && !photosInView.length" class="container row" ng-cloak>
+                <i class="span3 icon-camera"></i>
                 <h2 class="span6" ng-show="!stats.all">No photos are imported yet, please use the importers in the menu to add photos or just drag a folder here.</h2>
                 <h3>{{stats.all}} photos are imported</h3>
                 <h3>{{stats.thumbnails}} photos are ready</h3>
