@@ -160,6 +160,7 @@ console.log('loadMore')
     // ... and from the beginning
     var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
     if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
+      console.log('done', $scope.library);
 
       if (localStorage) localStorage.setObject('library', $scope.library);
     });
