@@ -110,7 +110,7 @@ console.log('loadMore')
 
       // next is a cursor to the next date in the library
       if (page.next){
-        return loadMore(page.next, done);
+        loadMore(page.next, done);
       } else{
         $scope.library.modified = page.modified;
 
@@ -118,20 +118,18 @@ console.log('loadMore')
       }
 
 
-      _($scope.library.photos)
-      .reduce(page.photos, function(a,b){
-        if (!b) return;
+      $scope.library.photos = $scope.library.photos.concat(page.photos);
 
-        b.src=b.src && b.src.replace('$', page.baseUrl) || null;
-        
-        a.push(b);
-        return a;
-      }, $scope.library.photos)
-      .sort(function(a,b){
-        return b.taken - a.taken;
+      $scope.library.photos.sort(function(a,b){
+        return b - a;
       });
 
-      
+      var i = $scope.library.photos.length;
+      while (i--) {
+        if (i && $scope.library.photos[i-1].taken === $scope.library.photos[i].taken) {
+          $scope.library.photos.splice(i,1);
+        }
+      }
 
     })
     .error(function(err){
@@ -153,6 +151,8 @@ console.log('loadMore')
     // Fill up the library from the end...
     var lastPhoto = $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
+      console.log('done', $scope.library);
+      
       if (localStorage) localStorage.setObject('library', $scope.library);
 
     });

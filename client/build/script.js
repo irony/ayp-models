@@ -1075,28 +1075,31 @@ console.log('loadMore')
 
       // next is a cursor to the next date in the library
       if (page.next){
-        return loadMore(page.next, done);
+        loadMore(page.next, done);
       } else{
         $scope.library.modified = page.modified;
 
         return done && done(null, $scope.library.photos);
       }
 
-
-      _($scope.library.photos)
-      .reduce(page.photos, function(a,b){
-        if (!b) return;
-
+      _.reduce(page.photos, function(a,b){
         b.src=b.src && b.src.replace('$', page.baseUrl) || null;
-        
-        a.push(b);
+        a.push(b);  // otherwise - insert it first
         return a;
-      }, $scope.library.photos)
-      .sort(function(a,b){
-        return b.taken - a.taken;
+      }, $scope.library.photos);
+
+      $scope.library.photos.sort(function(a,b){
+        return b - a;
       });
 
-      
+      var i = $scope.library.photos.length;
+
+      // remove duplicates
+      while (i--) {
+        if (i && $scope.library.photos[i-1].taken === $scope.library.photos[i].taken) {
+          $scope.library.photos.splice(i,1);
+        }
+      }
 
     })
     .error(function(err){
@@ -1118,6 +1121,8 @@ console.log('loadMore')
     // Fill up the library from the end...
     var lastPhoto = $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
+      console.log('done', $scope.library);
+      
       if (localStorage) localStorage.setObject('library', $scope.library);
 
     });
@@ -1125,6 +1130,7 @@ console.log('loadMore')
     // ... and from the beginning
     var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
     if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
+      console.log('done', $scope.library);
 
       if (localStorage) localStorage.setObject('library', $scope.library);
     });
@@ -2290,7 +2296,7 @@ function WallController($scope, $http){
     $scope.photosInView = $scope.photos.filter(function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     });
-    $scope.$apply();
+    if(!$scope.$$phase) $scope.$apply();
   }
   
   function findCenter(taken){

@@ -192,7 +192,7 @@ function WallController($scope, $http){
     $scope.photosInView = $scope.photos.filter(function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     });
-    $scope.$apply();
+    if(!$scope.$$phase) $scope.$apply();
   }
   
   function findCenter(taken){
