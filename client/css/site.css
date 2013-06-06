@@ -695,10 +695,11 @@ body .navbar-inner{
   max-width: inherit !important;
 }
 
-.subscription-plan{text-align:center;float:right;width:24.4%;border-right:1px #d0d2d9 solid;padding:20px 0 15px;border-bottom:1px #d0d2d9 solid;border-top:1px #d0d2d9 solid;background-color:#f7f7f7;overflow:hidden;position:relative;}.subscription-plan:last-of-type{border-left:1px #d0d2d9 solid;padding-left:0;border-radius:3px 0 0 3px;}
+.subscription-plan{text-align:center;float:right;width:30%;border-right:1px #d0d2d9 solid;padding:20px 0 15px;border-bottom:1px #d0d2d9 solid;border-top:1px #d0d2d9 solid;background-color:#f7f7f7;overflow:hidden;position:relative;}.subscription-plan:last-of-type{border-left:1px #d0d2d9 solid;padding-left:0;border-radius:3px 0 0 3px;}
 .subscription-plan:first-of-type{padding-right:0;border-radius:0 3px 3px 0;border-right-style:solid !important;}
 .subscription-plan h1{font-size:20px;text-transform:capitalize;}
 .subscription-plan h2{font-size:28px;color:#74b45c;padding:10px 0 0;margin:0 0 7px;}
+.subscription-plan .icon-ok-sign {font-size:28px;color:#74b45c;padding:10px 0 0;margin:0 0 7px;}
 .subscription-plan em{font-style:normal;color:#797e96;}
 .subscription-plan .object,.subscription-plan .feature{background-color:#fff;border-bottom:1px #d0d2d9 dotted;}
 .subscription-plan .object h2,.subscription-plan .feature h2{font-size:14px;margin:0.3em 0 0.12em;color:#cc8809;}
