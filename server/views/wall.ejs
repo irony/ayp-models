@@ -15,10 +15,12 @@
               <div ng-show="stats && !photosInView.length" class="container row stats" ng-cloak>
                 <i class="span3 icon icon-camera supersize"></i>
                 <h1>Import summary</h1>
-                <h2 class="span6" ng-show="!stats.all">No photos are imported yet, please use the importers in the menu to add photos or just drag a folder here.</h2>
-                <h3>{{stats.all}} photos are imported</h3>
-                <h3>{{library.photos.length}} of {{stats.thumbnails}} metadata are synced to this computer</h3>
-                <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
+                <h2 class="span6" ng-show="!stats.all">No photos have been imported yet, please use the importers in the menu or just drag a folder here.</h2>
+                <div ng-show="stats.all">
+                  <h3>{{stats.all}} photos are imported</h3>
+                  <h3>{{library.photos.length}} of {{stats.thumbnails}} metadata are synced to this computer</h3>
+                 <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
+                </div>
               </div>
             
               <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
@@ -33,13 +35,13 @@
           </div>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
 
-          <div id="meta" class="row" ng-controller="MetadataCtrl" ng-cloak="true" ng-show="{{selectedPhoto}}">
+          <div id="meta" ng-controller="MetadataCtrl" ng-cloak="true" ng-show="{{selectedPhoto}}">
             <a class="span6" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
-            <a class="span6" ng-click="hide(selectedPhoto)"><i class="icon-trash"></i></a>
-            <div class="span12">
-                {{selectedPhoto.meta.taken}}
+            <a class="span6" ng-click="hide(selectedPhoto)"><i class="icon-thumbs-down"></i></a>
+            <a class="span12">
+                {{selectedPhoto.taken | date:'yyyy MMM dd (EEE)'}}
                 {{selectedPhoto.meta.mine.vote}}
-            </div>
+            </a>
           </div>
 
         </div>

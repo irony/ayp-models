@@ -143,7 +143,7 @@ function UploadController($scope, $http){
     if (file.path)
       fd.append('path', file.path + file.filename);
 
-    fd.append('original|' + file.taken + '|' + file.size, file);
+    // fd.append('original|' + file.taken + '|' + file.size, file);
     fd.append('thumbnail' + '|' + file.taken + '|' + thumbnail.size, thumbnail);
     console.log('uploading...', file.taken, thumbnail.size);
     var xhr = new XMLHttpRequest();

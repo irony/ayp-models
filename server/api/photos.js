@@ -11,9 +11,11 @@ var _ = require('underscore');
 module.exports = function(app){
 
   app.get('/api/photo/:id', function(req, res){
-    Photo.findOne({_id:req.params.id, owners : req.user._id}, function(err, photo){
+    if (!req.user) return res.send('Login first..', 500);
+
+    Photo.findOne({_id: new ObjectId(req.params.id), owners : req.user._id}, function(err, photo){
       if (err) return res.send('Error finding photo', 500);
-      if (!photo) return res.send('Could not find photo', 403);
+      if (!photo) return res.send('Could not find photo ' + req.params.id, 403);
       photo.mine = photo.copies[req.user._id]; // only use this user's personal settings
       photo.vote = photo.mine.vote || (photo.mine.calculatedVote);
 
@@ -153,6 +155,9 @@ module.exports = function(app){
     console.log('user', typeof(req.user._id));
 
     async.parallel({
+      userId : function(done){
+        return done(null, req.user._id);
+      },
       total : function(done){
         console.log('found total');
         Photo.find({'owners': req.user._id}).count(done);

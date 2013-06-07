@@ -108,6 +108,9 @@ console.log('loadMore')
 
       if (!page || !page.photos) return;
 
+      if ($scope.library.userId !== page.userId)
+        $scope.library = {photos:[]}; // reset if we are logged in as new user
+
       // next is a cursor to the next date in the library
       if (page.next){
         loadMore(page.next, done);
@@ -120,21 +123,25 @@ console.log('loadMore')
 
       $scope.library.photos = $scope.library.photos.concat(page.photos);
 
-      $scope.library.photos.sort(function(a,b){
-        return b - a;
-      });
-
-      var i = $scope.library.photos.length;
-      while (i--) {
-        if (i && $scope.library.photos[i-1].taken === $scope.library.photos[i].taken) {
-          $scope.library.photos.splice(i,1);
-        }
-      }
+      
 
     })
     .error(function(err){
       console.log('library error', err);
     });
+  }
+
+  function sortAndRemoveDuplicates(){
+    $scope.library.photos.sort(function(a,b){
+        return b - a;
+    });
+
+    var i = $scope.library.photos.length;
+    while (i--) {
+      if (i && $scope.library.photos[i-1].taken === $scope.library.photos[i].taken) {
+        $scope.library.photos.splice(i,1);
+      }
+    }
   }
 
   $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
@@ -152,6 +159,7 @@ console.log('loadMore')
     var lastPhoto = $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
       console.log('done', $scope.library);
+      sortAndRemoveDuplicates();
       
       if (localStorage) localStorage.setObject('library', $scope.library);
 
@@ -161,6 +169,7 @@ console.log('loadMore')
     var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
     if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
       console.log('done', $scope.library);
+      sortAndRemoveDuplicates();
 
       if (localStorage) localStorage.setObject('library', $scope.library);
     });

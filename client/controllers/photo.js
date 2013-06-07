@@ -22,6 +22,7 @@ function PhotoController ($scope, $http){
 
   $scope.rightclick = function(photo){
     var meta = $('#meta')[0];
+    $scope.selectedPhoto = photo;
     angular.copy(event.target.style, meta.style);
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
