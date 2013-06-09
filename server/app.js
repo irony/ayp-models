@@ -26,7 +26,7 @@ console.debug = console.log;
 
 try {
   mongoose.connect(config.mongoUrl);
-  console.debug("Started connection on " + config.mongoUrl.split('@')[1].cyan + ", waiting for it to open...".grey);
+  console.debug("Started connection on " + (config.mongoUrl.split('@').slice(-1)).cyan + ", waiting for it to open...".grey);
 } catch (err) {
   console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
 }
@@ -50,7 +50,8 @@ exports.init = function() {
     // configure Express
     app.configure(function() {
 
-      var sessionOptions = { secret: config.sessionSecret, store: store , cookie: { maxAge: 31536000, domain :'.allyourphotos.org' }};
+      var sessionOptions = { secret: config.sessionSecret, store: store };
+      app.io.set("authorization", passportsio.authorize(sessionOptions));
 
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');
@@ -66,7 +67,6 @@ exports.init = function() {
       app.use(app.router);
 
 
-      app.io.set("authorization", passportsio.authorize(sessionOptions));
     });
 
     app.configure('development', function(){

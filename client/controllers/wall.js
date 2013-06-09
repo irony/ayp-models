@@ -24,9 +24,8 @@ function WallController($scope, $http){
   };
 
   $scope.dblclick = function(photo){
-    $scope.photoInCenter = photo;
+    $scope.select(null);
     $scope.zoomLevel += 3;
-      $scope.selectedPhoto = photo;
   };
 
   $scope.select = function(photo){

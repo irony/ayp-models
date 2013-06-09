@@ -62,7 +62,7 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {modified:modified}})
     .success(function(additions){
 
-      if (!additions || !additions.photos) return;
+      if (!additions || !additions.photos) return done();
 
       // we want to replace the old ones with the new ones or insert the newest ones first
       _.reduce(additions.photos, function(a,b){
@@ -92,17 +92,17 @@ function AppController($scope, $http)
     })
     .error(function(err){
       console.log('library error', err);
+      return done(err);
     });
 
   }
 
   // Load library based on photo taken, this will recurse until it reaches the end of the library
   function loadMore(taken, done){
-console.log('loadMore')
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(page){
 
-      if (!page || !page.photos) return;
+      if (!page || !page.photos) return done();
 
       if ($scope.library.userId !== page.userId)
         $scope.library = {photos:[]}; // reset if we are logged in as new user
@@ -126,6 +126,7 @@ console.log('loadMore')
     })
     .error(function(err){
       console.log('library error', err);
+      return done(err);
     });
   }
 
@@ -142,17 +143,9 @@ console.log('loadMore')
     }
   }
 
-  $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
+  function initialize(){
 
-  $scope.$watch('library', function(value){
-
-    // we already have the whole library
-    if ($scope.stats && $scope.stats.all <= value.photos.length)
-      return;
-
-    // avoid problems on first load
-    if (!$scope.library.photos) $scope.library = {photos : []};
-
+    $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
     // Fill up the library from the end...
     var lastPhoto = $scope.library.photos.slice(-1)[0];
     loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
@@ -172,7 +165,9 @@ console.log('loadMore')
       if (localStorage) localStorage.setObject('library', $scope.library);
     });
 
-  });
+  }
+
+  initialize();
 
 }
 

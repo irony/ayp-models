@@ -21,4 +21,3 @@ app.listen(process.env.PORT || 3000);
 console.log(process.env.HOST + ' started');
 
 console.log("Listening on port %d in %s mode", app.address());
-console.log("ENV: ", process.env);
