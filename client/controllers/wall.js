@@ -82,96 +82,13 @@ function WallController($scope, $http){
       clearTimeout(zoomTimeout);
       zoomTimeout = setTimeout(function(){
 
+        // Recalculate all widths and heights in the current window size and vote level
+        recalculateSizes();
 
-        var totalWidth = 0;
-        var top = 0;
-        var left = 0;
-        var maxWidth = window.innerWidth;
-        var lastPhoto;
-        $scope.height = $scope.zoomLevel > 8 && 120 ||
-                        $scope.zoomLevel > 6 && 120 ||
-                        $scope.zoomLevel < 2 && 480 ||
-                        240;
-
-        var row = [];
-        var group = [];
-        var groupNr = 0;
-        var found = false;
-
-        $scope.photos = ($scope.library.photos).filter(function(photo){
-          var height = $scope.height;
-
-          // calculate group
-          var gap = lastPhoto && (lastPhoto.taken - photo.taken) / (8 * 60 * 60 * 1000);
-          if (gap > 1 && group.length >= 6) {
-            group = [];
-            groupNr++;
-          }
-
-          lastPhoto = photo;
-          group.push(photo);
-          
-          // filter out the photos in this view
-          if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
-            photo.height = $scope.height;
-            photo.width = photo.height * (photo.ratio || 1);
-            totalWidth += photo.width;
-
-            // start new row
-            if (left + photo.width > maxWidth){
-
-              var percentageAdjustment = maxWidth / (left);
-              if (true){
-                // adjust height
-                row.forEach(function(photo){
-                  photo.left *= percentageAdjustment;
-                  photo.width *= percentageAdjustment;
-                  photo.height *= percentageAdjustment;
-                });
-
-              } else {
-                // center the row
-                row.forEach(function(photo){
-                  photo.left += (window.outerWidth - left) / row.length;
-                });
-                percentageAdjustment = 1;
-              }
-
-              top += photo.height * percentageAdjustment + 5;
-              photo.left = left = 0;
-              row = [];
-            } else {
-              photo.left = left;
-            }
-
-
-            left += photo.width + 5;
-            photo.top = top;
-
-            row.push(photo);
-            photo.groupNr = groupNr;
-
-
-            // optimize - if we find the current row directly, just scroll to it directly
-            if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
-              $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 100);
-              found = true;
-            }
-
-            return true;
-          }
-          return false;
-        }, []);
-
-        $scope.nrPhotos = $scope.photos.length || Math.round(($scope.stats && $scope.stats.all * $scope.zoomLevel / 10));
-
-        // cancel all previous image requests
-        // if (window.stop) window.stop();
+        // Waiting is a semaphore for preventing the scoll method of 
+        // changing the scroll-position until we are done with our filtering.
         
-        //$scope.photosInView = $scope.photos.slice(0,100);
-        $scope.totalHeight = top + $scope.height;
         waiting = true;
-
         setTimeout(function(){
           filterView();
           waiting = false;
@@ -191,21 +108,115 @@ function WallController($scope, $http){
 
     $scope.photosInView = $scope.photos.filter(function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
+    }).sort(function(a,b){
+      return a.vote - b.vote;
     });
     if(!$scope.$$phase) $scope.$apply();
+  }
+
+  function recalculateSizes(){
+
+    var totalWidth = 0;
+    var top = 0;
+    var left = 0;
+    var maxWidth = window.innerWidth;
+    var lastPhoto;
+    $scope.height = $scope.zoomLevel > 8 && 120 ||
+                    $scope.zoomLevel > 6 && 120 ||
+                    $scope.zoomLevel < 2 && 480 ||
+                    240;
+
+    var row = [];
+    var group = [];
+    var groupNr = 0;
+    var found = false;
+
+    $scope.photos = ($scope.library.photos).filter(function(photo){
+      var height = $scope.height;
+
+      // calculate group
+      var gap = lastPhoto && (lastPhoto.taken - photo.taken) / (8 * 60 * 60 * 1000);
+      if (gap > 1 && group.length >= 6) {
+        group = [];
+        groupNr++;
+      }
+
+      lastPhoto = photo;
+      group.push(photo);
+      
+      // filter out the photos in this view
+      if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
+        photo.height = $scope.height;
+        photo.width = photo.height * (photo.ratio || 1);
+        totalWidth += photo.width;
+
+        // start new row
+        if (left + photo.width > maxWidth){
+
+          var percentageAdjustment = maxWidth / (left);
+          if (true){
+            // adjust height
+            row.forEach(function(photo){
+              photo.left *= percentageAdjustment;
+              photo.width *= percentageAdjustment;
+              photo.height *= percentageAdjustment;
+            });
+
+          } else {
+            // center the row
+            row.forEach(function(photo){
+              photo.left += (window.outerWidth - left) / row.length;
+            });
+            percentageAdjustment = 1;
+          }
+
+          top += photo.height * percentageAdjustment + 5;
+          photo.left = left = 0;
+          row = [];
+        } else {
+          photo.left = left;
+        }
+
+
+        left += photo.width + 5;
+        photo.top = top;
+
+        row.push(photo);
+        photo.groupNr = groupNr;
+
+
+        // optimize - when we find the current row directly, just scroll to it directly
+        if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken) {
+          $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 100);
+          found = true;
+        }
+
+        return true;
+      }
+      return false;
+    }, []);
+
+    $scope.nrPhotos = $scope.photos.length || Math.round(($scope.stats && $scope.stats.all * $scope.zoomLevel / 10));
+
+    // cancel all previous image requests
+    // if (window.stop) window.stop();
+    
+    //$scope.photosInView = $scope.photos.slice(0,100);
+    $scope.totalHeight = top + $scope.height;
   }
   
   function findCenter(taken){
 
-    $scope.photos.some(function(a){
+
+    var found = _.find($scope.photos, function(a){
       if (a.taken >= taken){
         taken = a;
-        return true;
+        return a;
       }
       else return false;
     });
 
-    if (taken) location.hash = taken || "";
+    if (taken) location.hash = found.taken || "";
   }
 
   filterView(); // initial view

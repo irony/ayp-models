@@ -78,11 +78,7 @@ function AppController($scope, $http)
         });
 
         return a;
-      }, $scope.library.photos || [])
-      .sort(function(a,b){
-        // and then sort the collection
-        return b.taken - a.taken;
-      });
+      }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
       if (additions.next){
@@ -120,10 +116,12 @@ console.log('loadMore')
         return done && done(null, $scope.library.photos);
       }
 
+      page.photos.map(function(photo){
+        photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
+      });
 
       $scope.library.photos = $scope.library.photos.concat(page.photos);
 
-      
 
     })
     .error(function(err){
