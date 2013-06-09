@@ -25,6 +25,7 @@ module.exports = function(app){
 
   app.io.on('connection', function (socket) {
     var user = socket.handshake.user;
+    console.debug('handshake', socket.handshake);
 
     if (!user || !user._id) return;
 

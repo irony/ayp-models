@@ -23,7 +23,7 @@
                 </div>
               </div>
             
-              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightclick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <img beforeload="console.log(this)" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
           <div class="slider" ng-show="!selectedPhoto">
               <label class="pull-right  muted">All your photos</label>
@@ -35,7 +35,7 @@
           </div>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
 
-          <div id="meta" ng-controller="MetadataCtrl" ng-cloak="true" ng-show="{{selectedPhoto}}">
+          <div id="meta" ng-controller="MetadataCtrl" right-click="rightclick()" ng-cloak="true" ng-show="{{selectedPhoto}}">
             <a class="span6" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
             <a class="span6" ng-click="hide(selectedPhoto)"><i class="icon-thumbs-down"></i></a>
             <a class="span12">

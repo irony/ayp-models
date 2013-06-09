@@ -20,7 +20,10 @@ function PhotoController ($scope, $http){
     event.preventDefault();
   };
 
-  $scope.rightclick = function(photo){
+  $scope.rightClick = function(photo){
+    if ($scope.selectedPhoto === photo)
+      return $scope.selectedPhoto = null;
+    
     var meta = $('#meta')[0];
     $scope.selectedPhoto = photo;
     angular.copy(event.target.style, meta.style);

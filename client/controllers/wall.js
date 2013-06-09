@@ -33,11 +33,6 @@ function WallController($scope, $http){
     $scope.selectedPhoto = photo;
   };
 
-
-  $scope.$watch('fullscreen', function(value){
-    console.log('fullscreen', window.innerWidth);
-  });
-
   $scope.$watch('photoInCenter', function(value){
     $scope.q = value && value.taken;
   });
@@ -65,7 +60,13 @@ function WallController($scope, $http){
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
     photo.original = angular.copy(photo);
-    photo.src = photo.src.replace('thumbnail', 'original').split('?')[0];
+
+    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+      photo.meta = fullPhoto;
+      console.log('full', fullPhoto);
+      photo.src = fullPhoto.store.original.url;
+    });
+
     photo.class="selected";
     photo.top = $(document).scrollTop();
     photo.height = window.innerHeight;
@@ -84,7 +85,7 @@ function WallController($scope, $http){
         // Recalculate all widths and heights in the current window size and vote level
         recalculateSizes();
 
-        // Waiting is a semaphore for preventing the scoll method of 
+        // Waiting is a semaphore for preventing the scoll method of
         // changing the scroll-position until we are done with our filtering.
         
         waiting = true;

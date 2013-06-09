@@ -1025,13 +1025,13 @@ function AppController($scope, $http)
   function loadLatest(modified, done){
 
     $http.get('/api/library', {params: {modified:modified}})
-    .success(function(additions){
+    .success(function(page){
 
-      if (!additions || !additions.photos) return done();
+      if (!page || !page.photos) return done();
 
       // we want to replace the old ones with the new ones or insert the newest ones first
-      _.reduce(additions.photos, function(a,b){
-        b.src=b.src && b.src.replace('$', additions.baseUrl) || null;
+      _.reduce(page.photos, function(a,b){
+        b.src=b.src && b.src.replace('$', page.baseUrl) || null;
 
         _.find(a, {_id: b._id}, function(existing){
         // look for this photo in the library and update if it was found
@@ -1046,11 +1046,13 @@ function AppController($scope, $http)
       }, $scope.library.photos || []);
 
       // next is a cursor to the next date in the library
-      if (additions.next){
-        return loadLatest(additions.next, done);
+      if (page.next){
+        console.log('next latest', page.next);
+        return loadLatest(page.next, done);
       } else{
         // THE END
-        $scope.library.modified = additions.modified;
+        console.log('done latest', page.modified);
+        $scope.library.modified = page.modified;
         return done && done(null, $scope.library.photos);
       }
 
@@ -1069,24 +1071,24 @@ function AppController($scope, $http)
 
       if (!page || !page.photos) return done();
 
-      if ($scope.library.userId !== page.userId)
+      if ($scope.library.userId !== page.userId || !$scope.library.photos)
         $scope.library = {photos:[]}; // reset if we are logged in as new user
 
       // next is a cursor to the next date in the library
       if (page.next){
+        console.log('next more', page.next);
         loadMore(page.next, done);
       } else{
+        console.log('done more', page.modified);
         $scope.library.modified = page.modified;
 
         return done && done(null, $scope.library.photos);
       }
 
-      page.photos.map(function(photo){
+      _.each(page.photos, function(photo){
         photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
+        $scope.library.photos.push(photo);
       });
-
-      $scope.library.photos = $scope.library.photos.concat(page.photos);
-
 
     })
     .error(function(err){
@@ -1581,7 +1583,10 @@ function PhotoController ($scope, $http){
     event.preventDefault();
   };
 
-  $scope.rightclick = function(photo){
+  $scope.rightClick = function(photo){
+    if ($scope.selectedPhoto === photo)
+      return $scope.selectedPhoto = null;
+    
     var meta = $('#meta')[0];
     $scope.selectedPhoto = photo;
     angular.copy(event.target.style, meta.style);
@@ -2149,11 +2154,6 @@ function WallController($scope, $http){
     $scope.selectedPhoto = photo;
   };
 
-
-  $scope.$watch('fullscreen', function(value){
-    console.log('fullscreen', window.innerWidth);
-  });
-
   $scope.$watch('photoInCenter', function(value){
     $scope.q = value && value.taken;
   });
@@ -2181,7 +2181,13 @@ function WallController($scope, $http){
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
     photo.original = angular.copy(photo);
-    photo.src = photo.src.replace('thumbnail', 'original').split('?')[0];
+
+    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+      photo.meta = fullPhoto;
+      console.log('full', fullPhoto);
+      photo.src = fullPhoto.store.original.url;
+    });
+
     photo.class="selected";
     photo.top = $(document).scrollTop();
     photo.height = window.innerHeight;
@@ -2200,7 +2206,7 @@ function WallController($scope, $http){
         // Recalculate all widths and heights in the current window size and vote level
         recalculateSizes();
 
-        // Waiting is a semaphore for preventing the scoll method of 
+        // Waiting is a semaphore for preventing the scoll method of
         // changing the scroll-position until we are done with our filtering.
         
         waiting = true;
