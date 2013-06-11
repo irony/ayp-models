@@ -50,8 +50,6 @@ exports.init = function() {
     // configure Express
     app.configure(function() {
 
-      var sessionOptions = { secret: config.sessionSecret, store: store };
-      app.io.set("authorization", passportsio.authorize(sessionOptions));
 
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');
@@ -59,7 +57,11 @@ exports.init = function() {
       app.use(express.cookieParser());
       app.use(express.bodyParser());
       app.use(express.methodOverride());
+
+      var sessionOptions = { cookieParser: express.cookieParser, secret: config.sessionSecret, store: store };
       app.use(express.session(sessionOptions));
+      app.io.set("authorization", passportsio.authorize(sessionOptions));
+
       app.use(passport.initialize());
       app.use(passport.session());
       app.use('/vendor/', express.static(path.join(__dirname, '/../components')));

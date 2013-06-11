@@ -62,7 +62,7 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {modified:modified}})
     .success(function(page){
 
-      if (!page || !page.photos) return done();
+      if (!page || !page.photos) return;
 
       // we want to replace the old ones with the new ones or insert the newest ones first
       _.reduce(page.photos, function(a,b){
@@ -104,10 +104,10 @@ function AppController($scope, $http)
     $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
     .success(function(page){
 
-      if (!page || !page.photos) return done();
+      if (!page || !page.photos) return;
 
       if ($scope.library.userId !== page.userId || !$scope.library.photos)
-        $scope.library = {photos:[]}; // reset if we are logged in as new user
+        $scope.library = {photos:[], userId : page.userId }; // reset if we are logged in as new user
 
       // next is a cursor to the next date in the library
       if (page.next){
@@ -144,28 +144,65 @@ function AppController($scope, $http)
       }
     }
   }
+  
+  var server;
 
   function initialize(){
 
     $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
-    // Fill up the library from the end...
-    var lastPhoto = $scope.library.photos.slice(-1)[0];
-    loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
-      console.log('done', $scope.library);
-      sortAndRemoveDuplicates();
-      
-      if (localStorage) localStorage.setObject('library', $scope.library);
 
+    db.open({
+      server: 'my-app',
+      version: 1,
+      schema: {
+        photos: {
+          key: { keyPath: 'taken' , autoIncrement: false },
+          indexes: {
+            _id: { unique: true }
+          }
+        }
+      }
+    }).done( function ( s ) {
+      server = s;
+
+      server.photos.query()
+      .all()
+      .execute()
+      .done( function ( photos ) {
+
+        $scope.library.photos = photos;
+
+
+        // Fill up the library from the end...
+        var lastPhoto = $scope.library.photos.slice(-1)[0];
+        loadMore(lastPhoto && lastPhoto.taken, function(err, photos){
+          console.log('done', $scope.library);
+          sortAndRemoveDuplicates();
+          
+          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, user: $scope.library.userId});
+
+          $scope.library.photos.map(function(photo){
+            server.photos.update(photo); // update means put == insert or update
+          });
+
+        });
+
+        // ... and from the beginning
+        var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
+        if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
+          console.log('done', $scope.library);
+          sortAndRemoveDuplicates();
+
+          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, user: $scope.library.userId});
+
+          $scope.library.photos.map(function(photo){
+            server.photos.update(photo); // update means put == insert or update
+          });
+
+        });
+      });
     });
 
-    // ... and from the beginning
-    var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
-    if (lastModifyDate) loadLatest(lastModifyDate, function(err, photos){
-      console.log('done', $scope.library);
-      sortAndRemoveDuplicates();
-
-      if (localStorage) localStorage.setObject('library', $scope.library);
-    });
 
   }
 

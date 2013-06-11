@@ -40,7 +40,9 @@
     "passport.socketio": "~1.0.1",
     "xmlhttprequest": "~1.5.0",
     "redis": "~0.8.3",
-    "longjohn": "*"
+    "longjohn": "*",
+    "grunt-simple-mocha": "~0.4.0",
+    "grunt-contrib-watch": "~0.4.4"
   },
   "scripts": {
     "start": "nodemon server/server.js",

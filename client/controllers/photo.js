@@ -56,10 +56,7 @@ function PhotoController ($scope, $http){
   $scope.hide = function(photo, group){
     console.log('hide', photo);
     socket.emit('hide', photo._id);
-    for(var i=0; i<group.photos.length; i++){
-      if (group.photos[i]._id === photo._id)
-        return delete group.photos[i];
-    }
+    photo.vote = 10;
   };
 
 
