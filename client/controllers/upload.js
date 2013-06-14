@@ -21,8 +21,7 @@ function UploadController($scope, $http){
 
   $scope.$watch('files.length - queue.length', function(left){
     var progress = $scope.doneSize / $scope.allSize;
-    console.log('progress', progress, $scope.doneSize, $scope.allSize);
-    Piecon.setProgress(progress * 100);
+    if (progress) Piecon.setProgress(progress * 100);
   });
 
   $scope.$watch('files.length', function(files){

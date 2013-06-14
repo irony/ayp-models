@@ -158,17 +158,24 @@ function AppController($scope, $http)
         photos: {
           key: { keyPath: 'taken' , autoIncrement: false },
           indexes: {
-            _id: { unique: true }
+            _id: { unique: true },
+            vote: { unique: false }
           }
         }
       }
     }).done( function ( s ) {
       server = s;
 
+      console.log('indexdb opened ok', s);
+
       server.photos.query()
       .all()
       .execute()
+      .fail(function(err){
+        console.log('db fail', err);
+      })
       .done( function ( photos ) {
+        console.log('query ok', photos);
 
         $scope.library.photos = photos;
 
