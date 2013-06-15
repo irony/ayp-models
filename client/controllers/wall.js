@@ -222,55 +222,76 @@ function WallController($scope, $http){
   filterView(); // initial view
 
 
-  /*
-
-  document.addEventListener( 'keydown', function( e ) {
+  document.addEventListener( 'keyup', function( e ) {
+    console.log('arguments', arguments)
     var keyCode = e.keyCode || e.which,
-        arrow = {left: 37, up: 38, right: 39, down: 40 },
-        number = {
-          zero  : 48,
-          one   : 49,
-          two   : 50,
-          three : 51,
-          four  : 52,
-          five  : 53,
-          six   : 54,
-          seven : 55,
-          eight : 56,
-          nine  : 57
+        keys = {
+          27: 'esc',
+          32: 'space',
+          37: 'left',
+          38: 'up',
+          39: 'right',
+          40: 'down',
+          48: 'zero',
+          49: 'one',
+          50: 'two',
+          51: 'three',
+          52: 'four',
+          53: 'five',
+          54: 'six',
+          55: 'seven',
+          56: 'eight',
+          57: 'nine'
         };
+    
 
-    switch (keyCode) {
-      case arrow.left:
-        $('.selected').prev().click();
+    var current = $scope.photos.indexOf($scope.selectedPhoto);
+    console.log('key', current, keys[keyCode], keyCode);
+
+    switch (keys[keyCode]) {
+      case 'space' :
+        if ($scope.selectedPhoto)
+          $scope.select(null);
+        else
+          $scope.select($scope.photoInCenter);
+
+        $scope.$apply();
+        e.preventDefault();
+      break;
+
+      case 'esc' :
+        $scope.select(null);
+        $scope.$apply();
+        e.preventDefault();
+      break;
+      case 'left':
+        $scope.select(current > 0 ? $scope.photos[current -1 ] : null);
+        $scope.$apply();
         e.preventDefault();
         
       break;
-      case arrow.up:
+      case 'up':
         //..
       break;
-      case arrow.right:
-        $('.selected').next().click();
+      case 'right':
+        $scope.select($scope.photos.length > current ? $scope.photos[current +1 ] : null);
+        $scope.$apply();
         e.preventDefault();
-
-        
       break;
-      case arrow.down:
+      case 'down':
         //..
       break;
-      case number.zero : $scope.vote(0); break;
-      case number.one : vote($('.selected')[0].id, 1); break;
-      case number.two : vote($('.selected')[0].id, 2); break;
-      case number.three : vote($('.selected')[0].id, 3); break;
-      case number.four : vote($('.selected')[0].id, 4); break;
-      case number.five : vote($('.selected')[0].id, 5); break;
-      case number.sixe : vote($('.selected')[0].id, 6); break;
-      case number.seven : vote($('.selected')[0].id, 7); break;
-      case number.eight : vote($('.selected')[0].id, 8); break;
-      case number.nine : vote($('.selected')[0].id, 9); break;
+      case 'zero' : $scope.vote(0); break;
+      case 'one' : vote($('.selected')[0].id, 1); break;
+      case 'two' : vote($('.selected')[0].id, 2); break;
+      case 'three' : vote($('.selected')[0].id, 3); break;
+      case 'four' : vote($('.selected')[0].id, 4); break;
+      case 'five' : vote($('.selected')[0].id, 5); break;
+      case 'sixe' : vote($('.selected')[0].id, 6); break;
+      case 'seven' : vote($('.selected')[0].id, 7); break;
+      case 'eight' : vote($('.selected')[0].id, 8); break;
+      case 'nine' : vote($('.selected')[0].id, 9); break;
     }
   });
-  
-  */
   
 }

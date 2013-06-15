@@ -1,4 +1,4 @@
-
+  
     body{
       font-family: "Gill Sans", "Open Sans", Corbel, Consolas;
       background: #000;
@@ -952,17 +952,33 @@ body .modal.fade.in {
     top:0;
     bottom:0;
     -webkit-transition:all 1s ease-in-out;
-
     display: block;
     background: black;
   }
 
-  #wall.focus #shim{
-    opacity: 0.7;
-    z-index: 10;
-    display: block;
-    position: fixed;
+  #wall.focus img.selected{
+    -webkit-filter: blur(0);
+    filter: blur(0);
+    transition-delay: 0;
+    -webkit-transition-delay: 0;
+    opacity: 1;
   }
+
+  #wall.focus #shim{
+    z-index: 10;
+  }
+
+  #wall.focus img{
+    transition-delay: 1s;
+    opacity: 0.4;
+  }
+/*
+  #wall.focus img {
+    -webkit-filter: blur(10px);
+    transition-delay: 1s;
+    -webkit-transition-delay: 1s;
+  }
+  */
 
   #wall.fullscreen .fullscreen {
     display: none;
@@ -1050,6 +1066,9 @@ body .modal.fade.in {
 #wall .meta{
   background:rgba(0,0,0,0.5);
   padding:5px;
+    -webkit-filter: blur(5px);
+  filter: blur(5px);
+
   margin:0;
 }
 

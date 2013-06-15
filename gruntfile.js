@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         tasks:['copy', 'concat', 'simplemocha']
       },
       test:{
-        files:['*.js','server/*.js', 'models/*.js'],
+        files:['server/*.js', 'models/*.js'],
         tasks:['simplemocha:dev']
 
       }

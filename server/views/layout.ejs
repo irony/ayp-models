@@ -60,15 +60,19 @@
 
             </ul>
             <ul class="nav pull-right">
-             <%if (user) {%>  
-               
+            <%if (user) {%>  
                <li class="pull-right"><a href="/logout">
                 <%if (user && user.accounts.facebook) {%>
                 <img src="//graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
                <% }%>Logout</a></li>
-             <%} else {%>
-               <li class="pull-right"><a href="#login" role="button" data-toggle="modal">Login or register</a></li>
-             <%}%>
+            <%} else {%>
+               <li>
+                <a href="#login" role="button" data-toggle="modal">
+                  <span ng-click="register = false">Login</span>
+                  <span ng-click="register = true">or register</span>
+                </a>
+              </li>
+            <%}%>
             </ul>
           </div>
 
@@ -86,20 +90,20 @@
 
           <div class="modal-header">
             <h1>
-              Login or register
+              {{!register && 'Login' || 'Register account'}}
               <a class="close" data-dismiss="modal" href="/me/wall" >&times;</a>
             </h1>
             <p class="lead">
-              Login if you have an account or use the same form to register a new account. We will not spam your wall.
+              Use your email or our social login button. We respect your privacy.
             </p>
           </div>
           <div class="modal-body" >
 
             <div class="span4">
               <form class="well clearfix" action="/login" method="post">
-                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="New or existing email">
+                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="Your email">
                 <input class="span3" type="password" required pattern=".{4,}" ng-model="password" id="password" placeholder="Password">
-                <input type="submit" class="btn span3 pull-left btn-success" value="Login" ng-show="!register" ng-click="submit">
+                <input type="submit" class="btn span3 pull-left btn-success" ng-model="Login" ng-show="!register" ng-click="submit">
 
                 <label ng-show="register"><input type="checkbox" ng-model="agree"> I agree with the terms &amp; conditions</a>
                 <input type="submit" class="btn span3 pull-left btn-success" value="Register" ng-show="register" ng-click="submit">

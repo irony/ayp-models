@@ -34,9 +34,17 @@ function AppController($scope, $http)
     });
   });
 
+  $scope.$watch('scrollPosition', function(value){
+
+    // force reload check when scrolling to top.
+    if (value < 0 && !$scope.stats) $scope.stats = null;
+
+  });
+
   $scope.$watch('stats', function(value){
     if (!value){
-
+      console.log('loading stats');
+      
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 

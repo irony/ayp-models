@@ -1,5 +1,5 @@
 function LoginController($http, $scope){
-  $scope.register = undefined;
+//  $scope.register = undefined;
   $scope.agree = false;
   $scope.username = undefined;
   $scope.password = undefined;
