@@ -20,7 +20,7 @@ function WallController($scope, $http){
   $scope.scroll = function(){
     filterView($scope.scrollPosition - lastPosition);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2})[0];
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){

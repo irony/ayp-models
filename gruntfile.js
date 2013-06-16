@@ -21,12 +21,13 @@ module.exports = function(grunt) {
     bowerful: {
       all : {
         store: 'components',
-        include : ['jquery','bootstrap', 'angular'],
+        include : ['jquery','bootstrap', 'angular', 'caman'],
         dest : 'client/build',
         packages: {
             jquery: '',
             bootstrap: '',
-            angular : ''
+            angular : '',
+            caman : ''
         },
       }
     },
@@ -36,6 +37,7 @@ module.exports = function(grunt) {
         files: [
           {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/', flatten: true},
           {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/js/', flatten: true},
+          {expand: true, src: ['components/async/lib/async.js'], dest: 'client/js/', flatten: true},
           {expand: true, src: ['components/font-awesome/css/*.css'], dest: 'client/build/'},
           {expand: true, src: ['components/font-awesome/font/*.*'], dest: 'client/build/'},
         ]
@@ -49,8 +51,9 @@ module.exports = function(grunt) {
     },
     watch:{
       all:{
-        files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'client/js/*.js'],
-        tasks:['copy', 'concat', 'simplemocha']
+
+        files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'client/js/*.js', '-server/build/'],
+        tasks:['copy', 'concat']
       },
       test:{
         files:['server/*.js', 'models/*.js'],
