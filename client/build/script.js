@@ -1595,6 +1595,13 @@ function AppController($scope, $http)
       if ($scope.library.userId !== page.userId || !$scope.library.photos)
         $scope.library = {photos:[], userId : page.userId }; // reset if we are logged in as new user
 
+
+
+      _.each(page.photos, function(photo){
+        photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
+        $scope.library.photos.push(photo);
+      });
+
       // next is a cursor to the next date in the library
       if (page.next){
         console.log('next more', page.next);
@@ -1606,11 +1613,6 @@ function AppController($scope, $http)
         return done && done(null, $scope.library.photos);
       }
 
-      _.each(page.photos, function(photo){
-        photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
-        $scope.library.photos.push(photo);
-      });
-
     })
     .error(function(err){
       console.log('library error', err);
@@ -1620,7 +1622,7 @@ function AppController($scope, $http)
 
   function sortAndRemoveDuplicates(){
     $scope.library.photos.sort(function(a,b){
-        return b - a;
+        return b.taken - a.taken;
     });
 
     var i = $scope.library.photos.length;
@@ -1688,7 +1690,7 @@ function AppController($scope, $http)
 
           if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
 
-          $scope.library.photos.map(function(photo){
+          photos.map(function(photo){
             server.photos.update(photo); // update means put == insert or update
           });
 
@@ -2790,7 +2792,7 @@ function WallController($scope, $http){
     lastViewPosition = $scope.scrollPosition;
 
     $scope.photosInView = $scope.photos.filter(function(photo){
-        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
+        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2.5 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
     }).sort(function(a,b){
       return a.vote - b.vote;
     });

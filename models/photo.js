@@ -20,7 +20,7 @@ client.on('error', function(err){
 
 var PhotoSchema = new mongoose.Schema({
       path : { type: String},
-      taken : { type: Date},
+      taken : { type: Date, index:true},
       modified : { type: Date},
       source : { type: String},
       mimeType : { type: String},
@@ -31,7 +31,7 @@ var PhotoSchema = new mongoose.Schema({
 
       // pointer to the current user's copy - will only be populated in runtime
       mine : { type:  Schema.Types.Mixed},
-      exif : {},
+      exif : {}, // select:false
       ratio : {type:Number},
       store : {type:Schema.Types.Mixed},
 
