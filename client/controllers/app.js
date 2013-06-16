@@ -194,7 +194,7 @@ function AppController($scope, $http)
           console.log('done', $scope.library);
           sortAndRemoveDuplicates();
           
-          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, user: $scope.library.userId});
+          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
 
           $scope.library.photos.map(function(photo){
             server.photos.update(photo); // update means put == insert or update
@@ -208,7 +208,7 @@ function AppController($scope, $http)
           console.log('done', $scope.library);
           sortAndRemoveDuplicates();
 
-          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, user: $scope.library.userId});
+          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
 
           $scope.library.photos.map(function(photo){
             server.photos.update(photo); // update means put == insert or update
