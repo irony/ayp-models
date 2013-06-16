@@ -1664,6 +1664,9 @@ function AppController($scope, $http)
       })
       .done( function ( photos ) {
         console.log('query ok', photos);
+        
+        // descending order
+        photos.reverse();
 
         $scope.library.photos = photos;
 
@@ -2797,7 +2800,7 @@ function WallController($scope, $http){
     lastViewPosition = $scope.scrollPosition;
 
     $scope.photosInView = $scope.photos.filter(function(photo){
-        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 2.5 || $scope.height) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 2 || $scope.height);
+        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 5 || $scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 5 || $scope.height);
     }).sort(function(a,b){
       return a.vote - b.vote;
     });

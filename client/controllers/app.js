@@ -186,6 +186,9 @@ function AppController($scope, $http)
       })
       .done( function ( photos ) {
         console.log('query ok', photos);
+        
+        // descending order
+        photos.reverse();
 
         $scope.library.photos = photos;
 
