@@ -24,11 +24,13 @@ module.exports = function(done){
     async.map((users || []), function(user, userDone){
   
       // find all their photos and sort them on interestingness
-      Photo.find({'owners': user._id}, 'copies.' + user._id + '.rank ')
-      .sort('-copies.' + user._id + '.interestingness')
-      .limit(5000)
+      Photo.find({'owners': user._id}, 'copies.' + user._id + '.rank copies.' + user._id + '.interestingness')
       .exec(function(err, photos){
         if (err) throw err;
+
+        photos.sort(function(a,b){
+          return b.copies[user._id].interestingness - a.copies[user._id].interestingness;
+        });
       
         var rank = 0;
         

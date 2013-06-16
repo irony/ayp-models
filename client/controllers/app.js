@@ -202,6 +202,8 @@ function AppController($scope, $http)
             server.photos.update(photo); // update means put == insert or update
           });
 
+          console.log('more update done')
+
         });
 
         // ... and from the beginning
@@ -215,6 +217,9 @@ function AppController($scope, $http)
           photos.map(function(photo){
             server.photos.update(photo); // update means put == insert or update
           });
+          
+          console.log('latest update done')
+
 
         });
       });
