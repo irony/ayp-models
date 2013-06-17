@@ -48,7 +48,7 @@ function AppController($scope, $http)
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 
-        if ($scope.library.modified && $scope.stats.modified > $scope.library.modified)
+        if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
         {
           loadLatest($scope.library.modified);
         }
@@ -160,7 +160,7 @@ function AppController($scope, $http)
 
   function initialize(){
 
-    $scope.library = localStorage && localStorage.getObject('library');
+    $scope.library = localStorage && localStorage.getObject('library') || {modified:null, photos:[],userId:null};
     $scope.library.photos = $scope.library.photos || [];
 
 
