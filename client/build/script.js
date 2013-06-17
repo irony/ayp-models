@@ -2594,57 +2594,65 @@ function AppController($scope, $http)
 
   function initialize(){
 
-    $scope.library = localStorage && localStorage.getObject('library') || {photos:[]};
+    $scope.library = localStorage && localStorage.getObject('library');
+    $scope.library.photos = $scope.library.photos || [];
+
 
     if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
 
-    db.open({
-      server: 'my-app',
-      version: 1,
-      schema: {
-        photos: {
-          key: { keyPath: 'taken' , autoIncrement: false }
-        }
-      }
-    }).done( function ( s ) {
-      server = s;
-
-      console.log('indexdb opened ok', s);
-
-      server.photos.query()
-      .all()
-      .execute()
-      .fail(function(err){
-        console.log('db fail', err);
-      })
-      .done( function ( photos ) {
-        console.log('query ok', photos);
-        
-        // descending order
-        $scope.library.photos = photos.reverse();
-
-        async.parallel({
-          end : function(done){
-            var lastPhoto = $scope.library.photos.slice(-1)[0];
-            loadMore(lastPhoto && lastPhoto.taken, done);
-          },
-          beginning : function(done){
-            loadMore(null, done);
-          },
-          changes : function(done){
-            var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
-            if (lastModifyDate) loadLatest(lastModifyDate, done);
+    async.parallel({
+      end : function(done){
+        var lastPhoto = ($scope.library.photos || []).slice(-1)[0];
+        loadMore(lastPhoto && lastPhoto.taken, done);
+      },
+      beginning : function(done){
+        loadMore(null, done);
+      },
+      changes : function(done){
+        var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
+        if (lastModifyDate) loadLatest(lastModifyDate, done);
+      },
+      db : function(done){
+        db.open({
+          server: 'my-app',
+          version: 1,
+          schema: {
+            photos: {
+              key: { keyPath: 'taken' , autoIncrement: false }
+            }
           }
-        }, function(result){
+        }).done( function ( s ) {
+          server = s;
 
-          console.log('done', $scope.library);
-          sortAndRemoveDuplicates();
+          console.log('indexdb opened ok', s);
 
-          if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
-          server.photos.update.apply(photos); // update means put == insert or update
+          server.photos.query()
+          .all()
+          .execute()
+          .fail(function(err){
+            console.log('db fail', err);
+            done(err);
+          })
+          .done( function ( photos ) {
+            // descending order
+            $scope.library.photos.concat(photos.reverse());
+            done(null, photos);
+          });
         });
-      });
+      }
+    }, function(result){
+
+      console.log('done async load', $scope.library);
+      sortAndRemoveDuplicates();
+
+      if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
+      if (server) {
+        server.photos.update.apply($scope.library.photos); // update means put == insert or update
+      } else {
+        // load every time as fallback
+      }
     });
+
 
 
   }
@@ -2682,11 +2690,13 @@ return openDialog;})
     element.bind('contextmenu', function(event) {
       var fn = $parse(attr.rightClick);
       if (fn){
-        event.preventDefault();
         scope.$apply(function() {
-          fn(scope, {
+          if (fn(scope, {
             $event: event
-          });
+          })) {
+            // only stop menu if we have something meaningful to do (returns true)
+            event.preventDefault();
+          }
         });
         return false;
       }
@@ -3109,7 +3119,8 @@ function PhotoController ($scope, $http){
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
     });
-
+    
+    return true;
   };
 
   $scope.click = function(photo){
@@ -3856,7 +3867,6 @@ function WallController($scope, $http){
 
 
   document.addEventListener( 'keyup', function( e ) {
-    console.log('arguments', arguments)
     var keyCode = e.keyCode || e.which,
         keys = {
           27: 'esc',

@@ -951,16 +951,12 @@ body .modal.fade.in {
     right:0;
     top:0;
     bottom:0;
-    -webkit-transition:all 1s ease-in-out;
+    -webkit-transition:all 2s ease-in-out;
     display: block;
     background: black;
   }
 
   #wall.focus img.selected{
-    -webkit-filter: blur(0);
-    filter: blur(0);
-    transition-delay: 0;
-    -webkit-transition-delay: 0;
     opacity: 1;
   }
 
@@ -969,7 +965,6 @@ body .modal.fade.in {
   }
 
   #wall.focus img{
-    transition-delay: 1s;
     opacity: 0.4;
   }
 /*

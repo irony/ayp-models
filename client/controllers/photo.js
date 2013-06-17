@@ -30,7 +30,8 @@ function PhotoController ($scope, $http){
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
     });
-
+    
+    return true;
   };
 
   $scope.click = function(photo){

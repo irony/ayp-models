@@ -223,7 +223,6 @@ function WallController($scope, $http){
 
 
   document.addEventListener( 'keyup', function( e ) {
-    console.log('arguments', arguments)
     var keyCode = e.keyCode || e.which,
         keys = {
           27: 'esc',
