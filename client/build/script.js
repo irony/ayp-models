@@ -3736,9 +3736,9 @@ function WallController($scope, $http){
   });
 
   function filterView(delta){
-    if (delta && Math.abs(delta) > $scope.height) return window.stop();
+    if (delta && Math.abs(delta) > $scope.height) return;
 
-    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return window.stop();
+    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return;
 
     lastViewPosition = $scope.scrollPosition;
 
