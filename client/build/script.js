@@ -3844,7 +3844,7 @@ function WallController($scope, $http){
 
 
      // compensate for bigger / smaller screens
-     $scope.height = $scope.height * (window.innerWidth / 1024);
+     $scope.height = $scope.height * (window.innerWidth / 1920);
 
 
 
