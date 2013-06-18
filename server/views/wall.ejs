@@ -15,7 +15,7 @@
               <div ng-show="stats && !photosInView.length" class="container row stats" ng-cloak>
                 <i class="span3 icon icon-camera supersize"></i>
                 <h1>Import summary</h1>
-                <h2 class="span6" ng-show="!stats.all">This app is super boring without any photos. Add some by dragging a folder here or import from the menu. </h2>
+                <h2 class="span6" ng-show="!stats.all">This app will be super boring without any photos, try adding some by dragging a folder here or import from the menu. </h2>
                 <div ng-show="stats.all">
                   <h3>{{stats.all}} photos are imported</h3>
                   <h3>{{library.photos.length}} of {{stats.thumbnails}} metadata are synced to this computer</h3>
@@ -23,7 +23,7 @@
                 </div>
               </div>
             
-              <img load="console.log(this)" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}}" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}} lazy" ng-src="{{photo.src}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
           <div class="slider" ng-show="!selectedPhoto">
               <label class="pull-right  muted">All your photos</label>

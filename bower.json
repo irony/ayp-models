@@ -1,0 +1,7 @@
+{
+  "name": "allyourphotos",
+  "version": "0.0.0",
+  "dependencies": {
+    "bootstrap-daterangepicker": "latest"
+  }
+}

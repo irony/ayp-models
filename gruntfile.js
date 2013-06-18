@@ -21,14 +21,13 @@ module.exports = function(grunt) {
     bowerful: {
       all : {
         store: 'components',
-        include : ['jquery','bootstrap', 'angular', 'caman', 'bootstrap-daterangepicker'],
+        include : ['jquery','bootstrap', 'angular', 'caman'],
         dest : 'client/build',
         packages: {
             jquery: '',
             bootstrap: '',
             angular : '',
-            caman : '',
-            'bootstrap-daterangepicker' : ''
+            caman : ''
         },
       }
     },
