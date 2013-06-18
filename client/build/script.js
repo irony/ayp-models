@@ -2870,16 +2870,12 @@ return openDialog;})
 .directive('datepicker', function() {
  return function(scope, element, attrs) {
 
-  element.daterangepicker(
+  $(element).daterangepicker(
   {
     format: 'yyyy-MM-dd',
     ranges: {
       'Today': ['today', 'today'],
-      'Yesterday': ['yesterday', 'yesterday'],
-      'Last 7 Days': [Date.today().add({ days: -6 }), 'today'],
-      'Last 30 Days': [Date.today().add({ days: -29 }), 'today'],
-      'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
-      'Last Month': [Date.today().moveToFirstDayOfMonth().add({ months: -1 }), Date.today().moveToFirstDayOfMonth().add({ days: -1 })]
+      'Yesterday': ['yesterday', 'yesterday']
     }
   },
   function(start, end) {
@@ -3149,10 +3145,6 @@ function PhotoController ($scope, $http){
     photo.vote = 10;
   };
 
-
-  $scope.starClass = function(photo){
-    return photo && photo.starred ? "icon-heart" : "icon-heart-empty";
-  };
 }
 var loadTimeout;
 
@@ -3744,9 +3736,9 @@ function WallController($scope, $http){
   });
 
   function filterView(delta){
-    if (delta && Math.abs(delta) > $scope.height) return;
+    if (delta && Math.abs(delta) > $scope.height) return window.stop();
 
-    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return;
+    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return window.stop();
 
     lastViewPosition = $scope.scrollPosition;
 
@@ -3765,10 +3757,16 @@ function WallController($scope, $http){
     var left = 0;
     var maxWidth = window.innerWidth;
     var lastPhoto;
-    $scope.height = $scope.zoomLevel > 8 && 120 ||
+    $scope.height = $scope.zoomLevel > 8 && 110 ||
                     $scope.zoomLevel > 6 && 120 ||
                     $scope.zoomLevel < 2 && 480 ||
                     240;
+
+
+     // compensate for bigger / smaller screens
+     $scope.height = $scope.height * (window.innerWidth / 1024);
+
+
 
     var row = [];
     var group = [];

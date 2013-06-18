@@ -60,8 +60,4 @@ function PhotoController ($scope, $http){
     photo.vote = 10;
   };
 
-
-  $scope.starClass = function(photo){
-    return photo && photo.starred ? "icon-heart" : "icon-heart-empty";
-  };
 }

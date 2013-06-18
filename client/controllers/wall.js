@@ -100,9 +100,9 @@ function WallController($scope, $http){
   });
 
   function filterView(delta){
-    if (delta && Math.abs(delta) > $scope.height) return;
+    if (delta && Math.abs(delta) > $scope.height) return window.stop();
 
-    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return;
+    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return window.stop();
 
     lastViewPosition = $scope.scrollPosition;
 
@@ -121,10 +121,16 @@ function WallController($scope, $http){
     var left = 0;
     var maxWidth = window.innerWidth;
     var lastPhoto;
-    $scope.height = $scope.zoomLevel > 8 && 120 ||
+    $scope.height = $scope.zoomLevel > 8 && 110 ||
                     $scope.zoomLevel > 6 && 120 ||
                     $scope.zoomLevel < 2 && 480 ||
                     240;
+
+
+     // compensate for bigger / smaller screens
+     $scope.height = $scope.height * (window.innerWidth / 1024);
+
+
 
     var row = [];
     var group = [];
