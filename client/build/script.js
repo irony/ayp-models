@@ -3822,7 +3822,7 @@ function WallController($scope, $http){
 
     lastViewPosition = $scope.scrollPosition;
 
-    $scope.photosInView = $scope.photos.filter(function(photo){
+    $scope.photosInView = _.filter($scope.photos, function(photo){
         return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 5 || $scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 5 || $scope.height);
     }).sort(function(a,b){
       return a.vote - b.vote;
