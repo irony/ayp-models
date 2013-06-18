@@ -297,6 +297,19 @@ return openDialog;})
     });
   };
 })
+.directive('lazy', function($parse){
+  
+  return function(scope, element, attr){
+    element.bind('load', function(event) {
+      var fn = $parse(attr.lazy);
+      if (fn){
+        scope.$apply(function() {
+          fn();
+        });
+      }
+    });
+  };
+})
 .directive('dropzone', function($parse){
   return function(scope, element, attr){
     $(document).bind('dragover', function(e){e.preventDefault()});

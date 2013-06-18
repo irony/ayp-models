@@ -99,6 +99,10 @@ function WallController($scope, $http){
 
   });
 
+  function visible(photo){
+    return photo.top > $scope.scrollPosition - ($scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight + ($scope.height);
+  }
+
   function filterView(delta){
     if (delta && Math.abs(delta) > $scope.height) return;
 
@@ -112,16 +116,26 @@ function WallController($scope, $http){
    
     while(i++ <  $scope.photos.length){
       var photo = $scope.photos[i];
-      var top = photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 5 || $scope.height * 2.5);
-      var bottom =  photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 5 || $scope.height);
       
-      if (top && bottom) photosInView.push(photo);
-      if ( top && ! bottom) break;
+      if (visible(photo)) {
+        photosInView.push(photo);
+      } else{
+        if (photosInView.length) break;
+      }
     }
 
     $scope.photosInView = photosInView.sort(function(a,b){
       return a.vote - b.vote;
     });
+
+    async.mapLimit($scope.photosInView, 9, function(photo, done){
+      photo.visible = visible(photo);
+      if (!photo.visible) return done();
+      return photo.loaded = done;
+    }, function(){
+      // page done
+    });
+
     if(!$scope.$$phase) $scope.$apply();
   }
 
