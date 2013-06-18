@@ -2818,7 +2818,7 @@ return openDialog;})
       var fn = $parse(attr.lazy);
       if (fn){
         scope.$apply(function() {
-          fn();
+          fn(scope);
         });
       }
     });
@@ -3200,7 +3200,7 @@ function PhotoController ($scope, $http){
 
   $scope.rightClick = function(photo){
     if ($scope.selectedPhoto === photo)
-      return $scope.selectedPhoto = null;
+      return $scope.selected(null);
     
     var meta = $('#meta')[0];
     $scope.selectedPhoto = photo;
@@ -3762,6 +3762,12 @@ function WallController($scope, $http){
     $scope.selectedPhoto = photo;
   };
 
+
+
+  $scope.$watch('stats', function(value){
+    if ($scope.stats && $scope.stats.all && !$scope.totalHeight) $scope.totalHeight = $scope.height * $scope.stats.all / 5; // default to a height based on the known amount of images
+  });
+
   $scope.$watch('photoInCenter', function(value){
     $scope.q = value && value.taken;
   });
@@ -3857,10 +3863,13 @@ function WallController($scope, $http){
       return a.vote - b.vote;
     });
 
-    async.mapLimit($scope.photosInView, 9, function(photo, done){
+    async.mapLimit($scope.photosInView, 16, function(photo, done){
       photo.visible = visible(photo);
       if (!photo.visible) return done();
-      return photo.loaded = done;
+      return photo.loaded = function(){
+        done(); // let the image load attribute determine when the image is loaded
+        photo.loaded = null;
+      };
     }, function(){
       // page done
     });

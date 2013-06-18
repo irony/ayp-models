@@ -304,7 +304,7 @@ return openDialog;})
       var fn = $parse(attr.lazy);
       if (fn){
         scope.$apply(function() {
-          fn();
+          fn(scope);
         });
       }
     });

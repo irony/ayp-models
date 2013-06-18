@@ -20,14 +20,11 @@ module.exports = function(grunt) {
     },
     bowerful: {
       all : {
-        store: 'components',
-        include : ['jquery','bootstrap', 'angular', 'caman'],
         dest : 'client/build',
         packages: {
-            jquery: '',
-            bootstrap: '',
-            angular : '',
-            caman : ''
+            jquery: {select:'jquery.min.js'},
+            bootstrap: {select:['bootstrap.min.js', 'bootstrap-responsive.css']},
+            angular : {select:'bootstrap.min.js'}
         },
       }
     },
