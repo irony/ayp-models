@@ -3822,9 +3822,20 @@ function WallController($scope, $http){
 
     lastViewPosition = $scope.scrollPosition;
 
-    $scope.photosInView = _.filter($scope.photos, function(photo){
-        return photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 5 || $scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 5 || $scope.height);
-    }).sort(function(a,b){
+    // optimized filter instead of array.filter.
+    var photosInView = [];
+    var i = 0;
+   
+    while(i++ <  $scope.photos.length){
+      var photo = $scope.photos[i];
+      var top = photo.top > $scope.scrollPosition - (delta < 0 && $scope.height * 5 || $scope.height * 2.5);
+      var bottom =  photo.top < $scope.scrollPosition + window.innerHeight + (delta > 0 && $scope.height * 5 || $scope.height);
+      
+      if (top && bottom) photosInView.push(photo);
+      if ( top && ! bottom) break;
+    }
+
+    $scope.photosInView = photosInView.sort(function(a,b){
       return a.vote - b.vote;
     });
     if(!$scope.$$phase) $scope.$apply();

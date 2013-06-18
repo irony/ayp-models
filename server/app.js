@@ -58,7 +58,7 @@ exports.init = function() {
       app.use(express.bodyParser());
       app.use(express.methodOverride());
 
-      var sessionOptions = { cookieParser: express.cookieParser, secret: config.sessionSecret, store: store };
+      var sessionOptions = { cookieParser: express.cookieParser, secret: config.sessionSecret, store: store, maxAge : 365 * 24 * 60 * 60 * 1000 };
       app.use(express.session(sessionOptions));
       app.io.set("authorization", passportsio.authorize(sessionOptions));
 
