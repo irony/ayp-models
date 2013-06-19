@@ -956,17 +956,6 @@ body .modal.fade.in {
     background: black;
   }
 
-  #wall.focus img.selected{
-    opacity: 1;
-  }
-
-  #wall.focus #shim{
-    z-index: 10;
-  }
-
-  #wall.focus img{
-    opacity: 0.3;
-  }
 /*
   #wall.focus img {
     -webkit-filter: blur(10px);
@@ -1043,8 +1032,25 @@ body .modal.fade.in {
     opacity:1;
   }
 
+  #wall.focus img.selected{
+    opacity: 1;
+  }
+
+  #wall.focus #shim{
+    z-index: 10;
+  }
+
+  #wall.focus img, #wall.focus img.done{
+    opacity: 0.1;
+  }
+
+  #wall.focus img.inactive{
+    opacity: 0;
+  }
+
   #wall img{
-    opacity:0;
+    opacity:0.1;
+    background: #555;
     border: none;
     position: absolute;
     -webkit-transition: all 0.7s cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
