@@ -67,7 +67,7 @@ function AppController($scope, $http)
   // photos or recently added photos without loading the whole library again.
   function loadLatest(modified, done){
 
-    $http.get('/api/library', {params: {modified:modified}})
+    $http.get('/api/library', {params: {modified:modified}, cache: true})
     .success(function(page){
 
       if (!page || !page.photos) return;
@@ -109,7 +109,7 @@ function AppController($scope, $http)
 
   // Load library based on photo taken, this will recurse until it reaches the end of the library
   function loadMore(taken, done){
-    $http.get('/api/library', {params: {taken:taken || new Date().getTime() }})
+    $http.get('/api/library', {params: {taken:taken || new Date().getTime() }, cache: true})
     .success(function(page){
 
       if (!page || !page.photos || !page.photos.length) return done && done();

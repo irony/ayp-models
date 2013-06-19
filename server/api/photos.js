@@ -135,7 +135,6 @@ module.exports = function(app){
 
       async.map((photos || []), function(photo, done){
         photo.metadata = null;
-        photo.src = photo.store && photo.store.thumbnail && photo.store.thumbnail.url || '/img/thumbnail/' + photo.source + '/' + photo._id;
         return done(null, photo);
       }, function(err, photos){
         return res.json(photos);
@@ -152,60 +151,83 @@ module.exports = function(app){
 
     if (!req.user) return res.send('Login first');
 
-    console.log('user', typeof(req.user._id));
-
+    // first check e-tag, this will be adding a little more time but it is worth it?
     async.parallel({
-      userId : function(done){
-        return done(null, req.user._id);
-      },
       total : function(done){
-        console.log('found total');
         Photo.find({'owners': req.user._id}).count(done);
       },
       modified: function  (done) {
         Photo.findOne({'owners': req.user._id}, 'modified')
           .sort({'modified': -1})
           .exec(function(err, photo){
-            done(err, photo && photo.modified);
+            return done(err, photo && photo.modified);
           });
       },
-      photos : function(done){
-
-        // return all photos with just bare minimum information for local caching
-        Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken source ratio store mimeType')
-    //      .sort('-copies.' + req.user._id + '.interestingness')
-        .where('taken').lt(req.query.taken || new Date())
-        .where('modified').gt(req.query.modified || new Date(1900,0,1))
-        .where('store.thumbnail').exists()
-        .sort(req.query.modified ? {'modified' : 1} : {'taken' : -1})
-        .skip(req.query.skip)
-        .limit(parseInt(limit,10) +  1)
-        .exec(function(err, photos){
-          console.log('result', err || photos && photos.length);
-
-          async.map((photos || []), function(photo, next){
-            var mine = photo.copies[req.user._id] || {};
-            var vote = mine.vote || (mine.calculatedVote);
-            return next(null, {
-              _id : photo._id,
-              taken:photo.taken && photo.taken.getTime(),
-              src: global.s3.signedUrl(
-                  '/thumbnail/' + photo.source + '/' + photo._id
-                , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              ).replace(baseUrl, '$') || null,
-              vote: Math.floor(vote),
-              ratio: photo.ratio
-            });
-
-          }, done);
-        });
+      userId : function(done){
+          return done(null, req.user._id);
       }
     }, function(err, results){
-        var next = results.photos.length > limit && results.photos.pop()[req.query.modified ? 'modified' : 'taken'] || null;
-        results.next = next; //(results.photos.length === limit) && last.taken || null;
-        results.baseUrl = baseUrl;
-        res.json(results);
+
+      var etag = results.total + '-' + results.modified.getTime();
+      res.setHeader('Last-Modified', results.modified);
+      res.setHeader('ETag', etag);
+
+      res.setHeader("Cache-Control", "public");
+      res.setHeader("Max-Age", 0);
+
+      if (req.headers['if-none-match'] === etag.toString()) {
+        res.statusCode = 304;
+        return res.end();
+      } else {
+        console.debug(req.headers);
+      }
+
+      res.setHeader("Cache-Control", "max-age=604800, private");
+
+      // if we have new data, let's query it again
+      async.parallel({
+        photos : function(done){
+
+          // return all photos with just bare minimum information for local caching
+          Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' taken source ratio store mimeType')
+      //      .sort('-copies.' + req.user._id + '.interestingness')
+          .where('taken').lt(req.query.taken || new Date())
+          .where('modified').gt(req.query.modified || new Date(1900,0,1))
+          .where('store.thumbnail').exists()
+          .sort(req.query.modified ? {'modified' : 1} : {'taken' : -1})
+          .skip(req.query.skip)
+          .limit(parseInt(limit,10) +  1)
+          .exec(function(err, photos){
+            console.log('result', err || photos && photos.length);
+
+            async.map((photos || []), function(photo, next){
+              var mine = photo.copies[req.user._id] || {};
+              var vote = mine.vote || (mine.calculatedVote);
+              return next(null, {
+                _id : photo._id,
+                taken:photo.taken && photo.taken.getTime(),
+                src: global.s3.signedUrl(
+                    '/thumbnail/' + photo.source + '/' + photo._id
+                  , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                ).replace(baseUrl, '$') || null,
+                vote: Math.floor(vote),
+                ratio: photo.ratio
+              });
+
+            }, done);
+          });
+        }
+      }, function(err, results){
+
+          var next = results.photos.length > limit && results.photos.pop()[req.query.modified ? 'modified' : 'taken'] || null;
+          results.next = next; //(results.photos.length === limit) && last.taken || null;
+          results.baseUrl = baseUrl;
+
+          return res.json(results);
+
+      });
     });
+
   });
 
   app.get('/api/stats', function(req, res){
