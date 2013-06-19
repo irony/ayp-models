@@ -3863,13 +3863,12 @@ function WallController($scope, $http){
       return a.vote - b.vote;
     });
 
-    async.mapLimit($scope.photosInView, 10, function(photo, done){
-      if (photo.visible) return; // we already have this one
+    async.mapLimit($scope.photosInView, 16, function(photo, done){
       photo.visible = visible(photo);
       if (!photo.visible) return done();
       return photo.loaded = function(){
-        done(); // let the image load attribute determine when the image is loaded
         photo.loaded = null;
+        done(); // let the image load attribute determine when the image is loaded
       };
     }, function(){
       // page done
