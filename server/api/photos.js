@@ -4,6 +4,7 @@ var User = require('../../models/user');
 var InputConnector = require('../connectors/inputConnector');
 var fs = require('fs');
 var path = require('path');
+var moment = require('moment');
 var async = require('async');
 var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('underscore');
@@ -208,7 +209,7 @@ module.exports = function(app){
                 taken:photo.taken && photo.taken.getTime(),
                 src: global.s3.signedUrl(
                     '/thumbnail/' + photo.source + '/' + photo._id
-                  , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                  , moment().add('year', 1).startOf('year').toDate()
                 ).replace(baseUrl, '$') || null,
                 vote: Math.floor(vote),
                 ratio: photo.ratio

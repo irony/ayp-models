@@ -1053,12 +1053,12 @@ body .modal.fade.in {
     background: #555;
     border: none;
     position: absolute;
-    -webkit-transition: all 0.7s cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
-    -webkit-transition: all 0.7s cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-       -moz-transition: all 0.7s cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-        -ms-transition: all 0.7s cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-         -o-transition: all 0.7s cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-            transition: all 0.7s cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
+    -webkit-transition: all 400ms cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
+    -webkit-transition: all 400ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
+       -moz-transition: all 400ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
+        -ms-transition: all 400ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
+         -o-transition: all 400ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
+            transition: all 400ms cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
 
     -webkit-transition-timing-function: cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
     -webkit-transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); 

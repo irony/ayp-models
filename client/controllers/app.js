@@ -127,6 +127,7 @@ function AppController($scope, $http)
 
       // next is a cursor to the next date in the library
       if (page.next){
+        if (_.find($scope.library.photos, {taken:page.next})) return done && done();
         console.log('next more', page.next);
         loadMore(page.next, done);
       } else{

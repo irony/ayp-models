@@ -42,7 +42,8 @@
     "redis": "~0.8.3",
     "longjohn": "*",
     "grunt-simple-mocha": "~0.4.0",
-    "grunt-contrib-watch": "~0.4.4"
+    "grunt-contrib-watch": "~0.4.4",
+    "moment": "~2.0.0"
   },
   "scripts": {
     "start": "nodemon server/server.js",

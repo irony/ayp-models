@@ -2641,6 +2641,7 @@ function AppController($scope, $http)
 
       // next is a cursor to the next date in the library
       if (page.next){
+        if (_.find($scope.library.photos, {taken:page.next})) return done && done();
         console.log('next more', page.next);
         loadMore(page.next, done);
       } else{
@@ -3743,11 +3744,15 @@ function WallController($scope, $http){
   $scope.fullscreen = false;
 
   var lastPosition = null;
-  var lastViewPosition = null;
   var waiting = false;
    
   $scope.scroll = function(){
-    filterView($scope.scrollPosition - lastPosition);
+    var delta = $scope.scrollPosition - lastPosition;
+    if (Math.abs(delta) < $scope.height) return;
+
+    console.log(delta);
+
+    filterView(delta);
     lastPosition = $scope.scrollPosition;
     if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
@@ -3835,15 +3840,11 @@ function WallController($scope, $http){
   });
 
   function visible(photo){
-    return photo.top > $scope.scrollPosition - ($scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight + ($scope.height);
+    return photo.top > $scope.scrollPosition - ($scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
   }
 
   function filterView(delta){
-    if (delta && Math.abs(delta) > $scope.height) return;
 
-    if (delta && Math.abs($scope.scrollPosition - lastViewPosition) < $scope.height) return;
-
-    lastViewPosition = $scope.scrollPosition;
 
     // optimized filter instead of array.filter.
     var photosInView = [];
@@ -3860,7 +3861,7 @@ function WallController($scope, $http){
     }
 
     $scope.photosInView = photosInView.sort(function(a,b){
-      return a.vote - b.vote;
+      return Math.abs($scope.scrollPosition - a.top) - Math.abs($scope.scrollPosition - b.top) - (a.vote - b.vote) * $scope.height;
     });
 
 
