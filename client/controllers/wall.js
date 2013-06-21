@@ -109,8 +109,8 @@ function WallController($scope, $http){
 
   });
 
-  function visible(photo){
-    return photo.top > $scope.scrollPosition - ($scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
+  function visible(photo, delta){
+    return photo.top > $scope.scrollPosition - (window.innerHeight) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
   }
 
   function filterView(delta){
@@ -131,7 +131,8 @@ function WallController($scope, $http){
     }
 
     $scope.photosInView = photosInView.sort(function(a,b){
-      return Math.abs($scope.scrollPosition - a.top) - Math.abs($scope.scrollPosition - b.top) - (a.vote - b.vote) * $scope.height;
+      // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
+      return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
 
