@@ -3748,7 +3748,7 @@ function WallController($scope, $http){
    
   $scope.scroll = function(){
     var delta = $scope.scrollPosition - lastPosition;
-    if (Math.abs(delta) < $scope.height) return;
+    if (Math.abs(delta) < window.innerHeight) return;
 
     console.log(delta);
 
@@ -3865,7 +3865,7 @@ function WallController($scope, $http){
     });
 
 
-    async.mapLimit($scope.photosInView, 10, function(photo, done){
+    async.mapLimit($scope.photosInView, 5, function(photo, done){
       if (photo.visible) return done(); // we already have this one
 
       photo.visible = visible(photo);
