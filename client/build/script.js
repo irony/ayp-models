@@ -3839,8 +3839,8 @@ function WallController($scope, $http){
 
   });
 
-  function visible(photo){
-    return photo.top > $scope.scrollPosition - ($scope.height * 2.5) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
+  function visible(photo, delta){
+    return photo.top > $scope.scrollPosition - (window.innerHeight) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
   }
 
   function filterView(delta){

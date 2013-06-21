@@ -1034,6 +1034,11 @@ body .modal.fade.in {
     opacity: 0.1;
   }
 
+
+  #wall.focus img.selected{
+    opacity: 1;
+  }
+
   #wall.focus img.inactive{
     opacity: 0;
   }
@@ -1042,19 +1047,10 @@ body .modal.fade.in {
     background: #222;
     border: none;
     position: absolute;
-    -webkit-transition: all 800ms cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
-    -webkit-transition: all 800ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-       -moz-transition: all 800ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-        -ms-transition: all 800ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-         -o-transition: all 800ms cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-            transition: all 800ms cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
-
-    -webkit-transition-timing-function: cubic-bezier(0.555, 1, 0.190, 0.960); /* older webkit */
-    -webkit-transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-       -moz-transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-        -ms-transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-         -o-transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); 
-            transition-timing-function: cubic-bezier(0.555, 1.245, 0.190, 0.960); /* custom */
+    -webkit-transition: all 400ms ease-in-out;
+       -moz-transition: all 400ms ease-in-out;
+        -ms-transition: all 400ms ease-in-out;
+         -o-transition: all 400ms ease-in-out;
 }
 
 #wall .flip{
