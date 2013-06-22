@@ -36,7 +36,10 @@ function WallController($scope, $http){
   };
 
   $scope.select = function(photo){
-    if (photo) $scope.photoInCenter = photo;
+    if (photo) {
+      $scope.photoInCenter = photo;
+    }
+
     $scope.selectedPhoto = photo;
   };
 
@@ -63,6 +66,7 @@ function WallController($scope, $http){
         angular.copy(old.original, old);
       }
       old.src = old.src.replace('original', 'thumbnail').split('?')[0];
+      old.class = 'done';
 
       delete old.original;
     }
@@ -167,7 +171,9 @@ function WallController($scope, $http){
       photos: photos,
       top: top,
       height : last && (last.top + last.height - top) || 0,
-      bottom : last && (last.top + last.height) || 0
+      bottom : last && (last.top + last.height) || 0,
+      from : photos[0].taken,
+      to: top.taken
     };
 
     $scope.groups.push(group);
@@ -204,7 +210,7 @@ function WallController($scope, $http){
     var row = [];
     var group = [];
     var height = $scope.height;
-    var padding = 5;
+    var padding = 1;
     var maxWidth = window.innerWidth;
     var found = false;
     var lastRow = null;

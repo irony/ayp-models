@@ -571,6 +571,7 @@ body .navbar-inner{
   line-height: 30px;
   margin-bottom:10px;
   text-transform: capitalize;
+
 }
 
 .clear
@@ -677,8 +678,13 @@ body .navbar-inner{
 }
 
 #wall .group {
-  width: 100%;
+  width: 10%;
   border-left:thin solid #e3e3e3;
+  z-index: 100;
+  color:#fff;
+  font-size: 20px;
+  padding: 10px;
+  text-shadow: 1px solid #000;
 }
 #wall .group:hover {
   border-left:2px solid white;
@@ -1045,6 +1051,7 @@ body .modal.fade.in {
 
   #wall.focus img.selected{
     opacity: 1;
+    display:block;
   }
 
   #wall img{
