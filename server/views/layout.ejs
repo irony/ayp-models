@@ -46,7 +46,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import photos<b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="/auth/dropbox">Dropbox</a></li>
+                  <li><a href="/auth/dropbox" ng-disabled="stats.dropbox">Dropbox {{stats.dropbox && '(' + stats.dropbox + ')'}}</a></li>
                   <li><a href="/auth/instagram">Instagram</a></li>
                   <li><a href="/auth/flickr">Flickr</a></li>
                   <li><a href="/auth/facebook">Facebook</a></li>

@@ -676,9 +676,14 @@ body .navbar-inner{
   display: block;
 }
 
-#wall .group .photo{
-    display: inline;
+#wall .group {
+  width: 100%;
+  border-left:thin solid #e3e3e3;
 }
+#wall .group:hover {
+  border-left:2px solid white;
+}
+
 
 #wall .group .clearfix
 {
@@ -1022,8 +1027,11 @@ body .modal.fade.in {
   }
 
   #wall img.inactive{
-    background: #111;
-    opacity: 0.5;
+    display:none;
+  }
+
+  #wall img.done{
+    display:block;
   }
 
   #wall.focus #shim{
@@ -1039,12 +1047,8 @@ body .modal.fade.in {
     opacity: 1;
   }
 
-  #wall.focus img.inactive{
-    opacity: 0;
-  }
-
   #wall img{
-    background: #222;
+    display:none;
     border: none;
     position: absolute;
     -webkit-transition: all 400ms ease-in-out;

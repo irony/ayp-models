@@ -8,7 +8,7 @@
   <div id="photos" class="photos" >
     <div ng-controller="WallController" >
 
-        <div id="wall" style="height:{{totalHeight}}px;" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus')}}" when-scrolled="scroll()">
+        <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus')}}" when-scrolled="scroll()">
             <div id="shim" ng-click="select(null)"></div>
             <input id="date" ng-model="q" ng-show="q" date-format></input>
 
@@ -22,8 +22,10 @@
                  <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
                 </div>
               </div>
-            
-              <img lazy="photo.loaded()" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}} {{photo.visible && 'visible' || 'inactive'}}" ng-src="{{photo.visible && photo.src || 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <div href="#" class="group" ng-repeat="group in groups" style="position: absolute; top:{{group.top}}px; height: {{group.height}}px;">
+                Group
+              </div>
+              <img lazy="photo.loaded()" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}} {{photo.visible && 'visible' || 'inactive'}}" ng-src="{{photo.visible && photo.src || null}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
           <div class="slider" ng-show="!selectedPhoto">
               <label class="pull-right  muted">All your photos</label>

@@ -118,7 +118,7 @@ function AppController($scope, $http)
         $scope.library = {photos:[], userId : page.userId }; // reset if we are logged in as new user
 
 
-      if (_.find($scope.library.photos, {taken:page.photos[0].taken})) return done && done();
+      // if (_.find($scope.library.photos, {taken:page.photos[0].taken})) return done && done();
 
       _.each(page.photos, function(photo){
         photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
@@ -127,7 +127,7 @@ function AppController($scope, $http)
 
       // next is a cursor to the next date in the library
       if (page.next){
-        if (_.find($scope.library.photos, {taken:page.next})) return done && done();
+        if (_.any($scope.library.photos, {taken:page.next})) return done && done();
         console.log('next more', page.next);
         loadMore(page.next, done);
       } else{
