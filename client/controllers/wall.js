@@ -27,7 +27,7 @@ function WallController($scope, $http){
 
     filterView(delta);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -144,7 +144,6 @@ function WallController($scope, $http){
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
-
     async.mapLimit($scope.photosInView, 5, function(photo, done){
       if (photo.visible) return done(); // we already have this one
 
@@ -165,15 +164,18 @@ function WallController($scope, $http){
 
   function saveGroup(photos){
     var visible = photos.filter(function(a){return a.active });
-    var top = visible.length && visible[0].top || 0;
+    var top = (visible.length && visible[0].top || 0); //+ 20;
     var last = visible.length && visible[visible.length-1] || null;
+
+    //photos.forEach(function(photo){photo.top += 20});
     var group = {
       photos: photos,
       top: top,
       height : last && (last.top + last.height - top) || 0,
       bottom : last && (last.top + last.height) || 0,
       from : photos[0].taken,
-      to: top.taken
+      to: top.taken,
+      name : moment(photos[0].taken).format("dddd D MMM") //+ "(" + moment(photos.slice(-1).pop().taken).from(photos[0].taken, true) + ")"
     };
 
     $scope.groups.push(group);
@@ -229,7 +231,7 @@ function WallController($scope, $http){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (8 * 60 * 60 * 1000);
+      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (6 * 60 * 60 * 1000);
 
       group.push(photo);
       
@@ -266,7 +268,14 @@ function WallController($scope, $http){
       if (gap >= 1 ) {
 
         if (group.length >= 20){
-          if (row.length) closeRow(row, maxWidth);
+          if (row.length > 2) {
+            closeRow(row, maxWidth);
+          }
+          //else{
+          //  lastRow.concat(row);
+          //  closeRow(lastRow);
+          //}
+
           var savedGroup = saveGroup(group);
           console.log(savedGroup);
 

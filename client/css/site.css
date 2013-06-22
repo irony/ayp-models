@@ -563,16 +563,6 @@ body .navbar-inner{
   text-shadow: 0 0 10px rgba(255,255,255,.25);
 }
 
-.group h2{
-  color: #555;
-  padding:0;
-  font-weight: bold;
-  font-size: 28px;
-  line-height: 30px;
-  margin-bottom:10px;
-  text-transform: capitalize;
-
-}
 
 .clear
 {
@@ -677,17 +667,38 @@ body .navbar-inner{
   display: block;
 }
 
+#wall .group:hover {
+  width:15%;
+  background: rgba(0,0,0,0.8);
+    -webkit-transition    :all .2s ease-out-back;
+  -moz-transition       :all .2s ease-out-back;
+  transition            :all .2s ease-out-back;
+
+}
+#wall .group:hover fieldset{
+  display:block;
+}
+
 #wall .group {
-  width: 10%;
+  width: 5%;
   border-left:thin solid #e3e3e3;
   z-index: 100;
   color:#fff;
   font-size: 20px;
   padding: 10px;
-  text-shadow: 1px solid #000;
 }
+
+#wall .group h2{
+  color: rgba(255,255,255,0.8);
+  font-size: 16px;
+  text-shadow: 1px 1px black;
+  margin-top: -10px;
+  white-space: nowrap;
+}
+
 #wall .group:hover {
   border-left:2px solid white;
+  padding-left: 9px;
 }
 
 

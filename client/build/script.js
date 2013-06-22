@@ -2374,86 +2374,6 @@ addEvent(window, "load", loadAllImages);
 
 })();
 
-/* lazyload.js (c) Lorenzo Giuliani
- * MIT License (http://www.opensource.org/licenses/mit-license.html)
- *
- * expects a list of:  
- * `<img src="blank.gif" data-src="my_image.png" width="600" height="400" class="lazy">`
- */
-
-!function(window){
-  var $q = function(q, res){
-        if (document.querySelectorAll) {
-          res = document.querySelectorAll(q);
-        } else {
-          var d=document
-            , a=d.styleSheets[0] || d.createStyleSheet();
-          a.addRule(q,'f:b');
-          for(var l=d.all,b=0,c=[],f=l.length;b<f;b++)
-            l[b].currentStyle.f && c.push(l[b]);
-
-          a.removeRule(0);
-          res = c;
-        }
-        return res;
-      }
-    , addEventListener = function(evt, fn){
-        window.addEventListener
-          ? this.addEventListener(evt, fn, false)
-          : (window.attachEvent)
-            ? this.attachEvent('on' + evt, fn)
-            : this['on' + evt] = fn;
-      }
-    , _has = function(obj, key) {
-        return Object.prototype.hasOwnProperty.call(obj, key);
-      }
-    ;
-
-  function loadImage (el, fn) {
-    var img = new Image()
-      , src = el.getAttribute('data-src');
-    img.onload = function() {
-      if (!! el.parent)
-        el.parent.replaceChild(img, el)
-      else
-        el.src = src;
-
-      fn? fn() : null;
-    }
-    img.src = src;
-  }
-
-  function elementInViewport(el) {
-    var rect = el.getBoundingClientRect()
-
-    return (
-       rect.top    >= 0
-    && rect.left   >= 0
-    && rect.top <= (window.innerHeight || document.documentElement.clientHeight)
-    )
-  }
-
-    var images = new Array()
-      , query = $q('img.lazy')
-      , processScroll = function(){
-          for (var i = 0; i < images.length; i++) {
-            if (elementInViewport(images[i])) {
-              loadImage(images[i], function () {
-                images.splice(i, i);
-              });
-            }
-          };
-        }
-      ;
-    // Array.prototype.slice.call is not callable under our lovely IE8 
-    for (var i = 0; i < query.length; i++) {
-      images.push(query[i]);
-    };
-
-    processScroll();
-    addEventListener('scroll',processScroll);
-
-}(this);
 /**
  * @license
  * Lo-Dash 1.2.1 (Custom Build) lodash.com/license
@@ -2679,7 +2599,7 @@ function AppController($scope, $http)
     $scope.library.photos = $scope.library.photos || [];
 
 
-    if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
+    //if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
 
     async.parallel({
       end : function(done){
@@ -3757,7 +3677,7 @@ function WallController($scope, $http){
 
     filterView(delta);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = $scope.photosInView.filter(function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -3874,7 +3794,6 @@ function WallController($scope, $http){
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
-
     async.mapLimit($scope.photosInView, 5, function(photo, done){
       if (photo.visible) return done(); // we already have this one
 
@@ -3895,15 +3814,18 @@ function WallController($scope, $http){
 
   function saveGroup(photos){
     var visible = photos.filter(function(a){return a.active });
-    var top = visible.length && visible[0].top || 0;
+    var top = (visible.length && visible[0].top || 0); //+ 20;
     var last = visible.length && visible[visible.length-1] || null;
+
+    //photos.forEach(function(photo){photo.top += 20});
     var group = {
       photos: photos,
       top: top,
       height : last && (last.top + last.height - top) || 0,
       bottom : last && (last.top + last.height) || 0,
       from : photos[0].taken,
-      to: top.taken
+      to: top.taken,
+      name : moment(photos[0].taken).format("dddd D MMM") //+ "(" + moment(photos.slice(-1).pop().taken).from(photos[0].taken, true) + ")"
     };
 
     $scope.groups.push(group);
@@ -3959,7 +3881,7 @@ function WallController($scope, $http){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (8 * 60 * 60 * 1000);
+      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (6 * 60 * 60 * 1000);
 
       group.push(photo);
       
@@ -3996,7 +3918,14 @@ function WallController($scope, $http){
       if (gap >= 1 ) {
 
         if (group.length >= 20){
-          if (row.length) closeRow(row, maxWidth);
+          if (row.length > 2) {
+            closeRow(row, maxWidth);
+          }
+          //else{
+          //  lastRow.concat(row);
+          //  closeRow(lastRow);
+          //}
+
           var savedGroup = saveGroup(group);
           console.log(savedGroup);
 
