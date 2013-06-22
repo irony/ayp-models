@@ -97,6 +97,8 @@ function WallController($scope, $http){
 
         // Recalculate all widths and heights in the current window size and vote level
         recalculateSizes();
+        
+        if(!$scope.$$phase) $scope.$apply();
 
         // Waiting is a semaphore for preventing the scoll method of
         // changing the scroll-position until we are done with our filtering.
@@ -113,7 +115,7 @@ function WallController($scope, $http){
   });
 
   function visible(photo, delta){
-    return photo && photo.top > $scope.scrollPosition - (window.innerHeight) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
+    return photo && photo.top > $scope.scrollPosition - (window.innerHeight * 2) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
   }
 
   function filterView(delta){
@@ -126,7 +128,7 @@ function WallController($scope, $http){
     while(i++ <  $scope.photos.length){
       var photo = $scope.photos[i];
       
-      if (visible(photo)) {
+      if (visible(photo, delta)) {
         photosInView.push(photo);
       } else{
         if (photosInView.length) break;
@@ -152,25 +154,25 @@ function WallController($scope, $http){
     }, function(){
       // page done
     });
-
+    
     if(!$scope.$$phase) $scope.$apply();
+
   }
 
-  function saveGroup(group){
-    var visible = group.filter(function(a){return a.top});
+  function saveGroup(photos){
+    var visible = photos.filter(function(a){return a.active });
     var top = visible.length && visible[0].top || 0;
-    var last = visible.length && visible.slice(-1).pop() || null;
-
-    $scope.groups.push({
-      photos: group,
+    var last = visible.length && visible[visible.length-1] || null;
+    var group = {
+      photos: photos,
       top: top,
-      height : last && last.top + last.height - top || 0
-    });
+      height : last && (last.top + last.height - top) || 0,
+      bottom : last && (last.top + last.height) || 0
+    };
 
-    visible.forEach(function(groupPhoto){
-      groupPhoto.left += 15;
-    });
+    $scope.groups.push(group);
 
+    return group;
   }
 
   function closeRow(row, maxWidth){
@@ -178,8 +180,9 @@ function WallController($scope, $http){
     var rowWidth = last.left + last.width;
 
     var percentageAdjustment = maxWidth / (rowWidth);
+
     // adjust height
-    row.forEach(function(photo){
+    row.forEach(function(photo, i){
       photo.left *= percentageAdjustment;
       photo.width *= percentageAdjustment;
       photo.height *= percentageAdjustment;
@@ -201,6 +204,7 @@ function WallController($scope, $http){
     var row = [];
     var group = [];
     var height = $scope.height;
+    var padding = 5;
     var maxWidth = window.innerWidth;
     var found = false;
     var lastRow = null;
@@ -219,49 +223,55 @@ function WallController($scope, $http){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var gap = !nextPhoto || (nextPhoto.taken - photo.taken) / (8 * 60 * 60 * 1000);
+      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (8 * 60 * 60 * 1000);
 
       group.push(photo);
       
       // Only show visible photos
       if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
 
+        photo.active = true;
+
         photo.height = height;
         photo.width = photo.height * (photo.ratio || 1);
-        photo.top = top + 5;
-        photo.left = left + 5;
+        photo.top = top;
+        photo.left = left + padding;
         row.push(lastPhoto = photo);
 
         // should we start a new row after this photo?
         if (photo.left + photo.width > maxWidth){
-
           closeRow(lastRow = row, maxWidth);
           row = [];
-          top += photo.height;
-          left = 0;
-
+          top += photo.height + padding;
+          left = padding;
         } else {
-          left = photo.left + photo.width;
+          left = photo.left + photo.width + padding;
         }
-
-        if (gap) {
-
-          if (group.length >= 20){
-            saveGroup(group);
-          }
-          group = [];
-        }
-
 
         // optimize - when we find the current row directly, just scroll to it directly
         if (!found && $scope.photoInCenter && photo.taken <= $scope.photoInCenter.taken && photo.top) {
           $('body,html').animate({scrollTop: photo.top - window.outerHeight / 2 - $scope.height}, 100);
           found = true;
         }
-
-        return true;
+      } else{
+        photo.active = false;
       }
-      return false;
+
+      if (gap >= 1 ) {
+
+        if (group.length >= 20){
+          if (row.length) closeRow(row, maxWidth);
+          var savedGroup = saveGroup(group);
+          console.log(savedGroup);
+
+          top = savedGroup.bottom + 15;
+          left = 5;
+        }
+        group = [];
+      }
+
+      return photo.active;
+
     }, []);
 
     $scope.nrPhotos = $scope.photos.length || Math.round(($scope.stats && $scope.stats.all * $scope.zoomLevel / 10));

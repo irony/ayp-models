@@ -214,7 +214,7 @@ function AppController($scope, $http)
 
       if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
       if (server) {
-        server.photos.update.apply($scope.library.photos); // update means put == insert or update
+        server.photos.update.call($scope.library.photos); // update means put == insert or update
       } else {
         // load every time as fallback
       }
