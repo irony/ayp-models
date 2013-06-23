@@ -27,13 +27,13 @@ function WallController($scope, $http){
   $scope.scroll = function(){
 
     var delta = $scope.scrollPosition - lastPosition;
-    //if (Math.abs(delta) < window.innerHeight) return;
-
     $scope.scrolling = (Math.abs(delta) > 10);
+
+    // if (Math.abs(delta) < windowHeight/ 2) return;
+
 
     filterView(delta);
     lastPosition = $scope.scrollPosition;
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -124,6 +124,7 @@ function WallController($scope, $http){
           filterView();
           waiting = false;
           $scope.loading = false;
+          $scope.scrolling = false;
 
         }, 500);
 
@@ -139,7 +140,6 @@ function WallController($scope, $http){
   // by using a queue we can make sure we only prioritize loading images that are visible
   var loadQueue = async.queue(function(photo, done){
     if (photo.visible) return done(); // we already have this one
-
     photo.visible = visible(photo);
     if (!photo.visible) return done();
     return photo.loaded = function(){
@@ -153,7 +153,7 @@ function WallController($scope, $http){
 
   function filterView(delta){
 
-    if (Math.abs(delta) < windowHeight) return;
+    // if (Math.abs(delta) < windowHeight) return;
 
     // optimized filter instead of array.filter.
     var photosInView = [];
@@ -169,7 +169,6 @@ function WallController($scope, $http){
       }
     }
 
-
     photosInView = photosInView.sort(function(a,b){
       // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
@@ -177,8 +176,9 @@ function WallController($scope, $http){
 
     utils.filterMerge($scope.photosInView, photosInView);
 
-    var newImages = _.filter($scope.photosInView, function(a){return !a.visible});
+    var newImages = _.filter(photosInView, function(a){return !a.visible});
 
+    loadQueue.tasks = [];
     loadQueue.unshift(newImages);
     
     if(!$scope.$$phase) $scope.$apply();
@@ -361,7 +361,6 @@ function WallController($scope, $http){
     
 
     var current = $scope.photos.indexOf($scope.selectedPhoto);
-    console.log('key', current, keys[keyCode], keyCode);
 
     switch (keys[keyCode]) {
       case 'space' :

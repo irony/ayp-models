@@ -585,6 +585,9 @@ body .navbar-inner{
 #wall:hover.scrolling .slider
 {
   opacity:0;
+  visibility: hidden;
+  -webkit-animation-delay: 0.2s;
+  -moz-animation-delay: 0.2s;
 }
 
 #wall:hover .slider

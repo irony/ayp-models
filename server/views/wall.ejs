@@ -10,7 +10,7 @@
 
         <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus') + ' ' + (scrolling && 'scrolling')}}" when-scrolled="scroll()">
             <div id="shim" ng-click="select(null)"></div>
-            <input id="date" ng-model="q" ng-show="q" date-format></input>
+            <!--<input id="date" ng-model="q" ng-show="q" date-format></input>-->
 
               <div ng-show="stats && !photosInView.length" class="container row stats" ng-cloak>
                 <i class="span3 icon icon-camera supersize"></i>
