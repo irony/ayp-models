@@ -582,6 +582,11 @@ body .navbar-inner{
   margin-top:10px;
 }
 
+#wall:hover.scrolling .slider
+{
+  opacity:0;
+}
+
 #wall:hover .slider
 {
   opacity:0.9;
@@ -632,13 +637,13 @@ body .navbar-inner{
   position: fixed !important;
   bottom: 50px;
   opacity: 0;
-  -webkit-transition: all 0.5s;
+  -webkit-transition: all 0.3s ease;
 
-  background: #000 -webkit-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
-  background: #000    -moz-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
-  background: #000     -ms-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
-  background: #000      -o-linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
-  background: #000         linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000 -webkit-linear-gradient(92deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000    -moz-linear-gradient(92deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000     -ms-linear-gradient(92deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000      -o-linear-gradient(92deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+  background: #000         linear-gradient(92deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.075) 76%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
 
   border-radius: 5px;
   padding-top: 20px;
@@ -647,8 +652,6 @@ body .navbar-inner{
   margin: 0 20%;
   width: 50%;
   padding: 15px;
-    -webkit-transform: translateZ(10px);
-  -webkit-backface-visibility: hidden;
 
 }
 
@@ -667,25 +670,42 @@ body .navbar-inner{
   display: block;
 }
 
-#wall .group:hover {
+#wall .group.active {
   width:15%;
-  background: rgba(0,0,0,0.8);
-    -webkit-transition    :all .2s ease-out-back;
-  -moz-transition       :all .2s ease-out-back;
-  transition            :all .2s ease-out-back;
-
+  background: rgba(0,0,0,0.6);
 }
-#wall .group:hover fieldset{
+
+
+#wall .group fieldset{
+  display:none;
+}
+
+#wall .group:target fieldset{
   display:block;
 }
 
+
+#wall .group h2 small{
+  display: none;
+}
+
+#wall .group.active h2 small{
+  display:block;
+}
+
+#wall .group.inactive
+{
+  width: 5px;
+}
+
 #wall .group {
-  width: 5%;
-  border-left:thin solid #e3e3e3;
-  z-index: 100;
   color:#fff;
   font-size: 20px;
-  padding: 10px;
+  font-weight: 100;
+  padding: 10px 0;
+  -webkit-transition    :all 1s ease-out-back;
+  -moz-transition       :all 1s ease-out-back;
+  transition            :all 1s ease-out-back;
 }
 
 #wall .group h2{
@@ -696,9 +716,17 @@ body .navbar-inner{
   white-space: nowrap;
 }
 
-#wall .group:hover {
+
+
+#wall .group a{
+  height:100%;
+  width: 5px;
+  float:left;
+  border-left:thin solid #e3e3e3;
+}
+
+#wall .group a:hover {
   border-left:2px solid white;
-  padding-left: 9px;
 }
 
 
@@ -1056,11 +1084,13 @@ body .modal.fade.in {
   }
 
   #wall.focus img, #wall.focus img.done{
-    opacity: 0.1;
+    -webkit-animation-delay: 3s;
+    opacity:0;
   }
 
 
   #wall.focus img.selected{
+    -webkit-animation-delay: 0;
     opacity: 1;
     display:block;
   }

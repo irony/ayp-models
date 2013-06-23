@@ -14,6 +14,11 @@ function AppController($scope, $http)
   appScope = $scope;
   $scope.stats = localStorage && localStorage.getObject('stats');
 
+  setInterval(function(){
+    $scope.stats = null; // reset and load new every 30 seconds
+  }, 30000);
+
+
   socket.on('connect', function(data){
     console.log('connect');
     socket.on('trigger', function(trigger){
@@ -52,10 +57,6 @@ function AppController($scope, $http)
         {
           loadLatest($scope.library.modified);
         }
-
-        setInterval(function(){
-          $scope.stats = null; // reset and load new every 30 seconds
-        }, 30000);
       }).error(function(err){
         console.log('stats error');
       });
@@ -203,6 +204,7 @@ function AppController($scope, $http)
           .done( function ( photos ) {
             // descending order
             $scope.library.photos.concat(photos.reverse());
+            $scope.$apply();
             done(null, photos);
           });
         });

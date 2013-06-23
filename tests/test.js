@@ -61,6 +61,40 @@ describe("worker", function(){
 
 });*/
 
+
+describe("unit", function(){
+  var _ = require('lodash');
+  var utils = require('../client/js/utils')(_);
+
+
+  it("should diff two arrays", function(done){
+    var a = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
+    var b = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}];
+
+    var result = utils.merge(a,b, 'id');
+    //.union(old);
+
+
+    var expectedResult = [{id:1, a:true}, {id:2}, {id:3, a:false},{id:4, a:false}];
+    result.should.eql(expectedResult);
+    done();
+  });
+
+  it("should filter diff two arrays", function(done){
+    var oldArray = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
+    var newArray = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}, {id:17}];
+
+    utils.filterMerge(oldArray,newArray, 'id');
+    //.union(old);
+
+
+    var expectedResult = [{id:1, a:true}, {id:2}, {id:17}, {id:3, a:false}, {id:4, a:false}];
+    oldArray.should.eql(expectedResult);
+    done();
+  });
+
+});
+
 describe("app", function(){
 
   before(function(){

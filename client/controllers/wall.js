@@ -2,6 +2,9 @@ function WallController($scope, $http){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
+  var utils = new Utils(_);
+  var windowHeight = window.innerHeight;
+
   $scope.startDate = new Date();
   $scope.zoomLevel = 5;
   $scope.height = 240;
@@ -9,9 +12,11 @@ function WallController($scope, $http){
   $scope.groups = [];
   $scope.counter = 0;
   $scope.nrPhotos = undefined;
+  $scope.photosInView = [];
   $scope.selectedPhoto = null;
   $scope.q = null;
   $scope.fullscreen = false;
+  $scope.loading = true;
 
 
   console.log('wall', $scope);
@@ -20,10 +25,11 @@ function WallController($scope, $http){
   var waiting = false;
    
   $scope.scroll = function(){
-    var delta = $scope.scrollPosition - lastPosition;
-    if (Math.abs(delta) < window.innerHeight) return;
 
-    console.log(delta);
+    var delta = $scope.scrollPosition - lastPosition;
+    //if (Math.abs(delta) < window.innerHeight) return;
+
+    $scope.scrolling = (Math.abs(delta) > 10);
 
     filterView(delta);
     lastPosition = $scope.scrollPosition;
@@ -82,11 +88,15 @@ function WallController($scope, $http){
       photo.meta = fullPhoto;
       console.log('full', fullPhoto);
       photo.src = fullPhoto.store.original.url;
+      $scope.loading = true;
+      photo.loaded = function(){
+        $scope.loading = false;
+      };
     });
 
     photo.class="selected";
-    photo.top = $(document).scrollTop();
-    photo.height = window.innerHeight;
+    photo.top = $(document).scrollTop() - 20; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
+    photo.height = window.innerHeight + 40;
     photo.width = Math.round(photo.height * photo.ratio);
     photo.left = Math.max(0,(window.innerWidth/2 - photo.width/2));
 
@@ -98,6 +108,8 @@ function WallController($scope, $http){
     if ($scope.zoomLevel && $scope.library && $scope.library.photos){
       clearTimeout(zoomTimeout);
       zoomTimeout = setTimeout(function(){
+        
+        $scope.loading = true;
 
         // Recalculate all widths and heights in the current window size and vote level
         recalculateSizes();
@@ -111,6 +123,8 @@ function WallController($scope, $http){
         setTimeout(function(){
           filterView();
           waiting = false;
+          $scope.loading = false;
+
         }, 500);
 
       }, 300);
@@ -122,8 +136,24 @@ function WallController($scope, $http){
     return photo && photo.top > $scope.scrollPosition - (window.innerHeight * 2) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
   }
 
+  // by using a queue we can make sure we only prioritize loading images that are visible
+  var loadQueue = async.queue(function(photo, done){
+    if (photo.visible) return done(); // we already have this one
+
+    photo.visible = visible(photo);
+    if (!photo.visible) return done();
+    return photo.loaded = function(){
+      photo.loaded = null;
+      photo.class = 'done';
+      done(); // let the image load attribute determine when the image is loaded
+    };
+  }, 5);
+
+
+
   function filterView(delta){
 
+    if (Math.abs(delta) < windowHeight) return;
 
     // optimized filter instead of array.filter.
     var photosInView = [];
@@ -139,24 +169,17 @@ function WallController($scope, $http){
       }
     }
 
-    $scope.photosInView = photosInView.sort(function(a,b){
+
+    photosInView = photosInView.sort(function(a,b){
       // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
-    async.mapLimit($scope.photosInView, 5, function(photo, done){
-      if (photo.visible) return done(); // we already have this one
+    utils.filterMerge($scope.photosInView, photosInView);
 
-      photo.visible = visible(photo);
-      if (!photo.visible) return done();
-      return photo.loaded = function(){
-        photo.loaded = null;
-        photo.class = 'done';
-        done(); // let the image load attribute determine when the image is loaded
-      };
-    }, function(){
-      // page done
-    });
+    var newImages = _.filter($scope.photosInView, function(a){return !a.visible});
+
+    loadQueue.unshift(newImages);
     
     if(!$scope.$$phase) $scope.$apply();
 
@@ -169,6 +192,7 @@ function WallController($scope, $http){
 
     //photos.forEach(function(photo){photo.top += 20});
     var group = {
+      id : $scope.groups.length,
       photos: photos,
       top: top,
       height : last && (last.top + last.height - top) || 0,
@@ -277,7 +301,6 @@ function WallController($scope, $http){
           //}
 
           var savedGroup = saveGroup(group);
-          console.log(savedGroup);
 
           top = savedGroup.bottom + 15;
           left = 5;

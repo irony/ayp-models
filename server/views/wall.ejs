@@ -6,9 +6,9 @@
 
 
   <div id="photos" class="photos" >
-    <div ng-controller="WallController" >
+    <div ng-controller="WallController">
 
-        <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus')}}" when-scrolled="scroll()">
+        <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus') + ' ' + (scrolling && 'scrolling')}}" when-scrolled="scroll()">
             <div id="shim" ng-click="select(null)"></div>
             <input id="date" ng-model="q" ng-show="q" date-format></input>
 
@@ -24,8 +24,9 @@
               </div>
               <img lazy="photo.loaded()" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}} {{photo.visible && 'visible' || 'inactive'}}" ng-src="{{photo.visible && photo.src || null}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
-              <div href="#" class="group" ng-repeat="group in groups" style="position: absolute; top:{{group.top}}px; height: {{group.height}}px;">
-                <h2>{{group.name}}</h2>
+              <div id="group{{group.id}}" ng-init="group = g"  ng-click="g.active != g.active" class="group {{g.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
+                <a href="{{'#group'+g.id}}">&nbsp;</a>
+                <h2>{{g.name}}</h2>
                 <fieldset>
                   <label>Edit name</label>
                 </fieldset>
@@ -39,7 +40,7 @@
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
 
           </div>
-          <label fullscreen class="fullscreen"><i ng-class="{'icon-resize-full':!fullscreen, 'icon-resize-small':fullscreen}"></i></label>
+          <label fullscreen class="fullscreen"><i ng-class="{'icon-spinner icon-spin':loading, 'icon-resize-full':!fullscreen, 'icon-resize-small':!loading && fullscreen}"></i></label>
 
           <div id="meta" ng-controller="MetadataCtrl" right-click="rightclick()" ng-cloak="true" ng-show="{{selectedPhoto}}">
             <a class="span6" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
@@ -51,10 +52,3 @@
       </div>
     </div>
   </div>
-
-
-    <script>
-      console.log('connecting...');
-      var socket = io.connect();
-
-    </script>

@@ -1,3 +1,4 @@
+var socket = io.connect();
 
 function PhotoController ($scope, $http){
   var activePhoto = null;
