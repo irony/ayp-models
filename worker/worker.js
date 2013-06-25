@@ -53,6 +53,11 @@ var jobs = [
     interval: 9 * 60 * 1000
   },*/
   {
+    title:'Cluster',
+    fn:require('../jobs/clusterPhotos'),
+    interval: 10 * 60 * 10000
+  },
+  {
     title:'Calculate Interestingness',
     fn:require('../jobs/calculateInterestingness'),
     interval: 10 * 60 * 1000

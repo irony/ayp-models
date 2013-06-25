@@ -5,6 +5,7 @@ var User = require('../../models/user');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
+var clusterfck = require('clusterFck');
 var _ = require('lodash');
 
 module.exports = function(app){
@@ -55,26 +56,27 @@ module.exports = function(app){
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store')
-      .where('store.originals.url').exists(true)
-      .limit(500)
+      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store exif')
+      .exists('exif.gps.GPSLongitude')
 //      .sort('-copies.' + req.user._id + '.interestingness')
-      .sort('-taken')
+      .sort({'taken': -1})
       .exec(function(err, photos){
-        // return all photos with just bare minimum information for local caching
-        async.map((photos || []), function(photo, done){
-          var mine = photo.copies[req.user._id] || {};
 
-          if (!mine) return done(); // unranked images are not welcome here
+        async.map(photos, function(photo, done){
 
-          var vote = mine.vote || (mine.calculatedVote);
-          photo.src = photo.store && photo.store.thumbnails ? photo.store.thumbnails.url : '/img/Photos-icon.png';
+          // { GPSLongitude: [ 13, 7.65, 0 ], GPSLatitude: [ 56, 8, 0 ] }
 
-          return done(null, {id: photo._id, mine: mine, src:photo.src, vote: Math.floor(vote), ratio: photo.ratio});
-        }, function(err, photos){
-          
-          model.maxRank = user.maxRank;
-          model.photos = photos;
+          //if (photo.exif) console.log(photo.exif.gps);
+          var vector = [photo.taken.getTime(), photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLongitude[0]];
+          vector._id = photo._id;
+          vector.src = photo.src;
+          vector.ratio = photo.ratio;
+          return done(null, vector);
+
+        },function(err, vectors){
+
+          var clusters = clusterfck.kmeans(vectors, 10);
+          model.clusters = clusters;
           return res.render('library.ejs', model);
 
         });

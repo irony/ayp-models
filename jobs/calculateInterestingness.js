@@ -5,8 +5,7 @@
 var ObjectId = require('mongoose').Types.ObjectId,
     Photo = require('../models/photo'),
     async = require('async'),
-    emit = {}, // fool jsLint
-    mongoose = require('mongoose');
+    emit = {}; // fool jsLint
 
 
 
@@ -68,18 +67,6 @@ module.exports = function(done){
     if (err) return done && done(err);
 
     // console.log(stats);
-
-/*
-var kmeans = require('kmeans');
-var km = kmeans.create([
-  [1, 2],
-  [5, 4],
-  [2, 5],
-  [8, 4]
-], 3);
-
-var result = km.process();
-*/
 
     // Query the results
     model.find(function(err, photos){

@@ -25,9 +25,6 @@ var express = require('express'),
 var app = express(),
   server = http.createServer(app),
   io = require('socket.io').listen(server),
-  redisPub = redis.createClient(),
-  redisSub = redis.createClient(),
-  redisClient = redis.createClient(),
   RedisStore = require('connect-redis')(express),
   partials = require('express-partials'),
   sessionStore;
@@ -54,14 +51,11 @@ global.s3 = knox.createClient(config.aws);
 
 exports.init = function() {
   
-    var sessionOptions = { key: 'express.sid', cookieParser: express.cookieParser, secret: config.sessionSecret, store: sessionStore, cookie: {maxAge : 365 * 24 * 60 * 60 * 1000 }};
+    var sessionOptions = { key: 'express.sid', cookieParser: express.cookieParser, secret: config.sessionSecret, store: new RedisStore(), cookie: {maxAge : 365 * 24 * 60 * 60 * 1000 }};
 
     // configure Express
     app.configure(function() {
 
-      sessionStore = new RedisStore({
-        client: redisClient,
-      });
 
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');
@@ -98,6 +92,7 @@ exports.init = function() {
                // invalid session identifier. tl;dr gtfo.
                accept('session error', false);
              } else {
+                console.log('session loaded');
                data.session = session;
                accept(null, true);
              }

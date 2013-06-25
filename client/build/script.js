@@ -3756,7 +3756,7 @@ function WallController($scope, $http){
     filterView(delta);
     lastPosition = $scope.scrollPosition;
 
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
+    //if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -3891,6 +3891,25 @@ function WallController($scope, $http){
       }
     }
 
+    $scope.photosInView = photosInView.sort(function(a,b){
+      // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
+      return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
+    });
+
+    async.mapLimit($scope.photosInView, 5, function(photo, done){
+      if (photo.visible) return done(); // we already have this one
+
+      photo.visible = visible(photo);
+      if (!photo.visible) return done();
+      return photo.loaded = function(){
+        photo.loaded = null;
+        photo.class = 'done';
+        done(); // let the image load attribute determine when the image is loaded
+      };
+    }, function(){
+      // page done
+    });
+/*
     photosInView = photosInView.sort(function(a,b){
       // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
@@ -3901,12 +3920,12 @@ function WallController($scope, $http){
     var newImages = _.filter(photosInView, function(a){return !a.visible});
 
     loadQueue.push(newImages);
-    
+    */
     if(!$scope.$$phase) $scope.$apply();
 
   }
 
-  function saveGroup(photos){
+  function Group(photos){
     var visible = photos.filter(function(a){return a.active });
     var top = (visible.length && visible[0].top || 0); //+ 20;
     var last = visible.length && visible[visible.length-1] || null;
@@ -4021,7 +4040,7 @@ function WallController($scope, $http){
           //  closeRow(lastRow);
           //}
 
-          var savedGroup = saveGroup(group);
+          var savedGroup = new Group(group);
 
           top = savedGroup.bottom + 15;
           left = 5;

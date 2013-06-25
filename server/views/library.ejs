@@ -1,6 +1,11 @@
-<section id="wall" ng-controller="LibraryCtrl" class="{{ 'filter' + zoomLevel }}">
-  <% photos.map(function(photo){ %>
-      <img draggable="false" src="<%=photo.src%>" id="<%=photo.id%>" class="v<%=photo.vote%>" height="240" width="<%= Math.floor( (240 * photo.ratio || 0) || 240) %>" />
+<section  ng-controller="LibraryCtrl" class="{{ 'filter' + zoomLevel }}">
+  <% 
+    clusters.map(function(cluster, i){ %>
+      <h1>Group #<%= i %></h1>
+      <% cluster.map(function(photo){ %>
+        <img draggable="false" src="<%=photo.src%>" id="<%=photo._id%>" class="v<%=photo.vote%>" height="240" width="<%= Math.floor( (240 * photo.ratio || 0) || 240) %>" />
+      <% }) %>
+      <hr>
   <% }) %>
   <div class="slider">
       <label class="pull-right  muted">All your photos</label>
