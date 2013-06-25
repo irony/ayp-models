@@ -6,7 +6,7 @@ var util = require('util');
 var async = require('async');
 var Photo = require('../../models/photo');
 var Batch = require('batch');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var connector = new InputConnector();
 

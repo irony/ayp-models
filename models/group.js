@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose'),
     Photo = require('./photo')(mongoose).Schema,
-    _ = require('underscore'),
+    _ = require('lodash'),
     Schema = mongoose.Schema;
 
 var GroupSchema = new mongoose.Schema({

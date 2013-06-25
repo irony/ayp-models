@@ -3,24 +3,35 @@
 // Initializes database, all routes and express
  
 
-var config      = require('../conf');
-var mongoose    = require('mongoose');
-var _           = require('underscore');
-var colors      = require('colors');
-var http        = require('http');
-var express     = require('express');
-var util        = require('util');
-var passport    = require('./auth/passport');
-var knox        = require('knox');
-var RedisStore  = require('connect-redis')(express);
-var SocketIo    = require('socket.io');
-var passportsio = require("passport.socketio");
-var fs          = require('fs');
-var path          = require('path');
-var io          = require('socket.io');
-//var spdy        = require('spdy');
-var app         = express.createServer();
-var store       = new RedisStore();
+var config      = require('../conf'),
+    mongoose    = require('mongoose'),
+    _           = require('lodash'),
+    knox        = require('knox'),
+    colors      = require('colors');
+
+
+var express = require('express'),
+  passport = require('../server/auth/passport'),
+  LocalStrategy = require('passport-local').Strategy,
+  http = require('http'),
+  path = require('path'),
+  util = require('util'),
+  fs = require('fs'),
+  redis = require('redis'),
+  cookie = require('cookie'),
+  connectSession = require('connect/lib/middleware/session/session'),
+  socketRedisStore = require('socket.io/lib/stores/redis');
+ 
+var app = express(),
+  server = http.createServer(app),
+  io = require('socket.io').listen(server),
+  redisPub = redis.createClient(),
+  redisSub = redis.createClient(),
+  redisClient = redis.createClient(),
+  RedisStore = require('connect-redis')(express),
+  partials = require('express-partials'),
+  sessionStore;
+
 
 console.debug = console.log;
 
@@ -31,7 +42,6 @@ try {
   console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
 }
 
-
 var options = {
     ca:   fs.readFileSync(__dirname + '/../ssl/sub.class1.server.ca.pem'),
     key:  fs.readFileSync(__dirname + '/../ssl/ssl.key'),
@@ -41,29 +51,29 @@ var options = {
 // store the s3 client and socket io globally so we can use them from both jobs and routes without passing it as parameters
 global.s3 = knox.createClient(config.aws);
 //app.spdy = spdy.createServer(options, app.handle.bind(app));
-app.io = io.listen(app, {log: true});
-
 
 exports.init = function() {
   
+    var sessionOptions = { key: 'express.sid', cookieParser: express.cookieParser, secret: config.sessionSecret, store: sessionStore, cookie: {maxAge : 365 * 24 * 60 * 60 * 1000 }};
 
     // configure Express
     app.configure(function() {
 
+      sessionStore = new RedisStore({
+        client: redisClient,
+      });
 
       app.set('views', __dirname + '/views');
       app.set('view engine', 'ejs');
-      // app.use(express.logger());
-      app.use(express.cookieParser());
-      app.use(express.bodyParser());
+      app.use(partials());
+
+      app.use(express.cookieParser(config.sessionSecret));
       app.use(express.methodOverride());
-
-      var sessionOptions = { cookieParser: express.cookieParser, secret: config.sessionSecret, store: store, maxAge : 365 * 24 * 60 * 60 * 1000 };
+      app.use(express.bodyParser());
       app.use(express.session(sessionOptions));
-      app.io.set("authorization", passportsio.authorize(sessionOptions));
-
       app.use(passport.initialize());
       app.use(passport.session());
+
       app.use('/vendor/', express.static(path.join(__dirname, '/../components')));
       app.use(express.static(__dirname + '/../client'));
       app.use(app.router);
@@ -71,6 +81,39 @@ exports.init = function() {
 
     });
 
+    /**
+     * socket.io stuff. Streaming.
+     */
+    // authentication verification
+    io.configure(function () {
+       io.set('log level', 1);
+       io.set('authorization', function (data, accept) {
+         if (data.headers.cookie) {
+           data.cookie = cookie.parse(data.headers.cookie);
+           data.cookie = express.connect.utils.parseSignedCookies(data.cookie, config.sessionSecret);
+           data.cookie = express.connect.utils.parseJSONCookies(data.cookie);
+           data.sessionID = data.cookie['express.sid'];
+           sessionStore.load(data.sessionID, function (err, session) {
+             if (err || !session) {
+               // invalid session identifier. tl;dr gtfo.
+               accept('session error', false);
+             } else {
+               data.session = session;
+               accept(null, true);
+             }
+           });
+     
+         } else {
+          // no auth cookie...
+           accept('session error', false);
+         }
+       });
+    });
+
+    // shorthand to get it accessible everywhere
+    app.io = io;
+ 
+    
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
@@ -82,10 +125,8 @@ exports.init = function() {
         console.debug = function(){};
     });
 
-    // Error handler
-    app.error(function(err, req, res, next){
-        res.render('500.ejs', { locals: { error: err },status: 500 });
-    });
+
+
 
     require('./routes/user')(app);
     require('./routes/connectors')(app);
@@ -99,7 +140,12 @@ exports.init = function() {
     require('./api/photos')(app);
     require('./api/user')(app);
 
-
+    app.use(function(err, req, res, next){
+      // if an error occurs Connect will pass it down
+      // through these "error-handling" middleware
+      // allowing you to respond however you like
+      if (err) res.render('500.ejs', { locals: { error: err },status: 500 });
+    });
     /* The 404 Route (ALWAYS Keep this as the last route) */
     require('./routes/404')(app);
 

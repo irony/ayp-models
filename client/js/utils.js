@@ -30,7 +30,7 @@ function Utils(_){
 
   // returns a merged array with items from a but and new from b, all items from a which isnt present in b are removed 
   this.filterMerge = function(a,b,id){
-    if (!a instanceof Array || !b instanceof Array) throw "Two arrays required";
+    if (!a || !b || !a instanceof Array || !b instanceof Array) throw "Two arrays required";
 
     var oldIds = _.pluck(a, id);
     var newIds = _.pluck(b, id);

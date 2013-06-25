@@ -3,7 +3,7 @@
 // A copy of a photo for another user. Even for the owner of a photo they still have a PhotoCopy.
 
 var mongoose = require('mongoose'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     Schema = mongoose.Schema;
 
 

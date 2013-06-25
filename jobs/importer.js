@@ -5,7 +5,7 @@
 var Photo = require('../models/photo');
 var PhotoCopy = require('../models/photoCopy');
 var User = require('../models/user');
-var _ = require('underscore');
+var _ = require('lodash');
 var async = require('async');
 
 

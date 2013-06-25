@@ -5,7 +5,7 @@
 //
 
 var User = require('../../models/user'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 var updateProfile = function(user, profile, done){
 

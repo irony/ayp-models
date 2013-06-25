@@ -12,7 +12,7 @@ module.exports = function(grunt) {
       dev:{
         src:"tests/test.js",
         options:{
-          grep:'unit',
+          grep:'socket',
           reporter: 'spec',
           slow: 1000,
           timeout: 3000
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
         tasks:['copy', 'concat', 'simplemocha:dev']
       },
       test:{
-        files:['server/*.js', 'models/*.js'],
+        files:['server/*.js', 'models/*.js', 'tests/*.js'],
         tasks:['simplemocha:dev']
 
       }
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['copy', 'concat', 'bowerful', 'watch:all']);
-  grunt.registerTask('test', ['watch:test', 'simplemocha:dev']);
+  grunt.registerTask('test', ['simplemocha:dev', 'watch:test']);
 
 
 

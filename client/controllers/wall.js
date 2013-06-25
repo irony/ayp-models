@@ -25,15 +25,17 @@ function WallController($scope, $http){
   var waiting = false;
    
   $scope.scroll = function(){
+    
+    if (Math.abs(delta) < windowHeight/ 2) return;
 
     var delta = $scope.scrollPosition - lastPosition;
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    // if (Math.abs(delta) < windowHeight/ 2) return;
-
 
     filterView(delta);
     lastPosition = $scope.scrollPosition;
+
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -150,7 +152,6 @@ function WallController($scope, $http){
   }, 5);
 
 
-
   function filterView(delta){
 
     // if (Math.abs(delta) < windowHeight) return;
@@ -178,8 +179,7 @@ function WallController($scope, $http){
 
     var newImages = _.filter(photosInView, function(a){return !a.visible});
 
-    loadQueue.tasks = [];
-    loadQueue.unshift(newImages);
+    loadQueue.push(newImages);
     
     if(!$scope.$$phase) $scope.$apply();
 

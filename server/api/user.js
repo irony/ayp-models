@@ -1,7 +1,7 @@
 var User = require('../../models/user');
 var async = require('async');
 var ObjectId = require('mongoose').Types.ObjectId;
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = function(app){
 

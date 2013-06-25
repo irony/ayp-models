@@ -2,7 +2,7 @@ var async  = require("async");
 var passport = require('passport');
 var Photo = require('../../models/photo');
 var User = require('../../models/user');
-var _ = require('underscore');
+var _ = require('lodash');
 var ObjectId = require('mongoose').Types.ObjectId;
 var fs = require('fs');
 

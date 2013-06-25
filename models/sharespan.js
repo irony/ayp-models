@@ -24,7 +24,7 @@ var ShareSpanSchema = new mongoose.Schema({
 ShareSpanSchema.pre('save', function (next) {
   
   var span = this,
-    _ = require('underscore'),
+    _ = require('lodash'),
     Photo = require('./photo');
 
 

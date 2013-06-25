@@ -7,7 +7,7 @@ var passport = require('passport');
 var InputConnector = require('./inputConnector');
 var Photo = require('../../models/photo');
 var User = require('../../models/user');
-var _ = require('underscore');
+var _ = require('lodash');
 var ObjectId = require('mongoose').Types.ObjectId;
 var stream = require("stream");
 

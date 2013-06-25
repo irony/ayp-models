@@ -1,7 +1,7 @@
 
 var ViewModel = require('./viewModel');
 var Photo = require('../../models/photo');
-var _ = require('underscore');
+var _ = require('lodash');
 var async = require('async');
 var importer = require('../../jobs/importer');
 var downloader = require('../../jobs/downloader');

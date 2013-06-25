@@ -5,7 +5,7 @@
 
 var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
-    _ = require('underscore'),
+    _ = require('lodash'),
     PhotoCopy = require('./photoCopy')(mongoose).Schema,
 
     Schema = mongoose.Schema;
@@ -84,7 +84,7 @@ PhotoSchema.post('save', function (next) {
 
 PhotoSchema.pre('save', function (next) {
   var photo = this,
-      _ = require('underscore'),
+      _ = require('lodash'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
   if (!photo.taken && !photo.owners)
