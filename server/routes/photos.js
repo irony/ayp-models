@@ -5,7 +5,7 @@ var User = require('../../models/user');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
-var clusterfck = require('clusterFck');
+var clusterfck = require('clusterfck');
 var _ = require('lodash');
 var utils = new require('../../client/js/utils')(_);
 
