@@ -36,6 +36,7 @@ module.exports = function(grunt) {
           {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/', flatten: true},
           {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/js/', flatten: true},
           {expand: true, src: ['components/async/lib/async.js'], dest: 'client/js/', flatten: true},
+          {expand: true, src: ['components/jquery/jquery.min.js'], dest: 'client/js/', flatten: true},
           {expand: true, src: ['components/font-awesome/css/*.css'], dest: 'client/build/'},
           {expand: true, src: ['components/font-awesome/font/*.*'], dest: 'client/build/'},
         ]
