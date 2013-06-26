@@ -46,7 +46,8 @@
     "lodash": "*",
     "cookie": "*",
     "connect": "~2.7.11",
-    "express-partials": "~0.1.1"
+    "express-partials": "~0.1.1",
+    "clusterfck": "~0.5.2"
   },
   "scripts": {
     "start": "nodemon server/server.js",
