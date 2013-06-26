@@ -146,6 +146,7 @@ module.exports = function(app){
               subCluster.sort(function(a,b){
                 return a.vote - b.vote;
               });
+              
             }).sort(function(a,b){
               return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
             });

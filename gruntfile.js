@@ -19,24 +19,15 @@ module.exports = function(grunt) {
         }
       }
     },
-    bowerful: {
-      all : {
-        dest : 'client/build',
-        packages: {
-            jquery: {select:'jquery.min.js'},
-            bootstrap: {select:['bootstrap.min.js', 'bootstrap-responsive.css']},
-            angular : {select:'bootstrap.min.js'}
-        },
-      }
-    },
-
     copy: {
       all: {
         files: [
-          {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/', flatten: true},
-          {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/js/', flatten: true},
-          {expand: true, src: ['components/async/lib/async.js'], dest: 'client/js/', flatten: true},
-          {expand: true, src: ['components/jquery/jquery.min.js'], dest: 'client/js/', flatten: true},
+          {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/async/lib/async.js'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/jquery/jquery.min.js'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/bootstrap/docs/assets/js/bootstrap.min.js'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/bootstrap/docs/assets/css/bootstrap-responsive.css'], dest: 'client/assets/', flatten: true},
           {expand: true, src: ['components/font-awesome/css/*.css'], dest: 'client/build/'},
           {expand: true, src: ['components/font-awesome/font/*.*'], dest: 'client/build/'},
         ]
@@ -44,7 +35,7 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['client/js/*.js', 'client/controllers/*.js'],
+        src: ['client/assets/*.js','client/js/*.js', 'client/controllers/*.js'],
         dest: 'client/build/script.js'
       }
     },
