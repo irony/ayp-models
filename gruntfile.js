@@ -12,7 +12,7 @@ module.exports = function(grunt) {
       dev:{
         src:"tests/test.js",
         options:{
-          grep:'socket',
+          grep:'unit',
           reporter: 'spec',
           slow: 1000,
           timeout: 3000
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
         tasks:['copy', 'concat', 'simplemocha:dev']
       },
       test:{
-        files:['server/*.js', 'models/*.js', 'tests/*.js'],
+        files:['gruntfile.js', 'server/*.js', 'models/*.js', 'tests/*.js', 'client/js/*.js'],
         tasks:['simplemocha:dev']
 
       }

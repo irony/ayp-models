@@ -8,7 +8,6 @@ var should = require("should");
 var mongoose = require('mongoose');
 var auth = require('../server/auth/auth');
 var async = require('async');
-var app = require('../server/app').init();
 var User = require('../models/user');
 var Photo = require('../models/photo');
 var request = require('supertest');
@@ -93,6 +92,16 @@ describe("unit", function(){
     done();
   });
 
+it("should weave two arrays", function(done){
+    var a = [1,2,3,4];
+    var b = [1,2,3,4,5,6,7];
+
+    var result = utils.weave(a,b);
+
+    var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
+    result.should.eql(expectedResult);
+    done();
+  });
 });
 
 describe("app", function(){
@@ -100,8 +109,13 @@ describe("app", function(){
   before(function(){
     conf.mongoUrl.slice(-4).should.eql('test');
 
+    var app = require('../server/app').init();
+    app.listen(port);
+
+
     User.find().remove();
     Photo.find().remove();
+
 
   });
 
@@ -665,7 +679,7 @@ describe("app", function(){
       'force new connection': true
     };
 
-    app.listen(port);
+
 
     var photoA;
     var photoB;

@@ -7,6 +7,7 @@ var path = require('path');
 var async = require('async');
 var clusterfck = require('clusterFck');
 var _ = require('lodash');
+var utils = new require('../../client/js/utils')(_);
 
 module.exports = function(app){
 
@@ -45,7 +46,7 @@ module.exports = function(app){
   });
 
 
-  app.get('/me/library', function(req, res){
+  app.get('/me/gps', function(req, res){
     var model = new ViewModel(req.user);
 
     if (!req.user){
@@ -57,25 +58,104 @@ module.exports = function(app){
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
       Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store exif')
-      .exists('exif.gps.GPSLongitude')
+      .exists('exif.gps')
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort({'taken': -1})
       .exec(function(err, photos){
 
         async.map(photos, function(photo, done){
+          try{
+            // { GPSLongitude: [ 13, 7.65, 0 ], GPSLatitude: [ 56, 8, 0 ] }
+            if (!photo.exif.gps || photo.exif.gps === {}) return done();
 
-          // { GPSLongitude: [ 13, 7.65, 0 ], GPSLatitude: [ 56, 8, 0 ] }
-
-          //if (photo.exif) console.log(photo.exif.gps);
-          var vector = [photo.taken.getTime(), photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLongitude[0]];
-          vector._id = photo._id;
-          vector.src = photo.src;
-          vector.ratio = photo.ratio;
-          return done(null, vector);
+            if (photo.exif.gps.length){
+              photo.exif.gps = photo.exif.gps.reduce(function(gps, tag){
+                gps[tag.tagName] = tag.value;
+                return gps;
+              }, {});
+            }
+            var vector = [photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLongitude[0]];
+            vector._id = photo._id;
+            vector.src = photo.src;
+            vector.ratio = photo.ratio;
+            return done(null, vector);
+          }
+          catch(err){
+            console.log('err:', err);
+            return done();
+          }
 
         },function(err, vectors){
+          
+          console.log(vectors.slice(0,10));
 
-          var clusters = clusterfck.kmeans(vectors, 10);
+          var clusters = clusterfck.kmeans(vectors.filter(function(a){return a}), 100);
+          model.clusters = clusters;
+          return res.render('library.ejs', model);
+
+        });
+      });
+    });
+
+
+  });
+
+
+  app.get('/me/time', function(req, res){
+    var model = new ViewModel(req.user);
+
+    if (!req.user){
+      model.error = 'You have to login first';
+      return res.render('500.ejs', model);
+    }
+
+
+    // Get an updated user record for an updated user maxRank.
+    User.findOne({_id : req.user._id}, function(err, user){
+      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store exif')
+      // .exists('exif.gps')
+//      .sort('-copies.' + req.user._id + '.interestingness')
+      .sort({'taken': -1})
+      .exec(function(err, photos){
+
+        async.map(photos, function(photo, done){
+          try{
+            var vector = [photo.taken.getTime()];
+            vector._id = photo._id;
+            vector.src = photo.src;
+            vector.ratio = photo.ratio;
+            vector.vote = photo.copies[req.user._id].vote || photo.copies[req.user._id].calculatedVote;
+            return done(null, vector);
+          }
+          catch(err){
+            console.log('err:', err);
+            return done();
+          }
+
+        },function(err, vectors){
+          
+          console.log(vectors.slice(0,10));
+
+          var clusters = clusterfck.kmeans(vectors.filter(function(a){return a}), 100);
+
+          clusters.map(function(cluster){
+            var subClusters = clusterfck.kmeans(cluster, 5);
+            subClusters.map(function(subCluster, group, i){
+
+              // Weave the groups
+              subCluster.sort(function(a,b){
+                return a.vote - b.vote;
+              });
+            }).sort(function(a,b){
+              return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
+            });
+
+            var rankedPhotos = utils.weave(subClusters);
+            rankedPhotos.map(function(photo, i){
+              photo.interestingness = 100 - (i/rankedPhotos.length) * 100;
+            });
+
+          });
           model.clusters = clusters;
           return res.render('library.ejs', model);
 

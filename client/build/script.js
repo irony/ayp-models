@@ -2453,6 +2453,26 @@ function Utils(_){
     return summary;
   };
 
+  /**
+   * Take two array and weave them together into one array so that [1,2,3,4] + [1,2,3,4] => [1,1,2,2,3,3,4,4]
+   * @param  {[type]} a [description]
+   * @param  {[type]} b [description]
+   * @return {[type]}   [description]
+   */
+  this.weave = function(a,b){
+
+    var arrays = Array.prototype.slice.call(arguments);
+    var maxLength = Math.max.apply(Math, arrays.map(function (el) { return el.length }));
+
+    var result = [];
+    for(var i=0; i<maxLength; i++){
+      _.each(arrays, function(array){
+          if(array[i]) result.push(array[i]);
+      });
+    }
+    return result;
+  };
+
     // returns a merged array with items from a but and new from b, all items from a which isnt present in b are removed 
   this.merge = function (a,b,id){
     var diff = this.diff(a,b,id,true);

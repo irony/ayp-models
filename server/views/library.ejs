@@ -1,9 +1,9 @@
-<section  ng-controller="LibraryCtrl" class="{{ 'filter' + zoomLevel }}">
+<section  ng-controller="LibraryCtrl" class="wall {{ 'filter' + zoomLevel }}">
   <% 
     clusters.map(function(cluster, i){ %>
       <h1>Group #<%= i %></h1>
       <% cluster.map(function(photo){ %>
-        <img draggable="false" src="<%=photo.src%>" id="<%=photo._id%>" class="v<%=photo.vote%>" height="240" width="<%= Math.floor( (240 * photo.ratio || 0) || 240) %>" />
+        <img title="vote<%=photo.vote%> " draggable="false" src="<%=photo.src%>" id="<%=photo._id%>" class="v<%=photo.vote%>" height="240" width="<%= Math.floor( (240 * photo.ratio || 0) || 240) %>" />
       <% }) %>
       <hr>
   <% }) %>
@@ -15,6 +15,13 @@
     </div>
 
 </section>
+
+<style>
+  #wall img {
+    display: block !important;
+    position: inherit !important;
+  }
+</style>
 
 <script>
 

@@ -45,7 +45,8 @@
     "moment": "*",
     "lodash": "*",
     "cookie": "*",
-    "connect": "~2.7.11"
+    "connect": "~2.7.11",
+    "express-partials": "~0.1.1"
   },
   "scripts": {
     "start": "nodemon server/server.js",
