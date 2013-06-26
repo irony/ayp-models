@@ -7,7 +7,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
     User = require('../models/user'),
     async = require('async'),
     emit = {}, // fool jsLint
-    clusterfck = require('clusterFck'),
+    clusterfck = require('clusterfck'),
     mongoose = require('mongoose');
 
 
