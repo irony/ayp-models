@@ -168,19 +168,8 @@ function AppController($scope, $http)
 
     if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
 
-    async.parallel({
-      end : function(done){
-        var lastPhoto = ($scope.library.photos || []).slice(-1)[0];
-        loadMore(lastPhoto && lastPhoto.taken, done);
-      },
-      beginning : function(done){
-        loadMore(null, done);
-      },
-      changes : function(done){
-        var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
-        if (lastModifyDate) loadLatest(lastModifyDate, done);
-      },
-      db : function(done){
+    async.series({
+      /*db : function(done){
         db.open({
           server: 'my-app',
           version: 1,
@@ -208,6 +197,17 @@ function AppController($scope, $http)
             done(null, photos);
           });
         });
+      },*/
+      beginning : function(done){
+        loadMore(null, done);
+      },
+      changes : function(done){
+        var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
+        if (lastModifyDate) loadLatest(lastModifyDate, done);
+      },
+      end : function(done){
+        var lastPhoto = ($scope.library.photos || []).slice(-1)[0];
+        loadMore(lastPhoto && lastPhoto.taken, done);
       }
     }, function(result){
 

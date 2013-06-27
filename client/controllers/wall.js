@@ -22,6 +22,7 @@ function WallController($scope, $http){
   console.log('wall', $scope);
 
   var lastPosition = null;
+  var filterPosition = null;
   var waiting = false;
    
   $scope.scroll = function(){
@@ -30,16 +31,17 @@ function WallController($scope, $http){
     var delta = $scope.scrollPosition - lastPosition;
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    if(Math.abs(delta)<windowHeight) return;
+    if (Math.abs(filterPosition - $scope.scrollPosition) < windowHeight * 5) return;
 
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(function(){
+      filterPosition = $scope.scrollPosition;
       filterView(delta);
-    }, 400);
+      if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
+    }, Math.abs(delta)); // the more you scroll - the more you have to wait, chanses are you will scroll more
 
     lastPosition = $scope.scrollPosition;
 
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
   };
 
   $scope.dblclick = function(photo){
@@ -140,7 +142,7 @@ function WallController($scope, $http){
   });
 
   function visible(photo, delta){
-    return photo && photo.top > $scope.scrollPosition - (window.innerHeight * 2) && photo.top < $scope.scrollPosition + window.innerHeight * 2;
+    return photo && photo.top > $scope.scrollPosition - (windowHeight * 2) && photo.top < $scope.scrollPosition + windowHeight * 10;
   }
 
   // by using a queue we can make sure we only prioritize loading images that are visible
