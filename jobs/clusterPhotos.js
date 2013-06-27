@@ -7,6 +7,8 @@ var ObjectId = require('mongoose').Types.ObjectId,
     User = require('../models/user'),
     async = require('async'),
     emit = {}, // fool jsLint
+    _ = require('lodash'),
+    utils = new require('../client/js/utils')(_),
     clusterfck = require('clusterfck'),
     mongoose = require('mongoose');
 
@@ -24,41 +26,55 @@ module.exports = function(done){
     async.map((users || []), function(user, userDone){
 
 
-  
       // find all their photos and sort them on interestingness
-      Photo.find({'owners': user._id}, 'taken exif.gps.GPSLongitude exif.gps.GPSLatitude')
-      .exists('exif.gps')
+      Photo.find({'owners': user._id}, 'taken copies.' + user._id + '.calculatedVote copies.' + user._id + '.vote')
       .exec(function(err, photos){
         if (err) throw err;
 
         async.map(photos, function(photo, done){
+          try{
+            var vector = [photo.taken.getTime()];
+            vector._id = photo._id;
+            vector.vote = photo.copies[user._id].vote || photo.copies[user._id].calculatedVote;
+            return done(null, vector);
+          }
+          catch(err){
+            console.log('err:', err);
+            return done();
+          }
 
-          // { GPSLongitude: [ 13, 7.65, 0 ], GPSLatitude: [ 56, 8, 0 ] }
-
-          //if (photo.exif) console.log(photo.exif.gps);
-          var vector = [photo.taken.getTime(), photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLongitude[0]];
-          vector._id = photo._id;
-          return done(null, vector);
-
-        },function(err, photos){
-
-          var clusters = clusterfck.kmeans(photos, 10);
+        },function(err, vectors){
           
-          clusters.map(function(cluster, i){
-            async.map(cluster, function(photo, done){
+          var clusters = clusterfck.kmeans(vectors.filter(function(a){return a}), 100);
 
+          async.map(clusters, function(cluster, done){
+            var subClusters = clusterfck.kmeans(cluster, 5);
+            subClusters.map(function(subCluster, group, i){
+
+              // Weave the groups
+              subCluster.sort(function(a,b){
+                return a.vote - b.vote;
+              });
+
+            }).sort(function(a,b){
+              return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
+            });
+
+            var rankedPhotos = utils.weave(subClusters);
+            async.map(rankedPhotos, function(photo, done, i){
+              
               var setter = {$set : {}};
               var interestingness = photo.value >= 100 ? photo.value : Math.floor(Math.random()*100);
               
-              setter.$set['copies.' + user._id + '.cluster'] = i;
-              setter.$set['modified'] = new Date();
+              setter.$set['copies.' + user._id + '.clusterOrder'] = (i/rankedPhotos.length) * 100;
+              // setter.$set['modified'] = new Date();
 
-              return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
-            }, function(err, results){
-              return userDone(err, user);
-            });
+              return Photo.update({_id : photo._id}, setter, {upsert: true, safe:true}, done);
+
+            }, userDone);
+
           });
-
+          
         });
       });
     }, function(err, users){

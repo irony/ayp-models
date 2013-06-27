@@ -17,7 +17,7 @@ var PhotoCopy = new mongoose.Schema({
       calculatedVote : { type: Number, default: 5},
       tags : { type: []},
       groups : { type: []},
-      cluster : { type: Number},
+      clusterOrder : { type: Number},
       top : { type: Number, default: null},
       rank : { type: Number, default: 50}
     });

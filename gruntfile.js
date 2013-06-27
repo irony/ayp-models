@@ -2,10 +2,10 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-bowerful');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('assemble');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   grunt.initConfig({
     simplemocha:{
@@ -19,24 +19,31 @@ module.exports = function(grunt) {
         }
       }
     },
+    clean: ["client/js/assets/"],
     copy: {
       all: {
         files: [
-          {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/assets/', flatten: true},
-          {expand: true, src: ['components/moment/min/moment.min.js'], dest: 'client/assets/', flatten: true},
-          {expand: true, src: ['components/async/lib/async.js'], dest: 'client/assets/', flatten: true},
-          {expand: true, src: ['components/jquery/jquery.min.js'], dest: 'client/assets/', flatten: true},
-          {expand: true, src: ['components/bootstrap/docs/assets/js/bootstrap.min.js'], dest: 'client/assets/', flatten: true},
-          {expand: true, src: ['components/bootstrap/docs/assets/css/bootstrap-responsive.css'], dest: 'client/assets/', flatten: true},
+          {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/assets/', flatten: true},
+          
+          {expand: true, src: ['components/angular/angular.min.js'], dest: 'client/js/assets/', flatten: true},
+          {expand: true, src: ['components/*/*.min.js'], dest: 'client/js/assets/', flatten: true},
+          {expand: true, src: ['components/async/lib/async.js'], dest: 'client/js/assets/', flatten: true},
+          {expand: true, src: ['components/bootstrap/docs/assets/js/bootstrap.min.js'], dest: 'client/js/assets/', flatten: true},
+
           {expand: true, src: ['components/font-awesome/css/*.css'], dest: 'client/build/'},
           {expand: true, src: ['components/font-awesome/font/*.*'], dest: 'client/build/'},
+
+
         ]
       }
     },
     concat: {
       dist: {
-        src: ['client/assets/*.js','client/js/*.js', 'client/controllers/*.js'],
-        dest: 'client/build/script.js'
+        files :
+        {
+          'client/build/script.js' : ['client/js/*.js', 'client/controllers/*.js'],
+          'client/build/assets.js' : ['client/js/assets/*.js']
+        }
       }
     },
     watch:{
@@ -54,7 +61,7 @@ module.exports = function(grunt) {
     all: { src: ['test/**/*.js'] }
   });
 
-  grunt.registerTask('default', ['copy', 'concat', 'bowerful', 'watch:all']);
+  grunt.registerTask('default', ['copy', 'concat', 'watch:all']);
   grunt.registerTask('test', ['simplemocha:dev', 'watch:test']);
 
 

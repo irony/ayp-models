@@ -68,7 +68,7 @@ exports.init = function() {
       app.use(passport.initialize());
       app.use(passport.session());
 
-      app.use('/vendor/', express.static(path.join(__dirname, '/../components')));
+      app.use('/components/', express.static(path.join(__dirname, '/../components')));
       app.use(express.static(__dirname + '/../client'));
       app.use(app.router);
 

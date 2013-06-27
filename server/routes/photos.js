@@ -112,11 +112,13 @@ module.exports = function(app){
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
-      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store exif')
+    console.log('me/user')
+      Photo.find({'owners': req.user._id}, 'copies.' + req.user._id + ' ratio taken store')
       // .exists('exif.gps')
 //      .sort('-copies.' + req.user._id + '.interestingness')
       .sort({'taken': -1})
       .exec(function(err, photos){
+    console.log('me/photos', photos)
 
         async.map(photos, function(photo, done){
           try{
@@ -146,7 +148,7 @@ module.exports = function(app){
               subCluster.sort(function(a,b){
                 return a.vote - b.vote;
               });
-              
+
             }).sort(function(a,b){
               return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
             });
@@ -157,6 +159,7 @@ module.exports = function(app){
             });
 
           });
+          
           model.clusters = clusters;
           return res.render('library.ejs', model);
 

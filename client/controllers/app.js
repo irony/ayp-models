@@ -166,7 +166,7 @@ function AppController($scope, $http)
     $scope.library.photos = $scope.library.photos || [];
 
 
-    //if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
+    if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
 
     async.parallel({
       end : function(done){
