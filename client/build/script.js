@@ -2768,8 +2768,13 @@ function WallController($scope, $http){
     var delta = $scope.scrollPosition - lastPosition;
     $scope.scrolling = (Math.abs(delta) > 10);
 
+    if(Math.abs(delta)<windowHeight) return;
 
-    filterView(delta);
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function(){
+      filterView(delta);
+    }, 400);
+
     lastPosition = $scope.scrollPosition;
 
     if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
@@ -2878,16 +2883,16 @@ function WallController($scope, $http){
 
   // by using a queue we can make sure we only prioritize loading images that are visible
   var loadQueue = async.queue(function(photo, done){
-    if (photo.visible) return done(); // we already have this one
+    if (!photo || photo.visible) return done(); // we already have this one
+
     photo.visible = visible(photo);
     if (!photo.visible) return done();
     return photo.loaded = function(){
       photo.loaded = null;
       photo.class = 'done';
       done(); // let the image load attribute determine when the image is loaded
-      console.log(loaded++)
     };
-  }, 5);
+  }, 20);
 
 
   function filterView(delta){
@@ -2910,7 +2915,7 @@ function WallController($scope, $http){
       // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
-    utils.filterMerge($scope.photosInView, photosInView);
+    $scope.photosInView = photosInView; // utils.filterMerge($scope.photosInView, photosInView);
 
     // async.mapLimit($scope.photosInView, 5, function(photo, done){
     //   if (photo.visible) return done(); // we already have this one
@@ -2931,13 +2936,12 @@ function WallController($scope, $http){
       return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
+
+    var newImages = _.filter(photosInView, function(a){return !a.visible});
     */
 
-    //var newImages = _.filter(photosInView, function(a){return !a.visible});
-
-    loadQueue.push(photosInView);
-    loadQueue.process();
-
+    //loadQueue.tasks = [];
+    //loadQueue.push($scope.photosInView);
     if(!$scope.$$phase) $scope.$apply();
 
   }

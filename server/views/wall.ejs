@@ -22,7 +22,7 @@
                  <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
                 </div>
               </div>
-              <img lazy="photo.loaded()" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} {{photo.class}} {{photo.visible && 'visible' || 'inactive'}}" ng-src="{{photo.visible && photo.src || null}}" ng-cloak  ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} done {{photo.class}}" ng-src="{{photo.src}}" ng-cloak ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
               <div id="group{{group.id}}" ng-init="group = g"  ng-click="g.active != g.active" class="group {{g.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
                 <a href="{{'#group'+g.id}}">&nbsp;</a>
