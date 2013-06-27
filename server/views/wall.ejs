@@ -8,7 +8,7 @@
   <div id="photos" class="photos" >
     <div ng-controller="WallController">
 
-        <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus') + ' ' + (scrolling && 'scrolling')}}" when-scrolled="scroll()">
+        <div id="wall" style="height:{{totalHeight}}px; position:" class="{{ ('filter' + zoomLevel) + ' ' + (selectedPhoto && 'focus') + ' ' + (scrolling && 'scrolling')}}">
             <div id="shim" ng-click="select(null)"></div>
             <!--<input id="date" ng-model="q" ng-show="q" date-format></input>-->
 

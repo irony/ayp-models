@@ -1,4 +1,4 @@
-function WallController($scope, $http){
+function WallController($scope, $http, $window){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
@@ -22,23 +22,21 @@ function WallController($scope, $http){
   console.log('wall', $scope);
 
   var lastPosition = null;
-  var filterPosition = null;
   var waiting = false;
    
-  $scope.scroll = function(){
-    
+  $window.onscroll = function(event) {
+
+    $scope.loadingReverse = $(window).scrollTop() < 0;
+    $scope.scrollPosition = $(window).scrollTop();
 
     var delta = $scope.scrollPosition - lastPosition;
-    $scope.scrolling = (Math.abs(delta) > 10);
+    //$scope.scrolling = (Math.abs(delta) > 10);
 
-    if (Math.abs(filterPosition - $scope.scrollPosition) < windowHeight * 5) return;
+    if (isInViewPort($scope.scrollPosition + delta * 2)) return;
 
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function(){
-      filterPosition = $scope.scrollPosition;
-      filterView(delta);
-      if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
-    }, Math.abs(delta)); // the more you scroll - the more you have to wait, chanses are you will scroll more
+    $scope.scrolling = true;
+    filterView(delta);
+    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
 
     lastPosition = $scope.scrollPosition;
 
@@ -141,8 +139,12 @@ function WallController($scope, $http){
 
   });
 
+
+  function isInViewPort(top){
+    return top > $scope.scrollPosition - (windowHeight * 2) && top < $scope.scrollPosition + windowHeight * 2;
+  }
   function visible(photo, delta){
-    return photo && photo.top > $scope.scrollPosition - (windowHeight * 2) && photo.top < $scope.scrollPosition + windowHeight * 10;
+    return photo && isInViewPort(photo.top) || isInViewPort(photo.top + photo.height);
   }
 
   // by using a queue we can make sure we only prioritize loading images that are visible
@@ -160,6 +162,7 @@ function WallController($scope, $http){
 
 
   function filterView(delta){
+    console.log('filter');
 
     // optimized filter instead of array.filter.
     var photosInView = [];
@@ -177,7 +180,8 @@ function WallController($scope, $http){
 
     photosInView.sort(function(a,b){
       // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
-      return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
+      return (a.vote - b.vote);
+      //return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
     $scope.photosInView = photosInView; // utils.filterMerge($scope.photosInView, photosInView);
 

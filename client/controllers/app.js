@@ -237,7 +237,7 @@ angular.module('app', [])
     window.onscroll = function(event) {
       appScope.loadingReverse = $(window).scrollTop() < 0;
       appScope.scrollPosition = $(window).scrollTop();
-      scope.$apply(attr.whenScrolled);
+      appScope.apply(attr.whenScrolled);
     };
   }})
 .directive('slideshow', function() {
