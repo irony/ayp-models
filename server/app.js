@@ -117,6 +117,7 @@ exports.init = function() {
 
     app.configure('production', function(){
         app.use(express.errorHandler());
+        global.debug = false;
         console.debug = function(){};
     });
 

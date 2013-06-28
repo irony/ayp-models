@@ -79,7 +79,7 @@ var downloader = {
 
     var downloadAllResults = function downloadAllResults(err, photos){
 
-      if (photos && photos.length) console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
+      if (photos && photos.length) console.debug('Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
       
       async.map(photos, function(photo, done){
 
@@ -126,7 +126,7 @@ var downloader = {
       }, function(err, photos){
 
         // if (err) throw err;
-        
+
         if (photos.length){
           console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green);
           return done(err, photos);

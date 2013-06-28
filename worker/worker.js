@@ -9,11 +9,11 @@ var async = require('async');
 var http = require('http');
 var User = require('../models/user');
 var Photo = require('../models/photo');
-var _ = require('underscore');
+var _ = require('lodash');
 var colors = require('colors');
 
-if (process.ENV === "production" || true){
-  // console.debug = function(){ /* ignore debug messages*/};
+if (process.ENV === "production" && !global.debug ){
+  console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
     require('longjohn');
@@ -74,11 +74,13 @@ var jobs = [
 function startJob (job, done){
 
   function start(){
-    console.log('Starting job: %s', job.title.white);
+    console.debug('Starting job: %s', job.title.white);
+    process.stdout.write(".");
   }
 
   function finish(err, result){
-    console.log('Finished job: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
+    if (err) console.log('Job done err: %s', job.title.white + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
+    else console.debug('Finished job: %s affected: %s', job.title.white + ' [' + ('OK'.green) + ']', result && result.length || '');
   }
 
   try{
