@@ -207,6 +207,7 @@ module.exports = function(app){
               return next(null, {
                 _id : photo._id,
                 taken:photo.taken && photo.taken.getTime(),
+                cluster:mine.cluster,
                 src: global.s3.signedUrl(
                     '/thumbnail/' + photo.source + '/' + photo._id
                   , moment().add('year', 1).startOf('year').toDate()

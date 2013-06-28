@@ -271,6 +271,7 @@ function WallController($scope, $http, $window){
     var lastPhoto = null;
     var top = 0;
     var left = 0;
+    var cluster = null;
 
     // go through all photos
     // add all to groups
@@ -283,7 +284,7 @@ function WallController($scope, $http, $window){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var gap = !nextPhoto && 1 || (photo.taken - nextPhoto.taken) / (6 * 60 * 60 * 1000);
+      var newGroup = Math.floor(photo.cluster) !== Math.floor(cluster);
 
       group.push(photo);
       
@@ -317,7 +318,7 @@ function WallController($scope, $http, $window){
         photo.active = false;
       }
 
-      if (gap >= 1 ) {
+      if (newGroup) {
 
         if (group.length >= 20){
           if (row.length > 2) {
@@ -330,6 +331,7 @@ function WallController($scope, $http, $window){
 
           var savedGroup = new Group(group);
 
+          // next group will be placed on the next row
           top = savedGroup.bottom + 15;
           left = 5;
         }

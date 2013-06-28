@@ -117,7 +117,8 @@ var importer = {
           connector.importNewPhotos(user, function(err, photos){
             if (err || !photos || !photos.length) return done && done(err);
 
-            console.log('Importer: Found %d new photos', photos.length);
+            if (photos.length) console.debug('Importer: Found %d new photos', photos.length);
+
             return importer.savePhotos(user, photos, done);
 
           });
