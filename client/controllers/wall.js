@@ -23,6 +23,10 @@ function WallController($scope, $http, $window){
 
   var lastPosition = null;
   var waiting = false;
+
+  $window.onresize = function(event) {
+    windowHeight = window.innerHeight;
+  };
    
   $window.onscroll = function(event) {
 
@@ -271,7 +275,7 @@ function WallController($scope, $http, $window){
     var lastPhoto = null;
     var top = 0;
     var left = 0;
-    var cluster = null;
+    var cluster = 0;
 
     // go through all photos
     // add all to groups
@@ -284,10 +288,10 @@ function WallController($scope, $http, $window){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var newGroup = Math.floor(photo.cluster) !== Math.floor(cluster);
-
+      var newGroup = !nextPhoto || Math.floor(nextPhoto.cluster) !== Math.floor(cluster);
       group.push(photo);
-      
+      cluster = photo.cluster;
+
       // Only show visible photos
       if (photo && photo.src && photo.vote <= $scope.zoomLevel ) {
 
