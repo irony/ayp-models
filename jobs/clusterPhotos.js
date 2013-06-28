@@ -64,7 +64,6 @@ module.exports = function(done){
                   return a.vote - b.vote;
                 }).forEach(function(photo, i){
                   photo.cluster=clusterId + "." + group + i;
-                  console.log(photo)
                 });
 
               });
