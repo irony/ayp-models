@@ -51,20 +51,20 @@ module.exports = function(done){
           var clusterId = 0;
 
           async.map(clusters, function(cluster, done){
-            clusterId++;
-            var subClusterId=0;
             var subClusters = clusterfck.kmeans(cluster, 5);
             
+            clusterId++;
             subClusters
               .sort(function(a,b){
                 return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
               })
-              .map(function(subCluster, group, i){
+              .map(function(subCluster, group){
 
                 subCluster.sort(function(a,b){
-                  b.cluster=parseFloat(clusterId + "." + subCluster);
-                  subClusterId++;
                   return a.vote - b.vote;
+                }).forEach(function(photo, i){
+                  photo.cluster=clusterId + "." + group + i;
+                  console.log(photo)
                 });
 
               });
