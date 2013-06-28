@@ -19,7 +19,8 @@ var PhotoCopy = new mongoose.Schema({
       groups : { type: []},
       clusterOrder : { type: Number},
       top : { type: Number, default: null},
-      rank : { type: Number, default: 50}
+      rank : { type: Number, default: 50},
+      cluster : {type : Number}
     });
 
 module.exports = mongoose.models['PhotoCopy'] || mongoose.model('PhotoCopy', PhotoCopy);

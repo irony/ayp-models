@@ -29,6 +29,7 @@ module.exports = function(done){
       // find all their photos and sort them on interestingness
       Photo.find({'owners': user._id}, 'taken copies.' + user._id + '.calculatedVote copies.' + user._id + '.vote')
       // .where('copies.' + user._id + '.clusterOrder').exists(false)
+      .sort({ taken : -1 })
       .exec(function(err, photos){
         if (err) throw err;
 
@@ -47,19 +48,26 @@ module.exports = function(done){
         },function(err, vectors){
           
           var clusters = clusterfck.kmeans(vectors.filter(function(a){return a}), 100);
+          var clusterId = 0;
 
           async.map(clusters, function(cluster, done){
+            clusterId++;
+            var subClusterId=0;
             var subClusters = clusterfck.kmeans(cluster, 5);
-            subClusters.map(function(subCluster, group, i){
+            
+            subClusters
+              .sort(function(a,b){
+                return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
+              })
+              .map(function(subCluster, group, i){
 
-              // Weave the groups
-              subCluster.sort(function(a,b){
-                return a.vote - b.vote;
+                subCluster.sort(function(a,b){
+                  b.cluster=parseFloat(clusterId + "." + subCluster);
+                  subClusterId++;
+                  return a.vote - b.vote;
+                });
+
               });
-
-            }).sort(function(a,b){
-              return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
-            });
 
             var rankedPhotos = utils.weave(subClusters);
             var i = 0;
@@ -69,6 +77,7 @@ module.exports = function(done){
               var clusterRank = (i/rankedPhotos.length) * 100;
 
               setter.$set['copies.' + user._id + '.clusterOrder'] = clusterRank;
+              setter.$set['copies.' + user._id + '.cluster'] = photo.cluster;
               i++;
 
               return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true}, done);
