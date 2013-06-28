@@ -30,11 +30,10 @@ function WallController($scope, $http, $window){
     $scope.scrollPosition = $(window).scrollTop();
 
     var delta = $scope.scrollPosition - lastPosition;
-    //$scope.scrolling = (Math.abs(delta) > 10);
+    // $scope.scrolling = (Math.abs(delta) > 10);
 
     if (isInViewPort($scope.scrollPosition + delta * 2)) return;
 
-    $scope.scrolling = true;
     filterView(delta);
     if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
 

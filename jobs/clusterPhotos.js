@@ -28,6 +28,7 @@ module.exports = function(done){
 
       // find all their photos and sort them on interestingness
       Photo.find({'owners': user._id}, 'taken copies.' + user._id + '.calculatedVote copies.' + user._id + '.vote')
+      // .where('copies.' + user._id + '.clusterOrder').exists(false)
       .exec(function(err, photos){
         if (err) throw err;
 
@@ -61,15 +62,16 @@ module.exports = function(done){
             });
 
             var rankedPhotos = utils.weave(subClusters);
-            async.map(rankedPhotos, function(photo, done, i){
-              
+            var i = 0;
+            async.map(rankedPhotos, function(photo, done){
               var setter = {$set : {}};
               var interestingness = photo.value >= 100 ? photo.value : Math.floor(Math.random()*100);
-              
-              setter.$set['copies.' + user._id + '.clusterOrder'] = (i/rankedPhotos.length) * 100;
-              // setter.$set['modified'] = new Date();
+              var clusterRank = (i/rankedPhotos.length) * 100;
 
-              return Photo.update({_id : photo._id}, setter, {upsert: true, safe:true}, done);
+              setter.$set['copies.' + user._id + '.clusterOrder'] = clusterRank;
+              i++;
+
+              return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true}, done);
 
             }, userDone);
 
@@ -78,7 +80,7 @@ module.exports = function(done){
         });
       });
     }, function(err, users){
-      if (!err) console.debug(': Cluster OK %d users', users.length);
+      // if (!err) console.debug(': Cluster OK %d users', users.length);
       if (done) done(err, users);
     });
   });

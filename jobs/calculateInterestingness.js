@@ -32,6 +32,7 @@ module.exports = function(done){
         if(mine.starred) emit(group, 500);
 
         if(mine.views) emit(group, 100 + mine.views * 5);
+        if(mine.clusterOrder) emit(group, 100 - mine.clusterOrder);
         
 
         //if(self.exif && self.exif.) emit(group, 100 + 5);
@@ -39,7 +40,7 @@ module.exports = function(done){
         
         if(mine.clicks) emit(group, 100 + mine.clicks * 10);
 
-        if(mine.groups && mine.groups.length) emit(group, 100 + mine.groups.length * 10);
+        // if(mine.groups && mine.groups.length) emit(group, 100 + mine.groups.length * 10);
 
       }
     }
@@ -84,7 +85,7 @@ module.exports = function(done){
         setter.$set['modified'] = new Date();
 
         Photo.update({_id : photoId}, setter, function(err, photo){
-          if (err) console.log('_id, err, setter ', photo._id, err,setter);
+          if (err) console.log('err, setter ', err,setter);
           return done(err);
         });
 

@@ -79,8 +79,7 @@ var downloader = {
 
     var downloadAllResults = function downloadAllResults(err, photos){
 
-
-      console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
+      if (photos && photos.length) console.debug('[50]Found %d photos without downloaded thumbnails. Downloading...', photos && photos.length, err);
       
       async.map(photos, function(photo, done){
 
@@ -128,9 +127,8 @@ var downloader = {
 
         // if (err) throw err;
         
-        console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green);
-        
         if (photos.length){
+          console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green);
           return done(err, photos);
         }
         else{
@@ -200,8 +198,8 @@ var downloader = {
         });
       }, function(err, photos){
         
-        console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
         if (photos.length){
+          console.debug('Downloaded %d photos: %s', _.compact(photos).length, err && err.toString().red || 'Without errors'.green);
           return done(err, photos);
         }
         else{

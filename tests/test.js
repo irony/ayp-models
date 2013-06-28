@@ -92,11 +92,24 @@ describe("unit", function(){
     done();
   });
 
-it("should weave two arrays", function(done){
+  it("should weave two arrays", function(done){
     var a = [1,2,3,4];
     var b = [1,2,3,4,5,6,7];
 
     var result = utils.weave(a,b);
+
+    var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
+    result.should.eql(expectedResult);
+    done();
+  });
+
+  it("should weave many arrays", function(done){
+    var a = [
+              [1,2,3,4],
+              [1,2,3,4,5,6,7]
+            ];
+
+    var result = utils.weave(a);
 
     var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
     result.should.eql(expectedResult);

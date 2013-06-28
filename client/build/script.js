@@ -1457,8 +1457,7 @@ function Utils(_){
    * @return {[type]}   [description]
    */
   this.weave = function(a,b){
-
-    var arrays = Array.prototype.slice.call(arguments);
+    var arrays = Array.prototype.slice.call(arguments.length === 1 ? arguments[0] : arguments);
     var maxLength = Math.max.apply(Math, arrays.map(function (el) { return el.length }));
 
     var result = [];
@@ -2768,11 +2767,10 @@ function WallController($scope, $http, $window){
     $scope.scrollPosition = $(window).scrollTop();
 
     var delta = $scope.scrollPosition - lastPosition;
-    //$scope.scrolling = (Math.abs(delta) > 10);
+    // $scope.scrolling = (Math.abs(delta) > 10);
 
     if (isInViewPort($scope.scrollPosition + delta * 2)) return;
 
-    $scope.scrolling = true;
     filterView(delta);
     if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
 

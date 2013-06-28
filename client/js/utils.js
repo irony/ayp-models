@@ -29,8 +29,7 @@ function Utils(_){
    * @return {[type]}   [description]
    */
   this.weave = function(a,b){
-
-    var arrays = Array.prototype.slice.call(arguments);
+    var arrays = Array.prototype.slice.call(arguments.length === 1 ? arguments[0] : arguments);
     var maxLength = Math.max.apply(Math, arrays.map(function (el) { return el.length }));
 
     var result = [];

@@ -15,6 +15,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
 module.exports = function(done){
 
   if (!done) throw new Error("Callback is mandatory");
+  var affectedPhotos = 0;
 
   // find all users
   User.find().exec(function(err, users){
@@ -29,7 +30,7 @@ module.exports = function(done){
         if (err) throw err;
 
         photos.sort(function(a,b){
-          return b.copies[user._id].interestingness - a.copies[user._id].interestingness;
+          return a.copies[user._id].interestingness - b.copies[user._id].interestingness;
         });
       
         var rank = 0;
@@ -49,6 +50,7 @@ module.exports = function(done){
             return done();
           }
 
+          affectedPhotos++;
           // console.log('updating rank', photo._id, newRank / 100, mine.rank / 100);
 
           var setter = {$set : {}};
@@ -70,7 +72,7 @@ module.exports = function(done){
         });
       });
     }, function(err, users){
-      if (!err) console.debug(': Rank OK %d users', users.length);
+      if (!err) console.debug(': Ranked %d photos', affectedPhotos);
       if (done) done(err, users);
     });
   });
