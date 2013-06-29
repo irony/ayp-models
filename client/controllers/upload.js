@@ -132,9 +132,17 @@ function UploadController($scope, $http){
     fr.readAsBinaryString(file);
   }
 
+  // API: http://code.google.com/p/crypto-js/
+  function encrypt(file, secret){
+    var encrypted = CryptoJS.Rabbit.encrypt(file, secret);
+    var decrypted = CryptoJS.Rabbit.decrypt(encrypted, secret);
+  }
+
   function uploadFile(file, done){
     var fd = new FormData();
     var thumbnail = dataURItoBlob(file.thumbnail);
+
+    // TODO: add encryption here
     
     if (file.exif)
       fd.append('exif', JSON.stringify(file.exif));

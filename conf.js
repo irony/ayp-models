@@ -45,5 +45,9 @@
     "app_secret": "un2e5d75rkfdeml",
     root : 'dropbox',
     scope : ''
+  },
+  blitline :
+  {
+    key : '5EUcAOhUpehEGs6uXQzz_Sg'
   }
 };

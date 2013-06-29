@@ -56,24 +56,30 @@ module.exports = function(done){
             clusterId++;
             subClusters
               .sort(function(a,b){
-                return b.length - a.length; // sort the arrays so we get the longest cluster first - that is probably our best shot!
+                return a.length - b.length; // sort the arrays so we get the smallest clusters first - less risk of double shots from the same cluster
               })
               .map(function(subCluster, group){
 
                 subCluster.sort(function(a,b){
                   return a.vote - b.vote;
                 }).forEach(function(photo, i){
-                  photo.cluster=clusterId + "." + group + i;
+                  photo.cluster=clusterId + "." + group + "." + i; 
                 });
 
               });
 
             var rankedPhotos = utils.weave(subClusters);
-            var i = 0;
+            var i = 1;
             async.map(rankedPhotos, function(photo, done){
               var setter = {$set : {}};
               var interestingness = photo.value >= 100 ? photo.value : Math.floor(Math.random()*100);
-              var clusterRank = (i/rankedPhotos.length) * 100;
+              var clusterRank = (100/i);
+
+              // 1 = 100
+              // 2 = 50
+              // 3 = 25
+              // 4 = 12.5
+              // 5 = 6
 
               setter.$set['copies.' + user._id + '.clusterOrder'] = clusterRank;
               setter.$set['copies.' + user._id + '.cluster'] = photo.cluster;

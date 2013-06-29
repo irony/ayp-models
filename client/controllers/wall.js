@@ -18,9 +18,6 @@ function WallController($scope, $http, $window){
   $scope.fullscreen = false;
   $scope.loading = true;
 
-
-  console.log('wall', $scope);
-
   var lastPosition = null;
   var waiting = false;
 
