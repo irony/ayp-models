@@ -51,19 +51,20 @@ module.exports = function(done){
           var clusterId = 0;
 
           async.map(clusters, function(cluster, done){
-            var subClusters = clusterfck.kmeans(cluster, 5);
+            var subClusters = clusterfck.kmeans(cluster, 10);
             
             clusterId++;
             subClusters
               .sort(function(a,b){
-                return a.length - b.length; // sort the arrays so we get the smallest clusters first - less risk of double shots from the same cluster
+                // largest clusters first
+                return b.length - a.length;
               })
               .map(function(subCluster, group){
 
                 subCluster.sort(function(a,b){
                   return a.vote - b.vote;
                 }).forEach(function(photo, i){
-                  photo.clusterRank = (Math.min(100,subCluster.length*20)/i);
+                  photo.clusterRank = Math.min(100, (100/i));
                   photo.cluster=clusterId + "." + group + "." + i; 
                 });
 
