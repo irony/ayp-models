@@ -63,6 +63,7 @@ module.exports = function(done){
                 subCluster.sort(function(a,b){
                   return a.vote - b.vote;
                 }).forEach(function(photo, i){
+                  photo.clusterRank = (Math.min(100,subCluster.length*20)/i);
                   photo.cluster=clusterId + "." + group + "." + i; 
                 });
 
@@ -72,8 +73,6 @@ module.exports = function(done){
             var i = 1;
             async.map(rankedPhotos, function(photo, done){
               var setter = {$set : {}};
-              var interestingness = photo.value >= 100 ? photo.value : Math.floor(Math.random()*100);
-              var clusterRank = (100/i);
 
               // 1 = 100
               // 2 = 50
@@ -81,7 +80,7 @@ module.exports = function(done){
               // 4 = 12.5
               // 5 = 6
 
-              setter.$set['copies.' + user._id + '.clusterOrder'] = clusterRank;
+              setter.$set['copies.' + user._id + '.clusterOrder'] = photo.clusterRank;
               setter.$set['copies.' + user._id + '.cluster'] = photo.cluster;
               i++;
 
