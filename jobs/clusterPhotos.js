@@ -72,7 +72,7 @@ module.exports = function(done){
             var i = 1;
             async.map(rankedPhotos, function(photo, done){
               var setter = {$set : {}};
-              var clusterRank = 100-(rankedPhotos.length/i)*100;
+              var clusterRank = (rankedPhotos.length/i)*100;
 
               // 1 = 100
               // 2 = 50
