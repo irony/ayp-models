@@ -51,20 +51,18 @@ module.exports = function(done){
           var clusterId = 0;
 
           async.map(clusters, function(cluster, done){
-            var subClusters = clusterfck.kmeans(cluster, 10);
+            var subClusters = clusterfck.kmeans(cluster, cluster.length / 4);
             
             clusterId++;
             subClusters
               .sort(function(a,b){
-                // largest clusters first
-                return b.length - a.length;
+                return a.length - b.length; // sort the arrays so we get the smallest clusters first - less risk of double shots from the same cluster
               })
               .map(function(subCluster, group){
 
                 subCluster.sort(function(a,b){
                   return a.vote - b.vote;
                 }).forEach(function(photo, i){
-                  photo.clusterRank = Math.min(100, (100/i));
                   photo.cluster=clusterId + "." + group + "." + i; 
                 });
 
@@ -74,6 +72,7 @@ module.exports = function(done){
             var i = 1;
             async.map(rankedPhotos, function(photo, done){
               var setter = {$set : {}};
+              var clusterRank = (90/i);
 
               // 1 = 100
               // 2 = 50
@@ -81,7 +80,7 @@ module.exports = function(done){
               // 4 = 12.5
               // 5 = 6
 
-              setter.$set['copies.' + user._id + '.clusterOrder'] = photo.clusterRank;
+              setter.$set['copies.' + user._id + '.clusterOrder'] = clusterRank;
               setter.$set['copies.' + user._id + '.cluster'] = photo.cluster;
               i++;
 
