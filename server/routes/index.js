@@ -10,7 +10,7 @@ module.exports = function(app){
 
       res.render('template.ejs', model, function(err, data){
 
-        var pusher = new Pusher(req, res, './client');
+        /*var pusher = new Pusher(req, res, './client');
         [
           //'/fonts/fontawesome-webfont.woff',
           '/css/bootstrap.min.css',
@@ -23,7 +23,7 @@ module.exports = function(app){
           '/js/socket.io.min.js',
           '/controllers/app.js',
           '/img/allyourphotos.png'
-        ].map(function(file){pusher.pushFile(file)});
+        ].map(function(file){pusher.pushFile(file)});*/
         res.end(data);
       });
 

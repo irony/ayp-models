@@ -137,7 +137,6 @@
 
     .carousel .item {
       height: 400px;
-      overflow: none;
       vertical-align: middle;
     }
     .carousel img {
@@ -597,7 +596,7 @@ body .navbar-inner{
 
 #wall:hover .slider
 {
-  opacity:0.9;
+  opacity:1;
 }
 
 #wall #meta{
@@ -711,9 +710,9 @@ body .navbar-inner{
   font-size: 20px;
   font-weight: 100;
   padding: 10px 0;
-  -webkit-transition    :all 1s ease-out-back;
-  -moz-transition       :all 1s ease-out-back;
-  transition            :all 1s ease-out-back;
+  -webkit-transition    :all 1s ease-out;
+  -moz-transition       :all 1s ease-out;
+  transition            :all 1s ease-out;
 }
 
 #wall .group h2{
@@ -748,9 +747,9 @@ body .navbar-inner{
 
 #wall img
 {
-  -webkit-transition    :all .2s ease-out-back;
-  -moz-transition       :all .2s ease-out-back;
-  transition            :all .2s ease-out-back;
+  -webkit-transition    :all .2s ease-out;
+  -moz-transition       :all .2s ease-out;
+  transition            :all .2s ease-out;
   max-width: inherit !important;
 }
 
@@ -773,56 +772,8 @@ body .navbar-inner{
 .subscription-plan.recommended{border-left:1px #d0d2d9 solid;border-color:#7ab1d7;border-radius:4px;box-shadow:0 0 6px #c9dfef;-webkit-transform:scale(1.02);-moz-transform:scale(1.02);-ms-transform:scale(1.02);-o-transform:scale(1.02);transform:scale(1.02);position:relative;z-index:50;}
 
 
-@media only screen and (max-width : 1199px),
-only screen and (max-device-width : 1199px){
-    #wall .group {
-        -moz-column-count: 5;
-        -moz-column-gap: 5px;
-        -webkit-column-count: 5;
-        -webkit-column-gap: 5px;
-        column-count: 5;
-        column-gap: 5px;
-    }
-     
-}
- 
- 
-@media only screen and (max-width : 999px),
-only screen and (max-device-width : 999px){
-    #wall .group {
-        -moz-column-count: 4;
-        -moz-column-gap: 5px;
-        -webkit-column-count: 4;
-        -webkit-column-gap: 5px;
-        column-count: 4;
-        column-gap: 5px;
-    }
-     
-}
- 
-@media only screen and (max-width : 799px),
-only screen and (max-device-width : 799px){
-    #wall .group {
-        -moz-column-count: 3;
-        -moz-column-gap: 5px;
-        -webkit-column-count: 3;
-        -webkit-column-gap: 5px;
-        column-count: 3;
-        column-gap: 5px;
-    }
-
-}
- 
 @media only screen and (max-width : 599px),
 only screen and (max-device-width : 599px){
-    #wall .group {
-        -moz-column-count: 2;
-        -moz-column-gap: 5px;
-        -webkit-column-count: 2;
-        -webkit-column-gap: 5px;
-        column-count: 2;
-        column-gap: 5px;
-    }
      
     #wall .slider {
       height: 20px;
@@ -954,10 +905,6 @@ input[type=file]::-webkit-file-upload-button {
   background-size:100%;
   text-align: center;
   padding:30px;
-}
-
-.modal-body .instructions i{
-  text-shadow: 1px #eee;
 }
 
 #login {
@@ -1115,10 +1062,6 @@ body .modal.fade.in {
 
 #wall .flip{
    -webkit-transform:rotateY(-180deg);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden; /* Chrome and Safari */
-  -moz-backface-visibility:hidden; /* Firefox */
-  -ms-backface-visibility:hidden; /* Internet Explorer */
 }
 
 #wall .meta{
@@ -1132,33 +1075,28 @@ body .modal.fade.in {
 
   /* use css instead of javascript to use maximum power from the engine */
 
-  #wall img:hover, #wall img:selection
-  {
-    opacity:1;
-  }
-
   .filter0 .v0
-  {  opacity:1;  /*width:inherit*/; }
+  {  opacity:1; }
   .filter0 .v1, .filter0 .v2, .filter0 .v3, .filter0 .v4, .filter0 .v5, .filter0 .v6, .filter0 .v7, .filter0 .v8, .filter0 .v9
   {  opacity:0.4; width:0; height:0;}
 
   .filter1 .v0,.filter1 .v1  
-  {  opacity:1; /*width:inherit*/; }
+  {  opacity:1; }
   .filter1 .v2, .filter1 .v3, .filter1 .v4, .filter1 .v5, .filter1 .v6, .filter1 .v7, .filter1 .v8, .filter1 .v9
   {  opacity:0.4;}
 
   .filter2 .v0, .filter2 .v1, .filter2 .v2 
-  {  opacity:1;/*width:inherit*/; }
+  {  opacity:1; }
   .filter2 .v3, .filter2 .v4, .filter2 .v5, .filter2 .v6, .filter2 .v7, .filter2 .v8, .filter2 .v9
   {  opacity:0.4;}
  
   .filter4 .v0, .filter3 .v1, .filter3 .v2, .filter3 .v3 
-  {  opacity:1;/*width:inherit*/; }
+  {  opacity:1; }
   .filter3 .v4, .filter3 .v5, .filter3 .v6, .filter3 .v7, .filter3 .v8, .filter3 .v9
   {  opacity:0.4;}
 
   .filter4 .v0, .filter4 .v1, .filter4 .v2, .filter4 .v3, .filter4 .v4 
-  {  opacity:1;/*width:inherit*/; }
+  {  opacity:1; }
   .filter4 .v5, .filter4 .v6, .filter4 .v7, .filter4 .v8, .filter4 .v9
   {  opacity:0.4;}
 

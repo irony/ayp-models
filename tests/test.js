@@ -115,6 +115,45 @@ describe("unit", function(){
     result.should.eql(expectedResult);
     done();
   });
+
+  it("should gapSort an array", function(done){
+    var a = [1,2,3,4,99,55,22,33,44,55,11];
+
+    var result = utils.gapSort(a);
+
+    var expectedResult = [1,99,2,55,3,55,4,44,11,33,22];
+    a.should.have.length(11);
+    result.should.eql(expectedResult);
+    done();
+  });
+/*
+  it("should distSort an array", function(done){
+    var a = [1,2,3,4,20,30,40,50,60,70,80];
+
+    var result = utils.distSort(a);
+
+    var expectedResult = [1,80,2,55,3,55,4,44,11,33,22];
+    a.should.have.length(11);
+    result.should.eql(expectedResult);
+    done();
+  });*/
+
+  it("should gapSort an array on date t", function(done){
+    var a = [
+      {taken: 1},{taken: 2},{taken: 3},{taken: 4},{taken: 99},{taken: 55},{taken: 22},{taken: 33},{taken: 44},{taken: 55},{taken: 11}
+    ];
+
+    var result = utils.gapSort(a, 'taken');
+
+    var expectedResult =
+    [
+      {taken:1},{taken:99},{taken:2},{taken:55},{taken:3},{taken:55},{taken:4},{taken:44},{taken:11},{taken:33},{taken:22}
+    ];
+
+    result.should.eql(expectedResult);
+    done();
+  });
+
 });
 
 describe("app", function(){

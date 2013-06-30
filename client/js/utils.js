@@ -41,6 +41,74 @@ function Utils(_){
     return result;
   };
 
+  /**
+   * Sort an array on the total distance between each row so that we get an even spread
+   * @param  {[type]} array     [description]
+   * @param  {[type]} sortField [description]
+   * @return {[type]}           [description]
+   */
+  this.gapSort = function(array, sortField){
+
+    var sorted = _.sortBy(array,sortField);
+
+    var result = [];
+    while(sorted.length) {
+      if (sorted.length % 2){
+        result.push(sorted.splice(0,1)[0]);
+      } else {
+        result.push(sorted.splice(-1)[0]);
+      }
+    }
+    return result;
+  };
+
+  // [123         5        7      9]
+  // =>
+  // 195
+/* NOT WORKING YET */
+  this.distSort = function(array, sortField){
+
+    var combinations = [];
+    var i = array.length;
+
+    // create each combination pair: [1,99, 98], [1,98, 97],  .. [99,1], [99,99]
+    while(i--){
+      var j = array.length;
+      while(j--){
+        if (array[i] !== array[j]){
+          combinations.push([array[i],array[j], (array[i] + array[j]) / 2]);
+        }
+      }
+    }
+
+    var stdDiff = combinations.reduce(function(a,b){return a + b[2]}) / combinations.length;
+/*
+    var groupedArrays = _.sort(array, sortField).reduce(function(a,b){
+      if (Math.abs(a.slice(-1)[0].slice(-1)[0] - b))
+    }, [[]]);
+*/
+    combinations = _.sortBy(combinations, 2, true);
+
+    var next = combinations[0];
+    var result = [];
+    while(next){
+      result.push(next);
+      next = _.sortBy(combinations, function(a){
+        return Math.abs(next[2]-a[1]);
+      }).first();
+    }
+
+    console.log(combinations);
+    var result = combinations.reverse().reduce(function(a,b){
+      if (a.indexOf(b[0]) === -1) a.push(b[0]);
+      if (a.indexOf(b[1]) === -1) a.push(b[1]);
+      return a;
+    }, []);
+
+
+    return result;
+  };
+
     // returns a merged array with items from a but and new from b, all items from a which isnt present in b are removed 
   this.merge = function (a,b,id){
     var diff = this.diff(a,b,id,true);

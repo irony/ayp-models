@@ -129,7 +129,7 @@ var downloader = {
 
         if (photos.length){
           console.debug('Downloaded %d thumbnails: %s', photos.length, err && err.toString().red || 'Without errors'.green);
-          return done(err, photos);
+          return done(err, _(photos).compact().value());
         }
         else{
           setTimeout(done, 10000); // wait longer before trying again if queue is empty

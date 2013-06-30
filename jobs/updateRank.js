@@ -38,7 +38,7 @@ module.exports = function(done){
         // no meaning to rank too few photos
         if (photos.length < 30) return userDone();
 
-        async.map(photos, function(photo, done){
+        async.mapSeries(photos, function(photo, done){
           if (!photo || !photo.copies) return done();
 
           // closure
@@ -57,6 +57,7 @@ module.exports = function(done){
           setter.$set['copies.' + user._id + '.rank'] = newRank;
           setter.$set['copies.' + user._id + '.calculatedVote'] = Math.min(10, Math.round(newRank / photos.length * 15)); // 15 is to allow fewer pictures in "the best"
           setter.$set['copies.' + user._id + '.calculated'] = new Date();
+          setter.$set['modified'] = new Date();
 
           return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
 

@@ -137,7 +137,9 @@ var importer = {
 
       async.mapSeries(users, function(user, done){
         importer.importPhotosFromAllConnectors(user, done);
-      }, done);
+      }, function(err, results){
+        done(err, _(results).flatten().compact().value());
+      });
     });
   },
 

@@ -23,6 +23,7 @@ module.exports = function(grunt) {
     copy: {
       all: {
         files: [
+          {expand: true, src: ['node_modules/socket.io-client/dist/socket.io.min.js'], dest: 'client/js/assets/', flatten: true},
           {expand: true, src: ['components/lodash/dist/lodash.min.js'], dest: 'client/js/assets/', flatten: true},
           
           {expand: true, src: ['components/angular/angular.min.js'], dest: 'client/js/assets/', flatten: true},
