@@ -90,7 +90,7 @@ Clusterer.extractGroups = function(user, photos, number, done){
 };
 
 Clusterer.rankGroupPhotos = function(group, done){
-    var subClusters = clusterfck.kmeans(group.photos);
+    var subClusters = clusterfck.kmeans(group.photos, 10);
     subClusters
       .sort(function(a,b){
         return b.length - a.length; // sort the arrays bigger first, more value toeacho we get the smallest clusters first - less risk of double shots from the same cluster
