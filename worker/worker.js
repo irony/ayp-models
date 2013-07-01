@@ -12,7 +12,7 @@ var Photo = require('../models/photo');
 var _ = require('lodash');
 var colors = require('colors');
 
-if (!global.debug && false ){
+if (!global.debug ){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
