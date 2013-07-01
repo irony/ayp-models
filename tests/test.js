@@ -65,95 +65,149 @@ describe("unit", function(){
   var _ = require('lodash');
   var utils = require('../client/js/utils')(_);
 
+  describe("utils", function(){
 
-  it("should diff two arrays", function(done){
-    var a = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
-    var b = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}];
+    it("should diff two arrays", function(done){
+      var a = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
+      var b = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}];
 
-    var result = utils.merge(a,b, 'id');
-    //.union(old);
+      var result = utils.merge(a,b, 'id');
+      //.union(old);
 
 
-    var expectedResult = [{id:1, a:true}, {id:2}, {id:3, a:false},{id:4, a:false}];
-    result.should.eql(expectedResult);
-    done();
+      var expectedResult = [{id:1, a:true}, {id:2}, {id:3, a:false},{id:4, a:false}];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+    it("should filter diff two arrays", function(done){
+      var oldArray = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
+      var newArray = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}, {id:17}];
+
+      utils.filterMerge(oldArray,newArray, 'id');
+      //.union(old);
+
+
+      var expectedResult = [{id:1, a:true}, {id:2}, {id:17}, {id:3, a:false}, {id:4, a:false}];
+      oldArray.should.eql(expectedResult);
+      done();
+    });
+
+    it("should weave two arrays", function(done){
+      var a = [1,2,3,4];
+      var b = [1,2,3,4,5,6,7];
+
+      var result = utils.weave(a,b);
+
+      var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+    it("should weave many arrays", function(done){
+      var a = [
+                [1,2,3,4],
+                [1,2,3,4,5,6,7]
+              ];
+
+      var result = utils.weave(a);
+
+      var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+    it("should gapSort an array", function(done){
+      var a = [1,2,3,4,99,55,22,33,44,55,11];
+
+      var result = utils.gapSort(a);
+
+      var expectedResult = [1,99,2,55,3,55,4,44,11,33,22];
+      a.should.have.length(11);
+      result.should.eql(expectedResult);
+      done();
+    });
+  /*
+    it("should distSort an array", function(done){
+      var a = [1,2,3,4,20,30,40,50,60,70,80];
+
+      var result = utils.distSort(a);
+
+      var expectedResult = [1,80,2,55,3,55,4,44,11,33,22];
+      a.should.have.length(11);
+      result.should.eql(expectedResult);
+      done();
+    });*/
+
+    it("should gapSort an array on date t", function(done){
+      var a = [
+        {taken: 1},{taken: 2},{taken: 3},{taken: 4},{taken: 99},{taken: 55},{taken: 22},{taken: 33},{taken: 44},{taken: 55},{taken: 11}
+      ];
+
+      var result = utils.gapSort(a, 'taken');
+
+      var expectedResult =
+      [
+        {taken:1},{taken:99},{taken:2},{taken:55},{taken:3},{taken:55},{taken:4},{taken:44},{taken:11},{taken:33},{taken:22}
+      ];
+
+      result.should.eql(expectedResult);
+      done();
+    });
   });
+  describe("jobs", function(){
+    
+    var photos = require("./fixtures/photos").photos;
+    var userA = new User();
 
-  it("should filter diff two arrays", function(done){
-    var oldArray = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
-    var newArray = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}, {id:17}];
+    before(function(){
+      photos.map(function(photo){
+        photo.copies = {};
+        photo.taken = new Date(photo.taken);
+        photo.owners = [userA];
+      });
+    });
 
-    utils.filterMerge(oldArray,newArray, 'id');
-    //.union(old);
+    describe("clusterer", function(){
+      var clusterer = require("../jobs/clusterPhotos.js");
+      it("should be able to extract photo groups", function(done){
 
+        clusterer.extractGroups(userA, photos, 10, function(err, groups){
+          should.ok(groups);
+          groups.should.have.length(10);
+          groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
+          var lengths = groups.map(function(group){return group.photos.length});
+          // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
+          should.ok(groups[0].photos.length > 1);
+          done();
+        });
 
-    var expectedResult = [{id:1, a:true}, {id:2}, {id:17}, {id:3, a:false}, {id:4, a:false}];
-    oldArray.should.eql(expectedResult);
-    done();
+      });
+
+      it("should be able to rank each group", function(done){
+
+        clusterer.extractGroups(userA, photos, 10, function(err, groups){
+          var rankedGroups = groups.map(clusterer.rankGroupPhotos);
+          rankedGroups.sort(function(a,b){return b.photos.length - a.photos.length});
+
+          var extracted = _(rankedGroups[0].photos).map(function(photo){
+            return photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
+          }).sortBy(0).value();
+
+          extracted.should.have.length(rankedGroups[0].photos.length);
+          rankedGroups[0].photos[0].clicks.should.eql(10, extracted);
+          rankedGroups[0].photos[0].boost.should.eql(50);
+          rankedGroups[1].photos[0].boost.should.eql(50);
+          rankedGroups[2].photos[0].boost.should.eql(50);
+          rankedGroups[3].photos[0].boost.should.eql(50);
+          rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10, extracted);
+
+          done();
+        });
+
+      });
+    });
   });
-
-  it("should weave two arrays", function(done){
-    var a = [1,2,3,4];
-    var b = [1,2,3,4,5,6,7];
-
-    var result = utils.weave(a,b);
-
-    var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
-    result.should.eql(expectedResult);
-    done();
-  });
-
-  it("should weave many arrays", function(done){
-    var a = [
-              [1,2,3,4],
-              [1,2,3,4,5,6,7]
-            ];
-
-    var result = utils.weave(a);
-
-    var expectedResult = [1,1,2,2,3,3,4,4,5,6,7];
-    result.should.eql(expectedResult);
-    done();
-  });
-
-  it("should gapSort an array", function(done){
-    var a = [1,2,3,4,99,55,22,33,44,55,11];
-
-    var result = utils.gapSort(a);
-
-    var expectedResult = [1,99,2,55,3,55,4,44,11,33,22];
-    a.should.have.length(11);
-    result.should.eql(expectedResult);
-    done();
-  });
-/*
-  it("should distSort an array", function(done){
-    var a = [1,2,3,4,20,30,40,50,60,70,80];
-
-    var result = utils.distSort(a);
-
-    var expectedResult = [1,80,2,55,3,55,4,44,11,33,22];
-    a.should.have.length(11);
-    result.should.eql(expectedResult);
-    done();
-  });*/
-
-  it("should gapSort an array on date t", function(done){
-    var a = [
-      {taken: 1},{taken: 2},{taken: 3},{taken: 4},{taken: 99},{taken: 55},{taken: 22},{taken: 33},{taken: 44},{taken: 55},{taken: 11}
-    ];
-
-    var result = utils.gapSort(a, 'taken');
-
-    var expectedResult =
-    [
-      {taken:1},{taken:99},{taken:2},{taken:55},{taken:3},{taken:55},{taken:4},{taken:44},{taken:11},{taken:33},{taken:22}
-    ];
-
-    result.should.eql(expectedResult);
-    done();
-  });
-
 });
 
 describe("app", function(){

@@ -8,10 +8,9 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var GroupSchema = new mongoose.Schema({
-      _id  :  { type: String },
       value : { type: {}},
       user : {type: Schema.Types.ObjectId},
-      photos : { type: []}
+      photos : { type: {}}
     });
 
 

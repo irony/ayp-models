@@ -25,6 +25,7 @@ var PhotoCopy = new mongoose.Schema({
 
 
 PhotoCopy.virtual('calculatedInterestingness').get(function () {
+
   var mine = this;
   var count = 0;
   var total = 0;
@@ -41,7 +42,7 @@ PhotoCopy.virtual('calculatedInterestingness').get(function () {
 
   if(mine.clicks) emit(group, 100 + mine.clicks * 10);
   if(mine.hidden) emit(group, 0);
-  if(mine.starred) emit(group, 500);
+  // if(mine.vote) emit(group, 1000 - vote * 100);
 
   if (count === 0)
     return mine.interestingness;

@@ -50,11 +50,11 @@ module.exports = function(grunt) {
     watch:{
       all:{
 
-        files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'client/js/*.js', '-server/build/', 'tests/*.js'],
+        files:['*.js','server/*.js', 'models/*.js', 'client/*.js', 'client/controllers/*.js', 'jobs/*.js', 'client/js/*.js', '-server/build/', 'tests/*.js'],
         tasks:['copy', 'concat', 'simplemocha:dev']
       },
       test:{
-        files:['gruntfile.js', 'server/*.js', 'models/*.js', 'tests/*.js', 'client/js/*.js'],
+        files:['gruntfile.js', 'server/*.js', 'models/*.js', 'tests/*.js', 'client/js/*.js', 'jobs/*.js'],
         tasks:['simplemocha:dev']
 
       }
