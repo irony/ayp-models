@@ -16,7 +16,7 @@ if (!global.debug && false){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
-    require('longjohn');
+  // require('longjohn');
     console.debug = console.log;
 
   /*require('nodetime').profile({
@@ -28,56 +28,90 @@ if (!global.debug && false){
 
 
 
+/* wrapper to be able to log the progress */
+function startJob(options){
+
+
+  function start(done, previousResults){
+    // console.log(previousResults);
+
+    function finish(err, result){
+      if (err) console.log('Job done err: %s', options.title + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
+      else console.debug('Finished job: %s affected: %s', options.title.white + ' [' + ('OK'.green) + ']', result && result.length || '');
+      return done(err, result);
+    }
+
+    if (options.skip && options.skip(previousResults)) return done();
+
+    console.debug('Starting job: %s', options.title.white);
+    process.stdout.write(".");
+    
+
+    options.job(finish, previousResults);
+  }
+
+  return start;
+}
+
+
+
+
 var jobs = {
   importer :        [
-                      startJob('Importer',
-                      require('../jobs/importer').importAllNewPhotos)
+                      startJob({
+                        title: 'Importer',
+                        job: require('../jobs/importer').importAllNewPhotos
+                      })
                     ],
 
   cluster :         [
+                      // dependencies
                       'importer',
-                      startJob(
-                        'Cluster',
-                        require('../jobs/clusterPhotos')
-                        // ,function(results){return !results.import || results.import.length === 0;}
-                      )
+                      startJob({
+                        title: 'Cluster',
+                        job: require('../jobs/clusterPhotos'),
+                        skip : function(results){return !results.import || results.import.length === 0;}
+                      })
                     ],
 
   thumbnails :      [
+                      // dependencies
                       'importer',
-                      startJob(
-                        'Thumbnails',
-                        require('../jobs/downloader').downloadThumbnails,
-                        function(results){return !results.import || results.import.length === 0;}
-                        )
+                      startJob({
+                        title: 'Thumbnails',
+                        job: require('../jobs/downloader').downloadThumbnails,
+                        skip: function(results){return !results.import || results.import.length === 0;}
+                      })
                     ],
 
   originals :       [
+                      // dependencies
                       'thumbnails',
-                      startJob(
-                        'Originals',
-                        require('../jobs/downloader').downloadOriginals,
-                        function(results){return !results.import || results.import.length === 0;}
-                      )
+                      startJob({
+                        title: 'Originals',
+                        job: require('../jobs/downloader').downloadOriginals,
+                        skip: function(results){return !results.import || results.import.length === 0;}
+                      })
                     ],
 
   /*interestingness : [
                       'importer', 'cluster',
-                      startJob(
-                        'Interestingness',
-                        require('../jobs/calculateInterestingness',
-                        function(results){return !results.cluster || results.cluster.length === 0;})
-                      )
+                      startJob({
+                        title: 'Interestingness',
+                        job: require('../jobs/calculateInterestingness',
+                        skip: function(results){return !results.cluster || results.cluster.length === 0;})
+                      })
                     ],*/
 
   rank :            [
+                      // dependencies
                       'cluster',
-                      startJob(
-                        'Rank',
-                        require('../jobs/updateRank')
+                      startJob({
+                        title: 'Rank',
+                        job: require('../jobs/updateRank')
                         //,
-                        //function(results){return !results.interestingness || results.interestingness.length === 0;}
-                      )
+                        // skip: function(results){return !results.interestingness || results.interestingness.length === 0;}
+                      })
                     ]
 
   /*{
@@ -92,43 +126,27 @@ var jobs = {
   },*/
 };
 
-/* wrapper to be able to log the progress */
-function startJob (title, job, skip){
-
-
-  function start(done, previousResults){
-    // console.log(previousResults);
-
-    function finish(err, result){
-      if (err) console.log('Job done err: %s', title + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
-      else console.debug('Finished job: %s affected: %s', title.white + ' [' + ('OK'.green) + ']', result && result.length || '');
-      return done(err, result);
-    }
-
-    if (skip && skip(previousResults)) return done();
-
-    console.debug('Starting job: %s', title.white);
-    process.stdout.write(".");
+function restart()
+{
+  try{
     
+    console.log('Start sequence...');
+    async.auto(jobs, function(err, result){
 
-    job(finish, previousResults);
+      if (err) console.log('Sequence err: %s', ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
+     
+      console.log('Restart sequence...');
+      setTimeout(restart, 1000);
+
+    });
   }
-
-  return start;
+  catch(err){
+    console.log('Unhandled exception in job %s:', err.toString().red);
+  }
 }
 
-try{
-  async.auto(jobs, function(err, result){
+restart();
 
-    if (err) console.log('Sequence err: %s', ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
-   
-    // TODO: restart the jobs
-
-  });
-}
-catch(err){
-  console.log('Unhandled exception in job %s:', err.toString().red);
-}
 
 http.globalAgent.maxSockets = 50;
 global.s3 = knox.createClient(config.aws);

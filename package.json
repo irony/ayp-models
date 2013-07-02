@@ -29,7 +29,7 @@
     "passport-twitter": "*",
     "socket.io": "*",
     "mongoose": "*",
-    "async": "~0.1.22",
+    "async": "~0.2.9",
     "colors": "*",
     "spdy": "*",
     "knox": "*",
@@ -49,7 +49,7 @@
     "connect": "~2.7.11",
     "express-partials": "~0.1.1",
     "clusterfck": "~0.5.2"
-  }, 
+  },
   "main": "server/server.js",
   "scripts": {
     "start": "nodemon server/server.js",

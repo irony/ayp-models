@@ -121,7 +121,7 @@ Clusterer.rankGroupPhotos = function(group, clusters){
 
 Clusterer.saveGroupPhotos = function(group, done){
   var i = 1;
-  async.mapSeries(group.photos, function(photo, done){
+  group.photos.map(function(photo, done){
 
     if (photo.cluster === photo.oldCluster) return done();
 
@@ -134,13 +134,12 @@ Clusterer.saveGroupPhotos = function(group, done){
     setter.$set['copies.' + group.user._id + '.cluster'] = photo.cluster;
 
     i++;
-    Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true});
-    return done();
+    return Photo.update({_id : photo._id}, setter, {upsert: true});
 
-  }, function(err, results){
-    console.debug('..done', results.length);
-    return done(err, results);
   });
+
+  console.debug('..done', results.length);
+  return done(err, results);
 };
 
 module.exports = Clusterer;

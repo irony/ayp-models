@@ -38,8 +38,8 @@ module.exports = function(done){
         // no meaning to rank too few photos
         if (photos.length < 30) return userDone();
 
-        async.mapSeries(photos, function(photo, done){
-          if (!photo || !photo.copies) return done();
+        photos = photos.map(function(photo){
+          if (!photo || !photo.copies) return null;
 
           // closure
           var newRank = rank++;
@@ -47,7 +47,7 @@ module.exports = function(done){
 
           // No noticable different (less than 1% change)
           if (!mine || Math.round(newRank / 10) === Math.round(mine.rank / 10)){
-            return done();
+            return null;
           }
 
           affectedPhotos++;
@@ -59,18 +59,19 @@ module.exports = function(done){
           setter.$set['copies.' + user._id + '.calculated'] = new Date();
           setter.$set['modified'] = new Date();
 
-          return Photo.findOneAndUpdate({_id : photo._id}, setter, {upsert: true, safe:true}, done);
+          Photo.update({_id : photo._id}, setter, {upsert: true});
 
-        },function(err, photos){
-
-          if (photos.length){
-            user.maxRank = rank;
-            user.save();
-          }
-
-          return userDone(err, user);
+          return photo._id;
 
         });
+
+        if (photos.length){
+          user.maxRank = rank;
+          user.save();
+        }
+
+        return userDone(err, user);
+
       });
     }, function(err, users){
       if (!err) console.debug(': Ranked %d photos', affectedPhotos);
