@@ -139,6 +139,17 @@ describe("unit", function(){
       done();
     });*/
 
+    it("should cluster an array", function(done){
+      var a = [1,2,3,4,99,55,22,33,44,55,11];
+
+      var result = utils.cluster(a);
+
+      var expectedResult = [ [ 1, 2, 3, 4, 11 ], [ 22 ], [ 33 ], [ 44 ], [ 55, 55 ], [ 99 ] ];
+      a.should.have.length(11);
+      result.should.eql(expectedResult);
+      done();
+    });
+
     it("should gapSort an array on date t", function(done){
       var a = [
         {taken: 1},{taken: 2},{taken: 3},{taken: 4},{taken: 99},{taken: 55},{taken: 22},{taken: 33},{taken: 44},{taken: 55},{taken: 11}
@@ -171,18 +182,18 @@ describe("unit", function(){
     describe("clusterer", function(){
       var clusterer = require("../jobs/clusterPhotos.js");
       it("should be able to extract photo groups", function(done){
-
         clusterer.extractGroups(userA, photos, 10, function(err, groups){
           should.ok(groups);
-          groups.should.have.length(10);
+          groups.length.should.be.below(10);
           groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
           var lengths = groups.map(function(group){return group.photos.length});
           // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
           should.ok(groups[0].photos.length > 1);
-          done();
+          return done();
         });
 
       });
+
 
       it("should be able to rank each group", function(done){
 
@@ -195,14 +206,42 @@ describe("unit", function(){
           }).sortBy(0).value();
 
           extracted.should.have.length(rankedGroups[0].photos.length);
-          rankedGroups[0].photos[0].clicks.should.eql(10, extracted);
+          rankedGroups[0].photos[0].clicks.should.eql(10);
           rankedGroups[0].photos[0].boost.should.eql(50);
           rankedGroups[1].photos[0].boost.should.eql(50);
           rankedGroups[2].photos[0].boost.should.eql(50);
           rankedGroups[3].photos[0].boost.should.eql(50);
-          rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10, extracted);
+          rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10);
 
-          done();
+          return done();
+        });
+
+      });
+
+
+      it("should be able to extract photo groups and subgroups from 10 000 photos", function(done){
+        while(photos.length< 10000){
+          photos = photos.concat(photos);
+        }
+
+        this.timeout(20000);
+
+        photos.forEach(function(photo){photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25))});
+
+        clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2), function(err, groups){
+          should.ok(groups);
+          // groups.length.should.be.above(photos.length / 60);
+          
+          var rankedGroups = groups.map(function(group){
+            //group.photos.length.should.be.below(200);
+            return clusterer.rankGroupPhotos(group, 10).photos;
+          });
+
+          var total = _(rankedGroups).flatten().compact().value();
+          
+          total.length.should.eql(photos.length);
+          return done();
+
         });
 
       });
@@ -211,7 +250,7 @@ describe("unit", function(){
 });
 
 describe("app", function(){
-
+  console.log('app');
   before(function(){
     conf.mongoUrl.slice(-4).should.eql('test');
 

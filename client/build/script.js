@@ -1523,6 +1523,43 @@ function Utils(_){
     return result;
   };
 
+  /**
+   * Cluster a single dimension array into subarrays. This is very approxamative but very fast. Define what is the minimum amount of clusters. 
+   * Example: [1,2,3,4,99,55,22,33,44,55,11] -> [[1,2,3,4,11],[22],[33],[44],[55,55],[99]]]
+   *
+   * @param  {[number]} array     [vector to cluster]
+   * @param  {number} minClusters [minimum number of clusters]
+   * @return {[type]}             [returns a array of clusters. For example [[1,2,3,4,11],[22],[33],[44],[55,55],[99]]]
+   */
+  this.cluster = function(array, minClusters){
+    var sorted = _.sortBy(array);
+    var stdDiff = sorted.reduce(function(a,b){return a + b}) / sorted.length;
+    var result;
+    
+    for (var factor = 1; factor<10; factor++){
+      var i = sorted.length;
+      result = [];
+      var cluster = [];
+      while(i--){
+        var next = sorted[i-1];
+        var current = sorted[i];
+
+        if(current && Math.abs(current - next ) < (stdDiff / factor))
+        {
+          cluster.unshift(current);
+        } else {
+          if (current) cluster.unshift(current);
+          result.unshift(cluster);
+          cluster = [];
+        }
+      }
+      if (result.length >= (minClusters || Math.sqrt(array.length/2))) break;
+    }
+
+    return result;
+  };
+
+
   // [123         5        7      9]
   // =>
   // 195
