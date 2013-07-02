@@ -12,6 +12,7 @@ var Photo = require('../models/photo');
 var _ = require('lodash');
 var colors = require('colors');
 
+app.set('env', process.env.NODE_ENV || 'development');
 
 if (app.get('env') !== 'development'){
   console.debug = function(){ /* ignore debug messages*/};
