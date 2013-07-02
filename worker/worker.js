@@ -13,7 +13,7 @@ var _ = require('lodash');
 var colors = require('colors');
 
 
-if (this.get('env') !== 'development'){
+if (app.get('env') !== 'development'){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
