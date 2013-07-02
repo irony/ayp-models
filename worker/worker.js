@@ -12,7 +12,8 @@ var Photo = require('../models/photo');
 var _ = require('lodash');
 var colors = require('colors');
 
-if (!global.debug && false){
+
+if (this.get('env') !== 'development'){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
@@ -44,7 +45,7 @@ function startJob(options){
     if (options.skip && options.skip(previousResults)) return done();
 
     console.debug('Starting job: %s', options.title.white);
-    process.stdout.write(".");
+    process.stdout.write(".");  
     
 
     options.job(finish, previousResults);
@@ -57,62 +58,68 @@ function startJob(options){
 
 
 var jobs = {
-  importer :        [
-                      startJob({
-                        title: 'Importer',
-                        job: require('../jobs/importer').importAllNewPhotos
-                      })
-                    ],
+  importer :
+  [
+    startJob({
+      title: 'Importer',
+      job: require('../jobs/importer').importAllNewPhotos
+    })
+  ],
 
-  cluster :         [
-                      // dependencies
-                      'importer',
-                      startJob({
-                        title: 'Cluster',
-                        job: require('../jobs/clusterPhotos'),
-                        skip : function(results){return !results.import || results.import.length === 0;}
-                      })
-                    ],
+  cluster :
+  [
+    // dependencies
+    'importer',
+    startJob({
+      title: 'Cluster',
+      job: require('../jobs/clusterPhotos'),
+      skip : function(results){return !results.import || results.import.length === 0;}
+    })
+  ],
 
-  thumbnails :      [
-                      // dependencies
-                      'importer',
-                      startJob({
-                        title: 'Thumbnails',
-                        job: require('../jobs/downloader').downloadThumbnails,
-                        skip: function(results){return !results.import || results.import.length === 0;}
-                      })
-                    ],
+  thumbnails :
+  [
+    // dependencies
+    'importer',
+    startJob({
+      title: 'Thumbnails',
+      job: require('../jobs/downloader').downloadThumbnails,
+      skip: function(results){return !results.import || results.import.length === 0;}
+    })
+  ],
 
-  originals :       [
-                      // dependencies
-                      'thumbnails',
-                      startJob({
-                        title: 'Originals',
-                        job: require('../jobs/downloader').downloadOriginals,
-                        skip: function(results){return !results.import || results.import.length === 0;}
-                      })
-                    ],
+  originals :
+  [
+    // dependencies
+    'thumbnails',
+    startJob({
+      title: 'Originals',
+      job: require('../jobs/downloader').downloadOriginals,
+      skip: function(results){return !results.import || results.import.length === 0;}
+    })
+  ],
 
-  /*interestingness : [
-                      'importer', 'cluster',
-                      startJob({
-                        title: 'Interestingness',
-                        job: require('../jobs/calculateInterestingness',
-                        skip: function(results){return !results.cluster || results.cluster.length === 0;})
-                      })
-                    ],*/
+  /*interestingness :
+  [
+    'importer', 'cluster',
+    startJob({
+      title: 'Interestingness',
+      job: require('../jobs/calculateInterestingness',
+      skip: function(results){return !results.cluster || results.cluster.length === 0;})
+    })
+  ],*/
 
-  rank :            [
-                      // dependencies
-                      'cluster',
-                      startJob({
-                        title: 'Rank',
-                        job: require('../jobs/updateRank')
-                        //,
-                        // skip: function(results){return !results.interestingness || results.interestingness.length === 0;}
-                      })
-                    ]
+  rank :
+  [
+    // dependencies
+    'cluster',
+    startJob({
+      title: 'Rank',
+      job: require('../jobs/updateRank')
+      //,
+      // skip: function(results){return !results.interestingness || results.interestingness.length === 0;}
+    })
+  ]
 
   /*{
     title:'Group Photos',
@@ -136,7 +143,7 @@ function restart()
       if (err) console.log('Sequence err: %s', ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
      
       console.log('Restart sequence...');
-      setTimeout(restart, 1000);
+      setTimeout(restart, 15000);
 
     });
   }
