@@ -135,10 +135,13 @@ Clusterer.saveGroupPhotos = function(group, done){
     setter.$set['copies.' + group.user._id + '.cluster'] = photo.cluster;
 
     i++;
-    return Photo.update({_id : photo._id}, setter, {upsert: true});
+    Photo.update({_id : photo._id}, setter, {upsert: true});
+    return photo._id;
 
   });
 
+  group.update();
+  
   console.debug('..done', results.length);
   return done(err, results);
 };
