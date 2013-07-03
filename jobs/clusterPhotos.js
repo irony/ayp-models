@@ -104,7 +104,8 @@ Clusterer.rankGroupPhotos = function(group, clusters){
         }).map(function(photo, i){
           photo.cluster=group._id + "." + subGroup + "." + i;
           photo.boost = 50 / (1+i*2);
-          photo.interestingness = Math.floor(photo.boost + (photo.interestingness || 0));
+          photo.interestingness = Math.floor(photo.boost + Math.max(0, 100 - (i/subCluster.length) * 100));
+          // photo.interestingness = Math.floor(photo.boost + (photo.interestingness || 0));
           // || Math.floor(Math.random()*100)); // ) + photo.boost;
           return photo;
         });
