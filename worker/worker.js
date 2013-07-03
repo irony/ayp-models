@@ -45,7 +45,7 @@ function startJob(options){
     if (options.skip && options.skip(previousResults)) return done();
 
     console.debug('Starting job: %s', options.title.white);
-    process.stdout.write(".");  
+    process.stdout.write(".");
     
 
     options.job(finish, previousResults);
@@ -73,7 +73,7 @@ var jobs = {
     startJob({
       title: 'Cluster',
       job: require('../jobs/clusterPhotos'),
-      skip : function(results){return !results.import || results.import.length === 0;}
+      skip : function(results){return !results.importer || results.importer.length === 0;}
     })
   ],
 
@@ -84,7 +84,7 @@ var jobs = {
     startJob({
       title: 'Thumbnails',
       job: require('../jobs/downloader').downloadThumbnails,
-      skip: function(results){return !results.import || results.import.length === 0;}
+      skip: function(results){return !results.importer || results.importer.length === 0;}
     })
   ],
 
@@ -95,7 +95,7 @@ var jobs = {
     startJob({
       title: 'Originals',
       job: require('../jobs/downloader').downloadOriginals,
-      skip: function(results){return !results.import || results.import.length === 0;}
+      skip: function(results){return !results.importer || results.importer.length === 0;}
     })
   ],
 
@@ -116,8 +116,8 @@ var jobs = {
     startJob({
       title: 'Rank',
       job: require('../jobs/updateRank')
-      //,
-      // skip: function(results){return !results.interestingness || results.interestingness.length === 0;}
+      ,
+      skip: function(results){return !results.cluster || results.cluster.length === 0;}
     })
   ]
 
