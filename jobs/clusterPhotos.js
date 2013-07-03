@@ -122,7 +122,7 @@ Clusterer.rankGroupPhotos = function(group, clusters){
 
 Clusterer.saveGroupPhotos = function(group, done){
   var i = 1;
-  group.photos.map(function(photo, done){
+  group.photos = group.photos.map(function(photo, done){
 
     if (photo.cluster === photo.oldCluster) return done();
 
@@ -141,7 +141,7 @@ Clusterer.saveGroupPhotos = function(group, done){
   });
 
   group.update();
-  
+
   console.debug('..done', results.length);
   return done(err, results);
 };
