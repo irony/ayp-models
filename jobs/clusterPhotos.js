@@ -128,7 +128,7 @@ Clusterer.saveGroupPhotos = function(group, done){
     setter.$set['copies.' + group.user._id + '.interestingness'] = photo.interestingness;
     // + clusterRank + (photo.interestingness); // || Math.floor(Math.random()*100)); // ) + photo.boost;
     setter.$set['copies.' + group.user._id + '.cluster'] = photo.cluster;
-    console.debug(photo.cluster, photo.interestingness);
+    // console.debug(photo.cluster, photo.interestingness);
 
     i++;
     Photo.update({_id : photo._id}, setter, {upsert: true});

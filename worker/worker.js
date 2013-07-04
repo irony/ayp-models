@@ -72,8 +72,8 @@ var jobs = {
     'importer',
     startJob({
       title: 'Cluster',
-      job: require('../jobs/clusterPhotos')
-      //skip : function(results){return !results.importer || results.importer.length === 0;}
+      job: require('../jobs/clusterPhotos'),
+      skip : function(results){return !results.importer || results.importer.length === 0;}
     })
   ],
 
