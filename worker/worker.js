@@ -17,7 +17,7 @@ if ((process.env.NODE_ENV || 'development') !== 'development'){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
-   require('longjohn');
+   //require('longjohn');
     console.debug = console.log;
 
   /*require('nodetime').profile({
