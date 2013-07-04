@@ -17,7 +17,7 @@ if ((process.env.NODE_ENV || 'development') !== 'development'){
   console.debug = function(){ /* ignore debug messages*/};
 } else{
   // more logs
-  // require('longjohn');
+   require('longjohn');
     console.debug = console.log;
 
   /*require('nodetime').profile({
@@ -47,7 +47,7 @@ function startJob(options){
     console.debug('Starting job: %s', options.title.white);
     process.stdout.write(".");
     
-
+    // call job
     options.job(finish, previousResults);
   }
 
@@ -72,8 +72,8 @@ var jobs = {
     'importer',
     startJob({
       title: 'Cluster',
-      job: require('../jobs/clusterPhotos'),
-      skip : function(results){return !results.importer || results.importer.length === 0;}
+      job: require('../jobs/clusterPhotos')
+      //skip : function(results){return !results.importer || results.importer.length === 0;}
     })
   ],
 

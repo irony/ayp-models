@@ -182,39 +182,38 @@ describe("unit", function(){
     describe("clusterer", function(){
       var clusterer = require("../jobs/clusterPhotos.js");
       it("should be able to extract photo groups", function(done){
-        clusterer.extractGroups(userA, photos, 10, function(err, groups){
-          should.ok(groups);
-          groups.length.should.be.below(10);
-          groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
-          var lengths = groups.map(function(group){return group.photos.length});
-          // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
-          should.ok(groups[0].photos.length > 1);
-          return done();
-        });
+        var groups = clusterer.extractGroups(userA, photos, 10);
+
+        should.ok(groups);
+        groups.length.should.be.below(11);
+        groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
+        var lengths = groups.map(function(group){return group.photos.length});
+        // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
+        should.ok(groups[0].photos.length > 1);
+        return done();
 
       });
 
 
       it("should be able to rank each group", function(done){
 
-        clusterer.extractGroups(userA, photos, 10, function(err, groups){
-          var rankedGroups = groups.map(clusterer.rankGroupPhotos);
-          rankedGroups.sort(function(a,b){return b.photos.length - a.photos.length});
+        var groups = clusterer.extractGroups(userA, photos, 10);
+        var rankedGroups = groups.map(clusterer.rankGroupPhotos);
+        rankedGroups.sort(function(a,b){return b.photos.length - a.photos.length});
 
-          var extracted = _(rankedGroups[0].photos).map(function(photo){
-            return photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
-          }).sortBy(0).value();
+        var extracted = _(rankedGroups[0].photos).map(function(photo){
+          return photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
+        }).sortBy(0).value();
 
-          extracted.should.have.length(rankedGroups[0].photos.length);
-          rankedGroups[0].photos[0].clicks.should.eql(10);
-          rankedGroups[0].photos[0].boost.should.eql(50);
-          rankedGroups[1].photos[0].boost.should.eql(50);
-          rankedGroups[2].photos[0].boost.should.eql(50);
-          rankedGroups[3].photos[0].boost.should.eql(50);
-          rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10);
-
-          return done();
-        });
+        extracted.should.have.length(rankedGroups[0].photos.length);
+        rankedGroups[0].photos[0].clicks.should.eql(10);
+        rankedGroups[0].photos[0].boost.should.eql(50);
+        rankedGroups[1].photos[0].boost.should.eql(50);
+        rankedGroups[2].photos[0].boost.should.eql(50);
+        rankedGroups[3].photos[0].boost.should.eql(50);
+        rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10);
+ 
+        return done();
 
       });
 
@@ -228,21 +227,18 @@ describe("unit", function(){
 
         photos.forEach(function(photo){photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25))});
 
-        clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2), function(err, groups){
-          should.ok(groups);
-          // groups.length.should.be.above(photos.length / 60);
-          
-          var rankedGroups = groups.map(function(group){
-            //group.photos.length.should.be.below(200);
-            return clusterer.rankGroupPhotos(group, 10).photos;
-          });
-
-          var total = _(rankedGroups).flatten().compact().value();
-          
-          total.length.should.eql(photos.length);
-          return done();
-
+        var groups = clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2));
+        should.ok(groups);
+        // groups.length.should.be.above(photos.length / 60);
+        
+        var rankedGroups = groups.map(function(group){
+          //group.photos.length.should.be.below(200);
+          return clusterer.rankGroupPhotos(group, 10).photos;
         });
+
+        rankedGroups.length.should.be.below(photos.length / 100);
+
+        return done();
 
       });
     });

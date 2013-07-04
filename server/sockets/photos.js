@@ -41,6 +41,9 @@ module.exports = function(app){
     socket.on('views', function (photoId) {
       var setter = {$set : {modified : new Date()}, $inc : {}};
       setter.$inc['copies.' + user._id + '.views'] = 1;
+      
+      // TODO : reload of all photos in same clusters
+      //setter.$set['copies.' + user._id + '.cluster'] = null;
 
       Photo.update({_id : photoId, owners: user._id}, setter, function(err, photo){
         console.log('views', photoId, photo);
@@ -50,6 +53,10 @@ module.exports = function(app){
     socket.on('click', function (photoId, seconds) {
       var setter = {$set : {modified : new Date()}, $inc : {}};
       setter.$inc['copies.' + user._id + '.clicks'] = 1;
+
+
+      // TODO : reload of all photos in same clusters
+      //setter.$set['copies.' + user._id + '.cluster'] = null;
 
       Photo.update({_id : photoId, owners: user._id}, setter, function(err, photo){
         if (err || !photo) return socket.emit('error', 'photo not found');
@@ -61,6 +68,10 @@ module.exports = function(app){
     socket.on('hide', function (photoId, seconds) {
       var setter = {$set : {modified : new Date()}};
       setter.$set['copies.' + user._id + '.hidden'] = true;
+
+
+      // TODO : reload of all photos in same clusters
+      //setter.$set['copies.' + user._id + '.cluster'] = null;
 
       Photo.update({_id : photoId, owners: user._id}, setter, function(err, photo){
         if (err || !photo) return socket.emit('error', 'photo not found');
@@ -78,6 +89,10 @@ module.exports = function(app){
 
       if (value > 0)
         setter.$set['copies.' + user._id + '.hidden'] = false;
+
+
+      // TODO : reload of all photos in same clusters
+      //setter.$set['copies.' + user._id + '.cluster'] = null;
 
       Photo.update({_id : photoId, owners: user._id}, setter, function(err, photo){
         if (err || !photo) return socket.emit('error', 'photo not found');
