@@ -310,7 +310,7 @@ function WallController($scope, $http, $window){
 
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var newGroup = !nextPhoto || nextPhoto.cluster.split('.')[0] !== photo.cluster.split('.')[0];
+      var newGroup = !nextPhoto || !nextPhoto.cluster || nextPhoto.cluster.split('.')[0] !== photo.cluster.split('.')[0];
       group.push(photo);
 
       // Only show visible photos
