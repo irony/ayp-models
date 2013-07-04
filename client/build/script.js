@@ -3192,10 +3192,10 @@ function WallController($scope, $http, $window){
     $scope.photos = ($scope.library.photos).filter(function(photo, i, photos){
 
       if (!photo) return false;
-      
+
       // Is this the last in its group?
       var nextPhoto = photos[i+1];
-      var newGroup = !nextPhoto || !nextPhoto.cluster || nextPhoto.cluster.split('.')[0] !== photo.cluster.split('.')[0];
+      var newGroup = !nextPhoto || !nextPhoto.cluster || !photo.cluster || nextPhoto.cluster.split('.')[0] !== photo.cluster.split('.')[0];
       group.push(photo);
 
       // Only show visible photos
