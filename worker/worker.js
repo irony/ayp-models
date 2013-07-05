@@ -39,13 +39,15 @@ function startJob(options){
     function finish(err, result){
       if (err) console.log('Job done err: %s', options.title + ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
       else console.debug('Finished job: %s affected: %s', options.title.white + ' [' + ('OK'.green) + ']', result && result.length || '');
+      
+      process.stdout.write(".".green);
       return done(err, result);
     }
 
     if (options.skip && options.skip(previousResults)) return done();
 
     console.debug('Starting job: %s', options.title.white);
-    process.stdout.write(".");
+    process.stdout.write(".".white);
     
     // call job
     options.job(finish, previousResults);
@@ -137,12 +139,13 @@ function restart()
 {
   try{
     
-    console.log('Start sequence...');
+    console.debug('Start sequence...');
     async.auto(jobs, function(err, result){
 
       if (err) console.log('Sequence err: %s', ' [' + (err ? err.toString().red : 'OK'.green) + ']', result && result.length || '');
      
-      console.log('Restart sequence...');
+      process.stdout.write(".".yellow);
+      console.debug('Restart sequence...');
       setTimeout(restart, 15000);
 
     });
