@@ -28,7 +28,7 @@ function Clusterer(done){
 
       // find all their photos and sort them on interestingness
       Photo.find({'owners': user._id}, 'taken copies.' + user._id + '.calculatedVote copies.' + user._id + '.vote')
-      // .where('copies.' + user._id + '.cluster').exists(false)
+      .where('copies.' + user._id + '.cluster').exists(false)
       // .where('copies.' + user._id + '.clusterOrder').exists(false)
       .sort({ taken : -1 })
       .exec(function(err, photos){
@@ -36,7 +36,7 @@ function Clusterer(done){
 
         var groups = Clusterer.extractGroups(user, photos, 100);
         var savedPhotos = groups.reduce(function(a, group){
-          var rankedGroup = Clusterer.rankGroupPhotos(group, 10);
+          var rankedGroup = Clusterer.rankGroupPhotos(group);
           a.concat(Clusterer.saveGroupPhotos(rankedGroup));
           return a;
         }, []);
@@ -98,7 +98,7 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
           return b.interestingness - a.interestingness;
         }).map(function(photo, i){
           photo.cluster=group._id + "." + subGroup + "." + i;
-          photo.boost = 50 / (1+i*2);
+          photo.boost = Math.floor(subCluster.length * 5 / (1+i*2)); // first photos of big clusters get boost
           photo.interestingness = Math.floor(photo.boost + Math.max(0, 100 - (i/subCluster.length) * 100));
           // photo.interestingness = Math.floor(photo.boost + (photo.interestingness || 0));
           // || Math.floor(Math.random()*100)); // ) + photo.boost;
@@ -107,7 +107,7 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
         return subCluster;
 
       });
-      //console.debug(subClusters)
+      console.debug(subClusters)
       // console.debug('..done');
 
     group.photos = utils.weave(subClusters);
@@ -120,8 +120,9 @@ Clusterer.saveGroupPhotos = function(group){
   if (!group.user) throw "User is not set on group";
 
   group.photos = group.photos.map(function(photo){
-
-    //if (photo.cluster === photo.oldCluster) return null;
+    if (photo.oldCluster && photo.cluster === photo.oldCluster) {
+      return null;
+    }
 
     var setter = {$set : {}};
     //var clusterRank = 100 - (i / group.photos.length) * 100;
@@ -133,9 +134,7 @@ Clusterer.saveGroupPhotos = function(group){
     // console.debug(photo.cluster, photo.interestingness);
 
     i++;
-    Photo.update({_id : photo._id}, setter, {upsert: true}, function(err, result){
-      console.log(photo._id, group.user, photo.cluster);
-    });
+    Photo.update({_id : photo._id}, setter, {upsert: true});
     return photo._id;
 
   });

@@ -181,7 +181,7 @@ describe("unit", function(){
 
     describe("clusterer", function(){
       var clusterer = require("../jobs/clusterPhotos.js");
-      it("should be able to extract photo groups", function(done){
+      it("should extract photo groups", function(done){
         var groups = clusterer.extractGroups(userA, photos, 10);
 
         should.ok(groups);
@@ -195,22 +195,31 @@ describe("unit", function(){
       });
 
 
-      it("should be able to rank each group", function(done){
+      it("should rank each group", function(done){
 
         var groups = clusterer.extractGroups(userA, photos, 10);
+        var format = function(group){
+          return group.reduce(function(a,b){ a.concat(b.photos); return a;}, []).map(function(photo){
+            return photo._id; // + "-" + photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
+          }).sort(function(a,b){return a-b});
+        };
+
+        var original = format(groups);
         var rankedGroups = groups.map(clusterer.rankGroupPhotos);
+
+        var extracted = format(rankedGroups);
+        extracted.should.eql(original);
+
+        //rankedGroups.sort(function(a,b){return b.photos[0].clicks - a.photos[0].clicks});
+        //rankedGroups[0].photos[0].clicks.should.eql(10);
+        
+
         rankedGroups.sort(function(a,b){return b.photos.length - a.photos.length});
-
-        var extracted = _(rankedGroups[0].photos).map(function(photo){
-          return photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
-        }).sortBy(0).value();
-
-        extracted.should.have.length(rankedGroups[0].photos.length);
-        rankedGroups[0].photos[0].clicks.should.eql(10);
-        rankedGroups[0].photos[0].boost.should.eql(50);
-        rankedGroups[1].photos[0].boost.should.eql(50);
-        rankedGroups[2].photos[0].boost.should.eql(50);
-        rankedGroups[3].photos[0].boost.should.eql(50);
+        should.ok(rankedGroups[0].photos[0].cluster);
+        rankedGroups[0].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
+        rankedGroups[1].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
+        rankedGroups[2].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
+        rankedGroups[3].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
         rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10);
  
         return done();
@@ -218,7 +227,7 @@ describe("unit", function(){
       });
 
 
-      it("should be able to extract photo groups and subgroups from 10 000 photos", function(done){
+      it("should extract photo groups and subgroups from 10 000 photos", function(done){
         while(photos.length< 10000){
           photos = photos.concat(photos);
         }
@@ -242,15 +251,35 @@ describe("unit", function(){
 
       });
 
-      it("should be able to save a group", function(done){
+      it("should save a group", function(done){
         
-        var groups = clusterer.extractGroups(userA, photos.slice(0,100), Math.sqrt(photos.length / 2));
+        var groups = clusterer.extractGroups(userA, photos.slice(0,1000), Math.sqrt(photos.length / 2)).sort(function(a,b){return b.length - a.length});
         var total = groups[0].photos.length;
-        var group = clusterer.saveGroupPhotos(groups[0]);
+        total.should.be.above(5);
+
+        var group = clusterer.rankGroupPhotos(groups[0], 5);
         should.ok(group);
         group.photos.length.should.eql(total);
 
-        return done();
+        var setters = {};
+        Photo.update = function(key, setter){
+          setters[key] = setter;
+        };
+
+        group = clusterer.saveGroupPhotos(group);
+        should.ok(group);
+        group.photos.length.should.eql(total);
+        async.map(group.photos, function(photo){
+          var setter = setters[{_id: photo._id}];
+          should.ok(setter);
+          //setter.should.eql(group.user);
+          should.ok(setter['$set']);
+          should.ok(setter['$set']['copies.' + group.user + '.cluster']);
+          setter['$set']['copies.' + group.user + '.cluster'].should.not.eql(photo.cluster);
+        }, function(){
+          done();
+        });
+
       });
     });
   });
@@ -467,10 +496,10 @@ describe("app", function(){
 
     });
 
-    it('should be able to get the correct amount of total numbers of photos', function(done){
+    it('should get the correct amount of total numbers of photos', function(done){
     });
 
-    it('should be able to get all photos in the library');
+    it('should get all photos in the library');
 
   });*/
 
@@ -490,7 +519,7 @@ describe("app", function(){
       this.timeout(20000);
 
 
-      it("should be able to upload test file manually", function(done){
+      it("should upload test file manually", function(done){
 
         client.put("fixtures/couple.jpg", testPhoto, function(status, reply){
           status.should.eql(200);
@@ -501,7 +530,7 @@ describe("app", function(){
       });
 
 
-      it("should be able to upload a large test file manually", function(done){
+      it("should upload a large test file manually", function(done){
         var largePhoto = fs.readFileSync(__dirname + '/fixtures/IMG_5501.JPG');
 
         client.put("fixtures/IMG_5501.JPG", largePhoto, function(status, reply){
@@ -512,7 +541,7 @@ describe("app", function(){
 
       });
 
-      it("should be able to import all photos under fixtures", function(done){
+      it("should import all photos under fixtures", function(done){
 
         client.put("fixtures/couple.jpg", testPhoto, function(status, reply){
           status.should.eql(200);
@@ -580,7 +609,7 @@ describe("app", function(){
   describe("importer", function(){
 
 
-    it('should be able to import new properties to an existing photo', function(done){
+    it('should import new properties to an existing photo', function(done){
       
       var taken = new Date();
       var size = Math.floor(Math.random()*30000);
@@ -729,7 +758,7 @@ describe("app", function(){
         should.exist(cookie);
       });
 
-      it("should be able to upload a photo", function(done) {
+      it("should upload a photo", function(done) {
         var req = request(app)
         .post('/api/upload')
         .set('cookie', cookie)
@@ -761,7 +790,7 @@ describe("app", function(){
       });
       
 
-      it("should be able to upload a photo with both original and thumbnail", function(done) {
+      it("should upload a photo with both original and thumbnail", function(done) {
         var req = request(app)
         .post('/api/upload');
         
@@ -803,7 +832,7 @@ describe("app", function(){
   });
 
   describe("redis pubsub", function(){
-    it("should be able to publish and subscribe to a user channel", function(done){
+    it("should publish and subscribe to a user channel", function(done){
       var redis = require('redis');
       var client1 = redis.createClient();
       var client2 = redis.createClient();
@@ -941,7 +970,7 @@ describe("app", function(){
         });
     });
 
-    it("should be able to add a photo and receive notification", function (done) {
+    it("should add a photo and receive notification", function (done) {
       
        // create a new photo
       var photo = new Photo({
@@ -974,7 +1003,7 @@ describe("app", function(){
     });
 
 
-    it("should be able to add a photo to another user and not receive a notification", function (done) {
+    it("should add a photo to another user and not receive a notification", function (done) {
       
        // create a new photo
       var photo = new Photo({

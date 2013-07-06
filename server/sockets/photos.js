@@ -23,6 +23,7 @@ module.exports = function(app){
     client.removeAllListeners('message');
   });
 
+
   app.io.on('connection', function (socket) {
     var user = socket.handshake.user;
     console.debug('handshake', socket.handshake);
@@ -30,6 +31,7 @@ module.exports = function(app){
     if (!user || !user._id) return;
 
     console.debug('join', user._id);
+
 
     socket.join(user._id);
     client.subscribe(user._id); //    listen to messages from this user's pubsub channel
