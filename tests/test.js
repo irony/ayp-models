@@ -258,7 +258,6 @@ describe("unit", function(){
         total.should.be.above(5);
 
         var group = clusterer.rankGroupPhotos(groups[0], 5);
-        should.ok(group);
         group.photos.length.should.eql(total);
 
         var setters = {};
@@ -269,13 +268,15 @@ describe("unit", function(){
         group = clusterer.saveGroupPhotos(group);
         should.ok(group);
         group.photos.length.should.eql(total);
-        async.map(group.photos, function(photo){
+        async.map(group.photos, function(photo, done){
+          should.ok(!photo.cluster);
           var setter = setters[{_id: photo._id}];
           should.ok(setter);
           //setter.should.eql(group.user);
           should.ok(setter['$set']);
           should.ok(setter['$set']['copies.' + group.user + '.cluster']);
           setter['$set']['copies.' + group.user + '.cluster'].should.not.eql(photo.cluster);
+          done();
         }, function(){
           done();
         });

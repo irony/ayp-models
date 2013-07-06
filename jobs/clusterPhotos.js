@@ -85,9 +85,8 @@ Clusterer.extractGroups = function(user, photos, nrClusters){
 };
 
 Clusterer.rankGroupPhotos = function(group, nrClusters){
-    //var subClusters = utils.cluster(group.photos, nrClusters);
-    var subClusters = clusterfck.kmeans(group.photos, nrClusters);
-
+    var subClusters = utils.cluster(group.photos, nrClusters);
+    //var subClusters = clusterfck.kmeans(group.photos, nrClusters);
     subClusters
       .sort(function(a,b){
         return b.length - a.length; // sort the arrays bigger first, more value toeacho we get the smallest clusters first - less risk of double shots from the same cluster
@@ -107,7 +106,6 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
         return subCluster;
 
       });
-      console.debug(subClusters)
       // console.debug('..done');
 
     group.photos = utils.weave(subClusters);
