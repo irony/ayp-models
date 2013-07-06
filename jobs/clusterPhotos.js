@@ -35,12 +35,11 @@ function Clusterer(done){
         if (err || !photos || !photos.length) return userDone(err);
 
         var groups = Clusterer.extractGroups(user, photos, 100);
-        var savedPhotos = [];
-        groups.map(function(group){
+        var savedPhotos = groups.reduce(function(a, group){
           var rankedGroup = Clusterer.rankGroupPhotos(group, 10);
-          savedPhotos.concat(Clusterer.saveGroupPhotos(rankedGroup));
-          return null;
-        });
+          a.concat(Clusterer.saveGroupPhotos(rankedGroup));
+          return a;
+        }, []);
 
         return userDone(null, savedPhotos.length ? user : null);
 
@@ -115,23 +114,28 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
     return group;
 };
 
-Clusterer.saveGroupPhotos = function(group, done){
+Clusterer.saveGroupPhotos = function(group){
   var i = 1;
+
+  if (!group.user) throw "User is not set on group";
+
   group.photos = group.photos.map(function(photo){
 
-    if (photo.cluster === photo.oldCluster) return null;
+    //if (photo.cluster === photo.oldCluster) return null;
 
     var setter = {$set : {}};
     //var clusterRank = 100 - (i / group.photos.length) * 100;
 
-    setter.$set['copies.' + group.user._id + '.clusterOrder'] = i;
-    setter.$set['copies.' + group.user._id + '.interestingness'] = photo.interestingness;
+    setter.$set['copies.' + group.user + '.clusterOrder'] = i;
+    setter.$set['copies.' + group.user + '.interestingness'] = photo.interestingness;
     // + clusterRank + (photo.interestingness); // || Math.floor(Math.random()*100)); // ) + photo.boost;
-    setter.$set['copies.' + group.user._id + '.cluster'] = photo.cluster;
+    setter.$set['copies.' + group.user + '.cluster'] = photo.cluster;
     // console.debug(photo.cluster, photo.interestingness);
 
     i++;
-    Photo.update({_id : photo._id}, setter, {upsert: true});
+    Photo.update({_id : photo._id}, setter, {upsert: true}, function(err, result){
+      console.log(photo._id, group.user, photo.cluster);
+    });
     return photo._id;
 
   });
@@ -139,8 +143,6 @@ Clusterer.saveGroupPhotos = function(group, done){
   group.photos = _.compact(group.photos);
   
   if (!group.photos.length) return null;
-
-  group.update();
   return group;
 
 };

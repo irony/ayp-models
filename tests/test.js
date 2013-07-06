@@ -241,6 +241,17 @@ describe("unit", function(){
         return done();
 
       });
+
+      it("should be able to save a group", function(done){
+        
+        var groups = clusterer.extractGroups(userA, photos.slice(0,100), Math.sqrt(photos.length / 2));
+        var total = groups[0].photos.length;
+        var group = clusterer.saveGroupPhotos(groups[0]);
+        should.ok(group);
+        group.photos.length.should.eql(total);
+
+        return done();
+      });
     });
   });
 });
