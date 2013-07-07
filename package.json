@@ -48,7 +48,8 @@
     "cookie": "*",
     "connect": "~2.7.11",
     "express-partials": "~0.1.1",
-    "clusterfck": "~0.5.2"
+    "clusterfck": "~0.5.2",
+    "passport.socketio": "~1.2.1"
   },
   "main": "server/server.js",
   "scripts": {

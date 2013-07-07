@@ -2,8 +2,8 @@
 // =====
 // This contains the lower level initializations of the app
 
-
-var app = require('./app').init();
+var port = process.env.PORT || 3000;
+var app = require('./app').init(port);
 var http = require('http');
 var https = require('https');
 
@@ -12,7 +12,6 @@ var https = require('https');
 
 
 // attach express handler function to TWO servers, one for http and one for https
-app.listen(process.env.PORT || 3000);
 
 //http.globalAgent.maxSockets = 50;
 
@@ -20,4 +19,4 @@ app.listen(process.env.PORT || 3000);
 
 console.log(process.env.HOST + ' started');
 
-console.log("Listening on port %d in %s mode", process.env.PORT || 3000, global.debug && 'debug' || 'production');
+console.log("Listening on port %d in %s mode", port, global.debug && 'debug' || 'production');

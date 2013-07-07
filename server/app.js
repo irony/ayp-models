@@ -17,14 +17,10 @@ var express = require('express'),
   path = require('path'),
   util = require('util'),
   fs = require('fs'),
-  redis = require('redis'),
-  cookie = require('cookie'),
-  connectSession = require('connect/lib/middleware/session/session'),
-  socketRedisStore = require('socket.io/lib/stores/redis');
- 
+  passportSocketIo = require("passport.socketio");
+
+
 var app = express(),
-  server = http.createServer(app),
-  io = require('socket.io').listen(server),
   RedisStore = require('connect-redis')(express),
   partials = require('express-partials'),
   sessionStore;
@@ -49,8 +45,12 @@ var options = {
 global.s3 = knox.createClient(config.aws);
 //app.spdy = spdy.createServer(options, app.handle.bind(app));
 
-exports.init = function() {
+exports.init = function(port) {
   
+
+    var server = app.listen(port || process.env.PORT || 3000),
+        io = require('socket.io').listen(server);
+
     var sessionOptions = { key: 'express.sid', cookieParser: express.cookieParser, secret: config.sessionSecret, store: new RedisStore(), cookie: {maxAge : 365 * 24 * 60 * 60 * 1000 }};
 
     // configure Express
@@ -75,34 +75,10 @@ exports.init = function() {
 
     });
 
-    /**
-     * socket.io stuff. Streaming.
-     */
-    // authentication verification
+   io.set("authorization", passportSocketIo.authorize(sessionOptions));
+
     io.configure(function () {
        io.set('log level', 1);
-       io.set('authorization', function (data, accept) {
-         if (data.headers.cookie) {
-           data.cookie = cookie.parse(data.headers.cookie);
-           data.cookie = express.connect.utils.parseSignedCookies(data.cookie, config.sessionSecret);
-           data.cookie = express.connect.utils.parseJSONCookies(data.cookie);
-           data.sessionID = data.cookie['express.sid'];
-           sessionStore.load(data.sessionID, function (err, session) {
-             if (err || !session) {
-               // invalid session identifier. tl;dr gtfo.
-               accept('session error', false);
-             } else {
-                console.log('session loaded');
-               data.session = session;
-               accept(null, true);
-             }
-           });
-     
-         } else {
-          // no auth cookie...
-           accept('session error', false);
-         }
-       });
     });
 
     // shorthand to get it accessible everywhere

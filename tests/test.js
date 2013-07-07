@@ -21,6 +21,8 @@ var addedSpans = [];
 
 var port = 3333;
 var host = 'http://0.0.0.0:' + port;
+var app; // inits in integration tests
+
 // app.listen(port);
 
 
@@ -291,8 +293,7 @@ describe("app", function(){
   before(function(){
     conf.mongoUrl.slice(-4).should.eql('test');
 
-    var app = require('../server/app').init();
-    app.listen(port);
+    app = require('../server/app').init(port);
 
 
     User.find().remove();
@@ -857,11 +858,17 @@ describe("app", function(){
   
   describe("socket communication", function(){
     var options ={
-      transports: ['websocket'],
+      transports: ['websocket', 'xhr-polling'],
       'force new connection': true
     };
 
-
+    it("should be possible to connect to socket io",function(done){
+      var client1 = io.connect(socketURL, options);
+      client1.once('connect', function(data){
+        done();
+        client1.disconnect();
+      });
+    });
 
     var photoA;
     var photoB;
@@ -900,7 +907,7 @@ describe("app", function(){
           cookie = res.headers['set-cookie'];
           res.headers.should.have.property('user-id');
           userId = res.headers['user-id'];
-          socketURL = 'http://0.0.0.0:3000/';
+          //socketURL = 'http://0.0.0.0:3000/';
 
           /*
            *  First we will patch the xmlhttprequest library that socket.io-client uses
@@ -925,14 +932,6 @@ describe("app", function(){
       });
     });
 
-
-    it("should be possible to connect to socket io",function(done){
-        var client1 = io.connect(socketURL, options);
-        client1.once('connect', function(data){
-          done();
-          client1.disconnect();
-        });
-    });
 
     it("should be possible to vote on a photo",function(done){
         var client1 = io.connect(socketURL, options);

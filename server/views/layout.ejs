@@ -63,9 +63,9 @@
 
             </ul>
             <ul class="nav pull-right">
-            <%if (user) {%>  
+            <%if (user && user.accounts) {%>  
                <li class="pull-right"><a href="/logout">
-                <%if (user && user.accounts.facebook) {%>
+                <%if (user && user.accounts && user.accounts.facebook) {%>
                 <img src="//graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
                <% }%>Logout</a></li>
             <%} else {%>

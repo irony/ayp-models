@@ -2346,7 +2346,7 @@ function PhotoController ($scope, $http){
 
   $scope.rightClick = function(photo){
     if ($scope.selectedPhoto === photo)
-      return $scope.selected(null);
+      return $scope.select(null);
     
     var meta = $('#meta')[0];
     $scope.selectedPhoto = photo;
