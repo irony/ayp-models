@@ -2,7 +2,7 @@ function MetadataCtrl($scope){
   
   $scope.star = function(photo){
     photo.vote = 0;
-    socket.emit('vote', photo._id, 0);
+    socket.emit('vote', photo, 0);
     photo.starred = !photo.starred;
     console.log('star', photo);
   };
@@ -10,7 +10,7 @@ function MetadataCtrl($scope){
 
   $scope.hide = function(photo){
     photo.vote = 10;
-    socket.emit('vote', photo._id, 10);
+    socket.emit('vote', photo, 10);
     photo.hidden = true;
     console.log('hide', photo);
   };

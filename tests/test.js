@@ -876,7 +876,7 @@ describe("app", function(){
     var cookie;
     var socketURL = host;
 
-    beforeEach(function(done){
+    before(function(done){
       photoA = new Photo({
         taken : new Date(),
         bytes: 1337,
@@ -924,6 +924,14 @@ describe("app", function(){
             };
           };
 
+
+          photoA.copies = {};
+          photoA.copies[userId] = {cluster: "13.1.0"};
+
+
+          photoB.copies = {};
+          photoB.copies[userId] = {cluster: "13.1.1"};
+
           photoA.owners = [userId];
           photoA.save(done);
           photoB.save();
@@ -941,10 +949,10 @@ describe("app", function(){
           var client2 = io.connect(socketURL, options);
 
           client2.once('connect', function(){
-            client2.once('vote', function(photoId, value){
-              photoA._id.toString().should.eql(photoId);
+            client2.once('vote', function(photo, value){
+              photoA._id.toString().should.eql(photo._id);
               value.should.eql(5);
-              Photo.findById(photoId, function(err, photo){
+              Photo.findById(photo._id, function(err, photo){
                 photo.copies.should.have.property(userId);
                 photo.copies[userId].vote.should.eql(value);
                 done();
@@ -952,7 +960,28 @@ describe("app", function(){
                 client2.disconnect();
               });
             });
-            client1.emit('vote', photoA._id, 5);
+            client1.emit('vote', photoA, 5);
+          });
+        });
+    });
+
+
+
+    it("should be possible to vote on a photo and receive new cluster",function(done){
+        var client1 = io.connect(socketURL, options);
+
+        client1.once('connect', function(data){
+          should.not.exist(data);
+          var client2 = io.connect(socketURL, options);
+
+          client2.once('connect', function(){
+            client2.once('update', function(photos, value){
+              photos.filter(function(photo){
+                return photo.copies[userId].cluster.split('.')[0] === photoA.copies[userId].cluster.split('.')[0];
+              }).length.should.be.above(1);
+              return done();
+            });
+            client1.emit('click', photoA, 5);
           });
         });
     });
@@ -966,7 +995,7 @@ describe("app", function(){
             done();
             client1.disconnect();
           });
-          client1.emit('click', photoB._id);
+          client1.emit('click', photoB);
         });
     });
 

@@ -133,7 +133,7 @@ Clusterer.saveGroupPhotos = function(group){
 
     i++;
     Photo.update({_id : photo._id}, setter, {upsert: true});
-    return photo._id;
+    return photo;
 
   });
 

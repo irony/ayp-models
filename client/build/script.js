@@ -2301,7 +2301,7 @@ function MetadataCtrl($scope){
   
   $scope.star = function(photo){
     photo.vote = 0;
-    socket.emit('vote', photo._id, 0);
+    socket.emit('vote', photo, 0);
     photo.starred = !photo.starred;
     console.log('star', photo);
   };
@@ -2309,7 +2309,7 @@ function MetadataCtrl($scope){
 
   $scope.hide = function(photo){
     photo.vote = 10;
-    socket.emit('vote', photo._id, 10);
+    socket.emit('vote', photo, 10);
     photo.hidden = true;
     console.log('hide', photo);
   };
@@ -2360,19 +2360,14 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-    if ($scope.selectedPhoto === photo)
-      $scope.select(null);
-    else
-      $scope.select(photo);
-
-
-    // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
-    if (photo.updateClick) {
+    if ($scope.selectedPhoto === photo){
       clearTimeout(photo.updateClick);
-      socket.emit('click', photo._id, -1);
-    } else {
+      $scope.select(null);
+    }
+    else {
+      $scope.select(photo);
       photo.updateClick = setTimeout(function(){
-        socket.emit('click', photo._id, 1);
+        socket.emit('click', photo, 1);
       }, 300);
     }
 
@@ -2383,6 +2378,17 @@ function PhotoController ($scope, $http){
     socket.emit('hide', photo._id);
     photo.vote = 10;
   };
+
+
+  socket.on('update', function(photos){
+    $scope.apply(function(){
+      _.each(photos, function(photo){
+        _.first($scope.photos, {_id : photo._id}, function(existing){
+          _.assign(existing, photo);
+        });
+      });
+    });
+  });
 
 }
 var loadTimeout;

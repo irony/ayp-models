@@ -23,7 +23,7 @@ function PhotoController ($scope, $http){
 
   $scope.rightClick = function(photo){
     if ($scope.selectedPhoto === photo)
-      return $scope.selected(null);
+      return $scope.select(null);
     
     var meta = $('#meta')[0];
     $scope.selectedPhoto = photo;
@@ -37,19 +37,14 @@ function PhotoController ($scope, $http){
 
   $scope.click = function(photo){
 
-    if ($scope.selectedPhoto === photo)
-      $scope.select(null);
-    else
-      $scope.select(photo);
-
-
-    // if someone views this image more than a few moments - it will be counted as a click - otherwise it will be reverted
-    if (photo.updateClick) {
+    if ($scope.selectedPhoto === photo){
       clearTimeout(photo.updateClick);
-      socket.emit('click', photo._id, -1);
-    } else {
+      $scope.select(null);
+    }
+    else {
+      $scope.select(photo);
       photo.updateClick = setTimeout(function(){
-        socket.emit('click', photo._id, 1);
+        socket.emit('click', photo, 1);
       }, 300);
     }
 
@@ -60,5 +55,16 @@ function PhotoController ($scope, $http){
     socket.emit('hide', photo._id);
     photo.vote = 10;
   };
+
+
+  socket.on('update', function(photos){
+    $scope.apply(function(){
+      _.each(photos, function(photo){
+        _.first($scope.photos, {_id : photo._id}, function(existing){
+          _.assign(existing, photo);
+        });
+      });
+    });
+  });
 
 }
