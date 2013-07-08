@@ -634,7 +634,7 @@ body .navbar-inner{
   background: rgba(0,0,0,0.3);
 }
 
-.focus .slider
+.focus .slider, .focus .group
 {
   opacity: 0;
 }
@@ -662,9 +662,18 @@ body .navbar-inner{
 
 }
 
-#wall input{
-  padding: 10px 0;
+#wall .slider input{
   margin-top: -15px;
+  padding-left: 10px;
+}
+
+#wall input{
+  padding: 10px;
+  margin: 15px;
+  border: 1px solid white;
+  border-radius: 2px;
+  color: #fff;
+  background: rgba(255,255,255,0.2);
 }
 
 #wall
@@ -678,8 +687,10 @@ body .navbar-inner{
 }
 
 #wall .group.active {
-  width:15%;
+  width:30%;
   background: rgba(0,0,0,0.6);
+  border: 1px solid white;
+  border-radius: 2px;
 }
 
 #wall .group fieldset{
@@ -728,6 +739,15 @@ body .navbar-inner{
   -o-transform: rotate(90deg);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 
+}
+
+
+#wall .group.active h2{
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -ms-transform: rotate(0);
+  -o-transform: rotate(0);
+  margin: 0;
 }
 
 

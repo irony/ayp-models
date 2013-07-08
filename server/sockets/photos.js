@@ -36,14 +36,16 @@ module.exports = function(app){
       if (!cluster) return;
 
       query['copies.' + user._id + '.cluster'] = new RegExp(cluster + '.*');
-      Photo.find(query, 'copies.' + user._id, function(err, photos){
+      Photo.find(query, 'store taken copies.' + user._id, function(err, photos){
         if (err || !photos.length) return console.log('cluster err'.red, err, cluster, photos);
         
 
         var group = clusterer.rankGroupPhotos({user : user._id, photos:photos.map(function(photo){
           var mine = photo.copies[user._id]; // transform the photoCopy
           mine._id = photo._id;
-          return photo;
+          mine.src = photo.src;
+          mine.taken = photo.taken;
+          return mine;
         }), _id : cluster});
 
         group = clusterer.saveGroupPhotos(group);

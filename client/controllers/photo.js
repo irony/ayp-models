@@ -44,6 +44,7 @@ function PhotoController ($scope, $http){
     else {
       $scope.select(photo);
       photo.updateClick = setTimeout(function(){
+        console.log('click', photo);
         socket.emit('click', photo, 1);
       }, 300);
     }
@@ -58,11 +59,10 @@ function PhotoController ($scope, $http){
 
 
   socket.on('update', function(photos){
-    $scope.apply(function(){
-      _.each(photos, function(photo){
-        _.first($scope.photos, {_id : photo._id}, function(existing){
-          _.assign(existing, photo);
-        });
+    console.log('update', photos);
+    _.each(photos, function(photo){
+      _.first($scope.photos, {_id : photo._id}, function(existing){
+        _.assign(existing, photo);
       });
     });
   });

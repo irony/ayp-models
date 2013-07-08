@@ -15,7 +15,7 @@
               <div ng-show="stats && !photosInView.length" class="container row stats" ng-cloak>
                 <i class="span3 icon icon-camera supersize"></i>
                 <h1>Import summary</h1>
-                <h2 class="span6" ng-show="!stats.all">This app will be super boring without any photos, try adding some by dragging a folder here or import from the menu. </h2>
+                <h2 class="span6" ng-show="!stats.all">This app will be super boring without any photos, add some by dragging a folder here or import from the menu. </h2>
                 <div ng-show="stats.all">
                   <h3>{{stats.all}} photos are imported</h3>
                   <h3>{{library.photos.length}} of {{stats.thumbnails}} metadata are synced to this computer</h3>
@@ -24,15 +24,16 @@
               </div>
               <img title="{{photo.cluster + ':' + photo.vote}}" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} done {{photo.class}}" ng-src="{{photo.src}}" ng-cloak ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
-              <h2  ng-repeat="photo in photosInView" style="top: {{photo.top}}px; left: {{photo.left}}px; position:absolute">
-                {{photo.vote}}
-              </h2>
-
-              <div id="group{{group.id}}" ng-init="group = g" ng-show="group.photos.length" ng-click="g.active != g.active" class="group {{g.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
-                <a href="{{'#group'+g.id}}">&nbsp;</a>
+              <div id="group{{group.id}}" ng-controller="GroupCtrl" ng-init="group = g" ng-show="group.photos.length"  class="group {{group.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
+                <a href="{{'#group'+g.id}}" ng-click="click()">&nbsp;</a>
                 <h2>{{g.name}}</h2>
                 <fieldset>
-                  <label>Edit name</label>
+                  <h3>Edit group</h3>
+                  <input ng-model="g.name"  placeholder="Name">
+                  <input ng-model="g.from" date-format placeholder="From">
+                  <input ng-model="g.to" date-format placeholder="To">
+                  <input ng-model="g.tags" placeholder="Tags">
+                  <input type="submit" ng-click="group.active = false">
                 </fieldset>
               </div>
 

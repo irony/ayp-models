@@ -96,6 +96,7 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
         subCluster.sort(function(a,b){
           return b.interestingness - a.interestingness;
         }).map(function(photo, i){
+          photo.oldCluster = photo.cluster;
           photo.cluster=group._id + "." + subGroup + "." + i;
           photo.boost = Math.floor(subCluster.length * 5 / (1+i*2)); // first photos of big clusters get boost
           photo.interestingness = Math.floor(photo.boost + Math.max(0, 100 - (i/subCluster.length) * 100));
@@ -129,6 +130,7 @@ Clusterer.saveGroupPhotos = function(group){
     setter.$set['copies.' + group.user + '.interestingness'] = photo.interestingness;
     // + clusterRank + (photo.interestingness); // || Math.floor(Math.random()*100)); // ) + photo.boost;
     setter.$set['copies.' + group.user + '.cluster'] = photo.cluster;
+    setter.$set['modified'] = new Date();
     // console.debug(photo.cluster, photo.interestingness);
 
     i++;
