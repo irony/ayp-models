@@ -531,7 +531,7 @@ describe("app", function(){
 
       });
 
-
+/*
       it("should upload a large test file manually", function(done){
         var largePhoto = fs.readFileSync(__dirname + '/fixtures/IMG_5501.JPG');
 
@@ -542,6 +542,8 @@ describe("app", function(){
         });
 
       });
+
+*/
 
       it("should import all photos under fixtures", function(done){
 
@@ -738,6 +740,9 @@ describe("app", function(){
       var taken = d.slice(0, 10).split('-').join(':') + ' ' + d.slice(11);
 
       before(function(done) {
+        var buffer = require('stream').WriteStream;
+
+
         var random = Math.random() * 1000000;
         request(app)
         .post('/register')
@@ -761,6 +766,16 @@ describe("app", function(){
       });
 
       it("should upload a photo", function(done) {
+
+
+        global.s3.putStream = function(stream, filename, headers, done){
+          console.log('putStream')
+          stream.pipe(buffer);
+          stream.on('end', function(){
+            done(null, {statusCode:200});
+          });
+        };
+        
         var req = request(app)
         .post('/api/upload')
         .set('cookie', cookie)
@@ -961,6 +976,32 @@ describe("app", function(){
               });
             });
             client1.emit('vote', photoA, 5);
+          });
+        });
+    });
+
+     it("should be possible to click on a photo",function(done){
+        var client1 = io.connect(socketURL, options);
+
+        client1.once('connect', function(data){
+          should.not.exist(data);
+          var client2 = io.connect(socketURL, options);
+
+          client2.once('connect', function(){
+            client2.once('update', function(photos, value){
+              Photo.findById(photoA._id, function(err, photo){
+                should.ok(!err);
+                should.ok(photo.copies);
+                should.ok(photo.copies[userId]);
+            
+                 photo.copies.should.have.property(userId);
+                photo.copies[userId].clicks.should.eql(1);
+                done();
+                client1.disconnect();
+                client2.disconnect();
+              });
+            });
+            client1.emit('click', photoA, 1);
           });
         });
     });

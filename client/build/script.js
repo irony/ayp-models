@@ -2124,16 +2124,7 @@ Storage.prototype.getObject = function(key) {
 function GroupCtrl($scope){
   $scope.group = null;
 
-  
-  $scope.$watch('group', function(state){
-    $scope.group.active = state;
-    console.log($scope.group);
-
-    if (state){
-      $scope.photos.concat(group.photos);
-    }
-
-  }, true);
+ 
 }
 function GroupsController($scope, $http){
   
@@ -2922,14 +2913,14 @@ function WallController($scope, $http, $window){
     var delta = $scope.scrollPosition - lastPosition;
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    if (isInViewPort($scope.scrollPosition + delta * 2)) return;
+    if (isInViewPort($scope.scrollPosition + delta * 2)) return ;
 
 
     filterView(delta);
 
 
 
-    if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
+    // if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
 
     lastPosition = $scope.scrollPosition;
 
@@ -2992,18 +2983,21 @@ function WallController($scope, $http, $window){
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
     photo.original = angular.copy(photo);
+    photo.class="selected";
 
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
-      console.log('full', fullPhoto);
       photo.src = fullPhoto.store.original.url;
       $scope.loading = true;
+      $scope.$apply();
       photo.loaded = function(){
+        photo.loaded = null;
         $scope.loading = false;
+        photo.class="selected loaded";
+        $scope.$apply();
       };
     });
 
-    photo.class="selected";
     photo.top = $(document).scrollTop() - 20; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
     photo.height = window.innerHeight + 40;
     photo.width = Math.round(photo.height * photo.ratio);
@@ -3141,7 +3135,7 @@ function WallController($scope, $http, $window){
     };
 
     group.duration = moment(group.from).from(group.to, true);
-    group.name = moment(group.from).calendar() + " (" + group.duration + ")";
+    group.name = moment(group.from).format("ddd D MMM YYYY");
 
     $scope.groups.push(group);
 

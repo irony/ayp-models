@@ -12,7 +12,7 @@ module.exports = function(grunt) {
       dev:{
         src:"tests/test.js",
         options:{
-          grep:'socket',
+          //grep:'socket',
           reporter: 'spec',
           slow: 1000,
           timeout: 3000

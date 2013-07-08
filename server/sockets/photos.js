@@ -34,7 +34,7 @@ module.exports = function(app){
       var query = {};
       var cluster = (photo.cluster || (photo.copies && photo.copies[user._id].cluster) || '').split('.')[0];
       if (!cluster) return;
-      
+
       query['copies.' + user._id + '.cluster'] = new RegExp(cluster + '.*');
       Photo.find(query, 'copies.' + user._id, function(err, photos){
         if (err || !photos.length) return console.log('cluster err'.red, err, cluster, photos);
@@ -75,10 +75,9 @@ module.exports = function(app){
       setter.$inc['copies.' + user._id + '.clicks'] = 1;
       recalculateCluster(photo);
 
-      Photo.update({_id : photo._id, owners: user._id}, setter, function(err, photo){
-        if (err || !photo) return socket.emit('error', 'photo not found');
+      Photo.update({_id : photo._id, owners: user._id}, setter, function(err, result){
+        if (err || !result) return socket.emit('error', 'photo not found');
 
-        socket.broadcast.to(user._id).emit('click', photo._id);
       });
     });
 

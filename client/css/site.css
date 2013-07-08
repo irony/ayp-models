@@ -682,7 +682,6 @@ body .navbar-inner{
   background: rgba(0,0,0,0.6);
 }
 
-
 #wall .group fieldset{
   display:none;
 }
@@ -719,8 +718,16 @@ body .navbar-inner{
   color: rgba(255,255,255,0.8);
   font-size: 16px;
   text-shadow: 1px 1px black;
-  margin-top: -10px;
+  margin-top: -20px;
+  margin-left: 14px;
   white-space: nowrap;
+
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+
 }
 
 
@@ -752,6 +759,7 @@ body .navbar-inner{
   transition            :all .2s ease-out;
   max-width: inherit !important;
 }
+
 
 .subscription-plan{text-align:center;float:right;width:30%;border-right:1px #d0d2d9 solid;padding:20px 0 15px;border-bottom:1px #d0d2d9 solid;border-top:1px #d0d2d9 solid;background-color:#f7f7f7;overflow:hidden;position:relative;}.subscription-plan:last-of-type{border-left:1px #d0d2d9 solid;padding-left:0;border-radius:3px 0 0 3px;}
 .subscription-plan:first-of-type{padding-right:0;border-radius:0 3px 3px 0;border-right-style:solid !important;}
@@ -985,10 +993,14 @@ body .modal.fade.in {
     border-radius: 5px;
   }
 
-  #wall img.selected{
-    z-index: 100;
-    box-shadow: 0 0 85px #000;
-    border-radius:2px;
+  #wall img.selected.loaded{
+    -webkit-transition:all 15s ease-in !important;
+    -moz-transition:all 15s ease-in  !important;
+    transition:all 15s ease-in  !important;
+    -webkit-transform: scale(1.2) translateX(50px)  !important;
+    -moz-transform: scale(1.2) translateX(50px)  !important;
+    transform: scale(1.2) translateX(50px) !important;
+
   }
 
   #wall input#date{
@@ -1039,15 +1051,26 @@ body .modal.fade.in {
   }
 
   #wall.focus img, #wall.focus img.done{
-    -webkit-animation-delay: 3s;
     opacity:0;
+    -webkit-animation-delay: 3s;
+    -webkit-transition: all 1.4s ease-in-out;
+    -moz-transition: all 1.4s ease-in-out;
+    -ms-transition: all 1.4s ease-in-out;
+     -o-transition: all 1.4s ease-in-out;
+
   }
 
 
-  #wall.focus img.selected{
-    -webkit-animation-delay: 0;
-    opacity: 1;
+  #wall.focus img.selected {
+    -webkit-animation-delay: 0 !important;
+    opacity: 1 !important;
     display:block;
+    z-index: 100;
+    -webkit-transition: all 400ms ease-in-out;
+   -moz-transition: all 400ms ease-in-out;
+    -ms-transition: all 400ms ease-in-out;
+     -o-transition: all 400ms ease-in-out;
+
   }
 
   #wall img{
