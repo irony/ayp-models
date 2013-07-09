@@ -2170,7 +2170,6 @@ Group.prototype.finish = function(){
   this.duration = moment(this.from).from(this.to, true);
   this.name = moment(this.from).format("ddd D MMM YYYY") + "(" + this.duration + ")";
 
-  console.log('finish', this);
 };
 
 Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
@@ -2217,12 +2216,25 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
 
   this.rows = this.rows.filter(function(a){return a.length});
 
+/*
+  if (this.rows && this.rows.length){
+    if (left < ){
+      var totalHeight = this.rows.reduce(function(a,b){return a+b[0].height}, 0);
+      var remainder = maxWidth - 
+      group.bind(this.top, this.left, totalHeight * )
+    }
+
+    closeRow(this.rows.slice(-1)[0], maxWidth);
+  }*/
+  
   this.finish();
 };
 
 
 
 function closeRow(row, maxWidth){
+  if (!row) throw "Row is empty";
+
   var visible = row.filter(function(photo){return photo.active});
   var last = visible[visible.length-1];
   if (!last) return;
@@ -3199,8 +3211,7 @@ function WallController($scope, $http, $window){
     $scope.scrolling = false;
 
     $scope.photosInView = $scope.groups.reduce(function(visiblePhotos, group){
-      if (group.top <= $scope.scrollPosition + windowHeight && group.bottom >= $scope.scrollPosition){
-        console.log('group', group);
+      if (isInViewPort(group.top) || isInViewPort(group.bottom) || group.top <= $scope.scrollPosition && group.bottom >= $scope.scrollPosition){
         group.photos.forEach(function(photo){
           if (photo.active) visiblePhotos.push(photo);
         });
@@ -3252,7 +3263,7 @@ function WallController($scope, $http, $window){
     $scope.height = $scope.height * (window.innerWidth / 1920);
     $scope.groups.reduce(function(lastGroup, group){
       var top = lastGroup && lastGroup.bottom + 5 || 100;
-      var left = lastGroup && lastGroup.right + 5 || 0;
+      var left = 5; //lastGroup && lastGroup.right + 5 || 0;
       console.log('topleft', top, left)
       group.bind(top, left, $scope.height, $scope.zoomLevel);
       return group;

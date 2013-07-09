@@ -207,8 +207,7 @@ function WallController($scope, $http, $window){
     $scope.scrolling = false;
 
     $scope.photosInView = $scope.groups.reduce(function(visiblePhotos, group){
-      if (group.top <= $scope.scrollPosition + windowHeight && group.bottom >= $scope.scrollPosition){
-        console.log('group', group);
+      if (isInViewPort(group.top) || isInViewPort(group.bottom) || group.top <= $scope.scrollPosition && group.bottom >= $scope.scrollPosition){
         group.photos.forEach(function(photo){
           if (photo.active) visiblePhotos.push(photo);
         });
@@ -260,7 +259,7 @@ function WallController($scope, $http, $window){
     $scope.height = $scope.height * (window.innerWidth / 1920);
     $scope.groups.reduce(function(lastGroup, group){
       var top = lastGroup && lastGroup.bottom + 5 || 100;
-      var left = lastGroup && lastGroup.right + 5 || 0;
+      var left = 5; //lastGroup && lastGroup.right + 5 || 0;
       console.log('topleft', top, left)
       group.bind(top, left, $scope.height, $scope.zoomLevel);
       return group;

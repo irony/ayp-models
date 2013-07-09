@@ -586,7 +586,7 @@ body .navbar-inner{
   margin-top:10px;
 }
 
-#wall:hover.scrolling .slider
+#wall.scrolling .slider
 {
   opacity:0;
   visibility: hidden;
@@ -596,6 +596,7 @@ body .navbar-inner{
 
 #wall:hover .slider
 {
+  visibility: inherit;
   opacity:1;
 }
 

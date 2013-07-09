@@ -47,7 +47,6 @@ Group.prototype.finish = function(){
   this.duration = moment(this.from).from(this.to, true);
   this.name = moment(this.from).format("ddd D MMM YYYY") + "(" + this.duration + ")";
 
-  console.log('finish', this);
 };
 
 Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
@@ -94,12 +93,25 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
 
   this.rows = this.rows.filter(function(a){return a.length});
 
+/*
+  if (this.rows && this.rows.length){
+    if (left < ){
+      var totalHeight = this.rows.reduce(function(a,b){return a+b[0].height}, 0);
+      var remainder = maxWidth - 
+      group.bind(this.top, this.left, totalHeight * )
+    }
+
+    closeRow(this.rows.slice(-1)[0], maxWidth);
+  }*/
+  
   this.finish();
 };
 
 
 
 function closeRow(row, maxWidth){
+  if (!row) throw "Row is empty";
+
   var visible = row.filter(function(photo){return photo.active});
   var last = visible[visible.length-1];
   if (!last) return;
