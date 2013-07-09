@@ -104,6 +104,8 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
           // || Math.floor(Math.random()*100)); // ) + photo.boost;
           return photo;
         });
+        
+        // subCluster.forEach(function(photo){console.log(photo._id)})
         return subCluster;
 
       });

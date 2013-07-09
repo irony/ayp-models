@@ -25,7 +25,7 @@
               <img title="{{photo.cluster + ':' + photo.vote}}" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} done {{photo.class}}" ng-src="{{photo.src}}" ng-cloak ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
               <div id="group{{group.id}}" ng-controller="GroupCtrl" ng-init="group = g" ng-show="group.photos.length"  class="group {{group.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
-                <a href="{{'#group'+g.id}}" ng-click="click()">&nbsp;</a>
+                <a href="{{'#group'+g.id}}" style="left: {{g.left}}px;" ng-click="click()">&nbsp;</a>
                 <h2>{{g.name}}</h2>
                 <fieldset>
                   <h3>Edit group</h3>

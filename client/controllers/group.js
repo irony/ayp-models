@@ -2,16 +2,19 @@ function GroupCtrl($scope){
   $scope.group = null;
 
   $scope.$watch('group.active', function(state, oldState){
-    $scope.group.photos.forEach(function(photo){
-      photo.left += state && 300 || oldState && -300 || 0;
-      photo.actingVote = state && 0 || photo.vote;
-    });
+    if (state){
+      $scope.group.left = state && 300 || 0;
+      $scope.group.zoomLevel = state && 0 || $scope.zoomLevel;
+      $scope.group.photos.forEach(function(photo){
+        photo.actingVote = state && 0 || photo.vote;
+      });
+      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.zoomLevel);
+    }
 
   });
 
   $scope.click =function(){
     $scope.group.active = !$scope.group.active;
-    $scope.group.bind();
   };
 }
 
@@ -24,45 +27,48 @@ function Group(){
 Group.prototype.finish = function(){
 
 
-  var visible = this.photos.filter(function(a){return a.active });
+  if (!this.rows.length) return null;
 
-  if (!visible.length) return null;
+  var first = (this.rows[0][0]); //+ 20;
+  var last = this.rows[this.rows.length-1].slice(-1)[0];
 
-  var first = (visible.length && visible[0]); //+ 20;
-  var last = visible.length && visible[visible.length-1] || null;
-
+  if (!last) console.log('last not found', last, this.rows[this.rows.length-1])
   //photos.forEach(function(photo){photo.top += 20});
   
-  this.id = first && first.cluster.split('.')[0];
-  this.visible = visible.length;
-  this.height = last && (last.top + last.height - top) - 5 || 0;
-  this.bottom = last && (last.top + last.height) - 5 || 0;
-  this.right = last && (last.left + last.width) || 0;
+  //this.id = first.cluster.split('.')[0];
+  this.visible = this.rows.reduce(function(a,b){return a+b.length},0);
+  this.height = (last.top + last.height - this.top);
+  this.bottom = (last.top + last.height);
+  this.right = (last.left + last.width);
   this.from = last.taken;
   this.to = first.taken;
+  this.left = first.left;
+  this.top = first.top;
   this.duration = moment(this.from).from(this.to, true);
   this.name = moment(this.from).format("ddd D MMM YYYY") + "(" + this.duration + ")";
 
   console.log('finish', this);
 };
 
-Group.prototype.bind = function(top, left, height, zoomLevel){
+Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
   var padding = 1;
   var maxWidth = window.innerWidth;
-
-  this.top = top;
+  var group = this;
   this.left = left;
+  this.top = top;
 
   this.rows = (this.photos).reduce(function(rows, photo, i){
+    console.log(zoomLevel);
 
     if (!photo) return rows;
 
     // Only show visible photos
-    if (photo && photo.src && (photo.vote <= zoomLevel  || (photo.actingVote || 10) <= zoomLevel) ) {
+    if (photo && photo.src && (photo.vote <= zoomLevel )) {
 
       photo.active = true;
+      group.id = photo.cluster && photo.cluster.split('.')[0] || null;
 
-      photo.height = height;
+      photo.height = rowHeight;
       photo.width = photo.height * (photo.ratio || 1);
       photo.top = top;
       photo.left = left + padding;
@@ -85,6 +91,8 @@ Group.prototype.bind = function(top, left, height, zoomLevel){
     return rows;
 
   }, [[]]);
+
+  this.rows = this.rows.filter(function(a){return a.length});
 
   this.finish();
 };

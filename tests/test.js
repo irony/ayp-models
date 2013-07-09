@@ -188,10 +188,11 @@ describe("unit", function(){
 
         should.ok(groups);
         groups.length.should.be.below(11);
+        groups.length.should.be.above(0);
         groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
         var lengths = groups.map(function(group){return group.photos.length});
         // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
-        should.ok(groups[0].photos.length > 1);
+        should.ok(groups[0].photos.length > groups[1].photos.length);
         return done();
 
       });
@@ -199,18 +200,19 @@ describe("unit", function(){
 
       it("should rank each group", function(done){
 
-        var groups = clusterer.extractGroups(userA, photos, 10);
-        var format = function(group){
-          return group.reduce(function(a,b){ a.concat(b.photos); return a;}, []).map(function(photo){
-            return photo._id; // + "-" + photo.interestingness + ":" + new Date(photo.taken).getTime().toString().slice(-8) + ':' + photo.cluster.split('.').slice(-2) + ':' + (photo.interestingness || 0);
-          }).sort(function(a,b){return a-b});
+        var format = function(groups){
+          return _(groups).flatten().pluck('_id').compact().sortBy().value();
         };
 
+        var groups = clusterer.extractGroups(userA, photos, 10);
+        groups.should.not.eql([]);
         var original = format(groups);
+        original.should.not.eql([]);
         var rankedGroups = groups.map(clusterer.rankGroupPhotos);
 
         var extracted = format(rankedGroups);
-        extracted.should.eql(original);
+        extracted.should.eql(original); // same content, no id added, no id duplicated
+        extracted.reduce(function(a,b){a.should.not.eql(b); return b});
 
         //rankedGroups.sort(function(a,b){return b.photos[0].clicks - a.photos[0].clicks});
         //rankedGroups[0].photos[0].clicks.should.eql(10);
@@ -236,7 +238,10 @@ describe("unit", function(){
 
         this.timeout(20000);
 
-        photos.forEach(function(photo){photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25))});
+        photos.forEach(function(photo, i){
+          photo._id = i;
+          photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
+        });
 
         var groups = clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2));
         should.ok(groups);
@@ -254,7 +259,7 @@ describe("unit", function(){
       });
 
       it("should save a group", function(done){
-        
+
         var groups = clusterer.extractGroups(userA, photos.slice(0,1000), Math.sqrt(photos.length / 2)).sort(function(a,b){return b.length - a.length});
         var total = groups[0].photos.length;
         total.should.be.above(5);
@@ -264,20 +269,21 @@ describe("unit", function(){
 
         var setters = {};
         Photo.update = function(key, setter){
-          setters[key] = setter;
+          should.ok(!setters[key._id], key._id + ' already exists' + JSON.stringify(setter));
+          setters[key._id] = setter;
         };
 
         group = clusterer.saveGroupPhotos(group);
         should.ok(group);
         group.photos.length.should.eql(total);
         async.map(group.photos, function(photo, done){
-          should.ok(!photo.cluster);
-          var setter = setters[{_id: photo._id}];
+          should.ok(photo.cluster);
+          var setter = setters[photo._id];
           should.ok(setter);
           //setter.should.eql(group.user);
           should.ok(setter['$set']);
           should.ok(setter['$set']['copies.' + group.user + '.cluster']);
-          setter['$set']['copies.' + group.user + '.cluster'].should.not.eql(photo.cluster);
+          setter['$set']['copies.' + group.user + '.cluster'].should.eql(photo.cluster);
           done();
         }, function(){
           done();

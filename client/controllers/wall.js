@@ -134,13 +134,14 @@ function WallController($scope, $http, $window){
       var group = groups.slice(-1)[0];
       var lastPhoto = group && group.photos.slice(-1)[0];
 
-      if (!group || !lastPhoto || !photo.cluster || photo.cluster.split('.')[0] !== lastPhoto.cluster.split('.')[0]) {
+      if (!group || (lastPhoto && lastPhoto.cluster && photo.cluster && photo.cluster.split('.')[0] !== lastPhoto.cluster.split('.')[0])) {
         group = new Group();
         groups.push(group);
       }
       group.photos.push(photo);
       return groups;
     }, []);
+        
     recalculateSizes();
   });
   
@@ -155,7 +156,7 @@ function WallController($scope, $http, $window){
         $scope.loading = true;
 
         // Recalculate all widths and heights in the current window size and vote level
-        recalculateSizes($scope.zoomLevel);
+        recalculateSizes();
         
         if(!$scope.$$phase) $scope.$apply();
 
@@ -248,7 +249,7 @@ function WallController($scope, $http, $window){
   }
 
 
-  function recalculateSizes(zoomLevel){
+  function recalculateSizes(){
 
     $scope.height = $scope.zoomLevel > 8 && 110 ||
                     $scope.zoomLevel > 6 && 120 ||
@@ -258,12 +259,14 @@ function WallController($scope, $http, $window){
     // compensate for bigger / smaller screens
     $scope.height = $scope.height * (window.innerWidth / 1920);
     $scope.groups.reduce(function(lastGroup, group){
-      var top = lastGroup && lastGroup.bottom + 5 || 0;
+      var top = lastGroup && lastGroup.bottom + 5 || 100;
       var left = lastGroup && lastGroup.right + 5 || 0;
-      group.bind(top, left, $scope.height, zoomLevel);
+      console.log('topleft', top, left)
+      group.bind(top, left, $scope.height, $scope.zoomLevel);
       return group;
     }, null);
-
+    
+    console.log('groups',$scope.groups);
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
     $scope.totalHeight = $scope.groups.length && $scope.groups[$scope.groups.length-1].bottom || 0;
   }
