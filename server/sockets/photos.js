@@ -29,6 +29,9 @@ module.exports = function(app){
 
     if (!user || !user._id) return;
 
+
+
+    // do a realtime analysis on the cluster change based on the latest action
     var recalculateCluster = function(photo, done){
 
       var query = {};
@@ -50,7 +53,7 @@ module.exports = function(app){
 
         group = clusterer.saveGroupPhotos(group);
 
-        socket.broadcast.to(user._id).emit('update', group.photos);
+        if (group) socket.broadcast.to(user._id).emit('update', group.photos);
       });
     };
 

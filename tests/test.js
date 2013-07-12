@@ -238,7 +238,7 @@ describe("unit", function(){
 
         this.timeout(20000);
 
-        photos.forEach(function(photo, i){
+        photos.forEach(function(photo, length, i){
           photo._id = i;
           photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
         });
@@ -263,19 +263,25 @@ describe("unit", function(){
         var groups = clusterer.extractGroups(userA, photos.slice(0,1000), Math.sqrt(photos.length / 2)).sort(function(a,b){return b.length - a.length});
         var total = groups[0].photos.length;
         total.should.be.above(5);
+        groups.length.should.be.above(5);
 
         var group = clusterer.rankGroupPhotos(groups[0], 5);
         group.photos.length.should.eql(total);
 
+
         var setters = {};
         Photo.update = function(key, setter){
-          should.ok(!setters[key._id], key._id + ' already exists' + JSON.stringify(setter));
+          should.ok(!setters[key._id], key._id + ' already exists');
           setters[key._id] = setter;
         };
+
+
+        group.photos.reduce(function(a,b){a._id.should.not.eql(b._id); return b});
 
         group = clusterer.saveGroupPhotos(group);
         should.ok(group);
         group.photos.length.should.eql(total);
+
         async.map(group.photos, function(photo, done){
           should.ok(photo.cluster);
           var setter = setters[photo._id];

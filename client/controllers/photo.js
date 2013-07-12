@@ -22,16 +22,8 @@ function PhotoController ($scope, $http){
   };
 
   $scope.rightClick = function(photo){
-    if ($scope.selectedPhoto === photo)
-      return $scope.select(null);
-    
-    var meta = $('#meta')[0];
-    $scope.selectedPhoto = photo;
-    angular.copy(event.target.style, meta.style);
-    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-      photo.meta = fullPhoto;
-    });
-    
+    $scope.photoInCenter = photo === $scope.photoInCenter ? null : $scope.photoInCenter;
+
     return true;
   };
 

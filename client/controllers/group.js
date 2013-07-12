@@ -5,10 +5,7 @@ function GroupCtrl($scope){
     if (state){
       $scope.group.left = state && 300 || 0;
       $scope.group.zoomLevel = state && 0 || $scope.zoomLevel;
-      $scope.group.photos.forEach(function(photo){
-        photo.actingVote = state && 0 || photo.vote;
-      });
-      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.zoomLevel);
+      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.group.zoomLevel);
     }
 
   });
@@ -40,8 +37,8 @@ Group.prototype.finish = function(){
   this.height = (last.top + last.height - this.top);
   this.bottom = (last.top + last.height);
   this.right = (last.left + last.width);
-  this.from = last.taken;
-  this.to = first.taken;
+  this.from = this.photos[0].taken;
+  this.to = this.photos.slice(-1)[0].taken;
   this.left = first.left;
   this.top = first.top;
   this.duration = moment(this.from).from(this.to, true);
@@ -55,6 +52,7 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
   var group = this;
   this.left = left;
   this.top = top;
+  group.zoomLevel = zoomLevel;
 
   this.rows = (this.photos).reduce(function(rows, photo, i){
     console.log(zoomLevel);
@@ -62,7 +60,7 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
     if (!photo) return rows;
 
     // Only show visible photos
-    if (photo && photo.src && (photo.vote <= zoomLevel )) {
+    if (photo && photo.src && (photo.vote <= group.zoomLevel )) {
 
       photo.active = true;
       group.id = photo.cluster && photo.cluster.split('.')[0] || null;
@@ -76,6 +74,7 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
 
       if (photo.left + photo.width > maxWidth){
         closeRow(row, maxWidth);
+        // row.map(function(photo){photo.left += group.left});
         top += photo.height + padding;
         left = 5;
         rows.push([]);

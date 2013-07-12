@@ -75,8 +75,13 @@ function WallController($scope, $http, $window){
     if ($scope.stats && $scope.stats.all && !$scope.totalHeight) $scope.totalHeight = $scope.height * $scope.stats.all / 5; // default to a height based on the known amount of images
   });
 
-  $scope.$watch('photoInCenter', function(value){
-    $scope.q = value && value.taken;
+  $scope.$watch('photoInCenter', function(photo){
+    $scope.q = photo && photo.taken;
+    var meta = $('#meta')[0];
+    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+      photo.meta = fullPhoto;
+    });
+
   });
 /*
   $scope.$watch('q', function(value){
