@@ -149,11 +149,9 @@
             </label>
           </div>
           <ul class="media-list">
-            <li class="media span2 {{file.state}}" ng-repeat="file in files">
-              <img ng-src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail" class="pull-left"/>
-              <a class="{{file.state == 'Duplicate' && 'icon-cloud' || file.state == 'Uploading' && 'icon-circle-arrow-up' || 'icon-cloud-upload' }} pull-left icon-2x"> </a>
+            <li class="media {{file.state}}" ng-repeat="file in files">
+              <img ng-src="{{file.thumbnail}}" ng-cloak ng-show="file.thumbnail"/>
               <div class="media-body">
-                <h4 class="media-heading">{{file.name}}</h4>
                 <div class="progress progress-striped {{file.state == 'Uploading' && 'active' || ''}}">
                   <div title="{{file.error}}" class="bar {{file.state == 'Error' && 'bar-danger' || file.state == 'Done' && 'bar-success' || ''}}" style="width: {{file.progress || 0}}%;">{{file.state}}</div>
                 </div>

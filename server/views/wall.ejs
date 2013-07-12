@@ -47,10 +47,10 @@
           </div>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-spinner icon-spin':loading, 'icon-resize-full':!fullscreen, 'icon-resize-small':!loading && fullscreen}"></i></label>
 
-          <div id="meta" ng-controller="MetadataCtrl" right-click="rightclick()" ng-cloak="true" ng-show="{{selectedPhoto}}">
-            <a class="span6" ng-click="star(selectedPhoto)"><i class="icon-heart"></i></a>
-            <a class="span6" ng-click="hide(selectedPhoto)"><i class="icon-thumbs-down"></i></a>
-            <a class="span6" href="/share?date={{selectedPhoto.taken}}"></a>
+          <div id="meta" ng-controller="MetadataCtrl" right-click="rightClick()" ng-style="{left: photoInCenter.left, top: photoInCenter.top, width: photoInCenter.width, height:photoInCenter.height}" ng-cloak="true" ng-show="{{photoInCenter}}">
+            <a class="span6" ng-click="star(photoInCenter)"><i class="icon-heart"></i></a>
+            <a class="span6" ng-click="hide(photoInCenter)"><i class="icon-thumbs-down"></i></a>
+            <a class="span6" href="/share?date={{photoInCenter.taken}}"><i class="icon-share"></i></a>
           </div>
 
         </div>
