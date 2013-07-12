@@ -76,6 +76,8 @@ function WallController($scope, $http, $window){
   });
 
   $scope.$watch('photoInCenter', function(photo){
+    if (!photo) return;
+
     $scope.q = photo && photo.taken;
     var meta = $('#meta')[0];
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
@@ -130,11 +132,10 @@ function WallController($scope, $http, $window){
 
   });
 
+  library.listeners.push(function(photos){
+    if (!photos) return;
 
-
-
-  $scope.$watch('(library && library.photos.length)', function(){
-    $scope.groups = ($scope.library.photos).reduce(function(groups, photo, i){
+    $scope.groups = (photos).reduce(function(groups, photo, i){
 
       var group = groups.slice(-1)[0];
       var lastPhoto = group && group.photos.slice(-1)[0];
@@ -148,6 +149,7 @@ function WallController($scope, $http, $window){
     }, []);
         
     recalculateSizes();
+
   });
   
 

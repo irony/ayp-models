@@ -1642,52 +1642,20 @@ if (typeof(module)!=="undefined") {
 }
 
 var loadTimeout;
-var appScope;
+var appProvider = angular.module('app', []);
 
-function AppController($scope, $http)
+function AppController($scope, $http, socket, library, storage)
 {
-  var socket = io.connect();
 
-  $scope.loadMore = null;
   $scope.loading = false;
-  $scope.loadingReverse = false;
-  $scope.scrollPercentage = 0;
-  $scope.scrollPosition = 0;
 
-  appScope = $scope;
   $scope.stats = localStorage && localStorage.getObject('stats');
+
+  library.init();
 
   setInterval(function(){
     $scope.stats = null; // reset and load new every 30 seconds
   }, 30000);
-
-
-  socket.on('connect', function(data){
-    console.log('connect');
-    socket.on('trigger', function(trigger){
-      console.log('trigger', trigger);
-
-      var photo = $scope.library.photos.filter(function (item) {
-        return item.taken === new Date(trigger.item.taken).getTime();
-      }).pop();
-
-      if (photo){
-        angular.extend(photo, trigger.item); // update existing
-      }
-      else{
-        $scope.library.photos.push(trigger.item); // add
-      }
-
-
-    });
-  });
-
-  $scope.$watch('scrollPosition', function(value){
-
-    // force reload check when scrolling to top.
-    // if (value < 0 && !$scope.stats) $scope.stats = null;
-
-  });
 
   $scope.$watch('stats', function(value){
     if (!value){
@@ -1698,7 +1666,7 @@ function AppController($scope, $http)
 
         if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
         {
-          loadLatest($scope.library.modified);
+          library.loadLatest($scope.library.modified);
         }
       }).error(function(err){
         console.log('stats error');
@@ -1711,14 +1679,239 @@ function AppController($scope, $http)
 
 
 
-Storage.prototype.setObject = function(key, value) {
-  this.setItem(key, JSON.stringify(value));
-}
 
-Storage.prototype.getObject = function(key) {
-  var value = this.getItem(key);
-  return value && JSON.parse(value);
-}
+
+appProvider.directive('whenScrolled', function() {
+  return function(scope, elm, attr) {
+    var raw = document.body;
+    window.onscroll = function(event) {
+      appScope.loadingReverse = $(window).scrollTop() < 0;
+      appScope.scrollPosition = $(window).scrollTop();
+      appScope.apply(attr.whenScrolled);
+    };
+  };
+});
+
+appProvider.directive('rightClick', function($parse) {
+  return function(scope, element, attr) {
+    element.bind('contextmenu', function(event) {
+      var fn = $parse(attr.rightClick);
+      if (fn){
+        scope.$apply(function() {
+          if (fn(scope, {
+            $event: event
+          })) {
+            // only stop menu if we have something meaningful to do (returns true)
+            event.preventDefault();
+          }
+        });
+        return false;
+      }
+    });
+  };
+});
+
+/*appProvider.directive('dragstart', function($parse) {
+  return function(scope, element, attr) {
+    var fn = $parse(attr['dragstart']);
+    element.bind('dragstart', function(event) {
+      scope.$apply(function() {
+        fn(scope, {$event:event});
+      });
+    });
+  };
+})*/
+
+appProvider.directive('fullscreen', function(){
+
+  return function(scope, element, attr){
+    element.bind('click', function(event) {
+      var documentElement = document.documentElement;
+      if (documentElement.requestFullscreen) {
+        documentElement.requestFullscreen(scope.fullscreen);
+      }
+      else if (documentElement.mozRequestFullScreen) {
+        documentElement.mozRequestFullScreen(scope.fullscreen);
+      }
+      else if (documentElement.webkitRequestFullScreen) {
+        documentElement.webkitRequestFullScreen(scope.fullscreen);
+      }
+      scope.fullscreen = !scope.fullscreen;
+    });
+  };
+});
+
+appProvider.directive('lazy', function($parse){
+  
+  return function(scope, element, attr){
+    element.bind('load', function(event) {
+      var fn = $parse(attr.lazy);
+      if (fn){
+        scope.$apply(function() {
+          fn(scope);
+        });
+      }
+    });
+  };
+});
+
+appProvider.directive('dropzone', function($parse){
+  return function(scope, element, attr){
+    $(document).bind('dragover', function(e){e.preventDefault()});
+    $(document).bind('drop', function(event) {
+      var e = event.originalEvent;
+      e.preventDefault();
+
+      element.modal();
+      
+      var updateTimeout;
+      var addFile = function(file, path){
+        if(file.type.match(/image\.*/)){
+          file.path = path;
+          scope.files.push(file);
+          scope.files.sort(function(a,b){
+            return b.lastModifiedDate - a.lastModifiedDate;
+          });
+          // wait until we have found all files before updating the view
+          clearTimeout(updateTimeout);
+          updateTimeout = setTimeout(function(){
+            scope.$apply();
+          }, 200);
+        }
+      };
+      var i = 0;
+      angular.forEach(e.dataTransfer.items, function(item){
+        var entry = item.webkitGetAsEntry();
+        var file = e.dataTransfer.files[i];
+        i++;
+        if (entry.isFile) {
+          addFile(file);
+          console.log('file', file, entry);
+        } else if (entry.isDirectory) {
+          traverseFileTree(entry, null, addFile);
+        }
+
+
+      });
+      // initial binding
+      scope.$apply();
+
+    });
+
+
+    /* Traverse through files and directories */
+    function traverseFileTree(item, path, callback, done) {
+      path = path || "";
+      if (item.isFile) {
+        // Get file
+        item.file(function(file) {
+          if(file.type.match(/image\.*/)){
+            callback(file, path);
+          } else {
+            // TODO: identify iPhoto package and extract it
+          }
+        });
+      } else if (item.isDirectory) {
+        // Get folder contents
+        var dirReader = item.createReader();
+        dirReader.readEntries(function(entries) {
+          angular.forEach(entries, function(entry){
+            setTimeout(function(){
+              traverseFileTree(entry, path + item.name + "/", callback, scope.$apply);
+            },20);
+          });
+        });
+        if (done) done();
+      }
+    }
+    /* Main unzip function */
+    /*function unzip(zip){
+        model.getEntries(zip, function(entries) {
+            entries.forEach(function(entry) {
+                model.getEntryFile(entry, "Blob");
+            });
+        });
+}*/
+
+    //model for zip.js
+    /*var model = (function() {
+
+        return {
+            getEntries : function(file, onend) {
+                zip.createReader(new zip.BlobReader(file), function(zipReader) {
+                    zipReader.getEntries(onend);
+                }, onerror);
+            },
+            getEntryFile : function(entry, creationMethod, onend, onprogress) {
+                var writer, zipFileEntry;
+
+                function getData() {
+                    entry.getData(writer, function(blob) {
+
+                    //read the blob, grab the base64 data, send to upload function
+                    oFReader = new FileReader()
+                    oFReader.onloadend = function(e) {
+                      upload(this.result.split(',')[1]);
+                    };
+                    oFReader.readAsDataURL(blob);
+                 
+                    }, onprogress);
+                }
+                    writer = new zip.BlobWriter();
+                    getData();
+            }
+        };
+    })();
+*/
+};
+});
+
+appProvider.directive('dateFormat', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attr, ngModelCtrl) {
+      ngModelCtrl.$formatters.unshift(function(valueFromModel) {
+        return valueFromModel && moment(valueFromModel).format('YYYY MMM DD');
+        // return how data will be shown in input
+      });
+
+      ngModelCtrl.$parsers.push(function(valueFromInput) {
+        var date = moment(valueFromInput);
+        return date.isValid()? date.toDate().getTime() : null;
+        // return how data should be stored in model
+      });
+
+      $(element).bind('mouseover', function(e){
+        this.select();
+      });
+
+      $(element).bind('mouseout', function(e){
+        window.getSelection().removeAllRanges();
+      });
+    }
+  };
+});
+
+appProvider.directive('datepicker', function() {
+ return function(scope, element, attrs) {
+
+  $(element).daterangepicker(
+  {
+    format: 'yyyy-MM-dd',
+    ranges: {
+      'Today': ['today', 'today'],
+      'Yesterday': ['yesterday', 'yesterday']
+    }
+  },
+  function(start, end) {
+    var modelPath = $(element).attr('ng-model');
+    scope[modelPath] = start.toString('yyyy-MM-dd') + ' - ' + end.toString('yyyy-MM-dd 23:59:59');
+    scope.$apply();
+  }
+  );
+
+};
+});
 function GroupCtrl($scope){
   $scope.group = null;
 
@@ -1750,7 +1943,6 @@ Group.prototype.finish = function(){
   var first = (this.rows[0][0]); //+ 20;
   var last = this.rows[this.rows.length-1].slice(-1)[0];
 
-  if (!last) console.log('last not found', last, this.rows[this.rows.length-1])
   //photos.forEach(function(photo){photo.top += 20});
   
   //this.id = first.cluster.split('.')[0];
@@ -2009,38 +2201,20 @@ function GroupsController($scope, $http){
   if (document.location.hash)
     $scope.startDate = new Date(document.location.hash.slice(1));
 }
-function MetadataCtrl($scope){
-  
-  $scope.star = function(photo){
-    photo.vote = 0;
-    socket.emit('vote', photo, 0);
-    photo.starred = !photo.starred;
-    console.log('star', photo);
-  };
-
-
-  $scope.hide = function(photo){
-    photo.vote = 10;
-    socket.emit('vote', photo, 10);
-    photo.hidden = true;
-    console.log('hide', photo);
-  };
-
-  $scope.rightClick = function(){
-    $scope.$parentScope.selectedPhoto = null;
-
-  };
-  
-
-}
-
-angular.module('app', [])
-.factory('library', function(){
+appProvider.factory('library', function($http, socket, storage){
 
   var server;
   var photos = [];
 
   var library = {
+
+    listeners : [],
+
+    propagateChanges : function(photos){
+      listeners.map(function(fn){
+        fn.apply(photos);
+      });
+    },
 
     // load all photos based on modify date. It means we can fill up the library on newly changed
     // photos or recently added photos without loading the whole library again.
@@ -2069,11 +2243,11 @@ angular.module('app', [])
         // next is a cursor to the next date in the library
         if (page.next){
           console.log('next latest', page.next);
-          return loadLatest(page.next, done);
+          return library.loadLatest(page.next, done);
         } else{
           // THE END
           console.log('done latest', page.modified);
-          $scope.library.modified = page.modified;
+          library.meta.modified = page.modified;
           return done && done(null, photos);
         }
 
@@ -2084,6 +2258,10 @@ angular.module('app', [])
       });
 
     },
+    find : function(taken){
+      var photo = _.first(library.photos, {'taken' : new Date(taken).getTime()});
+      return photo;
+    },
     // Load library based on photo taken, this will recurse until it reaches the end of the library
     loadMore: function(taken, done){
       $http.get('/api/library', {params: {taken:taken || new Date().getTime() }, cache: true})
@@ -2091,25 +2269,27 @@ angular.module('app', [])
 
         if (!page || !page.photos || !page.photos.length) return done && done();
 
-        if ($scope.library.userId !== page.userId || !photos)
-          $scope.library = {photos:[], userId : page.userId }; // reset if we are logged in as new user
+        if (library.meta.userId !== page.userId || !photos){
+          library.photos =[];          
+          library.meta = {userId : page.userId }; // reset if we are logged in as new user
+        }
 
 
         // if (_.find(photos, {taken:page.photos[0].taken})) return done && done();
 
         _.each(page.photos, function(photo){
           photo.src=photo.src && photo.src.replace('$', page.baseUrl) || null;
-          photos.push(photo);
+          library.photos.push(photo);
         });
 
         // next is a cursor to the next date in the library
         if (page.next){
           if (_.any(photos, {taken:page.next})) return done && done();
           console.log('next more', page.next);
-          loadMore(page.next, done);
+          library.loadMore(page.next, done);
         } else{
           console.log('done more', page.modified);
-          $scope.library.modified = page.modified;
+          library.meta.modified = page.meta.modified;
 
           return done && done(null, photos);
         }
@@ -2121,27 +2301,27 @@ angular.module('app', [])
       });
     },
     sortAndRemoveDuplicates: function(){
-      photos.sort(function(a,b){
+      library.photos.sort(function(a,b){
           return b.taken - a.taken;
       });
 
-      var i = photos.length;
+      var i = library.photos.length;
       while (i--) {
-        if (i && photos[i-1].taken === photos[i].taken) {
-          photos.splice(i,1);
+        if (i && library.photos[i-1].taken === library.photos[i].taken) {
+          library.photos.splice(i,1);
         }
       }
     },
-    initialize:function(){
+    init:function(){
 
-      $scope.library = localStorage && localStorage.getObject('library') || {modified:null, photos:[],userId:null};
-      photos = photos || [];
+      library.meta = storage.getObject('meta') || {modified:null, userId:null}; 
+      library.photos = library.photos || [];
 
 
       if (window.shimIndexedDB) window.shimIndexedDB.__useShim();
 
       async.series({
-        /*db : function(done){
+        db : function(done){
           db.open({
             server: 'my-app',
             version: 1,
@@ -2163,19 +2343,20 @@ angular.module('app', [])
               done(err);
             })
             .done( function ( photos ) {
+              photos = photos.reverse();
+              library.propagateChanges(photos); // prerender with the last known library if found
               // descending order
-              photos.concat(photos.reverse());
-              $scope.$apply();
+              library.photos.concat(photos);
               done(null, photos);
             });
           });
-        },*/
+        },
         beginning : function(done){
           library.loadMore(null, done);
         },
         changes : function(done){
-          var lastModifyDate = $scope.library.modified && new Date($scope.library.modified).getTime() || null;
-          if (lastModifyDate) loadLatest(lastModifyDate, done);
+          var lastModifyDate = library.meta.modified && new Date(library.meta.modified).getTime() || null;
+          if (lastModifyDate) library.loadLatest(lastModifyDate, done);
         },
         end : function(done){
           var lastPhoto = (photos || []).slice(-1)[0];
@@ -2183,12 +2364,12 @@ angular.module('app', [])
         }
       }, function(result){
 
-        console.log('done async load', $scope.library);
         library.sortAndRemoveDuplicates();
+        library.propagateChanges(library.photos);
 
-        if (localStorage) localStorage.setObject('library', {modified: $scope.library.modified, userId: $scope.library.userId});
+        storage.setObject('meta', library.meta);
         if (server) {
-          server.photos.update.call(photos); // update means put == insert or update
+          server.photos.update.call(library.photos); // update means put == insert or update
         } else {
           // load every time as fallback
         }
@@ -2197,236 +2378,53 @@ angular.module('app', [])
 
   };
 
+
+  socket.on('connect', function(data){
+    socket.on('trigger', function(trigger){
+
+      var photo = library.find(new Date(trigger.item.taken).getTime());
+
+      if (photo){
+        angular.extend(photo, trigger.item); // update existing
+      }
+      else{
+        library.photos.push(trigger.item); // add
+      }
+
+
+    });
+  });
+
   return library;
   //initialize();
 })
-.directive('whenScrolled', function() {
-  return function(scope, elm, attr) {
-    var raw = document.body;
-    window.onscroll = function(event) {
-      appScope.loadingReverse = $(window).scrollTop() < 0;
-      appScope.scrollPosition = $(window).scrollTop();
-      appScope.apply(attr.whenScrolled);
-    };
-  };
-})
-.directive('rightClick', function($parse) {
-  return function(scope, element, attr) {
-    element.bind('contextmenu', function(event) {
-      var fn = $parse(attr.rightClick);
-      if (fn){
-        scope.$apply(function() {
-          if (fn(scope, {
-            $event: event
-          })) {
-            // only stop menu if we have something meaningful to do (returns true)
-            event.preventDefault();
-          }
-        });
-        return false;
-      }
-    });
-  };
-})
-/*.directive('dragstart', function($parse) {
-  return function(scope, element, attr) {
-    var fn = $parse(attr['dragstart']);
-    element.bind('dragstart', function(event) {
-      scope.$apply(function() {
-        fn(scope, {$event:event});
-      });
-    });
-  };
-})*/
-.directive('fullscreen', function(){
-
-  return function(scope, element, attr){
-    element.bind('click', function(event) {
-      var documentElement = document.documentElement;
-      if (documentElement.requestFullscreen) {
-        documentElement.requestFullscreen(scope.fullscreen);
-      }
-      else if (documentElement.mozRequestFullScreen) {
-        documentElement.mozRequestFullScreen(scope.fullscreen);
-      }
-      else if (documentElement.webkitRequestFullScreen) {
-        documentElement.webkitRequestFullScreen(scope.fullscreen);
-      }
-      scope.fullscreen = !scope.fullscreen;
-    });
-  };
-})
-.directive('lazy', function($parse){
+function MetadataCtrl($scope){
   
-  return function(scope, element, attr){
-    element.bind('load', function(event) {
-      var fn = $parse(attr.lazy);
-      if (fn){
-        scope.$apply(function() {
-          fn(scope);
-        });
-      }
-    });
+  $scope.star = function(photo){
+    photo.vote = 0;
+    socket.emit('vote', photo, 0);
+    photo.starred = !photo.starred;
+    console.log('star', photo);
   };
-})
-.directive('dropzone', function($parse){
-  return function(scope, element, attr){
-    $(document).bind('dragover', function(e){e.preventDefault()});
-    $(document).bind('drop', function(event) {
-      var e = event.originalEvent;
-      e.preventDefault();
-
-      element.modal();
-      
-      var updateTimeout;
-      var addFile = function(file, path){
-        if(file.type.match(/image\.*/)){
-          file.path = path;
-          scope.files.push(file);
-          scope.files.sort(function(a,b){
-            return b.lastModifiedDate - a.lastModifiedDate;
-          });
-          // wait until we have found all files before updating the view
-          clearTimeout(updateTimeout);
-          updateTimeout = setTimeout(function(){
-            scope.$apply();
-          }, 200);
-        }
-      };
-      var i = 0;
-      angular.forEach(e.dataTransfer.items, function(item){
-        var entry = item.webkitGetAsEntry();
-        var file = e.dataTransfer.files[i];
-        i++;
-        if (entry.isFile) {
-          addFile(file);
-          console.log('file', file, entry);
-        } else if (entry.isDirectory) {
-          traverseFileTree(entry, null, addFile);
-        }
 
 
-      });
-      // initial binding
-      scope.$apply();
-
-    });
-
-
-    /* Traverse through files and directories */
-    function traverseFileTree(item, path, callback, done) {
-      path = path || "";
-      if (item.isFile) {
-        // Get file
-        item.file(function(file) {
-          if(file.type.match(/image\.*/)){
-            callback(file, path);
-          } else {
-            // TODO: identify iPhoto package and extract it
-          }
-        });
-      } else if (item.isDirectory) {
-        // Get folder contents
-        var dirReader = item.createReader();
-        dirReader.readEntries(function(entries) {
-          angular.forEach(entries, function(entry){
-            setTimeout(function(){
-              traverseFileTree(entry, path + item.name + "/", callback, scope.$apply);
-            },20);
-          });
-        });
-        if (done) done();
-      }
-    }
-    /* Main unzip function */
-    /*function unzip(zip){
-        model.getEntries(zip, function(entries) {
-            entries.forEach(function(entry) {
-                model.getEntryFile(entry, "Blob");
-            });
-        });
-}*/
-
-    //model for zip.js
-    /*var model = (function() {
-
-        return {
-            getEntries : function(file, onend) {
-                zip.createReader(new zip.BlobReader(file), function(zipReader) {
-                    zipReader.getEntries(onend);
-                }, onerror);
-            },
-            getEntryFile : function(entry, creationMethod, onend, onprogress) {
-                var writer, zipFileEntry;
-
-                function getData() {
-                    entry.getData(writer, function(blob) {
-
-                    //read the blob, grab the base64 data, send to upload function
-                    oFReader = new FileReader()
-                    oFReader.onloadend = function(e) {
-                      upload(this.result.split(',')[1]);
-                    };
-                    oFReader.readAsDataURL(blob);
-                 
-                    }, onprogress);
-                }
-                    writer = new zip.BlobWriter();
-                    getData();
-            }
-        };
-    })();
-*/
-};
-})
-.directive('dateFormat', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attr, ngModelCtrl) {
-      ngModelCtrl.$formatters.unshift(function(valueFromModel) {
-        return valueFromModel && moment(valueFromModel).format('YYYY MMM DD');
-        // return how data will be shown in input
-      });
-
-      ngModelCtrl.$parsers.push(function(valueFromInput) {
-        var date = moment(valueFromInput);
-        return date.isValid()? date.toDate().getTime() : null;
-        // return how data should be stored in model
-      });
-
-      $(element).bind('mouseover', function(e){
-        this.select();
-      });
-
-      $(element).bind('mouseout', function(e){
-        window.getSelection().removeAllRanges();
-      });
-    }
+  $scope.hide = function(photo){
+    photo.vote = 10;
+    socket.emit('vote', photo, 10);
+    photo.hidden = true;
+    console.log('hide', photo);
   };
-})
-.directive('datepicker', function() {
- return function(scope, element, attrs) {
 
-  $(element).daterangepicker(
-  {
-    format: 'yyyy-MM-dd',
-    ranges: {
-      'Today': ['today', 'today'],
-      'Yesterday': ['yesterday', 'yesterday']
-    }
-  },
-  function(start, end) {
-    var modelPath = $(element).attr('ng-model');
-    scope[modelPath] = start.toString('yyyy-MM-dd') + ' - ' + end.toString('yyyy-MM-dd 23:59:59');
-    scope.$apply();
-  }
-  );
+  $scope.rightClick = function(){
+    $scope.$parentScope.selectedPhoto = null;
 
-};
-});
+  };
+  
+
+}
 var socket = io.connect();
 
-function PhotoController ($scope, $http){
+function PhotoController ($scope, $http, socket){
   var activePhoto = null;
   
   $scope.mouseMove = function(photo){
@@ -2710,6 +2708,27 @@ function SlideshowController ($scope, $http){
   $scope.setModel = this.setModel;
 }
 
+appProvider.factory('socket', function(){
+
+  var socket = io.connect();
+
+  return socket;
+
+});
+
+appProvider.factory('storage', function(){
+
+	Storage.prototype.setObject = function(key, value) {
+		this.setItem(key, JSON.stringify(value));
+	};
+
+	Storage.prototype.getObject = function(key) {
+		var value = this.getItem(key);
+		return value && JSON.parse(value);
+	};
+
+  return localStorage;
+});
 function UploadController($scope, $http){
 
   $scope.state = null;
@@ -3060,6 +3079,8 @@ function WallController($scope, $http, $window){
   });
 
   $scope.$watch('photoInCenter', function(photo){
+    if (!photo) return;
+
     $scope.q = photo && photo.taken;
     var meta = $('#meta')[0];
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
@@ -3114,11 +3135,10 @@ function WallController($scope, $http, $window){
 
   });
 
+  library.listeners.push(function(photos){
+    if (!photos) return;
 
-
-
-  $scope.$watch('(library && library.photos.length)', function(){
-    $scope.groups = ($scope.library.photos).reduce(function(groups, photo, i){
+    $scope.groups = (photos).reduce(function(groups, photo, i){
 
       var group = groups.slice(-1)[0];
       var lastPhoto = group && group.photos.slice(-1)[0];
@@ -3132,6 +3152,7 @@ function WallController($scope, $http, $window){
     }, []);
         
     recalculateSizes();
+
   });
   
 

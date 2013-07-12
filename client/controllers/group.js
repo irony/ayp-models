@@ -29,7 +29,6 @@ Group.prototype.finish = function(){
   var first = (this.rows[0][0]); //+ 20;
   var last = this.rows[this.rows.length-1].slice(-1)[0];
 
-  if (!last) console.log('last not found', last, this.rows[this.rows.length-1])
   //photos.forEach(function(photo){photo.top += 20});
   
   //this.id = first.cluster.split('.')[0];

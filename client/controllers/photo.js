@@ -1,6 +1,6 @@
 var socket = io.connect();
 
-function PhotoController ($scope, $http){
+function PhotoController ($scope, $http, socket){
   var activePhoto = null;
   
   $scope.mouseMove = function(photo){
