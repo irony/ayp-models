@@ -8,7 +8,6 @@ function AppController($scope, $http, socket, library, storage)
 
   $scope.stats = localStorage && localStorage.getObject('stats');
 
-  library.init();
 
   setInterval(function(){
     $scope.stats = null; // reset and load new every 30 seconds

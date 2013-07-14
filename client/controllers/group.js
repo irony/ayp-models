@@ -5,7 +5,7 @@ function GroupCtrl($scope){
     if (state){
       $scope.group.left = state && 300 || 0;
       $scope.group.zoomLevel = state && 0 || $scope.zoomLevel;
-      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.group.zoomLevel);
+//      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.group.zoomLevel);
     }
 
   });
@@ -51,10 +51,9 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
   var group = this;
   this.left = left;
   this.top = top;
-  group.zoomLevel = zoomLevel;
+  group.zoomLevel = zoomLevel || group.zoomLevel;
 
   this.rows = (this.photos).reduce(function(rows, photo, i){
-    console.log(zoomLevel);
 
     if (!photo) return rows;
 
@@ -64,17 +63,17 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
       photo.active = true;
       group.id = photo.cluster && photo.cluster.split('.')[0] || null;
 
-      photo.height = rowHeight;
-      photo.width = photo.height * (photo.ratio || 1);
-      photo.top = top;
-      photo.left = left + padding;
+      photo.height = Math.floor(rowHeight);
+      photo.width = Math.floor(photo.height * (photo.ratio || 1));
+      photo.top = Math.floor(top);
+      photo.left = Math.floor(left) + padding;
       var row = rows.slice(-1)[0];
       row.push(photo);
 
       if (photo.left + photo.width > maxWidth){
         closeRow(row, maxWidth);
         // row.map(function(photo){photo.left += group.left});
-        top += photo.height + padding;
+        top = photo.top + photo.height + padding;
         left = 5;
         rows.push([]);
       } else {

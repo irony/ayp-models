@@ -231,7 +231,7 @@ describe("unit", function(){
       });
 
 
-      it("should extract photo groups and subgroups from 10 000 photos", function(done){
+      it("should extract photo groups from 10 000 photos", function(done){
         while(photos.length< 10000){
           photos = photos.concat(photos);
         }
@@ -239,6 +239,27 @@ describe("unit", function(){
         this.timeout(20000);
 
         photos.forEach(function(photo, length, i){
+          photo._id = i;
+          photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
+        });
+
+        var groups = clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2));
+        should.ok(groups);
+        // groups.length.should.be.above(photos.length / 60);
+        groups.length.should.be.below(photos.length / 100);
+
+        return done();
+
+      });
+
+       it("should extract photo groups and subgroups from 10 000 photos", function(done){
+        while(photos.length< 10000){
+          photos = photos.concat(photos);
+        }
+
+        this.timeout(20000);
+
+        photos.forEach(function(photo, i){
           photo._id = i;
           photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
         });
@@ -259,6 +280,9 @@ describe("unit", function(){
       });
 
       it("should save a group", function(done){
+
+
+        photos.reduce(function(a,b){a._id.should.not.eql(b._id); return b});
 
         var groups = clusterer.extractGroups(userA, photos.slice(0,1000), Math.sqrt(photos.length / 2)).sort(function(a,b){return b.length - a.length});
         var total = groups[0].photos.length;

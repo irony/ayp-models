@@ -1,4 +1,4 @@
-function WallController($scope, $http, $window){
+function WallController($scope, $http, $window, library){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
@@ -17,6 +17,8 @@ function WallController($scope, $http, $window){
   $scope.q = null;
   $scope.fullscreen = false;
   $scope.loading = true;
+
+  library.init();
 
   var lastPosition = null;
   var waiting = false;
@@ -133,7 +135,8 @@ function WallController($scope, $http, $window){
   });
 
   library.listeners.push(function(photos){
-    if (!photos) return;
+
+    console.log('library push', photos)
 
     $scope.groups = (photos).reduce(function(groups, photo, i){
 
@@ -156,7 +159,7 @@ function WallController($scope, $http, $window){
   $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
     
     
-    if ($scope.zoomLevel && $scope.library && $scope.library.photos){
+    if ($scope.zoomLevel){
       clearTimeout(zoomTimeout);
       zoomTimeout = setTimeout(function(){
         
@@ -263,18 +266,15 @@ function WallController($scope, $http, $window){
                     240;
 
     // compensate for bigger / smaller screens
-    $scope.height = $scope.height * (window.innerWidth / 1920);
-    $scope.groups.reduce(function(lastGroup, group){
-      var top = lastGroup && lastGroup.bottom + 5 || 100;
+    $scope.height = Math.floor($scope.height * (window.innerWidth / 1920));
+    $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
-      console.log('topleft', top, left)
       group.bind(top, left, $scope.height, $scope.zoomLevel);
-      return group;
-    }, null);
+      return group.bottom + 5;
+    }, 100);
     
-    console.log('groups',$scope.groups);
+
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
-    $scope.totalHeight = $scope.groups.length && $scope.groups[$scope.groups.length-1].bottom || 0;
   }
   
 

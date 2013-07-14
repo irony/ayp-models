@@ -687,21 +687,11 @@ body .navbar-inner{
   display: block;
 }
 
-#wall .group.active {
-  width:30%;
+#wall .group:hover, #wall .group.active {
+  left:0;
   background: rgba(0,0,0,0.6);
-  border-right: 1px solid rgba(255,255,255,0.4);
   border-radius: 2px;
 }
-
-#wall .group fieldset{
-  display:none;
-}
-
-#wall .group:target fieldset{
-  display:block;
-}
-
 
 #wall .group h2 small{
   display: none;
@@ -713,11 +703,13 @@ body .navbar-inner{
 
 #wall .group.inactive
 {
-  width: 5px;
+  width: 30%;
+  left: -30%;
+  border-right: 1px solid rgba(255,255,255,0.4);
 }
 
 #wall .group {
-  color:#fff;
+  color:#aaa;
   font-size: 20px;
   font-weight: 100;
   padding: 10px 0;

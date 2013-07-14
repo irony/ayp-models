@@ -12,6 +12,7 @@ var ObjectId = require('mongoose').Types.ObjectId,
     _ = require('lodash'),
     utils = new require('../client/js/utils')(_),
     clusterfck = require('clusterfck'),
+    interestingnessCalculator = require('../jobs/interestingnessCalculator'),
     mongoose = require('mongoose');
 
 function Clusterer(done){
@@ -62,14 +63,14 @@ Clusterer.extractGroups = function(user, photos, nrClusters){
     
     var vector = [photo.taken.getTime()]; // this is where the magic happens
 
-    var mine = new PhotoCopy(photo.copies[user._id] || photo);
+    var mine = photo.copies[user._id] || photo;
 
     vector._id = photo._id;
     vector.oldCluster = mine.cluster;
     vector.taken = photo.taken;
     vector.vote = mine.vote;
     vector.clicks = mine.clicks;
-    vector.interestingness = mine.calculatedInterestingness || Math.floor(Math.random()*100);
+    vector.interestingness = interestingnessCalculator(mine) || Math.floor(Math.random()*100);
     return vector;
   });
 
@@ -87,6 +88,7 @@ Clusterer.extractGroups = function(user, photos, nrClusters){
 Clusterer.rankGroupPhotos = function(group, nrClusters){
     //var subClusters = utils.cluster(group.photos, nrClusters);
     var subClusters = clusterfck.kmeans(group.photos, nrClusters);
+    
     subClusters
       .sort(function(a,b){
         return b.length - a.length; // sort the arrays bigger first, more value toeacho we get the smallest clusters first - less risk of double shots from the same cluster
@@ -111,7 +113,9 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
       });
       // console.debug('..done');
 
+      console.log('sub', subClusters.length);
     group.photos = utils.weave(subClusters);
+      console.log('sub', group.photos.length);
     return group;
 };
 
@@ -119,7 +123,6 @@ Clusterer.saveGroupPhotos = function(group){
   var i = 1;
 
   if (!group.user) throw "User is not set on group";
-
   group.photos = group.photos.map(function(photo){
     if (photo.oldCluster && photo.cluster === photo.oldCluster) {
       return null;
@@ -133,7 +136,6 @@ Clusterer.saveGroupPhotos = function(group){
     // + clusterRank + (photo.interestingness); // || Math.floor(Math.random()*100)); // ) + photo.boost;
     setter.$set['copies.' + group.user + '.cluster'] = photo.cluster;
     setter.$set['modified'] = new Date();
-    // console.debug(photo.cluster, photo.interestingness);
 
     i++;
     Photo.update({_id : photo._id}, setter, {upsert: true});

@@ -1651,7 +1651,6 @@ function AppController($scope, $http, socket, library, storage)
 
   $scope.stats = localStorage && localStorage.getObject('stats');
 
-  library.init();
 
   setInterval(function(){
     $scope.stats = null; // reset and load new every 30 seconds
@@ -1919,7 +1918,7 @@ function GroupCtrl($scope){
     if (state){
       $scope.group.left = state && 300 || 0;
       $scope.group.zoomLevel = state && 0 || $scope.zoomLevel;
-      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.group.zoomLevel);
+//      $scope.group.bind($scope.group.top, $scope.group.left, $scope.height, $scope.group.zoomLevel);
     }
 
   });
@@ -1965,10 +1964,9 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
   var group = this;
   this.left = left;
   this.top = top;
-  group.zoomLevel = zoomLevel;
+  group.zoomLevel = zoomLevel || group.zoomLevel;
 
   this.rows = (this.photos).reduce(function(rows, photo, i){
-    console.log(zoomLevel);
 
     if (!photo) return rows;
 
@@ -1978,17 +1976,17 @@ Group.prototype.bind = function(top, left, rowHeight, zoomLevel){
       photo.active = true;
       group.id = photo.cluster && photo.cluster.split('.')[0] || null;
 
-      photo.height = rowHeight;
-      photo.width = photo.height * (photo.ratio || 1);
-      photo.top = top;
-      photo.left = left + padding;
+      photo.height = Math.floor(rowHeight);
+      photo.width = Math.floor(photo.height * (photo.ratio || 1));
+      photo.top = Math.floor(top);
+      photo.left = Math.floor(left) + padding;
       var row = rows.slice(-1)[0];
       row.push(photo);
 
       if (photo.left + photo.width > maxWidth){
         closeRow(row, maxWidth);
         // row.map(function(photo){photo.left += group.left});
-        top += photo.height + padding;
+        top = photo.top + photo.height + padding;
         left = 5;
         rows.push([]);
       } else {
@@ -2202,26 +2200,29 @@ function GroupsController($scope, $http){
     $scope.startDate = new Date(document.location.hash.slice(1));
 }
 appProvider.factory('library', function($http, socket, storage){
-
+  console.log('library factory')
   var server;
   var photos = [];
 
   var library = {
 
     listeners : [],
-
+    meta : {},
     propagateChanges : function(photos){
-      listeners.map(function(fn){
-        fn.apply(photos);
+      console.log('propagateChanges')
+      library.listeners.map(function(fn){
+        fn(photos);
       });
     },
 
     // load all photos based on modify date. It means we can fill up the library on newly changed
     // photos or recently added photos without loading the whole library again.
     loadLatest : function(modified, done){
+          console.log('latest ', modified);
 
       $http.get('/api/library', {params: {modified:modified}, cache: true})
       .success(function(page){
+          console.log('latest page', page);
 
         if (!page || !page.photos) return;
 
@@ -2266,7 +2267,7 @@ appProvider.factory('library', function($http, socket, storage){
     loadMore: function(taken, done){
       $http.get('/api/library', {params: {taken:taken || new Date().getTime() }, cache: true})
       .success(function(page){
-
+        console.log('more success', page);
         if (!page || !page.photos || !page.photos.length) return done && done();
 
         if (library.meta.userId !== page.userId || !photos){
@@ -2289,7 +2290,7 @@ appProvider.factory('library', function($http, socket, storage){
           library.loadMore(page.next, done);
         } else{
           console.log('done more', page.modified);
-          library.meta.modified = page.meta.modified;
+          library.meta.modified = page.modified;
 
           return done && done(null, photos);
         }
@@ -2322,6 +2323,7 @@ appProvider.factory('library', function($http, socket, storage){
 
       async.series({
         db : function(done){
+          console.log('__db');
           db.open({
             server: 'my-app',
             version: 1,
@@ -2343,6 +2345,8 @@ appProvider.factory('library', function($http, socket, storage){
               done(err);
             })
             .done( function ( photos ) {
+              console.log('db done', photos);
+
               photos = photos.reverse();
               library.propagateChanges(photos); // prerender with the last known library if found
               // descending order
@@ -2351,18 +2355,24 @@ appProvider.factory('library', function($http, socket, storage){
             });
           });
         },
-        beginning : function(done){
+/*        beginning : function(done){
           library.loadMore(null, done);
-        },
+        },*/
         changes : function(done){
+      console.log('__changes')
           var lastModifyDate = library.meta.modified && new Date(library.meta.modified).getTime() || null;
-          if (lastModifyDate) library.loadLatest(lastModifyDate, done);
+          if (lastModifyDate){
+            library.loadLatest(lastModifyDate, done);
+          }
+          else done();
         },
         end : function(done){
-          var lastPhoto = (photos || []).slice(-1)[0];
-          library.loadMore(lastPhoto && lastPhoto.taken, done);
+      console.log('__end')
+          var lastPhoto = (library.photos || []).slice(-1)[0];
+          library.loadMore(lastPhoto && lastPhoto.taken || null, done);
         }
       }, function(result){
+      console.log('__result', result)
 
         library.sortAndRemoveDuplicates();
         library.propagateChanges(library.photos);
@@ -3001,7 +3011,7 @@ function LoginController($http, $scope){
   });
 
 }
-function WallController($scope, $http, $window){
+function WallController($scope, $http, $window, library){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
@@ -3020,6 +3030,8 @@ function WallController($scope, $http, $window){
   $scope.q = null;
   $scope.fullscreen = false;
   $scope.loading = true;
+
+  library.init();
 
   var lastPosition = null;
   var waiting = false;
@@ -3136,7 +3148,8 @@ function WallController($scope, $http, $window){
   });
 
   library.listeners.push(function(photos){
-    if (!photos) return;
+
+    console.log('library push', photos)
 
     $scope.groups = (photos).reduce(function(groups, photo, i){
 
@@ -3159,7 +3172,7 @@ function WallController($scope, $http, $window){
   $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
     
     
-    if ($scope.zoomLevel && $scope.library && $scope.library.photos){
+    if ($scope.zoomLevel){
       clearTimeout(zoomTimeout);
       zoomTimeout = setTimeout(function(){
         
@@ -3266,18 +3279,15 @@ function WallController($scope, $http, $window){
                     240;
 
     // compensate for bigger / smaller screens
-    $scope.height = $scope.height * (window.innerWidth / 1920);
-    $scope.groups.reduce(function(lastGroup, group){
-      var top = lastGroup && lastGroup.bottom + 5 || 100;
+    $scope.height = Math.floor($scope.height * (window.innerWidth / 1920));
+    $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
-      console.log('topleft', top, left)
       group.bind(top, left, $scope.height, $scope.zoomLevel);
-      return group;
-    }, null);
+      return group.bottom + 5;
+    }, 100);
     
-    console.log('groups',$scope.groups);
+
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
-    $scope.totalHeight = $scope.groups.length && $scope.groups[$scope.groups.length-1].bottom || 0;
   }
   
 
