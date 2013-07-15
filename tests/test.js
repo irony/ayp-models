@@ -267,14 +267,13 @@ describe("unit", function(){
 
         //rankedGroups.sort(function(a,b){return b.photos[0].clicks - a.photos[0].clicks});
         //rankedGroups[0].photos[0].clicks.should.eql(10);
-        
 
         rankedGroups.sort(function(a,b){return b.photos.length - a.photos.length});
         should.ok(rankedGroups[0].photos[0].cluster);
-        rankedGroups[0].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
-        rankedGroups[1].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
-        rankedGroups[2].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
-        rankedGroups[3].photos[1].boost.should.be.below(rankedGroups[0].photos[0].boost);//, "first photo should have max boost");
+        rankedGroups[0].photos[2].boost.should.be.below(rankedGroups[0].photos[0].boost);
+        rankedGroups[1].photos[2].boost.should.be.below(rankedGroups[0].photos[0].boost);
+        rankedGroups[2].photos[2].boost.should.be.below(rankedGroups[0].photos[0].boost);
+        rankedGroups[3].photos[2].boost.should.be.below(rankedGroups[0].photos[0].boost);
         rankedGroups[0].photos.slice(-1)[0].boost.should.be.below(10);
  
         return done();
@@ -334,11 +333,7 @@ describe("unit", function(){
 
         var i = 0;
 
-        photos.map(function(photo){
-          photo._id = i++;
-          photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
-        });
-        console.log(photos.sort(function(a,b){return a._id - b._id}))
+        // check for duplicates
         photos.sort(function(a,b){return a._id - b._id}).reduce(function(a,b){a._id.should.not.eql(b._id); return b});
         photos.sort(function(a,b){return a.taken - b.taken}).reduce(function(a,b){a.taken.should.not.eql(b.taken); return b});
 
@@ -347,7 +342,6 @@ describe("unit", function(){
         total.should.be.above(5);
         groups.length.should.be.above(5);
 
-        console.log(groups[0])
         var group = clusterer.rankGroupPhotos(groups[0], 5);
         group.photos.length.should.eql(total);
 
@@ -876,6 +870,7 @@ describe("app", function(){
         .attach('thumbnail|' + taken + '|35260', 'tests/fixtures/couple.jpg')
         .expect(200)
         .end(function(err, res){
+          console.log('end')
           if (err) done(err);
 
           should.not.exist(err);
@@ -1112,7 +1107,8 @@ describe("app", function(){
           client2.once('connect', function(){
             client2.once('update', function(photos, value){
               photos.filter(function(photo){
-                return photo.copies[userId].cluster.split('.')[0] === photoA.copies[userId].cluster.split('.')[0];
+                console.log(photo)
+                return photo.cluster.split('.')[0] === photoA.copies[userId].cluster.split('.')[0];
               }).length.should.be.above(1);
               return done();
             });

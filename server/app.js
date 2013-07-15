@@ -85,15 +85,16 @@ exports.init = function(port) {
     app.io = io;
  
     
-    require('nodetime').profile({
-    accountKey: 'a3163d6d8e01eee439e7c772f8fa6fad851aa1a5',
-    appName: 'Node.js Application'
-  });
 
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         global.debug = true;
         // app.use(express.logger({ format: ':method :url' }));
+        // 
+        require('nodetime').profile({
+          accountKey: 'a3163d6d8e01eee439e7c772f8fa6fad851aa1a5',
+          appName: 'Node.js Application'
+        });
     });
 
     app.configure('production', function(){
