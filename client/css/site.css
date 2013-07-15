@@ -723,9 +723,10 @@ body .navbar-inner{
   font-size: 16px;
   text-shadow: 1px 1px black;
   margin-top: -20px;
-  margin-left: 14px;
+  margin-right: -32px;
   white-space: nowrap;
-
+  float: right;
+  
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);

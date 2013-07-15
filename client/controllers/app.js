@@ -35,3 +35,16 @@ function AppController($scope, $http, socket, library, storage)
 }
 
 
+
+appProvider.factory('utils', function(_){
+  return new Utils(_);
+});
+
+appProvider.factory('_', function(){
+  return _;
+});
+
+
+appProvider.factory('moment', function(){
+  return moment;
+});

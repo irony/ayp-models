@@ -1,8 +1,7 @@
-function WallController($scope, $http, $window, library){
+function WallController($scope, $http, $window, library, Group){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
-  var utils = new Utils(_);
   var windowHeight = window.innerHeight;
 
   $scope.startDate = new Date();
@@ -130,8 +129,6 @@ function WallController($scope, $http, $window, library){
   });
 
   library.listeners.push(function(photos){
-
-    console.log('library push', photos)
 
     $scope.groups = (photos).reduce(function(groups, photo, i){
 

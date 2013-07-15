@@ -83,15 +83,15 @@ appProvider.factory('library', function($http, socket, storage){
         });
 
         // next is a cursor to the next date in the library
-        if (page.next){
-          if (_.any(photos, {taken:page.next})) return done && done();
+        if (page.next || !taken){
+          if (_.any(photos, {taken:page.next})) return done && done(null, page.photos);
           console.log('next more', page.next);
           library.loadMore(page.next, done);
         } else{
           console.log('done more', page.modified);
           library.meta.modified = page.modified;
 
-          return done && done(null, photos);
+          return done && done(null, page.photos);
         }
 
       })
@@ -154,11 +154,15 @@ appProvider.factory('library', function($http, socket, storage){
             });
           });
         },
-/*        beginning : function(done){
-          library.loadMore(null, done);
-        },*/
+         beginning : function(done){
+          console.log('__beginning');
+          library.loadMore(null, function(err, photos){
+            library.propagateChanges(photos); // prerender with the last known library if found
+            done(err, photos);
+          });
+        },
         changes : function(done){
-      console.log('__changes')
+          console.log('__changes');
           var lastModifyDate = library.meta.modified && new Date(library.meta.modified).getTime() || null;
           if (lastModifyDate){
             library.loadLatest(lastModifyDate, done);
@@ -166,12 +170,12 @@ appProvider.factory('library', function($http, socket, storage){
           else done();
         },
         end : function(done){
-      console.log('__end')
+          console.log('__end');
           var lastPhoto = (library.photos || []).slice(-1)[0];
-          library.loadMore(lastPhoto && lastPhoto.taken || null, done);
+          library.loadMore(lastPhoto && lastPhoto.taken || new DateTime(), done);
         }
-      }, function(result){
-      console.log('__result', result)
+      }, function(err, result){
+        console.log('__result', result);
 
         library.sortAndRemoveDuplicates();
         library.propagateChanges(library.photos);
