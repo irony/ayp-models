@@ -1484,7 +1484,7 @@ function Utils(_){
   };
 
   /**
-   * Take two array and weave them together into one array so that [1,2,3,4] + [1,2,3,4] => [1,1,2,2,3,3,4,4]
+   * Take two array (or more) and weave them together into one array so that [1,2,3,4] + [1,2,3,4] => [1,1,2,2,3,3,4,4]
    * @param  {[type]} a [description]
    * @param  {[type]} b [description]
    * @return {[type]}   [description]
@@ -1492,6 +1492,8 @@ function Utils(_){
   this.weave = function(a,b){
     var arrays = Array.prototype.slice.call(arguments.length === 1 ? arguments[0] : arguments);
     var maxLength = Math.max.apply(Math, arrays.map(function (el) { return el.length }));
+
+    if (isNaN(maxLength)) return arrays[0].length && arrays[0] || arrays; // no need to weave one single array
 
     var result = [];
     for(var i=0; i<maxLength; i++){
@@ -1501,6 +1503,14 @@ function Utils(_){
     }
     return result;
   };
+/*
+  this.weave = function() {
+    if (!_.some(arguments)) return [];
+
+    return _.compact(_.filter(_.flatten(_.zip.apply(null, arguments), true), function(elem) {
+      return elem !== null;
+    }));
+  };*/
 
   /**
    * Sort an array on the total distance between each row so that we get an even spread
@@ -1665,6 +1675,7 @@ function AppController($scope, $http, socket, library, storage)
 
         if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
         {
+          console.log('found changes', $scope.stats.modified);
           library.loadLatest($scope.library.modified);
         }
       }).error(function(err){
@@ -1947,7 +1958,7 @@ Group.prototype.finish = function(){
   //this.id = first.cluster.split('.')[0];
   this.visible = this.rows.reduce(function(a,b){return a+b.length},0);
   this.height = (last.top + last.height - this.top);
-  this.bottom = (last.top + last.height);
+  this.bottom = (last.top + last.height) || this.top;
   this.right = (last.left + last.width);
   this.from = this.photos[0].taken;
   this.to = this.photos.slice(-1)[0].taken;
@@ -3100,12 +3111,7 @@ function WallController($scope, $http, $window, library){
     });
 
   });
-/*
-  $scope.$watch('q', function(value){
-    //$scope.q = value.taken;
-    if (value) findCenter(value && value.toDate().getTime());
-  });
-*/
+
   $scope.$watch('selectedPhoto', function(photo, old){
 
     if (old){
@@ -3165,11 +3171,12 @@ function WallController($scope, $http, $window, library){
     }, []);
         
     recalculateSizes();
+    filterView(); // initial view
 
   });
   
 
-  $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
+  $scope.$watch('zoomLevel + fullscreen', function(value, oldValue){
     
     
     if ($scope.zoomLevel){
@@ -3283,30 +3290,14 @@ function WallController($scope, $http, $window, library){
     $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
       group.bind(top, left, $scope.height, $scope.zoomLevel);
-      return group.bottom + 5;
+      console.log('bottom', group.bottom, top, group.visible)
+      return (group.bottom || top) + 5;
     }, 100);
     
 
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
   }
-  
 
-
-  function findCenter(taken){
-
-
-    var found = _.find($scope.photos, function(a){
-      if (a.taken >= taken){
-        taken = a;
-        return a;
-      }
-      else return false;
-    });
-
-    if (taken) location.hash = found.taken || "";
-  }
-
-  filterView(); // initial view
 
 
   document.addEventListener( 'keyup', function( e ) {

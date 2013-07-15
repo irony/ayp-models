@@ -119,6 +119,57 @@ describe("unit", function(){
       done();
     });
 
+    it("should ignore one array", function(done){
+      var a =   [1,2,3,4];
+
+      var result = utils.weave(a);
+
+      var expectedResult = [1,2,3,4];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+    it("should weave just one subarray", function(done){
+      var a =   [[1,2,3,4]];
+
+      var result = utils.weave(a);
+
+      var expectedResult = [1,2,3,4];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+
+
+    it("should weave two arrays with subarrays", function(done){
+      var a = [[1],[2],[3],[4]];
+      var b = [[1],[2],[3],[4],[5],[6],[7]];
+
+      var result = utils.weave(a,b);
+
+      var expectedResult = [[1],[1],[2],[2],[3],[3],[4],[4],[5],[6],[7]];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+
+
+    it("should weave two arrays with objects", function(done){
+      var a = [[1],[2],[3],[4]];
+      var b = [[1],[2],[3],[4],[5],[6],[7]];
+
+      a[0]._id='foo';
+      b[0]._id='bar';
+      a[0].should.have.property('_id');
+
+      var result = utils.weave(a,b);
+
+      var expectedResult = [{0:1, '_id':'foo'},{0:1, _id:'bar'},[2],[2],[3],[3],[4],[4],[5],[6],[7]];
+      result.should.eql(expectedResult);
+      done();
+    });
+
+
     it("should gapSort an array", function(done){
       var a = [1,2,3,4,99,55,22,33,44,55,11];
 
@@ -233,7 +284,7 @@ describe("unit", function(){
 
       it("should extract photo groups from 10 000 photos", function(done){
         while(photos.length< 10000){
-          photos = photos.concat(photos);
+          photos = photos.concat(JSON.parse(JSON.stringify(photos)));
         }
 
         this.timeout(20000);
@@ -253,16 +304,15 @@ describe("unit", function(){
       });
 
        it("should extract photo groups and subgroups from 10 000 photos", function(done){
-        while(photos.length< 10000){
-          photos = photos.concat(photos);
-        }
 
-        this.timeout(20000);
+        this.timeout(2000);
 
         photos.forEach(function(photo, i){
           photo._id = i;
           photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
         });
+
+       
 
         var groups = clusterer.extractGroups(userA, photos, Math.sqrt(photos.length / 2));
         should.ok(groups);
@@ -274,6 +324,7 @@ describe("unit", function(){
         });
 
         rankedGroups.length.should.be.below(photos.length / 100);
+        rankedGroups.length.should.be.above(10);
 
         return done();
 
@@ -281,14 +332,22 @@ describe("unit", function(){
 
       it("should save a group", function(done){
 
+        var i = 0;
 
-        photos.reduce(function(a,b){a._id.should.not.eql(b._id); return b});
+        photos.map(function(photo){
+          photo._id = i++;
+          photo.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
+        });
+        console.log(photos.sort(function(a,b){return a._id - b._id}))
+        photos.sort(function(a,b){return a._id - b._id}).reduce(function(a,b){a._id.should.not.eql(b._id); return b});
+        photos.sort(function(a,b){return a.taken - b.taken}).reduce(function(a,b){a.taken.should.not.eql(b.taken); return b});
 
-        var groups = clusterer.extractGroups(userA, photos.slice(0,1000), Math.sqrt(photos.length / 2)).sort(function(a,b){return b.length - a.length});
+        var groups = clusterer.extractGroups(userA, photos, 100).sort(function(a,b){return b.length - a.length});
         var total = groups[0].photos.length;
         total.should.be.above(5);
         groups.length.should.be.above(5);
 
+        console.log(groups[0])
         var group = clusterer.rankGroupPhotos(groups[0], 5);
         group.photos.length.should.eql(total);
 
@@ -298,7 +357,6 @@ describe("unit", function(){
           should.ok(!setters[key._id], key._id + ' already exists');
           setters[key._id] = setter;
         };
-
 
         group.photos.reduce(function(a,b){a._id.should.not.eql(b._id); return b});
 

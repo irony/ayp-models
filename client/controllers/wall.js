@@ -87,12 +87,7 @@ function WallController($scope, $http, $window, library){
     });
 
   });
-/*
-  $scope.$watch('q', function(value){
-    //$scope.q = value.taken;
-    if (value) findCenter(value && value.toDate().getTime());
-  });
-*/
+
   $scope.$watch('selectedPhoto', function(photo, old){
 
     if (old){
@@ -152,11 +147,12 @@ function WallController($scope, $http, $window, library){
     }, []);
         
     recalculateSizes();
+    filterView(); // initial view
 
   });
   
 
-  $scope.$watch('zoomLevel + (library && library.photos.length) + fullscreen', function(value, oldValue){
+  $scope.$watch('zoomLevel + fullscreen', function(value, oldValue){
     
     
     if ($scope.zoomLevel){
@@ -270,30 +266,14 @@ function WallController($scope, $http, $window, library){
     $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
       group.bind(top, left, $scope.height, $scope.zoomLevel);
-      return group.bottom + 5;
+      console.log('bottom', group.bottom, top, group.visible)
+      return (group.bottom || top) + 5;
     }, 100);
     
 
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
   }
-  
 
-
-  function findCenter(taken){
-
-
-    var found = _.find($scope.photos, function(a){
-      if (a.taken >= taken){
-        taken = a;
-        return a;
-      }
-      else return false;
-    });
-
-    if (taken) location.hash = found.taken || "";
-  }
-
-  filterView(); // initial view
 
 
   document.addEventListener( 'keyup', function( e ) {

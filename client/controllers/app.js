@@ -22,6 +22,7 @@ function AppController($scope, $http, socket, library, storage)
 
         if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
         {
+          console.log('found changes', $scope.stats.modified);
           library.loadLatest($scope.library.modified);
         }
       }).error(function(err){

@@ -112,10 +112,7 @@ Clusterer.rankGroupPhotos = function(group, nrClusters){
 
       });
       // console.debug('..done');
-
-      console.log('sub', subClusters.length);
     group.photos = utils.weave(subClusters);
-      console.log('sub', group.photos.length);
     return group;
 };
 
