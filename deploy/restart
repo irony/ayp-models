@@ -9,7 +9,7 @@ echo "restarting All Your Photos after receiving push"
 #sudo nf export -a app -o /etc/init
 
 export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos
-
+export NODE_ENV=production
 
 npm install
 npm test

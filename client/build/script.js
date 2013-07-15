@@ -279,6 +279,7 @@ document.write(
   + "End Function\r\n"
   + "</script>\r\n"
 );
+
 (function ( window , undefined ) {
     'use strict';
     var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.oIndexedDB || window.msIndexedDB,
@@ -1461,7 +1462,33 @@ a;a++)b[a]^=e[a+4&7];if(c){var a=c.words,c=a[0],a=a[1],c=(c<<8|c>>>24)&16711935|
 16711935|(l[a]<<24|l[a]>>>8)&4278255360,b[c+a]^=l[a]},blockSize:4,ivSize:2});k.Rabbit=e._createHelper(s)})();
 function Utils(_){
   if(!_) throw "underscore or lo-dash is required";
+  var self = this;
 
+  this.dateDiff = function(start, end){
+    var periods =['years', 'months', 'weeks', 'days', 'hours'];
+    var numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+
+    return periods.reduce(function(result, period){
+      if (result) return result;
+
+      var val = end.diff(start, period);
+      if (val) result = numbers[val] + " " + (val > 1 && period || period.slice(0, -1));
+      return result;
+    }, null);
+
+  };
+
+  this.formatMoment = function(start, end){
+    var periods =['years', 'months', 'weeks', 'days', 'hours'];
+    var formats = ['YYYY','MMMM YYYY', 'MMMM YYYY', 'D MMM', 'ddd D MMMM'];
+    return periods.reduce(function(result, period, i){
+      if (result) return result;
+
+      var val = end.diff(start, period);
+      if (val) return start.format(formats[i]);
+    }, null) + " (" + self.dateDiff(start, end) + ")";
+
+  };
 
  // returns a summary of the changes in two arrays
   this.diff = function (a,b,id, merge){
@@ -1965,7 +1992,7 @@ Group.prototype.finish = function(){
   this.left = first.left;
   this.top = first.top;
   this.duration = moment(this.from).from(this.to, true);
-  this.name = moment(this.from).format("ddd D MMM YYYY") + "(" + this.duration + ")";
+  this.name = utils.formatMoment(moment(this.from), moment(this.to));
 
 };
 

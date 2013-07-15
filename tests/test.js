@@ -69,6 +69,24 @@ describe("unit", function(){
 
   describe("utils", function(){
 
+    it("should return a short duration description from dates", function(done){
+      var moment = require('moment');
+      utils.dateDiff(moment([2012, 11, 01, 9]), moment([2012, 11, 01, 14])).should.eql('five hours');
+      utils.dateDiff(moment([2012, 11, 01]), moment([2012, 11, 15])).should.eql('two weeks');
+      utils.dateDiff(moment([2012, 01, 01]), moment([2012, 11, 15])).should.eql('ten months');
+      utils.dateDiff(moment([2011, 01, 01]), moment([2012, 11, 15])).should.eql('one year');
+      done();
+    });
+
+     it("should return a short moment description from dates", function(done){
+      var moment = require('moment');
+      utils.formatMoment(moment([2012, 11, 01, 9]), moment([2012, 11, 01, 14])).should.eql('Sat 1 December (five hours)');
+      utils.formatMoment(moment([2012, 11, 01]), moment([2012, 11, 15])).should.eql('December 2012 (two weeks)');
+      utils.formatMoment(moment([2012, 01, 01]), moment([2012, 11, 15])).should.eql('February 2012 (ten months)');
+      utils.formatMoment(moment([2011, 01, 01]), moment([2012, 11, 15])).should.eql('2011 (one year)');
+      done();
+    });
+
     it("should diff two arrays", function(done){
       var a = [{id:3, a:false}, {id:4, a:false}, {id:5},{id:6}];
       var b = [{id:1, a:true}, {id:2}, {id:3, a:true},{id:4, a:true}];
@@ -243,7 +261,7 @@ describe("unit", function(){
         groups = groups.sort(function(a,b){return b.photos.length - a.photos.length});
         var lengths = groups.map(function(group){return group.photos.length});
         // lengths.should.eql([ 30, 18, 14, 10, 10, 6, 5, 4, 2, 1 ]);
-        should.ok(groups[0].photos.length > groups[1].photos.length);
+        should.ok(groups[0].photos.length > groups.slice(-1).pop().photos.length);
         return done();
 
       });

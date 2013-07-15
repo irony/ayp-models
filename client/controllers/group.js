@@ -41,7 +41,7 @@ Group.prototype.finish = function(){
   this.left = first.left;
   this.top = first.top;
   this.duration = moment(this.from).from(this.to, true);
-  this.name = moment(this.from).format("ddd D MMM YYYY") + "(" + this.duration + ")";
+  this.name = utils.formatMoment(moment(this.from), moment(this.to));
 
 };
 

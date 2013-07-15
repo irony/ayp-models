@@ -1,6 +1,32 @@
 function Utils(_){
   if(!_) throw "underscore or lo-dash is required";
+  var self = this;
 
+  this.dateDiff = function(start, end){
+    var periods =['years', 'months', 'weeks', 'days', 'hours'];
+    var numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+
+    return periods.reduce(function(result, period){
+      if (result) return result;
+
+      var val = end.diff(start, period);
+      if (val) result = numbers[val] + " " + (val > 1 && period || period.slice(0, -1));
+      return result;
+    }, null);
+
+  };
+
+  this.formatMoment = function(start, end){
+    var periods =['years', 'months', 'weeks', 'days', 'hours'];
+    var formats = ['YYYY','MMMM YYYY', 'MMMM YYYY', 'D MMM', 'ddd D MMMM'];
+    return periods.reduce(function(result, period, i){
+      if (result) return result;
+
+      var val = end.diff(start, period);
+      if (val) return start.format(formats[i]);
+    }, null) + " (" + self.dateDiff(start, end) + ")";
+
+  };
 
  // returns a summary of the changes in two arrays
   this.diff = function (a,b,id, merge){
