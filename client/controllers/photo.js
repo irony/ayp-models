@@ -24,7 +24,7 @@ function PhotoController ($scope, $http, socket){
   $scope.rightClick = function(photo){
     $scope.photoInCenter = photo === $scope.photoInCenter ? null : $scope.photoInCenter;
 
-    return true;
+    return !!$scope.photoInCenter;
   };
 
   $scope.click = function(photo){

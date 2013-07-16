@@ -250,7 +250,17 @@
       height: 500px;
       background-attachment: fixed !important;
       z-index: 0;
+      color: #fff;
+      font-weight: normal;
     }
+
+    .featurette-divider .row{
+      width: 50%;
+      text-align: center;
+      margin: 0 400px;
+      padding-top:100px;
+    }
+
     .featurette {
       padding: 60px; /* Vertically center images part 1: add padding above and below text. */
       padding-bottom: 350px;
@@ -726,7 +736,7 @@ body .navbar-inner{
   margin-right: -32px;
   white-space: nowrap;
   float: right;
-  
+
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
@@ -764,14 +774,6 @@ body .navbar-inner{
   clear: both;
   float:none;
   display: block;
-}
-
-#wall img
-{
-  -webkit-transition    :all .2s ease-out;
-  -moz-transition       :all .2s ease-out;
-  transition            :all .2s ease-out;
-  max-width: inherit !important;
 }
 
 
@@ -1056,10 +1058,6 @@ body .modal.fade.in {
     display:none;
   }
 
-  #wall img.done{
-    display:block;
-  }
-
   #wall.focus #shim{
     z-index: 10;
   }
@@ -1084,21 +1082,46 @@ body .modal.fade.in {
    -moz-transition: all 400ms ease-in-out;
     -ms-transition: all 400ms ease-in-out;
      -o-transition: all 400ms ease-in-out;
-
   }
 
-  #wall img{
-    display:none;
+  #wall img.selected.zoom2{
+    webkit-transform: scale(2);
+  }
+
+  #wall img.selected.zoom3{
+    webkit-transform: scale(3);
+  }
+
+  #wall img.selected.zoom4{
+    webkit-transform: scal2e(4);
+  }
+
+  #wall img.selected.zoom5{
+    webkit-transform: scale(5);
+  }
+
+  #wall img.selected.zoom6{
+    webkit-transform: scale(6);
+  }
+
+  #wall img.selected.zoom7{
+    webkit-transform: scale(7);
+  }
+
+  #wall img
+  {
+    -webkit-transition    :all .2s ease-out;
+    -moz-transition       :all .2s ease-out;
+    transition            :all .2s ease-out;
+    max-width: inherit !important;
     border: none;
     position: absolute;
-    -webkit-transition: all 400ms ease-in-out;
-       -moz-transition: all 400ms ease-in-out;
-        -ms-transition: all 400ms ease-in-out;
-         -o-transition: all 400ms ease-in-out;
 }
 
-#wall .flip{
-   -webkit-transform:rotateY(-180deg);
+#wall img.flip{
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -webkit-transform:rotateY(-180deg);
 }
 
 #wall .meta{
@@ -1108,6 +1131,48 @@ body .modal.fade.in {
   filter: blur(5px);
 
   margin:0;
+}
+
+#wall aside {
+  visibility: hidden;
+  position: fixed;
+  z-index: 1001;
+  right: -45px;
+  width: 30px;
+  opacity:0;
+  color: #fff;
+  font-weight: lighter;
+  -webkit-transition: all 0.4s ease-in-out;
+  padding: 20px;
+  font-size: 13px;
+}
+
+#wall.focus aside{
+  opacity: 1;
+  visibility: visible;
+}
+
+#wall.focus aside:hover{
+  opacity: 1;
+  right:-3px;
+  visibility: visible;
+}
+
+aside address label i{
+  color:#ccc;
+  clear: both;
+  display: block;
+}
+
+aside address label{
+  background: rgba(0,0,0,0.3);
+  padding: 5px;
+  font-size: 13px;
+  text-transform: uppercase;
+  padding-bottom: 20px;
+  border-left:1px solid rgba(255,255,255,0.5);
+  width: 30px;
+  text-align: center;
 }
 
   /* use css instead of javascript to use maximum power from the engine */
@@ -1160,6 +1225,11 @@ body .modal.fade.in {
   .filter9 .v0, .filter9 .v1, .filter9 .v2, .filter9 .v3, .filter9 .v4, .filter9 .v5, .filter9 .v6, .filter9 .v7, .filter9 .v8, .filter9 .v9 
   {  opacity:1; }
 
+.featurette i {
+  color: #cc8809;
+  text-align: center;
+  width: 100%;
+}
 
 
 .featurette .container{

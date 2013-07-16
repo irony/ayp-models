@@ -2517,7 +2517,7 @@ function PhotoController ($scope, $http, socket){
   $scope.rightClick = function(photo){
     $scope.photoInCenter = photo === $scope.photoInCenter ? null : $scope.photoInCenter;
 
-    return true;
+    return !!$scope.photoInCenter;
   };
 
   $scope.click = function(photo){
@@ -3106,7 +3106,7 @@ function WallController($scope, $http, $window, library, Group){
     var delta = $scope.scrollPosition - lastPosition;
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    if (isInViewPort($scope.scrollPosition + delta * 2)) return ;
+    if (isInViewPort($scope.scrollPosition + delta * 10)) return ;
 
 
     filterView(delta);
@@ -3151,11 +3151,14 @@ function WallController($scope, $http, $window, library, Group){
   $scope.$watch('photoInCenter', function(photo){
     if (!photo) return;
 
+    photo.class="flip";
+
     $scope.q = photo && photo.taken;
-    var meta = $('#meta')[0];
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
     });
+
+    $scope.$apply();
 
   });
 
@@ -3168,6 +3171,7 @@ function WallController($scope, $http, $window, library, Group){
       }
       old.src = old.src.replace('original', 'thumbnail').split('?')[0];
       old.class = 'done';
+      old.zoom = 0;
 
       delete old.original;
     }
@@ -3177,21 +3181,24 @@ function WallController($scope, $http, $window, library, Group){
     if (window.history.pushState) {
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
+    photo.loaded = null;
     photo.original = angular.copy(photo);
     photo.class="selected";
 
-    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-      photo.meta = fullPhoto;
-      photo.src = fullPhoto.store.original.url;
-      $scope.loading = true;
-      $scope.$apply();
-      photo.loaded = function(){
-        photo.loaded = null;
-        $scope.loading = false;
-        photo.class="selected loaded";
-        // $scope.$apply();
-      };
-    });
+    setTimeout(function(){
+      $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+        photo.meta = fullPhoto;
+        photo.src = fullPhoto.store.original.url;
+        $scope.loading = true;
+        $scope.$apply();
+        photo.loaded = function(){
+          photo.loaded = null;
+          $scope.loading = false;
+          photo.class="selected loaded";
+          // $scope.$apply();
+        };
+      });
+    }, 1000); // wait until the animation is complete
 
     photo.top = $(document).scrollTop() - 20; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
     photo.height = window.innerHeight + 40;
@@ -3257,10 +3264,11 @@ function WallController($scope, $http, $window, library, Group){
   });
 
   function isInViewPort(top, delta){
+    
     return top > $scope.scrollPosition - (windowHeight * 2) && top < $scope.scrollPosition + windowHeight * 2;
   }
   function visible(photo, delta){
-//    if (Math.abs(delta) > windowHeight / 2) return;
+    if ($scope.nrPhotos < 2000 ) return true;
     return photo && photo.active && isInViewPort(photo.top, delta) || photo && isInViewPort(photo.top + photo.height, delta);
   }
 
@@ -3318,8 +3326,10 @@ function WallController($scope, $http, $window, library, Group){
 
     //loadQueue.tasks = [];
     //loadQueue.push($scope.photosInView);
-    if(!$scope.$$phase) $scope.$apply();
-
+    if(!$scope.$$phase) {
+      $scope.$apply();
+      console.log('bind')
+    }
   }
 
 
@@ -3335,7 +3345,6 @@ function WallController($scope, $http, $window, library, Group){
     $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
       group.bind(top, left, $scope.height, $scope.zoomLevel);
-      console.log('bottom', group.bottom, top, group.visible)
       return (group.bottom || top) + 5;
     }, 100);
     
@@ -3391,15 +3400,23 @@ function WallController($scope, $http, $window, library, Group){
         e.preventDefault();
         
       break;
-      case 'up':
-        //..
-      break;
       case 'right':
         $scope.select($scope.photosInView.length > current ? $scope.photosInView[current +1 ] : null);
         $scope.$apply();
         e.preventDefault();
       break;
+      case 'up':
+        if ($scope.selectedPhoto){
+          $scope.selectedPhoto.class = "selected zoom" + $scope.selectedPhoto.zoom++;
+          e.preventDefault();
+        }
+        //..
+      break;
       case 'down':
+        if ($scope.selectedPhoto){
+          $scope.selectedPhoto.class = "selected zoom" + $scope.selectedPhoto.zoom--;
+          e.preventDefault();
+        }
         //..
       break;
       case 'zero' : $scope.vote(0); break;

@@ -22,7 +22,7 @@
                  <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
                 </div>
               </div>
-              <img title="{{photo.cluster + ':' + photo.vote}}" ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} done {{photo.class}}" ng-src="{{photo.src}}" ng-cloak ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
+              <img ng-repeat="photo in photosInView" id="{{photo.taken}}" ng-controller="PhotoController" style="top: {{photo.top}}px; left: {{photo.left}}px; width: {{photo.width}}px; height:{{photo.height}}px;" class="{{ 'v' + photo.vote}} done {{photo.class}}" ng-src="{{photo.src}}" ng-cloak ng-click="click(photo)" right-click="rightClick(photo)" dragstart="dragstart(photo)" ng-dblclick="dblclick(photo)">
 
               <div id="group{{group.id}}" ng-controller="GroupCtrl" ng-init="group = g" ng-show="group.photos.length"  class="group {{group.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
                 <a href="{{'#group'+g.id}}" style="left: {{g.left}}px;" ng-click="click()">&nbsp;</a>
@@ -45,6 +45,20 @@
               <input type="range" ng-model="zoomLevel" id="zoomLevel" max="10" step="1">
 
           </div>
+          <aside>
+            <address>
+              <label>
+                <i class="icon-hand-up"></i> {{selectedPhoto.meta.mine.clicks}}
+              </label>
+              <label>
+                <i class="icon-list-ol"></i> {{selectedPhoto.meta.mine.rank}}
+              </label>
+              <label>
+                <i class="icon-tags"></i> {{selectedPhoto.meta.mine.tags}}
+                {{moment(selectedPhoto.taken).calendar()}}
+              </label>
+            </address>
+          </aside>
           <label fullscreen class="fullscreen"><i ng-class="{'icon-spinner icon-spin':loading, 'icon-resize-full':!fullscreen, 'icon-resize-small':!loading && fullscreen}"></i></label>
 
           <div id="meta" ng-controller="MetadataCtrl" right-click="rightCxlick()" ng-style="{left: photoInCenter.left, top: photoInCenter.top, width: photoInCenter.width, height:photoInCenter.height}" ng-cloak="true" ng-show="{{photoInCenter}}">
