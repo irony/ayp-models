@@ -35,6 +35,11 @@ function Clusterer(done){
       .exec(function(err, photos){
         if (err || !photos || !photos.length) return userDone(err);
 
+        photos.forEach(function(photo){
+          if (!photo.copies) photo.copies = {};
+          if (!photo.copies[user._id]) photo.copies[user._id] = {};
+        });
+
         var groups = Clusterer.extractGroups(user, photos, 100);
         var savedPhotos = groups.reduce(function(a, group){
           var rankedGroup = Clusterer.rankGroupPhotos(group);
@@ -63,7 +68,7 @@ Clusterer.extractGroups = function(user, photos, nrClusters){
     
     var vector = [photo.taken.getTime()]; // this is where the magic happens
 
-    var mine = photo.copies[user._id] || photo;
+    var mine = photo.copies && photo.copies[user._id] || photo;
 
     vector._id = photo._id;
     vector.oldCluster = mine.cluster;

@@ -347,6 +347,34 @@ describe("unit", function(){
 
       });
 
+      it("should extract cluster and interestingness from empty photos", function(done){
+
+        this.timeout(2000);
+
+        var emptyPhotos = photos.map(function(photo, i){
+          var emptyPhoto = {_id : i};
+          emptyPhoto.taken = new Date(new Date(photo.taken).getTime() + Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 25));
+          return emptyPhoto;
+        });
+
+       
+
+        var groups = clusterer.extractGroups(userA, emptyPhotos, Math.sqrt(photos.length / 2));
+        should.ok(groups);
+        // groups.length.should.be.above(photos.length / 60);
+        
+        var rankedGroups = groups.map(function(group){
+          //group.photos.length.should.be.below(200);
+          return clusterer.rankGroupPhotos(group, 10).photos;
+        });
+
+        rankedGroups.length.should.be.below(photos.length / 100);
+        rankedGroups.length.should.be.above(10);
+
+        return done();
+
+      });
+
       it("should save a group", function(done){
 
         var i = 0;
