@@ -2411,14 +2411,14 @@ appProvider.factory('library', function($http, socket, storage){
           });
         },
          beginning : function(done){
-          console.log('__beginning')
+          console.log('__beginning');
           library.loadMore(null, function(err, photos){
             library.propagateChanges(photos); // prerender with the last known library if found
             done(err, photos);
           });
         },
         changes : function(done){
-          console.log('__changes')
+          console.log('__changes');
           var lastModifyDate = library.meta.modified && new Date(library.meta.modified).getTime() || null;
           if (lastModifyDate){
             library.loadLatest(lastModifyDate, done);
@@ -2426,19 +2426,19 @@ appProvider.factory('library', function($http, socket, storage){
           else done();
         },
         end : function(done){
-          console.log('__end')
+          console.log('__end');
           var lastPhoto = (library.photos || []).slice(-1)[0];
           library.loadMore(lastPhoto && lastPhoto.taken || new DateTime(), done);
         }
       }, function(err, result){
-        console.log('__result', result)
+        console.log('__result', result);
 
         library.sortAndRemoveDuplicates();
         library.propagateChanges(library.photos);
 
         storage.setObject('meta', library.meta);
         if (server) {
-          server.photos.update.call(library.photos); // update means put == insert or update
+          server.photos.update.apply(null, library.photos); // update means put == insert or update
         } else {
           // load every time as fallback
         }
@@ -3189,7 +3189,7 @@ function WallController($scope, $http, $window, library, Group){
         photo.loaded = null;
         $scope.loading = false;
         photo.class="selected loaded";
-        $scope.$apply();
+        // $scope.$apply();
       };
     });
 
@@ -3367,7 +3367,7 @@ function WallController($scope, $http, $window, library, Group){
         };
     
 
-    var current = $scope.photos.indexOf($scope.selectedPhoto);
+    var current = $scope.photosInView.indexOf($scope.selectedPhoto);
 
     switch (keys[keyCode]) {
       case 'space' :
@@ -3386,7 +3386,7 @@ function WallController($scope, $http, $window, library, Group){
         // e.preventDefault();
       break;
       case 'left':
-        $scope.select(current > 0 ? $scope.photos[current -1 ] : null);
+        $scope.select(current > 0 ? $scope.photosInView[current -1 ] : null);
         $scope.$apply();
         e.preventDefault();
         
@@ -3395,7 +3395,7 @@ function WallController($scope, $http, $window, library, Group){
         //..
       break;
       case 'right':
-        $scope.select($scope.photos.length > current ? $scope.photos[current +1 ] : null);
+        $scope.select($scope.photosInView.length > current ? $scope.photosInView[current +1 ] : null);
         $scope.$apply();
         e.preventDefault();
       break;

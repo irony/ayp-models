@@ -182,7 +182,7 @@ appProvider.factory('library', function($http, socket, storage){
 
         storage.setObject('meta', library.meta);
         if (server) {
-          server.photos.update.call(library.photos); // update means put == insert or update
+          server.photos.update.apply(null, library.photos); // update means put == insert or update
         } else {
           // load every time as fallback
         }
