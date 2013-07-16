@@ -3104,6 +3104,13 @@ function WallController($scope, $http, $window, library, Group){
     $scope.scrollPosition = $(window).scrollTop();
 
     var delta = $scope.scrollPosition - lastPosition;
+
+    if ($scope.selectedPhoto)
+    {
+      if (Math.abs($scope.scrollPosition - $scope.selectedPhoto.top) > $scope.selectedPhoto.height * (1+$scope.selectedPhoto.zoom))
+        $scope.select(null);
+    }
+
     $scope.scrolling = (Math.abs(delta) > 10);
 
     if (isInViewPort($scope.scrollPosition + delta * 10)) return ;
@@ -3171,7 +3178,7 @@ function WallController($scope, $http, $window, library, Group){
       }
       old.src = old.src.replace('original', 'thumbnail').split('?')[0];
       old.class = 'done';
-      old.zoom = 0;
+      old.zoom = 1;
 
       delete old.original;
     }
@@ -3183,22 +3190,21 @@ function WallController($scope, $http, $window, library, Group){
     }
     photo.loaded = null;
     photo.original = angular.copy(photo);
-    photo.class="selected";
+    photo.zoom = 1;
 
-    setTimeout(function(){
-      $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-        photo.meta = fullPhoto;
-        photo.src = fullPhoto.store.original.url;
-        $scope.loading = true;
-        $scope.$apply();
-        photo.loaded = function(){
-          photo.loaded = null;
-          $scope.loading = false;
-          photo.class="selected loaded";
-          // $scope.$apply();
-        };
-      });
-    }, 1000); // wait until the animation is complete
+    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
+      photo.meta = fullPhoto;
+      photo.src = fullPhoto.store.original.url;
+      photo.class="selected";
+      $scope.loading = true;
+      //$scope.$apply();
+      photo.loaded = function(){
+        photo.loaded = null;
+        $scope.loading = false;
+        photo.class="selected loaded";
+        // $scope.$apply();
+      };
+    });
 
     photo.top = $(document).scrollTop() - 20; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
     photo.height = window.innerHeight + 40;
@@ -3354,7 +3360,7 @@ function WallController($scope, $http, $window, library, Group){
 
 
 
-  document.addEventListener( 'keyup', function( e ) {
+  document.addEventListener( 'keydown', function( e ) {
     var keyCode = e.keyCode || e.which,
         keys = {
           27: 'esc',
@@ -3376,7 +3382,7 @@ function WallController($scope, $http, $window, library, Group){
         };
     
 
-    var current = $scope.photosInView.indexOf($scope.selectedPhoto);
+    var current = $scope.photosInView.sort(function(a,b){return b.taken - a.taken}).indexOf($scope.selectedPhoto);
 
     switch (keys[keyCode]) {
       case 'space' :
@@ -3407,14 +3413,19 @@ function WallController($scope, $http, $window, library, Group){
       break;
       case 'up':
         if ($scope.selectedPhoto){
-          $scope.selectedPhoto.class = "selected zoom" + $scope.selectedPhoto.zoom++;
+          $scope.selectedPhoto.zoom++;
+          $scope.$apply();
           e.preventDefault();
         }
         //..
       break;
       case 'down':
         if ($scope.selectedPhoto){
-          $scope.selectedPhoto.class = "selected zoom" + $scope.selectedPhoto.zoom--;
+          if($scope.selectedPhoto.zoom-- < 1){
+            $scope.select(null);
+          }
+
+          $scope.$apply();
           e.preventDefault();
         }
         //..
