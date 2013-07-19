@@ -8,7 +8,7 @@ module.exports = function(app){
 
   app.get('/api/user/exist', function(req, res){
 
-    User.find({'emails.value':req.query.q}).count(function(err, result){
+    User.find({'emails.value':req.query.q}).or({username : req.query.q}).or({emails : req.query.q}).count(function(err, result){
 
       return res.json(result > 0);
 

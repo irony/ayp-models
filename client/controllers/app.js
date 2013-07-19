@@ -14,13 +14,13 @@ function AppController($scope, $http, socket, library, storage)
   }, 30000);
 
   $scope.$watch('stats', function(value){
-    if (!value){
+    if (!value && library.modified){
       console.log('loading stats');
       
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 
-        if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
+        if ($scope.stats.modified > library.modified)
         {
           console.log('found changes', $scope.stats.modified);
           library.loadLatest($scope.library.modified);

@@ -31,7 +31,7 @@ module.exports = function(app){
 
     app.post('/login', passport.authenticate('local'), function(req, res) {
         res.setHeader('user-id', req.user._id);
-        res.redirect('/');
+        res.redirect('/me/wall');
     });
 
     app.get('/login', function(req, res) {
@@ -39,13 +39,14 @@ module.exports = function(app){
     });
 
     app.post('/register', function(req, res) {
-        User.register(new User({ username : req.body.username }), req.body.password, function(err, account) {
+        console.log(req.body);
+        User.register(new User({ username : req.body.username, emails: [req.body.username] }), req.body.password, function(err, account) {
             if (err) {
                 console.log(err);
-                return res.render('login', new ViewModel(account));
+                return res.redirect('/#login');
             }
 
-            res.redirect('/');
+            res.redirect('/me/wall');
         });
     });
 

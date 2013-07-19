@@ -169,6 +169,8 @@ module.exports = function(app){
       }
     }, function(err, results){
 
+      if (!results.length) return res.json(results);
+
       var etag = results.total + '-' + results.modified.getTime();
       res.setHeader('Last-Modified', results.modified);
       res.setHeader('ETag', etag);

@@ -59,7 +59,7 @@
 
             </ul>
             <ul class="nav pull-right">
-            <%if (user && user.accounts) {%>  
+            <%if (user) {%>  
                <li class="pull-right"><a href="/logout">
                 <%if (user && user.accounts && user.accounts.facebook) {%>
                 <img src="//graph.facebook.com/<%= user.accounts.facebook.id%>/picture" class="me">
@@ -99,9 +99,11 @@
           <div class="modal-body" >
 
             <div class="span4">
-              <form class="well clearfix" action="/login" method="post">
-                <input class="span3" type="email" autofocus required ng-model="username" id="username" placeholder="Your email">
-                <input class="span3" type="password" required pattern=".{4,}" ng-model="password" id="password" placeholder="{{ register && 'Choose Password' || 'Your Password'}}">
+              <form class="well clearfix" action="{{register && '/register' || '/login'}}" method="post">
+                <input class="span3" type="email" autofocus required ng-model="username" name="username" placeholder="Your email">
+                <input class="span3" type="password" required pattern=".{4,}" ng-model="password" name="password" placeholder="{{ register && 'Choose Password' || 'Your Password'}}">
+                <input class="span3" type="password" ng-show="register" pattern=".{4,}" ng-model="password2" placeholder="Repeat password">
+
                 <input type="submit" class="btn span3 pull-left btn-success" value="Login" ng-show="!register" ng-click="submit">
 
                 <label ng-show="register"><input type="checkbox" ng-model="agree"> I agree with the terms &amp; conditions</a>
