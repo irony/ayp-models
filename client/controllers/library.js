@@ -144,9 +144,7 @@ appProvider.factory('library', function($http, socket, storage){
               done(err);
             })
             .done( function ( photos ) {
-              console.log('db done', photos);
-
-              photos = photos.reverse();
+              // photos = photos.reverse();
               library.propagateChanges(photos); // prerender with the last known library if found
               // descending order
               library.photos.concat(photos);
