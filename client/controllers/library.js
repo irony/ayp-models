@@ -70,6 +70,7 @@ appProvider.factory('library', function($http, socket, storage){
         if (!page || !page.photos || !page.photos.length) return done && done();
 
         if (library.meta.userId !== page.userId || !photos){
+          console.log('clear')
           library.photos =[];          
           library.meta = {userId : page.userId }; // reset if we are logged in as new user
         }
@@ -112,6 +113,40 @@ appProvider.factory('library', function($http, socket, storage){
         }
       }
     },
+    queryDb : function(from, to, done){
+      console.log('__db');
+      db.open({
+        server: 'my-app',
+        version: 1,
+        schema: {
+          photos: {
+            key: { keyPath: 'taken' , autoIncrement: false }
+          }
+        }
+      }).done( function ( s ) {
+        server = s;
+
+        console.log('indexdb opened ok', s);
+
+        server.photos.query()
+        //.bound(from,to)
+        .all()
+        //.desc()
+        .execute()
+        .done( function ( photos ) {
+          console.log('db done')
+          // photos = photos.reverse();
+          library.propagateChanges(photos); // prerender with the last known library if found
+          // descending order
+          library.photos.concat(photos);
+          done(null, photos);
+        })
+        .fail(function(err){
+          console.log('db fail')
+          done(err);
+        });
+      });
+    },
     init:function(){
 
       library.meta = storage.getObject('meta') || {modified:null, userId:null}; 
@@ -122,42 +157,12 @@ appProvider.factory('library', function($http, socket, storage){
 
       async.series({
         db : function(done){
-          console.log('__db');
-          db.open({
-            server: 'my-app',
-            version: 1,
-            schema: {
-              photos: {
-                key: { keyPath: 'taken' , autoIncrement: false }
-              }
-            }
-          }).done( function ( s ) {
-            server = s;
-
-            console.log('indexdb opened ok', s);
-
-            server.photos.query()
-            .all()
-            .execute()
-            .fail(function(err){
-              console.log('db fail', err);
-              done(err);
-            })
-            .done( function ( photos ) {
-              // photos = photos.reverse();
-              library.propagateChanges(photos); // prerender with the last known library if found
-              // descending order
-              library.photos.concat(photos);
-              done(null, photos);
-            });
-          });
+          if (!window.indexedDb) return done();
+          library.queryDb(null, null, done);
         },
          beginning : function(done){
           console.log('__beginning');
-          library.loadMore(null, function(err, photos){
-            library.propagateChanges(photos); // prerender with the last known library if found
-            done(err, photos);
-          });
+          library.loadMore(null, done);
         },
         changes : function(done){
           console.log('__changes');
@@ -170,7 +175,7 @@ appProvider.factory('library', function($http, socket, storage){
         end : function(done){
           console.log('__end');
           var lastPhoto = (library.photos || []).slice(-1)[0];
-          library.loadMore(lastPhoto && lastPhoto.taken || new DateTime(), done);
+          library.loadMore(lastPhoto && lastPhoto.taken || new Date(), done);
         }
       }, function(err, result){
         console.log('__result', result);

@@ -9,11 +9,20 @@
     header.featurette{
       padding: 50px 500px;
       margin: -50px -500px 0;
-     /* background: url(/img/is099t8ft.jpg);*/
+      background: url(/img/photohands.jpg);
 /*      background: url(http://pcdn.500px.net/553621/ae6a6518619f0cc18dde75a15c4e648df70b0686/15.jpg);
-*/      background: url(http://www.johner.se/images/robertharding/sketch/serie0019/772-1267.jpg);
-      background-size: 1920px;
+      background: url(http://www.johner.se/images/robertharding/sketch/serie0019/772-1267.jpg);*/
+      background-size: 2260px;
+      background-position: -100px -400px;
 
+    }
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 2){
+      header.featurette{
+        background: url(/img/photohands@2x.jpg);
+        background-size: 2260px;
+        background-position: -100px -400px;
+      }
     }
 
     header a.btn{
@@ -1062,26 +1071,25 @@ body .modal.fade.in {
     z-index: 10;
   }
 
-  #wall.focus img, #wall.focus img.done{
+  #wall.focus img{
     opacity:0;
     -webkit-animation-delay: 3s;
-    -webkit-transition: all 1.4s ease-in-out;
-    -moz-transition: all 1.4s ease-in-out;
-    -ms-transition: all 1.4s ease-in-out;
-     -o-transition: all 1.4s ease-in-out;
+    -webkit-transition: all 1.4s easeOutCubic;
+    -moz-transition: all 1.4s easeOutCubic;
+    -ms-transition: all 1.4s easeOutCubic;
+     -o-transition: all 1.4s easeOutCubic;
 
   }
 
 
-  #wall.focus img.selected {
+  #wall img.selected {
     -webkit-animation-delay: 0 !important;
     opacity: 1 !important;
-    display:block;
     z-index: 100;
-    -webkit-transition: all 400ms ease-in-out;
-   -moz-transition: all 400ms ease-in-out;
-    -ms-transition: all 400ms ease-in-out;
-     -o-transition: all 400ms ease-in-out;
+    -webkit-transition: all 400ms easeOutCubic;
+   -moz-transition: all 400ms easeOutCubic;
+    -ms-transition: all 400ms easeOutCubic;
+     -o-transition: all 400ms easeOutCubic;
   }
 
   #wall img.selected.zoom2{
@@ -1127,9 +1135,6 @@ body .modal.fade.in {
 #wall .meta{
   background:rgba(0,0,0,0.5);
   padding:5px;
-    -webkit-filter: blur(5px);
-  filter: blur(5px);
-
   margin:0;
 }
 
@@ -1142,7 +1147,7 @@ body .modal.fade.in {
   opacity:0;
   color: #fff;
   font-weight: lighter;
-  -webkit-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
   padding: 20px;
   font-size: 13px;
 }
@@ -1158,10 +1163,11 @@ body .modal.fade.in {
   visibility: visible;
 }
 
-aside address label i{
+aside label i{
   color:#ccc;
   clear: both;
   display: block;
+  font-size: 30px;
 }
 
 aside address label{
@@ -1170,7 +1176,7 @@ aside address label{
   font-size: 13px;
   text-transform: uppercase;
   padding-bottom: 20px;
-  border-left:1px solid rgba(255,255,255,0.5);
+  border-left:1px solid rgba(255,255,255,0.1);
   width: 30px;
   text-align: center;
 }

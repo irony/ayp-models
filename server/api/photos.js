@@ -169,7 +169,7 @@ module.exports = function(app){
       }
     }, function(err, results){
 
-      if (!results.length) return res.json(results);
+      if (!results.total) return res.json(results);
 
       var etag = results.total + '-' + results.modified.getTime();
       res.setHeader('Last-Modified', results.modified);
@@ -180,6 +180,7 @@ module.exports = function(app){
 
       if (req.headers['if-none-match'] === etag.toString()) {
         res.statusCode = 304;
+        console.log('304');
         return res.end();
       } else {
         console.debug(req.headers);

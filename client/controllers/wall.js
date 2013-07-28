@@ -41,7 +41,7 @@ function WallController($scope, $http, $window, library, Group){
 
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    if (isInViewPort($scope.scrollPosition + delta * 10)) return ;
+    if (isInViewPort($scope.scrollPosition + delta * 4)) return ;
 
 
     filterView(delta);
@@ -57,7 +57,7 @@ function WallController($scope, $http, $window, library, Group){
 
   $scope.dblclick = function(photo){
     $scope.select(null);
-    //$scope.zoomLevel += 3;
+    $scope.zoomLevel += 3;
 /*
     var index=$scope.library.photos.indexOf(photo);
 
@@ -111,7 +111,13 @@ function WallController($scope, $http, $window, library, Group){
       delete old.original;
     }
 
-    if (!photo) return;
+    if (!photo){
+
+      $scope.focus = false;
+      $scope.$apply();
+      return;
+
+    }
 
     if (window.history.pushState) {
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
@@ -125,12 +131,15 @@ function WallController($scope, $http, $window, library, Group){
       photo.src = fullPhoto.store.original.url;
       photo.class="selected";
       $scope.loading = true;
-      //$scope.$apply();
+      setTimeout(function(){
+        $scope.focus = true;
+        $scope.$apply();
+      }, 400);
       photo.loaded = function(){
         photo.loaded = null;
         $scope.loading = false;
         photo.class="selected loaded";
-        // $scope.$apply();
+        $scope.$apply();
       };
     });
 
@@ -143,7 +152,7 @@ function WallController($scope, $http, $window, library, Group){
 
   library.listeners.push(function(photos){
 
-    $scope.groups = (photos).reduce(function(groups, photo, i){
+    $scope.groups = (photos || []).reduce(function(groups, photo, i){
 
       var group = groups.slice(-1)[0];
       var lastPhoto = group && group.photos.slice(-1)[0];
@@ -157,7 +166,7 @@ function WallController($scope, $http, $window, library, Group){
     }, []);
         
     recalculateSizes();
-    filterView(); // initial view
+    filterView();
 
   });
   
@@ -262,7 +271,6 @@ function WallController($scope, $http, $window, library, Group){
     //loadQueue.push($scope.photosInView);
     if(!$scope.$$phase) {
       $scope.$apply();
-      console.log('bind')
     }
   }
 

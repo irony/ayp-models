@@ -1696,13 +1696,13 @@ function AppController($scope, $http, socket, library, storage)
   }, 30000);
 
   $scope.$watch('stats', function(value){
-    if (!value){
+    if (!value && library.modified){
       console.log('loading stats');
       
       $http.get('/api/stats', {params: null}).success(function(stats){
         $scope.stats = stats;
 
-        if ($scope.library && $scope.library.modified && $scope.stats.modified > $scope.library.modified)
+        if ($scope.stats.modified > library.modified)
         {
           console.log('found changes', $scope.stats.modified);
           library.loadLatest($scope.library.modified);
@@ -2326,6 +2326,7 @@ appProvider.factory('library', function($http, socket, storage){
         if (!page || !page.photos || !page.photos.length) return done && done();
 
         if (library.meta.userId !== page.userId || !photos){
+          console.log('clear')
           library.photos =[];          
           library.meta = {userId : page.userId }; // reset if we are logged in as new user
         }
@@ -2368,6 +2369,40 @@ appProvider.factory('library', function($http, socket, storage){
         }
       }
     },
+    queryDb : function(from, to, done){
+      console.log('__db');
+      db.open({
+        server: 'my-app',
+        version: 1,
+        schema: {
+          photos: {
+            key: { keyPath: 'taken' , autoIncrement: false }
+          }
+        }
+      }).done( function ( s ) {
+        server = s;
+
+        console.log('indexdb opened ok', s);
+
+        server.photos.query()
+        //.bound(from,to)
+        .all()
+        //.desc()
+        .execute()
+        .done( function ( photos ) {
+          console.log('db done')
+          // photos = photos.reverse();
+          library.propagateChanges(photos); // prerender with the last known library if found
+          // descending order
+          library.photos.concat(photos);
+          done(null, photos);
+        })
+        .fail(function(err){
+          console.log('db fail')
+          done(err);
+        });
+      });
+    },
     init:function(){
 
       library.meta = storage.getObject('meta') || {modified:null, userId:null}; 
@@ -2378,44 +2413,12 @@ appProvider.factory('library', function($http, socket, storage){
 
       async.series({
         db : function(done){
-          console.log('__db');
-          db.open({
-            server: 'my-app',
-            version: 1,
-            schema: {
-              photos: {
-                key: { keyPath: 'taken' , autoIncrement: false }
-              }
-            }
-          }).done( function ( s ) {
-            server = s;
-
-            console.log('indexdb opened ok', s);
-
-            server.photos.query()
-            .all()
-            .execute()
-            .fail(function(err){
-              console.log('db fail', err);
-              done(err);
-            })
-            .done( function ( photos ) {
-              console.log('db done', photos);
-
-              photos = photos.reverse();
-              library.propagateChanges(photos); // prerender with the last known library if found
-              // descending order
-              library.photos.concat(photos);
-              done(null, photos);
-            });
-          });
+          if (!window.indexedDb) return done();
+          library.queryDb(null, null, done);
         },
          beginning : function(done){
           console.log('__beginning');
-          library.loadMore(null, function(err, photos){
-            library.propagateChanges(photos); // prerender with the last known library if found
-            done(err, photos);
-          });
+          library.loadMore(null, done);
         },
         changes : function(done){
           console.log('__changes');
@@ -2428,7 +2431,7 @@ appProvider.factory('library', function($http, socket, storage){
         end : function(done){
           console.log('__end');
           var lastPhoto = (library.photos || []).slice(-1)[0];
-          library.loadMore(lastPhoto && lastPhoto.taken || new DateTime(), done);
+          library.loadMore(lastPhoto && lastPhoto.taken || new Date(), done);
         }
       }, function(err, result){
         console.log('__result', result);
@@ -3130,7 +3133,7 @@ function WallController($scope, $http, $window, library, Group){
 
     $scope.scrolling = (Math.abs(delta) > 10);
 
-    if (isInViewPort($scope.scrollPosition + delta * 10)) return ;
+    if (isInViewPort($scope.scrollPosition + delta * 4)) return ;
 
 
     filterView(delta);
@@ -3146,7 +3149,7 @@ function WallController($scope, $http, $window, library, Group){
 
   $scope.dblclick = function(photo){
     $scope.select(null);
-    //$scope.zoomLevel += 3;
+    $scope.zoomLevel += 3;
 /*
     var index=$scope.library.photos.indexOf(photo);
 
@@ -3200,7 +3203,12 @@ function WallController($scope, $http, $window, library, Group){
       delete old.original;
     }
 
-    if (!photo) return;
+    if (!photo){
+
+      $scope.focus = false;
+      $scope.$apply();
+      return;
+    }
 
     if (window.history.pushState) {
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
@@ -3214,12 +3222,15 @@ function WallController($scope, $http, $window, library, Group){
       photo.src = fullPhoto.store.original.url;
       photo.class="selected";
       $scope.loading = true;
-      //$scope.$apply();
+      setTimeout(function(){
+        $scope.focus = true;
+        $scope.$apply();
+      }, 400);
       photo.loaded = function(){
         photo.loaded = null;
         $scope.loading = false;
         photo.class="selected loaded";
-        // $scope.$apply();
+        $scope.$apply();
       };
     });
 
@@ -3232,7 +3243,7 @@ function WallController($scope, $http, $window, library, Group){
 
   library.listeners.push(function(photos){
 
-    $scope.groups = (photos).reduce(function(groups, photo, i){
+    $scope.groups = (photos || []).reduce(function(groups, photo, i){
 
       var group = groups.slice(-1)[0];
       var lastPhoto = group && group.photos.slice(-1)[0];
@@ -3246,7 +3257,7 @@ function WallController($scope, $http, $window, library, Group){
     }, []);
         
     recalculateSizes();
-    filterView(); // initial view
+    filterView();
 
   });
   
@@ -3351,7 +3362,6 @@ function WallController($scope, $http, $window, library, Group){
     //loadQueue.push($scope.photosInView);
     if(!$scope.$$phase) {
       $scope.$apply();
-      console.log('bind')
     }
   }
 
