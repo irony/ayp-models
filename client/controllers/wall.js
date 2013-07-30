@@ -1,4 +1,4 @@
-function WallController($scope, $http, $window, library, Group){
+function WallController($scope, $http, $window, library, socket, Group){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
@@ -77,6 +77,11 @@ function WallController($scope, $http, $window, library, Group){
     $scope.selectedPhoto = photo;
   };
 
+  $scope.vote = function(photo, vote){
+    console.log('vote', vote);
+    socket.emit('vote', photo, vote);
+  };
+
 
 
   $scope.$watch('stats', function(value){
@@ -114,7 +119,6 @@ function WallController($scope, $http, $window, library, Group){
     if (!photo){
 
       $scope.focus = false;
-      $scope.$apply();
       return;
 
     }
@@ -125,21 +129,18 @@ function WallController($scope, $http, $window, library, Group){
     photo.loaded = null;
     photo.original = angular.copy(photo);
     photo.zoom = 1;
+    photo.class="selected";
+    $scope.loading = true;
 
     $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
       photo.meta = fullPhoto;
       photo.src = fullPhoto.store.original.url;
-      photo.class="selected";
-      $scope.loading = true;
-      setTimeout(function(){
-        $scope.focus = true;
-        $scope.$apply();
-      }, 400);
+      $scope.focus = true;
+
       photo.loaded = function(){
         photo.loaded = null;
         $scope.loading = false;
         photo.class="selected loaded";
-        $scope.$apply();
       };
     });
 

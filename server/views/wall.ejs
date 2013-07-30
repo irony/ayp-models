@@ -61,11 +61,13 @@
               <label>
                 <i class="icon-hand-up"></i> {{selectedPhoto.meta.mine.clicks}}
               </label>
-              <label title="Key-up" ng-click="selectedPhoto.zoom++">
+              <label title="Key-up" ng-click="selectedPhoto.zoom = selectedPhoto.zoom + 1">
                 <i class="icon-zoom-in"></i>
+                <div class="hover">Use key up</div>
               </label>
-              <label  title="Key-down" ng-click="selectedPhoto.zoom--">
+              <label  title="Key-down" ng-click="selectedPhoto.zoom = selectedPhoto.zoom - 1">
                 <i class="icon-zoom-out"></i>
+                <div class="hover">Use key down</div>
               </label>
               <label>
                 <i class="icon-tags"></i> {{selectedPhoto.meta.mine.tags}}
@@ -73,6 +75,16 @@
               </label>
               <label>
                 <i ng-class="{'icon-star':selectedPhoto.vote<3, 'icon-star-half-full': selectedPhoto.vote>=3, 'icon-star-empty': selectedPhoto.vote > 8}"></i>
+                <div class="hover">
+                  <i ng-class="icon-star" ng-click="vote(selectedPhoto, 0)"></i> Max
+                  <i ng-class="icon-star-empty" ng-click="vote(selectedPhoto, 10)"></i> Min
+               </div>
+              </label>
+              <label>
+                <i class="icon-map-marker"></i>
+                <div class="hover">
+                  Map here {{selectedPhoto.meta.metadata.position.lat}}, {{selectedPhoto.meta.metadata.position.lng}}
+                </div>
               </label>
             </address>
           </aside>

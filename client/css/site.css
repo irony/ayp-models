@@ -1,7 +1,7 @@
   
     body{
       font-family: "Gill Sans", "Open Sans", Corbel, Consolas;
-      background: #000;
+      background: #000902;
     }
 
 
@@ -19,9 +19,7 @@
 
     @media only screen and (-webkit-min-device-pixel-ratio: 2){
       header.featurette{
-        background: url(/img/photohands@2x.jpg);
-        background-size: 2260px;
-        background-position: -100px -400px;
+        background-image: url(/img/photohands@2x.jpg);
       }
     }
 
@@ -1073,7 +1071,7 @@ body .modal.fade.in {
 
   #wall.focus img{
     opacity:0;
-    -webkit-animation-delay: 3s;
+    -webkit-animation-delay: 1s;
     -webkit-transition: all 1.4s easeOutCubic;
     -moz-transition: all 1.4s easeOutCubic;
     -ms-transition: all 1.4s easeOutCubic;
@@ -1082,14 +1080,15 @@ body .modal.fade.in {
   }
 
 
+  #wall.focus img.selected,
   #wall img.selected {
     -webkit-animation-delay: 0 !important;
     opacity: 1 !important;
     z-index: 100;
-    -webkit-transition: all 400ms easeOutCubic;
-   -moz-transition: all 400ms easeOutCubic;
-    -ms-transition: all 400ms easeOutCubic;
-     -o-transition: all 400ms easeOutCubic;
+    -webkit-transition: all 100ms easeOutCubic;
+   -moz-transition: all 100ms easeOutCubic;
+    -ms-transition: all 100ms easeOutCubic;
+     -o-transition: all 100ms easeOutCubic;
   }
 
   #wall img.selected.zoom2{
@@ -1142,8 +1141,8 @@ body .modal.fade.in {
   visibility: hidden;
   position: fixed;
   z-index: 1001;
-  right: -45px;
-  width: 30px;
+  right: -55px;
+  width: 40px;
   opacity:0;
   color: #fff;
   font-weight: lighter;
@@ -1168,6 +1167,25 @@ aside label i{
   clear: both;
   display: block;
   font-size: 30px;
+  padding-left: 10px;
+}
+
+aside label .hover{
+  position: fixed;
+  right: 0px;
+  visibility: hidden;
+  opacity: 0;
+
+    -webkit-transition: all 100ms easeOutCubic;
+   -moz-transition: all 100ms easeOutCubic;
+    -ms-transition: all 100ms easeOutCubic;
+     -o-transition: all 100ms easeOutCubic;
+}
+
+aside label:hover .hover{
+  visibility: inherit;
+  opacity: 1;
+  right: 40px;
 }
 
 aside address label{

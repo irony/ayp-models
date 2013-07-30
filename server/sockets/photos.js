@@ -104,7 +104,7 @@ module.exports = function(app){
 
     socket.on('vote', function (photo, value) {
 
-      // console.log('vote', value);
+      console.log('vote', value);
       
       var setter = {$set : {modified : new Date()}};
       setter.$set['copies.' + user._id + '.vote'] = value;
