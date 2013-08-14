@@ -39,9 +39,9 @@ function WallController($scope, $http, $window, library, socket, Group){
         $scope.select(null);
     }
 
-    $scope.scrolling = (Math.abs(delta) > 10);
+    $scope.scrolling = (Math.abs(delta) > 50);
 
-    if (isInViewPort($scope.scrollPosition + delta * 4)) return ;
+    if ($scope.scrolling) return ;
 
 
     filterView(delta);
@@ -209,10 +209,9 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   function isInViewPort(top, delta){
     
-    return top > $scope.scrollPosition - (windowHeight * 2) && top < $scope.scrollPosition + windowHeight * 2;
+    return top > $scope.scrollPosition - (windowHeight) && top < $scope.scrollPosition + windowHeight * 2;
   }
   function visible(photo, delta){
-    if ($scope.nrPhotos < 2000 ) return true;
     return photo && photo.active && isInViewPort(photo.top, delta) || photo && isInViewPort(photo.top + photo.height, delta);
   }
 
