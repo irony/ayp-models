@@ -24,12 +24,15 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   $window.onresize = function(event) {
     windowHeight = window.innerHeight;
+    windowWidth = window.innerWidth;
+
   };
    
   $window.onscroll = function(event) {
 
     $scope.loadingReverse = $(window).scrollTop() < 0;
     $scope.scrollPosition = $(window).scrollTop();
+    $scope.scrollCenter = $scope.scrollPosition + window.outerHeight / 2;
 
     var delta = $scope.scrollPosition - lastPosition;
 
@@ -41,12 +44,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
     $scope.scrolling = (Math.abs(delta) > 50);
 
-    if ($scope.scrolling) return ;
-
-
     filterView(delta);
-
-
 
     // if (!waiting && $scope.photosInView) $scope.photoInCenter = _.filter($scope.photosInView, function(a){return a.top >= $scope.scrollPosition + window.outerHeight / 2 - $scope.height / 2}).sort(function(a,b){ return b.taken-a.taken })[0];
 
@@ -207,32 +205,55 @@ function WallController($scope, $http, $window, library, socket, Group){
     if (group) $('body,html').animate({scrollTop: group.top}, 300);
   });
 
-  function isInViewPort(top, delta){
+  function isInViewPort(top){
     
     return top > $scope.scrollPosition - (windowHeight) && top < $scope.scrollPosition + windowHeight * 2;
   }
-  function visible(photo, delta){
-    return photo && photo.active && isInViewPort(photo.top, delta) || photo && isInViewPort(photo.top + photo.height, delta);
+  function visible(photo){
+    return photo && photo.active && isInViewPort(photo.top) || photo && isInViewPort(photo.top + photo.height);
   }
+
+  // TODO: move to factory
+  var ctx=document.getElementById("wall");
 
   // by using a queue we can make sure we only prioritize loading images that are visible
   var loadQueue = async.queue(function(photo, done){
-    if (!photo || photo.visible) return done(); // we already have this one
+    if (!photo || photo.loaded) return done(); // we already have this one
+    if (!visible(photo)) return done(); // this isn't visible anymore we will not continue to load it
 
-    photo.visible = visible(photo);
-    if (!photo.visible) return done();
-    return photo.loaded = function(){
-      photo.loaded = null;
-      photo.class = 'done';
-      done(); // let the image load attribute determine when the image is loaded
+    photo.started = true;
+
+    var image = new Image();
+    image.src = photo.src;
+    image.style.top = photo.top + "px";
+    image.style.left = photo.left + "px";
+    image.style.width = photo.width + "px";
+    image.style.height = photo.height + "px";
+    image.style.position = 'absolute';
+
+    image.onload = function(){
+      ctx.appendChild(image);
+
+      //ctx.drawImage(image,photo.left,photo.top, photo.width, photo.height);
+      photo.loaded = true;
+
+      return done(); // let the image load attribute determine when the image is loaded
     };
-  }, 20);
+
+  }, 7);
+
+  loadQueue.drain = function(){
+    console.log('all loaded');
+  };
 
 
   function filterView(delta){
+
+    console.log('filter');
     $scope.scrolling = false;
 
-    $scope.photosInView = $scope.groups.reduce(function(visiblePhotos, group){
+    var photos = $scope.groups.reduce(function(visiblePhotos, group){
+      
       if (isInViewPort(group.top) || isInViewPort(group.bottom) || group.top <= $scope.scrollPosition && group.bottom >= $scope.scrollPosition){
         group.photos.forEach(function(photo){
           if (photo.active) visiblePhotos.push(photo);
@@ -240,8 +261,8 @@ function WallController($scope, $http, $window, library, socket, Group){
       }
       return visiblePhotos;
     }, []).sort(function(a,b){
-      return (a.vote - b.vote);
-      //return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
+      //return (a.vote - b.vote);
+      return Math.abs($scope.scrollPosition - a.top) - Math.abs($scope.scrollPosition - b.top) || 0 - (a.vote - b.vote) * $scope.height;
     });
 
     // async.mapLimit($scope.photosInView, 5, function(photo, done){
@@ -257,18 +278,26 @@ function WallController($scope, $http, $window, library, socket, Group){
     // }, function(){
     //   // page done
     // });
-/*
-    photosInView = photosInView.sort(function(a,b){
-      // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
-      return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
-    });
+
+    // photosInView = photosInView.sort(function(a,b){
+    //   // take the center ones first but also prioritize the highest voted photos since they are more likely to be cached
+    //   return $scope.photoInCenter && Math.abs($scope.photoInCenter.top - a.top) - Math.abs($scope.photoInCenter.top - b.top) || 0 - (a.vote - b.vote) * $scope.height;
+    // });
 
 
-    var newImages = _.filter(photosInView, function(a){return !a.visible});
-    */
+    //var newImages = _.filter(photosInView, function(a){return !a.visible});
 
     //loadQueue.tasks = [];
-    //loadQueue.push($scope.photosInView);
+    photos = photos.filter(function(photo){
+      return !photo.started;
+    });
+
+    loadQueue.tasks = loadQueue.tasks.filter(function(photo){
+      return photo.started;
+    });
+
+    loadQueue.unshift(photos);
+
     if(!$scope.$$phase) {
       $scope.$apply();
     }
@@ -289,7 +318,7 @@ function WallController($scope, $http, $window, library, socket, Group){
       group.bind(top, left, $scope.height, $scope.zoomLevel);
       return (group.bottom || top) + 5;
     }, 100);
-    
+    $scope.totalWidth = window.innerWidth;
 
     $scope.nrPhotos = $scope.groups.reduce(function(sum, group){return sum + group.visible}, 0);
   }

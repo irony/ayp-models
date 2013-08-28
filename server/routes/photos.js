@@ -14,11 +14,6 @@ module.exports = function(app){
   app.get('/me/wall', function(req, res){
     var model = new ViewModel(req.user);
 
-    if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
-    }
-
     res.render('wall.ejs', model);
 
   });
@@ -48,11 +43,6 @@ module.exports = function(app){
 
   app.get('/me/gps', function(req, res){
     var model = new ViewModel(req.user);
-
-    if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
-    }
 
 
     // Get an updated user record for an updated user maxRank.
@@ -103,12 +93,6 @@ module.exports = function(app){
 
   app.get('/me/time', function(req, res){
     var model = new ViewModel(req.user);
-
-    if (!req.user){
-      model.error = 'You have to login first';
-      return res.render('500.ejs', model);
-    }
-
 
     // Get an updated user record for an updated user maxRank.
     User.findOne({_id : req.user._id}, function(err, user){
