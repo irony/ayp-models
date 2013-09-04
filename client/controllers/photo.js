@@ -27,22 +27,7 @@ function PhotoController ($scope, $http, socket){
     return !!$scope.photoInCenter;
   };
 
-  $scope.click = function(photo){
-
-    if ($scope.selectedPhoto === photo){
-      clearTimeout(photo.updateClick);
-      $scope.select(null);
-    }
-    else {
-      $scope.select(photo);
-      photo.updateClick = setTimeout(function(){
-        console.log('click', photo);
-        socket.emit('click', photo, 1);
-      }, 300);
-    }
-
-  };
-
+ 
   $scope.hide = function(photo, group){
     console.log('hide', photo);
     socket.emit('hide', photo._id);

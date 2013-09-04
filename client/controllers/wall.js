@@ -5,7 +5,7 @@ function WallController($scope, $http, $window, library, socket, Group){
   var windowHeight = window.innerHeight;
 
   $scope.startDate = new Date();
-  $scope.zoomLevel = 5;
+  $scope.zoomLevel = 50;
   $scope.height = 240;
   $scope.photos = [];
   $scope.groups = [];
@@ -71,7 +71,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   $scope.dblclick = function(photo){
     $scope.select(null);
-    $scope.zoomLevel += 3;
+    $scope.zoomLevel += 30;
 /*
     var index=$scope.library.photos.indexOf(photo);
 
@@ -308,16 +308,16 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   function recalculateSizes(){
 
-    $scope.height = $scope.zoomLevel > 8 && 110 ||
-                    $scope.zoomLevel > 6 && 120 ||
-                    $scope.zoomLevel < 2 && 480 ||
+    $scope.height = $scope.zoomLevel > 80 && 110 ||
+                    $scope.zoomLevel > 60 && 120 ||
+                    $scope.zoomLevel < 20 && 480 ||
                     240;
 
     // compensate for bigger / smaller screens
     $scope.height = Math.floor($scope.height * (window.innerWidth / 1920));
     $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
-      group.bind(top, left, $scope.height, $scope.zoomLevel);
+      group.bind(top, left, $scope.height, Math.floor($scope.zoomLevel / 10));
       return (group.bottom || top) + 5;
     }, 100);
     $scope.totalWidth = window.innerWidth;
