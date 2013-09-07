@@ -1,5 +1,4 @@
 
-
 appProvider.directive('whenScrolled', function() {
   return function(scope, elm, attr) {
     var raw = document.body;

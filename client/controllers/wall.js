@@ -53,7 +53,7 @@ function WallController($scope, $http, $window, library, socket, Group){
   };
 
 
-  $scope.click = function(photo){
+  $scope.click = function(image){
 
     if ($scope.selectedPhoto === photo){
       clearTimeout(photo.updateClick);
@@ -140,7 +140,7 @@ function WallController($scope, $http, $window, library, socket, Group){
     if (window.history.pushState) {
       window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
     }
-    photo.loaded = null;
+
     photo.original = angular.copy(photo);
     photo.zoom = 1;
     photo.class="selected";
@@ -225,36 +225,50 @@ function WallController($scope, $http, $window, library, socket, Group){
     
     return top > $scope.scrollPosition - (windowHeight) && top < $scope.scrollPosition + windowHeight * 2;
   }
+
   function visible(photo){
     return photo && photo.active && isInViewPort(photo.top) || photo && isInViewPort(photo.top + photo.height);
   }
 
-  // TODO: move to factory
-  var wall=document.getElementById("wall");
-
-  // by using a queue we can make sure we only prioritize loading images that are visible
-  var loadQueue = async.queue(function(photo, done){
-    if (!photo || photo.loaded) return done(); // we already have this one
-    if (!visible(photo)) return done(); // this isn't visible anymore we will not continue to load it
-
-    photo.started = true;
-
+  function renderPhoto(photo){
     var image = new Image();
     image.src = photo.src;
+    image.id = photo._id;
+    updateImage(photo,image);
+    return image;
+  }
+
+  function updateImage(photo, image){
+    
+    if (!image) image = document.getElementById(photo._id);
+
     image.style.top = photo.top + "px";
     image.style.left = photo.left + "px";
     image.style.width = photo.width + "px";
     image.style.height = photo.height + "px";
     image.class='v' + photo.vote + ' done ' + photo.class;
+    return image;
+  }
 
+  // TODO: move to directive
+  var wall=document.getElementById("wall");
 
+  // by using a queue we can make sure we only prioritize loading images that are visible
+  var loadQueue = async.queue(function(photo, done){
+    if (!photo) return done(); // should never happen..
+    if (!visible(photo)) return done(); // this isn't visible anymore we will not continue to load it
+    if (photo.loaded) return done(updatePhoto(photo)); // we already have this one, just update with new dimensions
+
+    var image = renderPhoto(photo);
+    photo.started = true;
 
     image.onload = function(){
       wall.appendChild(image);
       photo.loaded = true;
+      photo.apply = function(){updateImage(photo, image);};
+      photo.hide = function(){wall.removeChild(image)};
 
       image.onclick = function(){
-        console.log('click', photo);
         $scope.click(photo);
       };
 
@@ -277,9 +291,9 @@ function WallController($scope, $http, $window, library, socket, Group){
 
     $scope.scrolling = false;
 
-    var photos = $scope.groups.reduce(function(visiblePhotos, group){
+    $scope.photosInView = $scope.groups.reduce(function(visiblePhotos, group){
       
-      if (isInViewPort(group.top) || isInViewPort(group.bottom) || group.top <= $scope.scrollPosition && group.bottom >= $scope.scrollPosition){
+      if (isInViewPort(group.top) || isInViewPort(group.bottom) || (group.top <= $scope.scrollPosition && group.bottom >= $scope.scrollPosition)){
         group.photos.forEach(function(photo){
           if (photo.active) visiblePhotos.push(photo);
         });
@@ -290,14 +304,17 @@ function WallController($scope, $http, $window, library, socket, Group){
       return Math.abs(b.top - $scope.scrollCenter) - Math.abs(a.top - $scope.scrollCenter); // + (0- (a.vote - b.vote) * $scope.height;
     });
 
-    photos = photos.filter(function(photo){
+    // remove photos that have already been started before
+    var photos = $scope.photosInView.filter(function(photo){
       return !photo.started;
     });
 
+    // abort all active queued images in queue except for those that have started
     loadQueue.tasks = loadQueue.tasks.filter(function(photo){
       return photo.started;
     });
 
+    // add new photos first
     loadQueue.unshift(photos);
 
     if(!$scope.$$phase) {

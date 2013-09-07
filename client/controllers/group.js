@@ -81,8 +81,11 @@ appProvider.factory('Group', function(moment, utils){
           left = photo.left + photo.width + padding;
         }
 
+        if (photo.apply) photo.apply();
+
       } else{
         photo.active = false;
+        if (photo.hide) photo.hide();
       }
 
       return rows;
@@ -123,6 +126,7 @@ appProvider.factory('Group', function(moment, utils){
       photo.left *= percentageAdjustment;
       photo.width *= percentageAdjustment;
       photo.height *= percentageAdjustment;
+      if (photo.apply) photo.apply(); // this is visible on screen, we only update those
     });
   }
   return Group;

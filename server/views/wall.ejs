@@ -22,18 +22,6 @@
                  <h3>{{stats.all - stats.originals}} photos are waiting for download</h3>
                 </div>
               </div>
-              <!-- <img ng-repeat="photo in photosInView" 
-                id="{{photo.taken}}" 
-                ng-controller="PhotoController" style="
-                  top: {{photo.top}}px; 
-                  left: {{photo.left}}px; 
-                  width: {{photo.width}}px; 
-                  height:{{photo.height}}px; 
-                  {{photo.zoom && '-webkit-transform: scale(' + photo.zoom + ',' + photo.zoom + ')'}}" 
-                class="{{ 'v' + photo.vote}} done {{photo.class}}" lazy="photo.loaded()"
-                ng-src="{{photo.src}}" ng-cloak 
-                ng-click="click(photo)" 
-                ng-dblclick="dblclick(photo)"> -->
 
               <div id="group{{group.id}}" ng-controller="GroupCtrl" ng-init="group = g" ng-show="group.photos.length"  class="group {{group.active && 'active' || 'inactive'}}" ng-repeat="g in groups" style="position: absolute; top:{{g.top}}px; height: {{g.height}}px;">
                 <header>
