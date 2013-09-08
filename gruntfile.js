@@ -64,6 +64,7 @@ module.exports = function(grunt) {
     all: { src: ['test/**/*.js'] }
   });
 
+  grunt.registerTask('build', ['copy', 'concat']);
   grunt.registerTask('default', ['copy', 'concat', 'watch:all']);
   grunt.registerTask('test', ['simplemocha:dev', 'watch:test']);
 

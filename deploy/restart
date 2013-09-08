@@ -18,6 +18,7 @@ npm test
 #sudo stop app
 #sudo pkill "node"
 
+sudo grunt build
 sudo restart app
 sudo chmod 700 deploy/monit
 sudo chown root deploy/monit
