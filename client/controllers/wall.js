@@ -1,11 +1,14 @@
+
+
 function WallController($scope, $http, $window, library, socket, Group){
   
   var zoomTimeout = null;
   var scrollTimeout = null;
   var windowHeight = window.innerHeight;
+  var windowWidth = window.innerWidth;
 
   $scope.startDate = new Date();
-  $scope.zoomLevel = 50;
+  $scope.zoomLevel = 5;
   $scope.height = 240;
   $scope.photos = [];
   $scope.groups = [];
@@ -25,7 +28,6 @@ function WallController($scope, $http, $window, library, socket, Group){
   $window.onresize = function(event) {
     windowHeight = window.innerHeight;
     windowWidth = window.innerWidth;
-
   };
    
   $window.onscroll = function(event) {
@@ -53,7 +55,7 @@ function WallController($scope, $http, $window, library, socket, Group){
   };
 
 
-  $scope.click = function(image){
+  $scope.click = function(photo){
 
     if ($scope.selectedPhoto === photo){
       clearTimeout(photo.updateClick);
@@ -71,7 +73,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   $scope.dblclick = function(photo){
     $scope.select(null);
-    $scope.zoomLevel += 30;
+    $scope.zoomLevel += 3;
 /*
     var index=$scope.library.photos.indexOf(photo);
 
@@ -89,19 +91,14 @@ function WallController($scope, $http, $window, library, socket, Group){
     }
 
     $scope.selectedPhoto = photo;
+    $scope.$apply();
   };
-
-  $scope.vote = function(photo, vote){
-    console.log('vote', vote);
-    socket.emit('vote', photo, vote);
-  };
-
 
 
   $scope.$watch('stats', function(value){
     if ($scope.stats && $scope.stats.all && !$scope.totalHeight) $scope.totalHeight = $scope.height * $scope.stats.all / 5; // default to a height based on the known amount of images
   });
-
+/*
   $scope.$watch('photoInCenter', function(photo){
     if (!photo) return;
 
@@ -113,21 +110,14 @@ function WallController($scope, $http, $window, library, socket, Group){
     });
 
     $scope.$apply();
+    photo.apply();
 
-  });
+  });*/
 
   $scope.$watch('selectedPhoto', function(photo, old){
 
-    if (old){
-      if (old.original) {
-        old.src = old.original.src;
-        angular.copy(old.original, old);
-      }
-      old.src = old.src.replace('original', 'thumbnail').split('?')[0];
-      old.class = 'done';
-      old.zoom = 1;
-
-      delete old.original;
+    if (old && old.zoom) {
+      old.zoom(null);
     }
 
     if (!photo){
@@ -138,30 +128,9 @@ function WallController($scope, $http, $window, library, socket, Group){
     }
 
     if (window.history.pushState) {
-      window.history.pushState(photo, "Photo #" + photo._id, "#" + photo.taken);
+      window.history.pushState(photo.taken, "Photo #" + photo._id, "#" + photo.taken);
     }
 
-    photo.original = angular.copy(photo);
-    photo.zoom = 1;
-    photo.class="selected";
-    $scope.loading = true;
-
-    $http.get('/api/photo/' + photo._id).success(function(fullPhoto){
-      photo.meta = fullPhoto;
-      photo.src = fullPhoto.store.original.url;
-      $scope.focus = true;
-
-      photo.loaded = function(){
-        photo.loaded = null;
-        $scope.loading = false;
-        photo.class="selected loaded";
-      };
-    });
-
-    photo.top = $(document).scrollTop() - 20; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
-    photo.height = window.innerHeight + 40;
-    photo.width = Math.round(photo.height * photo.ratio);
-    photo.left = Math.max(0,(window.innerWidth/2 - photo.width/2));
 
   });
 
@@ -230,55 +199,15 @@ function WallController($scope, $http, $window, library, socket, Group){
     return photo && photo.active && isInViewPort(photo.top) || photo && isInViewPort(photo.top + photo.height);
   }
 
-  function renderPhoto(photo){
-    var image = new Image();
-    image.src = photo.src;
-    image.id = photo._id;
-    updateImage(photo,image);
-    return image;
-  }
-
-  function updateImage(photo, image){
-    
-    if (!image) image = document.getElementById(photo._id);
-
-    image.style.top = photo.top + "px";
-    image.style.left = photo.left + "px";
-    image.style.width = photo.width + "px";
-    image.style.height = photo.height + "px";
-    image.class='v' + photo.vote + ' done ' + photo.class;
-    return image;
-  }
-
-  // TODO: move to directive
-  var wall=document.getElementById("wall");
+  
 
   // by using a queue we can make sure we only prioritize loading images that are visible
   var loadQueue = async.queue(function(photo, done){
     if (!photo) return done(); // should never happen..
     if (!visible(photo)) return done(); // this isn't visible anymore we will not continue to load it
-    if (photo.loaded) return done(updatePhoto(photo)); // we already have this one, just update with new dimensions
+    if (photo.loaded) return done(photo.apply()); // we already have this one, just update with new dimensions
 
-    var image = renderPhoto(photo);
-    photo.started = true;
-
-    image.onload = function(){
-      wall.appendChild(image);
-      photo.loaded = true;
-      photo.apply = function(){updateImage(photo, image);};
-      photo.hide = function(){wall.removeChild(image)};
-
-      image.onclick = function(){
-        $scope.click(photo);
-      };
-
-     image.dblclick = function(){
-        console.log('click', photo);
-        $scope.dblclick(photo);
-      };
-
-      return done(); // let the image load attribute determine when the image is loaded
-    };
+    return new Photo(photo, $scope, $http, done);
 
   }, 7);
 
@@ -325,16 +254,16 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   function recalculateSizes(){
 
-    $scope.height = $scope.zoomLevel > 80 && 110 ||
-                    $scope.zoomLevel > 60 && 120 ||
-                    $scope.zoomLevel < 20 && 480 ||
+    $scope.height = $scope.zoomLevel > 8 && 110 ||
+                    $scope.zoomLevel > 6 && 120 ||
+                    $scope.zoomLevel < 2 && 480 ||
                     240;
 
     // compensate for bigger / smaller screens
     $scope.height = Math.floor($scope.height * (window.innerWidth / 1920));
     $scope.totalHeight = $scope.groups.reduce(function(top, group){
       var left = 5; //lastGroup && lastGroup.right + 5 || 0;
-      group.bind(top, left, $scope.height, Math.floor($scope.zoomLevel / 10));
+      group.bind(top, left, $scope.height, $scope.zoomLevel);
       return (group.bottom || top) + 5;
     }, 100);
     $scope.totalWidth = window.innerWidth;
