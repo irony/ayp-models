@@ -677,6 +677,7 @@ body .navbar-inner{
   margin: 0 20%;
   width: 50%;
   padding: 15px;
+  z-index: 1000;
 
 }
 

@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         }
       }
     },
-    clean: ["client/js/assets/"],
+    clean: ["client/js/assets/", "client/css/assets/"],
     copy: {
       all: {
         files: [
@@ -30,6 +30,7 @@ module.exports = function(grunt) {
           {expand: true, src: ['components/*/*.min.js'], dest: 'client/js/assets/', flatten: true},
           {expand: true, src: ['components/async/lib/async.js'], dest: 'client/js/assets/', flatten: true},
           {expand: true, src: ['components/bootstrap/docs/assets/js/bootstrap.min.js'], dest: 'client/js/assets/', flatten: true},
+          {expand: true, src: ['components/bootstrap/docs/assets/css/*.css'], dest: 'client/css/assets/', flatten: true},
 
           {expand: true, src: ['components/font-awesome/css/*.css'], dest: 'client/build/'},
           {expand: true, src: ['components/font-awesome/font/*.*'], dest: 'client/build/'},
@@ -43,7 +44,8 @@ module.exports = function(grunt) {
         files :
         {
           'client/build/script.js' : ['client/js/*.js', 'client/controllers/*.js'],
-          'client/build/assets.js' : ['client/js/assets/*.js']
+          'client/build/assets.js' : ['client/js/assets/*.js'],
+          'client/build/assets.css' : ['client/css/assets/*.css']
         }
       }
     },
