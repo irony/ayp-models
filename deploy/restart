@@ -13,7 +13,7 @@ export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazo
 export NODE_ENV=production
 
 npm install
-npm test
+#npm test
 #mason build app
 
 #sudo stop app
