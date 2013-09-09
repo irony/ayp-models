@@ -43,11 +43,10 @@ function Photo(photo, $scope, $http, done){
       width : fullWidth + "px",
       top : $(document).scrollTop() - 20 + "px", // zoom in a little bit more - gives the wide screen a little more space to fill the screen
       left : (window.innerWidth)/2 - fullWidth/2 + "px",
-      height : window.innerHeight + 40 + "px",
-      '-webkit-transform:' : "scale(" + level + "," + level + ")",
-      'transform:' : "scale(" + level + "," + level + ")"
+      height : window.innerHeight + 40 + "px"
     };
     $(image).css(style); // apply all styles at once
+    image.style.transform.scale = level;
   };
 
   photo.render = function(){
