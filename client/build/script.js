@@ -2519,24 +2519,25 @@ var socket = io.connect();
 // TODO: move to directive
 var wall=document.getElementById("wall");
 
-// decoration class - patch in a few methods on the photo object to directly control it's rendering on the page
+// decorator class - patch in a few methods on the photo object to directly control it's rendering on the page
 // the reason we do it this way instead of the angular $scope.apply way is because of performance
 function Photo(photo, $scope, $http, done){
   var image;
   var self = this;
 
-  photo.vote = function(vote){
+  photo.updateVote = function(vote){
     console.log('vote', vote);
     socket.emit('vote', photo, vote);
   };
 
   photo.zoom = function(level){
 
-    photo.zoom = level;
+    photo.zoomLevel = level;
 
     if (!level){
       image.src = photo.src;
       photo.apply();
+      return;
     }
 
     image.className="selected";
@@ -2552,11 +2553,17 @@ function Photo(photo, $scope, $http, done){
       };
     });
 
+    var fullWidth = Math.round((window.innerHeight + 40) * photo.ratio);
 
-    image.style.width = Math.round((window.innerHeight + 40) * photo.ratio) + "px";
-    image.style.top = $(document).scrollTop() - 20 + "px"; // zoom in a little bit more - gives the wide screen a little more space to fill the screen
-    image.style.left = Math.max(0,((parseInt(image.style.width))/2 - photo.width/2))  + "px";
-    image.style.height = window.innerHeight + 40 + "px";
+    var style = {
+      width : fullWidth + "px",
+      top : $(document).scrollTop() - 20 + "px", // zoom in a little bit more - gives the wide screen a little more space to fill the screen
+      left : (window.innerWidth)/2 - fullWidth/2 + "px",
+      height : window.innerHeight + 40 + "px",
+      '-webkit-transform:' : "scale(" + level + "," + level + ")",
+      'transform:' : "scale(" + level + "," + level + ")"
+    };
+    $(image).css(style); // apply all styles at once
   };
 
   photo.render = function(){
@@ -2580,11 +2587,17 @@ function Photo(photo, $scope, $http, done){
     
     if (!image) image = document.getElementById(photo._id);
 
-    image.style.top = photo.top + "px";
-    image.style.left = photo.left + "px";
-    image.style.width = photo.width + "px";
-    image.style.height = photo.height + "px";
+    var style = {
+      top : Math.round(photo.top) + "px",
+      left : Math.round(photo.left) + "px",
+      width : Math.round(photo.width) + "px",
+      height : Math.round(photo.height) + "px"
+    };
+    $(image).css(style); // apply all styles at once to prevent flickering
+
     image.className='v' + photo.vote + ' done ' + photo.class;
+
+
     return image;
   };
   
@@ -3196,7 +3209,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
     if ($scope.selectedPhoto)
     {
-      if (Math.abs($scope.scrollPosition - $scope.selectedPhoto.top) > $scope.selectedPhoto.height * (1+$scope.selectedPhoto.zoom))
+      if (Math.abs($scope.scrollPosition - $scope.selectedPhoto.top) > $scope.selectedPhoto.height * (1+$scope.selectedPhoto.zoomLevel))
         $scope.select(null);
     }
 
@@ -3272,21 +3285,20 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   $scope.$watch('selectedPhoto', function(photo, old){
 
-    if (old && old.zoom) {
+    if (old && old.zoomLevel) {
       old.zoom(null);
     }
 
     if (!photo){
-
       $scope.focus = false;
       return;
-
     }
 
     if (window.history.pushState) {
       window.history.pushState(photo.taken, "Photo #" + photo._id, "#" + photo.taken);
     }
 
+    photo.zoom(1);
 
   });
 
@@ -3471,30 +3483,28 @@ function WallController($scope, $http, $window, library, socket, Group){
       break;
       case 'left':
         $scope.select(current > 0 ? $scope.photosInView[current -1 ] : null);
-        $scope.$apply();
         e.preventDefault();
         
       break;
       case 'right':
         $scope.select($scope.photosInView.length > current ? $scope.photosInView[current +1 ] : null);
-        $scope.$apply();
         e.preventDefault();
       break;
       case 'up':
         if ($scope.selectedPhoto){
-          $scope.selectedPhoto.zoom++;
-          $scope.$apply();
+          $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel++);
           e.preventDefault();
         }
         //..
       break;
       case 'down':
         if ($scope.selectedPhoto){
-          if($scope.selectedPhoto.zoom-- < 1){
+          if($scope.selectedPhoto.zoomLevel-- < 1){
             $scope.select(null);
-          }
+          } else{
+            $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel);
 
-          $scope.$apply();
+          }
           e.preventDefault();
         }
         //..

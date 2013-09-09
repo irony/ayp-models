@@ -40,7 +40,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
     if ($scope.selectedPhoto)
     {
-      if (Math.abs($scope.scrollPosition - $scope.selectedPhoto.top) > $scope.selectedPhoto.height * (1+$scope.selectedPhoto.zoom))
+      if (Math.abs($scope.scrollPosition - $scope.selectedPhoto.top) > $scope.selectedPhoto.height * (1+$scope.selectedPhoto.zoomLevel))
         $scope.select(null);
     }
 
@@ -116,21 +116,20 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   $scope.$watch('selectedPhoto', function(photo, old){
 
-    if (old && old.zoom) {
+    if (old && old.zoomLevel) {
       old.zoom(null);
     }
 
     if (!photo){
-
       $scope.focus = false;
       return;
-
     }
 
     if (window.history.pushState) {
       window.history.pushState(photo.taken, "Photo #" + photo._id, "#" + photo.taken);
     }
 
+    photo.zoom(1);
 
   });
 
@@ -315,30 +314,28 @@ function WallController($scope, $http, $window, library, socket, Group){
       break;
       case 'left':
         $scope.select(current > 0 ? $scope.photosInView[current -1 ] : null);
-        $scope.$apply();
         e.preventDefault();
         
       break;
       case 'right':
         $scope.select($scope.photosInView.length > current ? $scope.photosInView[current +1 ] : null);
-        $scope.$apply();
         e.preventDefault();
       break;
       case 'up':
         if ($scope.selectedPhoto){
-          $scope.selectedPhoto.zoom++;
-          $scope.$apply();
+          $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel++);
           e.preventDefault();
         }
         //..
       break;
       case 'down':
         if ($scope.selectedPhoto){
-          if($scope.selectedPhoto.zoom-- < 1){
+          if($scope.selectedPhoto.zoomLevel-- < 1){
             $scope.select(null);
-          }
+          } else{
+            $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel);
 
-          $scope.$apply();
+          }
           e.preventDefault();
         }
         //..
