@@ -150,7 +150,6 @@ function WallController($scope, $http, $window, library, socket, Group){
         
     recalculateSizes();
     filterView();
-
   });
   
 

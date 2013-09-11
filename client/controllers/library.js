@@ -88,6 +88,7 @@ appProvider.factory('library', function($http, socket, storage){
           if (_.any(photos, {taken:page.next})) return done && done(null, page.photos);
           console.log('next more', page.next);
           library.loadMore(page.next, done);
+          library.propagateChanges(photos); // prerender with the last known library if found
         } else{
           console.log('done more', page.modified);
           library.meta.modified = page.modified;
@@ -136,7 +137,6 @@ appProvider.factory('library', function($http, socket, storage){
         .done( function ( photos ) {
           console.log('db done')
           // photos = photos.reverse();
-          library.propagateChanges(photos); // prerender with the last known library if found
           // descending order
           library.photos.concat(photos);
           done(null, photos);
