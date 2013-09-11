@@ -68,7 +68,7 @@ function Photo(photo, $scope, $http, done){
 
   photo.apply = function(image){
     
-    if (!image) image = document.getElementById(photo._id);
+    if (!image) image = document.getElementById(photo._id) || photo.render();
 
     var style = {
       top : Math.round(photo.top) + "px",
@@ -84,7 +84,12 @@ function Photo(photo, $scope, $http, done){
     return image;
   };
   
-  photo.hide = function(){wall.removeChild(image)};
+  photo.hide = function(){
+    if (photo.loaded){
+      wall.removeChild(image);
+      photo.loaded = false;
+    }
+  };
   
   photo.render();
 
