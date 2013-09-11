@@ -7,20 +7,20 @@
 // * Star / heart
 
 
-var redis = require('redis');
+var Redis = require('redis');
 var clusterer = require("../../jobs/clusterPhotos.js");
 
 module.exports = function(app){
   var Photo = require('../../models/photo');
   
-  var client = redis.createClient();
-  client.on('error', function(err){
+  var redis = Redis.createClient();
+  redis.on('error', function(err){
     // ignore errors
     console.debug('error redis', err);
   });
 
   app.io.on('disconnect', function(){
-    client.removeAllListeners('message');
+    redis.removeAllListeners('message');
   });
 
 
@@ -58,8 +58,8 @@ module.exports = function(app){
     };
 
     socket.join(user._id);
-    client.subscribe(user._id); //    listen to messages from this user's pubsub channel
-    client.on('message', function(channel, message) {
+    redis.subscribe(user._id); //    listen to messages from this user's pubsub channel
+    redis.on('message', function(channel, message) {
       socket.emit('trigger', JSON.parse(message)) ;
     });
 
