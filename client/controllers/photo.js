@@ -43,10 +43,10 @@ function Photo(photo, $scope, $http, done){
       width : fullWidth + "px",
       top : $(document).scrollTop() - 20 + "px", // zoom in a little bit more - gives the wide screen a little more space to fill the screen
       left : (window.innerWidth)/2 - fullWidth/2 + "px",
-      height : window.innerHeight + 40 + "px"
+      height : window.innerHeight + 40 + "px",
+      webkitTransform : "scale(" + level + "," + level + ")"
     };
     $(image).css(style); // apply all styles at once
-    image.style.transform.scale = level;
   };
 
   photo.render = function(){
@@ -69,6 +69,7 @@ function Photo(photo, $scope, $http, done){
   photo.apply = function(image){
     
     if (!image) image = document.getElementById(photo._id) || photo.render();
+    if (!image) return; // why?
 
     var style = {
       top : Math.round(photo.top) + "px",

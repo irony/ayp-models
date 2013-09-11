@@ -323,19 +323,20 @@ function WallController($scope, $http, $window, library, socket, Group){
       break;
       case 'up':
         if ($scope.selectedPhoto){
-          $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel++);
+          $scope.selectedPhoto.zoomLevel++;
+          $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel);
           e.preventDefault();
         }
         //..
       break;
       case 'down':
         if ($scope.selectedPhoto){
-          if($scope.selectedPhoto.zoomLevel-- < 1){
-            $scope.select(null);
-          } else{
-            $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel);
-
-          }
+          
+          $scope.selectedPhoto.zoomLevel--;
+          $scope.selectedPhoto.zoom($scope.selectedPhoto.zoomLevel);
+          
+          if(!$scope.selectedPhoto.zoomLevel) $scope.select(null);
+          
           e.preventDefault();
         }
         //..

@@ -28,7 +28,8 @@ module.exports = function(app){
           }, {});
         }
         photo.metadata = photo.metadata || {};
-        photo.metadata.position = {lat: parseFloat(photo.exif.gps.GPSLatitude[0] + "." + photo.exif.gps.GPSLatitude[1],10), lng: parseFloat(photo.exif.gps.GPSLongitude[0] + "." + photo.exif.gps.GPSLongitude[1],10)};
+        if (photo.exif.gps.GPSLatitude && photo.exif.gps.GPSLatitude.length)
+          photo.metadata.position = {lat: parseFloat(photo.exif.gps.GPSLatitude[0] + "." + photo.exif.gps.GPSLatitude[1],10), lng: parseFloat(photo.exif.gps.GPSLongitude[0] + "." + photo.exif.gps.GPSLongitude[1],10)};
       }
 
 
