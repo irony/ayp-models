@@ -7,7 +7,7 @@ echo "restarting All Your Photos after receiving push"
 #sudo gem install foreman 
 #sudo npm install -g foreman
 #sudo nf export -a app -o /etc/init
-#sudo npm install -g grunt-cli
+sudo npm install -g grunt-cli
 
 export MONGOHQ_URL=mongodb://R:billion@ec2-54-228-162-49.eu-west-1.compute.amazonaws.com/allyourphotos
 export NODE_ENV=production
