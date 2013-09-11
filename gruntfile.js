@@ -37,6 +37,7 @@ module.exports = function(grunt) {
             'bower_components/jquery/jquery.min.js',
             'bower_components/angular/angular.min.js',
             'bower_components/async/lib/async.js',
+            'bower_components/moment/min/moment.min.js',
             'bower_components/lodash/dist/lodash.min.js',
             'node_modules/socket.io-client/dist/socket.io.min.js',
             'bower_components/bootstrap/docs/assets/js/bootstrap.min.js'
