@@ -34,11 +34,11 @@ module.exports = function(grunt) {
           'client/build/js/app.js' : ['client/js/*.js', 'client/controllers/*.js'],
           'client/build/css/app.css' : ['client/css/*.css'],
           'client/build/js/assets.js' : [
-            'bower_components/jquery/jquery.js',
+            'bower_components/jquery/jquery.min.js',
+            'bower_components/angular/angular.min.js',
             'bower_components/async/lib/async.js',
             'bower_components/lodash/dist/lodash.min.js',
             'node_modules/socket.io-client/dist/socket.io.min.js',
-            'bower_components/angular/angular.min.js',
             'bower_components/bootstrap/docs/assets/js/bootstrap.min.js'
           ],
           'client/build/css/assets.css' : [
