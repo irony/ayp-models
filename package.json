@@ -51,7 +51,9 @@
     "connect": "~2.7.11",
     "express-partials": "~0.1.1",
     "clusterfck": "~0.5.2",
-    "passport.socketio": "~1.2.1"
+    "passport.socketio": "~1.2.1",
+    "grunt-simple-mocha": "~0.4.0",
+    "grunt-contrib-watch": "~0.5.3"
   },
   "main": "server/server.js",
   "scripts": {
