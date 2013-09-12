@@ -190,7 +190,7 @@ function WallController($scope, $http, $window, library, socket, Group){
 
   function isInViewPort(top){
     
-    return top > $scope.scrollPosition - (windowHeight) && top < $scope.scrollPosition + windowHeight * 2;
+    return top > $scope.scrollPosition - (windowHeight) && top < $scope.scrollPosition + windowHeight * 3;
   }
 
   function visible(photo){
@@ -228,8 +228,10 @@ function WallController($scope, $http, $window, library, socket, Group){
       return visiblePhotos;
     }, []).sort(function(a,b){
       //return (a.vote - b.vote);
-      return Math.abs(b.top - $scope.scrollCenter) - Math.abs(a.top - $scope.scrollCenter); // + (0- (a.vote - b.vote) * $scope.height;
+      return -(Math.abs(b.top - $scope.scrollCenter) - Math.abs(a.top - $scope.scrollCenter)); // + (0- (a.vote - b.vote) * $scope.height;
     });
+
+    $scope.photoInCenter = $scope.photosInView;
 
     // remove photos that have already been started before
     var photos = $scope.photosInView.filter(function(photo){

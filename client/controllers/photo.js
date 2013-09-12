@@ -44,8 +44,12 @@ function Photo(photo, $scope, $http, done){
       top : $(document).scrollTop() - 20 + "px", // zoom in a little bit more - gives the wide screen a little more space to fill the screen
       left : (window.innerWidth)/2 - fullWidth/2 + "px",
       height : window.innerHeight + 40 + "px",
-      webkitTransform : "scale(" + level + "," + level + ")"
     };
+    if (image.style.hasOwnProperty("webkitTransform")){
+      style.webkitTransform = "translate(" + style.left + "," + style.top + ") scale(" + level + "," + level + ") ";
+      style.left = undefined;
+      style.top = undefined;
+    }
     $(image).css(style); // apply all styles at once
   };
 
@@ -77,6 +81,12 @@ function Photo(photo, $scope, $http, done){
       width : Math.round(photo.width) + "px",
       height : Math.round(photo.height) + "px"
     };
+    if (image.style.hasOwnProperty("webkitTransform")){
+      style.webkitTransform = "translate(" + style.left + "," + style.top + ")";
+      style.left = undefined;
+      style.top = undefined;
+    }
+
     $(image).css(style); // apply all styles at once to prevent flickering
 
     image.className='v' + photo.vote + ' done ' + photo.class;

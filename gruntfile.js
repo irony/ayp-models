@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-simple-mocha');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('assemble');
@@ -31,7 +32,7 @@ module.exports = function(grunt) {
       dist: {
         files :
         {
-          'client/build/js/app.js' : ['client/js/*.js', 'client/controllers/*.js'],
+          'client/build/js/app.js' : ['client/js/*.js', 'client/controllers/*.js','client/directives/*.js'  ],
           'client/build/css/app.css' : ['client/css/*.css'],
           'client/build/js/assets.js' : [
             'bower_components/jquery/jquery.min.js',
