@@ -10,6 +10,8 @@ var models = module.exports = {
   passport : require('./auth/passport'),
   init : function(config){
     try {
+      if (!config) config = require('../conf');
+      
       mongoose.connect(config.mongoUrl);
       return models;
     } catch (err) {
