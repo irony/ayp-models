@@ -12,6 +12,15 @@
   "dependencies": {
     "mongoose": "~3.6.19",
     "lodash": "~2.0.0",
-    "passport-local-mongoose": "~0.2.4"
+    "redis": "~0.8.4",
+    "passport": "*",
+    "passport-facebook": "*",
+    "passport-twitter": "*",
+    "passport-dropbox": "*",
+    "passport-flickr": "*",
+    "passport-instagram": "~0.1.2",
+    "passport-local": "*",
+    "passport-local-mongoose": "~0.2.4",
+    "multiparty": "~2.1.8"
   }
 }

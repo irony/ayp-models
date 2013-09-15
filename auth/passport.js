@@ -1,5 +1,4 @@
-var InstagramStrategy = require('passport-instagram').Strategy,
-    FlickrStrategy = require('passport-flickr').Strategy,
+var FlickrStrategy = require('passport-flickr').Strategy,
     TwitterStrategy = require('passport-twitter').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
@@ -46,7 +45,7 @@ module.exports = function(conf){
   //   Strategies in Passport require a `verify` function, which accept
   //   credentials (in this case, an accessToken, refreshToken, and Instagram
   //   profile), and invoke a callback with a user object.
-  passport.use(new InstagramStrategy({
+  /*passport.use(new InstagramStrategy({
       clientID: conf.instagram.clientId,
       clientSecret: conf.instagram.clientSecret,
       callbackURL: callbackBaseUrl + "/auth/instagram/callback",
@@ -59,7 +58,7 @@ module.exports = function(conf){
       
       return auth.findOrCreateAndUpdateUser(req.user, profile, done);
     }
-  ));
+  ));*/
 
   // Use the DropboxStrategy within Passport.
   //   Strategies in passport require a `verify` function, which accept
