@@ -11,7 +11,6 @@ var models = module.exports = {
   init : function(config){
     try {
       mongoose.connect(config.mongoUrl);
-      console.debug("Started connection on " + (config.mongoUrl.split('@').slice(-1)).cyan + ", waiting for it to open...".grey);
       return models;
     } catch (err) {
       console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
