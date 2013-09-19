@@ -12,7 +12,7 @@ var models = module.exports = {
     try {
       if (!config) config = require('../conf');
       
-      mongoose.connect(config.mongoUrl);
+      models.db = mongoose.createConnection(config.mongoUrl);
       return models;
     } catch (err) {
       console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
