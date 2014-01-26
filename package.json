@@ -2,6 +2,7 @@
   "name": "AllYourPhotosModels",
   "version": "0.0.1",
   "description": "Models for the all your photos system, use npm install ../models to install",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +12,7 @@
   "license": "BSD",
   "dependencies": {
     "mongoose": "~3.6.19",
-    "lodash": "~2.0.0",
+    "lodash": "*",
     "redis": "~0.8.4",
     "passport": "*",
     "passport-facebook": "*",
