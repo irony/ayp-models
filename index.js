@@ -10,7 +10,7 @@ var models = module.exports = {
   passport : require('./auth/passport'),
   init : function(config){
     try {
-      if (!config) config = require('AllYourPhotosConfig');
+      if (!config) config = require('config');
       
       mongoose.connect(config.mongoUrl);
       return models;
