@@ -22,6 +22,8 @@
     "passport-instagram": "~0.1.2",
     "passport-local": "*",
     "passport-local-mongoose": "~0.2.4",
-    "multiparty": "~2.1.8"
+    "multiparty": "~2.1.8",
+    "nconf": "~0.6.9",
+    "nconf-redis": "~0.3.1"
   }
 }

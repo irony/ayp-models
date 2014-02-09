@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var nconf = require('nconf');
 
 var models = module.exports = {
   group : require('./models/group'),
@@ -8,14 +9,12 @@ var models = module.exports = {
   user : require('./models/user'),
   auth : require('./auth/auth'),
   passport : require('./auth/passport'),
-  init : function(config){
+  init : function(){
     try {
-      if (!config) config = require('config');
-      
-      mongoose.connect(config.mongoUrl);
+      mongoose.connect(nconf.get('mongoUrl'));
       return models;
     } catch (err) {
-      console.log(("Setting up failed to connect to " + config.mongoUrl).red, err.message);
+      console.log(("Setting up failed to connect to " + nconf.get('mongoUrl')).red, err.message);
     }
   }
 };

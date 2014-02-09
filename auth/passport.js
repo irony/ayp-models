@@ -4,12 +4,13 @@ var FlickrStrategy = require('passport-flickr').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
     LocalStrategy = require('passport-local').Strategy,
+    nconf = require('nconf'),
     User = require('../models/user'),
     auth = require('./auth.js');
 
-module.exports = function(conf){
+module.exports = function(){
   var passport = require('passport');
-  var callbackBaseUrl = conf.baseUrl;
+  var callbackBaseUrl = nconf.get('baseUrl');
 
   passport.serializeUser(function(user, done) {
     done(null, user._id);
@@ -27,9 +28,9 @@ module.exports = function(conf){
   //   credentials (in this case, an accessToken, refreshToken, and Instagram
   //   profile), and invoke a callback with a user object.
   passport.use(new TwitterStrategy({
-      consumerKey: conf.twitter.consumerKey,
-      consumerSecret: conf.twitter.consumerSecret,
-      clientSecret: conf.instagram.clientSecret,
+      consumerKey: nconf.get('twitter:consumerKey'),
+      consumerSecret: nconf.get('twitter:consumerSecret'),
+      clientSecret: nconf.get('instagram:clientSecret'),
       callbackURL: callbackBaseUrl + "/auth/twitter/callback",
       passReqToCallback: true
     },
@@ -47,8 +48,8 @@ module.exports = function(conf){
   //   credentials (in this case, an accessToken, refreshToken, and Instagram
   //   profile), and invoke a callback with a user object.
   passport.use(new InstagramStrategy({
-      clientID: conf.instagram.clientId,
-      clientSecret: conf.instagram.clientSecret,
+      clientID: nconf.get('instagram:clientId'),
+      clientSecret: nconf.get('instagram:clientSecret'),
       callbackURL: callbackBaseUrl + "/auth/instagram/callback",
       passReqToCallback: true
     },
@@ -66,8 +67,8 @@ module.exports = function(conf){
   //   credentials (in this case, a token, tokenSecret, and Dropbox profile), and
   //   invoke a callback with a user object.
   passport.use(new DropboxStrategy({
-      consumerKey: conf.dbox.app_key,
-      consumerSecret: conf.dbox.app_secret,
+      consumerKey: nconf.get('dbox:app_key'),
+      consumerSecret: nconf.get('dbox:app_secret'),
       callbackURL: callbackBaseUrl + "/auth/dropbox/callback",
       passReqToCallback: true
     },
@@ -83,8 +84,8 @@ module.exports = function(conf){
   ));
 
   passport.use(new FlickrStrategy({
-      consumerKey: conf.flickr.consumerKey,
-      consumerSecret: conf.flickr.consumerSecret,
+      consumerKey: nconf.get('flickr:consumerKey'),
+      consumerSecret: nconf.get('flickr:consumerSecret'),
       callbackURL: callbackBaseUrl + "/auth/flickr/callback",
       passReqToCallback: true
     },
@@ -96,8 +97,8 @@ module.exports = function(conf){
   ));
 
   passport.use(new FacebookStrategy({
-    clientID: conf.facebook.appId,
-    clientSecret: conf.facebook.appSecret,
+    clientID: nconf.get('facebook:appId'),
+    clientSecret: nconf.get('facebook:appSecret'),
     callbackURL: callbackBaseUrl + "/auth/facebook/callback"
   },
   function(req, accessToken, refreshToken, profile, done) {
