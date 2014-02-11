@@ -6,12 +6,13 @@
 var mongoose = require('mongoose'),
     User = require('./user')(mongoose).Schema,
     _ = require('lodash'),
+    nconf = require('nconf'),
     PhotoCopy = require('./photoCopy')(mongoose).Schema,
 
     Schema = mongoose.Schema;
 
 var redis = require('redis');
-var client = redis.createClient();
+var client = redis.createClient(nconf.get('redis').port, nconf.get('redis').host);
 client.on('error', function(err){
   // ignore errors
   console.debug('error redis', err);
