@@ -12,7 +12,11 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var redis = require('redis');
-var client = redis.createClient(nconf.get('redis').port, nconf.get('redis').host);
+var client = redis.createClient(nconf.get('redis'));
+
+
+if (!nconf.get('redis')) throw "nconf not initialized";
+
 client.on('error', function(err){
   // ignore errors
   console.debug('error redis', err);
