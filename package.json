@@ -18,7 +18,6 @@
     "mongoose": "*",
     "redis": "*",
     "passport": "*",
-    "nconf": "*",
     "passport-facebook": "*",
     "passport-twitter": "*",
     "passport-dropbox": "*",
