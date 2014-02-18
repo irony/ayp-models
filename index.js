@@ -11,6 +11,7 @@ var models = module.exports = {
   passport : require('./auth/passport'),
   init : function(){
     try {
+      mongoose.connect(nconf.get('mongoUrl'));
       return models;
     } catch (err) {
       console.log(("Setting up failed to connect to " + nconf.get('mongoUrl')).red, err.message);

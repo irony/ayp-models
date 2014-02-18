@@ -102,7 +102,8 @@ module.exports = function(){
     callbackURL: callbackBaseUrl + "/auth/facebook/callback"
   },
   function(req, accessToken, refreshToken, profile, done) {
-
+        console.log('authorize facebook');
+        
         profile.token = accessToken;
         profile.refreshToken = refreshToken;
 
