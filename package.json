@@ -1,6 +1,6 @@
 {
   "name": "AllYourPhotosModels",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Models for the all your photos system, use npm install ../models to install",
   "private": true,
   "main": "index.js",
@@ -10,10 +10,10 @@
   "repository": "",
   "author": "",
   "license": "BSD",
-  "peerDependencies" : {
+  "peerDependencies": {
     "nconf": "*"
   },
-  "dependencies" : {
+  "dependencies": {
     "lodash": "*",
     "mongoose": "*",
     "redis": "*",
