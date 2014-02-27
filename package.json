@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
+  "repository": "irony/ayp-models",
   "author": "",
   "license": "BSD",
   "peerDependencies": {
@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "lodash": "*",
+    "knox": "*",
+    "moment": "*",
     "mongoose": "*",
     "redis": "*",
     "passport": "*",

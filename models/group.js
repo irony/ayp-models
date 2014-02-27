@@ -9,19 +9,11 @@ var mongoose = require('mongoose'),
 
 var GroupSchema = new mongoose.Schema({
       value : { type: {}},
-      user : {type: Schema.Types.ObjectId},
-      photos : { type: {}}
+      userId : { type: Schema.Types.ObjectId },
+      photos : { type: []},
+      from : { type: Date },
+      to : { type: Date }
     });
-
-
-GroupSchema.virtual('from').get(function () {
-  return _(this.photos).sortBy('taken').first().value();
-});
-
-
-GroupSchema.virtual('to').get(function () {
-  return _(this.photos).sortBy('taken').last().value();
-});
 
 
 module.exports = mongoose.model('Group', GroupSchema);

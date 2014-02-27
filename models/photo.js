@@ -8,7 +8,9 @@ var mongoose = require('mongoose'),
     _ = require('lodash'),
     nconf = require('nconf'),
     PhotoCopy = require('./photoCopy')(mongoose).Schema,
-
+    knox = require('knox'),
+    moment = require('moment'),
+    s3 = knox.createClient(nconf.get('aws')),
     Schema = mongoose.Schema;
 
 var redis = require('redis');
@@ -63,8 +65,28 @@ PhotoSchema.virtual('src').get(function (done) {
   }
 });
 
+PhotoSchema.virtual('signedSrc').get(function (done) {
+  var photo = this;
+  return s3.signedUrl(
+      '/thumbnail/' + photo.source + '/' + photo._id
+    , moment().add('year', 1).startOf('year').toDate()
+  )
+});
 
-
+PhotoSchema.methods.getMine = function (user) {
+  var photo = this;
+  var mine = photo.copies[user._id] || {};
+  var vote = mine.vote || (mine.calculatedVote);
+  
+  return {
+    _id : photo._id,
+    taken: photo.taken && photo.taken.getTime(),
+    cluster: mine.cluster,
+    src: photo.signedUrl,
+    vote: Math.floor(vote),
+    ratio: photo.ratio
+  };
+} 
 
 PhotoSchema.post('save', function (next) {
   var photo = this;
