@@ -3,26 +3,30 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
-
-
-// if (mongoose.models.User) return module.exports = mongoose.models.User;
-
-var AccountSchema = new mongoose.Schema({
-	displayName : {type: String},
-	// TODO etc
-});
-
 var UserSchema = new mongoose.Schema({
   id  :  { type: Schema.ObjectId},
   displayName : { type: String},
   username : { type: String},
   password : { type: String},
+  token : { type: String },
   emails : { type: []},
   accounts : {type :  Schema.Types.Mixed},
   subscription : {type: Number, default:0 },
   maxRank : {type : Number},
   updated : {type: Date}
 });
+
+
+UserSchema.methods.generateToken = function (done) {
+  var user = this;
+  require('crypto').randomBytes(48, function(ex, buf) {
+    var token = buf.toString('hex');
+    user.set('token', token);
+    user.save(function(){
+      done(token);
+    });
+  });
+} 
 
 
 UserSchema.plugin(passportLocalMongoose);
