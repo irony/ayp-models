@@ -21,7 +21,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 passport.use(new LocalStrategy({usernameField:'username'}, User.authenticate()));
-console.log('start passport');
 // Use the InstagramStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Instagram
