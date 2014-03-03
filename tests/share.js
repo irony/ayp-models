@@ -97,8 +97,6 @@ describe("share", function(){
                   done();
                 });
 
-
-
               });
 
           });
@@ -107,6 +105,5 @@ describe("share", function(){
       });
 
     });
-
 
   });

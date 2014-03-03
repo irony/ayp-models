@@ -19,7 +19,7 @@ var UserSchema = new mongoose.Schema({
 
 UserSchema.methods.generateToken = function (done) {
   var user = this;
-  require('crypto').randomBytes(48, function(ex, buf) {
+  require('crypto').randomBytes(24, function(ex, buf) {
     var token = buf.toString('hex');
     user.set('token', token);
     user.save(function(){

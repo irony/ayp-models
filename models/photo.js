@@ -42,7 +42,7 @@ var PhotoSchema = new mongoose.Schema({
       ratio : {type:Number},
       store : {type:Schema.Types.Mixed},
 
-      owners : [{ type: Schema.Types.ObjectId, ref: 'User' }]
+      owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
     });
 /*
 
