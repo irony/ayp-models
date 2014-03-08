@@ -67,22 +67,20 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.virtual('signedSrc').get(function (done) {
   var photo = this;
-  return s3.signedUrl(
-      '/thumbnail/' + photo.source + '/' + photo._id
-    , moment().add('year', 1).startOf('year').toDate()
-  )
+  var url = photo.store && photo.store.thumbnail.url.split('phto.org').pop() || null;
+  return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
 });
 
 PhotoSchema.methods.getMine = function (user) {
   var photo = this;
-  var mine = photo.copies[user._id] || {};
+  var mine = photo.copies && photo.copies[user._id] || {};
   var vote = mine.vote || (mine.calculatedVote);
   
   return {
     _id : photo._id,
     taken: photo.taken && photo.taken.getTime(),
     cluster: mine.cluster,
-    src: photo.signedUrl,
+    src: photo.signedSrc,
     vote: Math.floor(vote),
     ratio: photo.ratio
   };

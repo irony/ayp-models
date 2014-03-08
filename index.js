@@ -15,6 +15,7 @@ var models = module.exports = {
   auth : require('./auth/auth'),
   passport : require('./auth/passport'),
   init : function(){
+    if (this.initialized) return models;
     try {
       /*if (process.env.NODE_ENV !== 'production'){
         mongoose.set('debug', true);
@@ -26,6 +27,7 @@ var models = module.exports = {
       });
 
 
+      this.initialized = true;
       return models;
     } catch (err) {
       console.log(("Setting up failed to connect to " + nconf.get('mongoUrl')).red, err.message);

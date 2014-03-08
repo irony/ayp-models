@@ -9,7 +9,7 @@ var FlickrStrategy = require('passport-flickr').Strategy,
     auth = require('./auth.js');
 
 var passport = require('passport');
-var callbackBaseUrl = nconf.get('apiUrl');
+var callbackBaseUrl = nconf.get('baseUrl') + '/api/user';
 
 passport.serializeUser(function(user, done) {
   done(null, user._id);
@@ -29,7 +29,7 @@ passport.use(new TwitterStrategy({
     consumerKey: nconf.get('twitter:consumerKey'),
     consumerSecret: nconf.get('twitter:consumerSecret'),
     clientSecret: nconf.get('instagram:clientSecret'),
-    callbackURL: callbackBaseUrl + "/auth/twitter/callback",
+    callbackURL: callbackBaseUrl + "/twitter/callback",
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
@@ -48,7 +48,7 @@ passport.use(new TwitterStrategy({
 passport.use(new InstagramStrategy({
     clientID: nconf.get('instagram:clientId'),
     clientSecret: nconf.get('instagram:clientSecret'),
-    callbackURL: callbackBaseUrl + "/auth/instagram/callback",
+    callbackURL: callbackBaseUrl + "/instagram/callback",
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
@@ -67,7 +67,7 @@ passport.use(new InstagramStrategy({
 passport.use(new DropboxStrategy({
     consumerKey: nconf.get('dbox:app_key'),
     consumerSecret: nconf.get('dbox:app_secret'),
-    callbackURL: callbackBaseUrl + "/auth/dropbox/callback",
+    callbackURL: callbackBaseUrl + "/dropbox/callback",
     passReqToCallback: true
   },
   function(req, token, tokenSecret, profile, done) {
@@ -84,7 +84,7 @@ passport.use(new DropboxStrategy({
 passport.use(new FlickrStrategy({
     consumerKey: nconf.get('flickr:consumerKey'),
     consumerSecret: nconf.get('flickr:consumerSecret'),
-    callbackURL: callbackBaseUrl + "/auth/flickr/callback",
+    callbackURL: callbackBaseUrl + "/flickr/callback",
     passReqToCallback: true
   },
   function(req, token, tokenSecret, profile, done) {
@@ -97,7 +97,7 @@ passport.use(new FlickrStrategy({
 passport.use(new FacebookStrategy({
   clientID: nconf.get('facebook:appId'),
   clientSecret: nconf.get('facebook:appSecret'),
-  callbackURL: callbackBaseUrl + "/auth/facebook/callback"
+  callbackURL: callbackBaseUrl + "/facebook/callback"
 },
 function(req, accessToken, refreshToken, profile, done) {
       console.log('authorize facebook');
