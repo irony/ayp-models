@@ -4,6 +4,7 @@ var FlickrStrategy = require('passport-flickr').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     DropboxStrategy = require('passport-dropbox').Strategy,
     LocalStrategy = require('passport-local').Strategy,
+    _ = require('lodash'),
     nconf = require('nconf'),
     User = require('../models/user'),
     auth = require('./auth.js');
@@ -76,6 +77,7 @@ passport.use(new DropboxStrategy({
     
     profile.token = token;
     profile.tokenSecret = tokenSecret;
+    profile.emails = _.pluck(profile.emails, 'value');
 
     return auth.findOrCreateAndUpdateUser(req.user, profile, done);
   }
@@ -104,6 +106,7 @@ function(req, accessToken, refreshToken, profile, done) {
       
       profile.token = accessToken;
       profile.refreshToken = refreshToken;
+      profile.emails = _.pluck(profile.emails, 'value');
 
       return auth.findOrCreateAndUpdateUser(req.user, profile, done);
 

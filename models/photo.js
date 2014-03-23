@@ -75,7 +75,6 @@ PhotoSchema.methods.getMine = function (user) {
   var photo = this;
   var mine = photo.copies && photo.copies[user._id] || {};
   var vote = mine.vote || (mine.calculatedVote);
-  
   return {
     _id : photo._id,
     taken: photo.taken && photo.taken.getTime(),

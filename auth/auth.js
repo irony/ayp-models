@@ -9,22 +9,14 @@ var User = require('../models/user'),
 
 var updateProfile = function(user, profile, done){
 
-  if (!user)
-  {
-    throw new Error("User must have a value");
-  }
+  if (!user) throw new Error("User must have a value");
 
   var accounts = (user.accounts || {});
   var emails = (user.emails || []);
-
   accounts[profile.provider] = profile;
-
   user.updated = new Date();
-
   user.set('emails', _.uniq(_.union(emails, profile.emails)));
-
   user.displayName = profile.displayName;
-//   user.set('emails', emails);
   user.set('accounts', accounts);
   user.markModified('accounts');
 
@@ -38,10 +30,7 @@ var findOrCreateAndUpdateUser = function (user, profile, done)
   if (user && user._id){
     return User.findById(user._id, function(err, foundUser){
 
-      if (!foundUser){
-        foundUser = new User(user);
-      }
-
+      if (!foundUser) foundUser = new User(user);
       return updateProfile(foundUser, profile, done);
   
     });
