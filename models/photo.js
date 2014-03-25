@@ -4,10 +4,7 @@
 
 
 var mongoose = require('mongoose'),
-    User = require('./user')(mongoose).Schema,
-    _ = require('lodash'),
     nconf = require('nconf'),
-    PhotoCopy = require('./photoCopy')(mongoose).Schema,
     knox = require('knox'),
     moment = require('moment'),
     s3 = knox.createClient(nconf.get('aws')),
@@ -17,7 +14,7 @@ var redis = require('redis');
 var client = redis.createClient(nconf.get('redis'));
 
 
-if (!nconf.get('redis')) throw "nconf not initialized";
+if (!nconf.get('redis')) throw 'nconf not initialized';
 
 client.on('error', function(err){
   // ignore errors
@@ -26,24 +23,24 @@ client.on('error', function(err){
 
 
 var PhotoSchema = new mongoose.Schema({
-      path : { type: String},
-      taken : { type: Date, index:true},
-      modified : { type: Date},
-      source : { type: String},
-      mimeType : { type: String},
-      copies : {}, // [PhotoCopy],
-      bytes : {type: Number},
+  path : { type: String},
+  taken : { type: Date, index: true},
+  modified : { type: Date},
+  source : { type: String},
+  mimeType : { type: String, index: true},
+  copies : {}, // [PhotoCopy],
+  bytes : {type: Number},
 
-      metadata : { type:  Schema.Types.Mixed},
+  metadata : { type:  Schema.Types.Mixed},
 
-      // pointer to the current user's copy - will only be populated in runtime
-      mine : { type:  Schema.Types.Mixed},
-      exif : {}, // select:false
-      ratio : {type:Number},
-      store : {type:Schema.Types.Mixed},
+  // pointer to the current user's copy - will only be populated in runtime
+  mine : { type:  Schema.Types.Mixed},
+  exif : {}, // select:false
+  ratio : {type:Number},
+  store : {type:Schema.Types.Mixed},
 
-      owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
-    });
+  owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
+});
 /*
 
 PhotoSchema.pre('save', function (next) {
@@ -51,7 +48,7 @@ PhotoSchema.pre('save', function (next) {
   
   Photo.findOne({taken : photo.taken, bytes: photo.bytes}, function(err, existingPhoto){
     if (existingPhoto) console.log('existingPhoto found')
-    next(existingPhoto ? new Error("This photo is already in the database, please use the importer to initialize correct values") : null);
+    next(existingPhoto ? new Error('This photo is already in the database, please use the importer to initialize correct values') : null);
   });
 });
 */
@@ -83,9 +80,9 @@ PhotoSchema.methods.getMine = function (user) {
     vote: Math.floor(vote),
     ratio: photo.ratio
   };
-} 
+};
 
-PhotoSchema.post('save', function (next) {
+PhotoSchema.post('save', function () {
   var photo = this;
   
   // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
