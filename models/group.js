@@ -2,8 +2,6 @@
 // =====
 
 var mongoose = require('mongoose'),
-    Photo = require('./photo')(mongoose).Schema,
-    _ = require('lodash'),
     Schema = mongoose.Schema;
 
 var GroupSchema = new mongoose.Schema({
@@ -11,7 +9,8 @@ var GroupSchema = new mongoose.Schema({
   userId : { type: Schema.Types.ObjectId, ref: 'User' },
   photos : [{ type: Schema.Types.ObjectId, ref: 'Photo' }],
   from : { type: Date },
-  to : { type: Date }
+  to : { type: Date },
+  modified : { type: Date, default: Date.now }
 });
 
 
