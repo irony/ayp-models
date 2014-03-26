@@ -26,7 +26,7 @@ UserSchema.methods.generateToken = function (done) {
       done(token);
     });
   });
-} 
+};
 
 
 UserSchema.plugin(passportLocalMongoose);
