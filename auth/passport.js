@@ -76,6 +76,7 @@ passport.use(new DropboxStrategy({
     profile.token = token;
     profile.tokenSecret = tokenSecret;
     profile.emails = _.pluck(profile.emails, 'value');
+    profile.cursor = null;
 
     return auth.findOrCreateAndUpdateUser(req.user, profile, done);
   }
