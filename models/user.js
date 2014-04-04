@@ -11,7 +11,7 @@ var UserSchema = new mongoose.Schema({
   token : { type: String },
   emails : { type: []},
   accounts : {type :  Schema.Types.Mixed},
-  subscription : {type: Number, default:0 },
+  subscription : {type: Date, default: new Date(new Date().setMonth(new Date().getMonth() + 1)) },
   maxRank : {type : Number},
   updated : {type: Date}
 });

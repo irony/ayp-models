@@ -6,8 +6,13 @@
 var mongoose = require('mongoose'),
     nconf = require('nconf'),
     knox = require('knox'),
-    moment = require('moment'),
-    s3 = knox.createClient(nconf.get('aws')),
+    moment = require('moment');
+
+if (!nconf.get('aws')) {
+  throw 'No aws config defined, please check nconf config';
+}
+
+var s3 = knox.createClient(nconf.get('aws')),
     Schema = mongoose.Schema;
 
 var redis = require('redis');
