@@ -81,12 +81,13 @@ PhotoSchema.methods.getMine = function (user) {
     _id : photo._id,
     taken: photo.taken && photo.taken.getTime(),
     cluster: mine.cluster,
+    rank: mine.rank,
     src: photo.signedSrc,
     vote: Math.floor(vote),
     ratio: photo.ratio
   };
 };
-
+/*
 PhotoSchema.post('save', function () {
   var photo = this;
   
@@ -97,7 +98,7 @@ PhotoSchema.post('save', function () {
       var trigger = {
         action: 'save',
         type: 'photo',
-        item: photo
+        item: { _id: photo._id, _taken : photo.taken }
       };
       try{
         client.publish(userId, JSON.stringify(trigger));
@@ -134,6 +135,6 @@ PhotoSchema.pre('save', function (next) {
   });
 
 });
-
+*/
 
 var Photo = module.exports = mongoose.model('Photo', PhotoSchema);
