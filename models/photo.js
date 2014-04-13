@@ -62,10 +62,31 @@ PhotoSchema.virtual('src').get(function (done) {
   }
 });
 
-PhotoSchema.virtual('signedSrc').get(function (done) {
+PhotoSchema.virtual('signedSrc').get(function () {
   var photo = this;
   var url = photo.store && photo.store.thumbnail.url.split('phto.org').pop() || null;
   return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
+});
+
+PhotoSchema.virtual('location').get(function(){
+  var photo = this;
+  if (photo.exif && photo.exif.gps){
+    if (photo.exif.gps.length){
+      photo.exif.gps = photo.exif.gps.reduce(function(gps, tag){
+        gps[tag.tagName] = tag.value;
+        return gps;
+      }, {});
+    }
+    var location = {};
+    if (photo.exif.gps.GPSLatitude && photo.exif.gps.GPSLatitude.length){
+      location = {
+        lat: parseFloat(photo.exif.gps.GPSLatitude[0] + '.' + photo.exif.gps.GPSLatitude[1],10),
+        lng: parseFloat(photo.exif.gps.GPSLongitude[0] + '.' + photo.exif.gps.GPSLongitude[1],10)
+      };
+    }
+    return location;
+  }
+  return undefined;
 });
 
 PhotoSchema.methods.getMine = function (user) {
@@ -79,6 +100,7 @@ PhotoSchema.methods.getMine = function (user) {
     taken: photo.taken && photo.taken.getTime(),
     cluster: mine.cluster,
     rank: mine.rank,
+    location : photo.location,
     views: mine.views,
     clicks: mine.clicks,
     src: photo.signedSrc,
