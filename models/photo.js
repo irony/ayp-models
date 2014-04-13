@@ -21,11 +21,6 @@ var client = redis.createClient(nconf.get('redis'));
 
 if (!nconf.get('redis')) throw 'nconf not initialized';
 
-client.on('error', function(err){
-  // ignore errors
-  console.debug('error redis', err);
-});
-
 
 var PhotoSchema = new mongoose.Schema({
   path : { type: String},
@@ -74,6 +69,8 @@ PhotoSchema.virtual('signedSrc').get(function (done) {
 });
 
 PhotoSchema.methods.getMine = function (user) {
+  if (!user) throw 'User parameter is required';
+
   var photo = this;
   var mine = photo.copies && photo.copies[user._id] || {};
   var vote = mine.vote || (mine.calculatedVote);
@@ -82,12 +79,14 @@ PhotoSchema.methods.getMine = function (user) {
     taken: photo.taken && photo.taken.getTime(),
     cluster: mine.cluster,
     rank: mine.rank,
+    views: mine.views,
+    clicks: mine.clicks,
     src: photo.signedSrc,
     vote: Math.floor(vote),
     ratio: photo.ratio
   };
 };
-/*
+
 PhotoSchema.post('save', function () {
   var photo = this;
   
@@ -98,7 +97,7 @@ PhotoSchema.post('save', function () {
       var trigger = {
         action: 'save',
         type: 'photo',
-        item: { _id: photo._id, _taken : photo.taken }
+        item: { _id: photo._id, taken : photo.taken }
       };
       try{
         client.publish(userId, JSON.stringify(trigger));
@@ -109,7 +108,7 @@ PhotoSchema.post('save', function () {
   }
 });
 
-PhotoSchema.pre('save', function (next) {
+PhotoSchema.methods.updateShares = function (next) {
   var photo = this,
       _ = require('lodash'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
@@ -134,7 +133,6 @@ PhotoSchema.pre('save', function (next) {
     next();
   });
 
-});
-*/
+};
 
-var Photo = module.exports = mongoose.model('Photo', PhotoSchema);
+module.exports = mongoose.model('Photo', PhotoSchema);
