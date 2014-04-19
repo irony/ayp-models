@@ -27,7 +27,8 @@
     "passport-instagram": "*",
     "passport-local": "*",
     "passport-local-mongoose": "*",
-    "multiparty": "*"
+    "multiparty": "*",
+    "jsonwebtoken": "~0.2.0"
   },
   "devDependencies": {
     "should": "~3.1.3"

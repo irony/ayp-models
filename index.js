@@ -14,7 +14,8 @@ var models = module.exports = {
   user : require('./models/user'),
   auth : require('./auth/auth'),
   passport : require('./auth/passport'),
-  init : function(){
+  init : function(_nconf){
+    if (_nconf) nconf = nconf;
     if (this.initialized) return models;
     try {
       /*if (process.env.NODE_ENV !== 'production'){

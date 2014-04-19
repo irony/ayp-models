@@ -7,19 +7,18 @@
 
 
 var mongoose = require('mongoose'),
-    User = require('./user')(mongoose).Schema,
-    Photo = require('./photo'),
     Schema = mongoose.Schema;
 
 var ShareSpanSchema = new mongoose.Schema({
-  added : { type: Date, default: Date.now()},
-  startDate: {type : Date},
-  stopDate: {type : Date},
+  added : { type: Date, default: Date.now},
+  from: {type : Date},
+  to: {type : Date},
+  live : {type: Boolean, default: false},
+  vote : {type: Number, default: 9},
   photos : [Schema.Types.ObjectId],
-  members : [Schema.Types.ObjectId]
+  sender: { type: Schema.Types.ObjectId, ref: 'User' },
+  receivers : [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
-
-
 
 ShareSpanSchema.pre('save', function (next) {
   
@@ -27,16 +26,21 @@ ShareSpanSchema.pre('save', function (next) {
     _ = require('lodash'),
     Photo = require('./photo');
 
-
-  Photo.find()
-  .where('owners').in(span.members)
-  .where('photos').nin(span.photos)
-  .where('taken').gte(span.startDate).lte(span.stopDate)
+  Photo.find({}, '_id owners')
+  .where('owners').in(span.sender)
+  .where('copies.' + span.sender + '.vote').lte(span.vote || 9)
+  .where('taken').gte(span.from).lte(span.to)
+  //.or.where('photos').nin(span.photos) // TODO: make tests for updating existing
   .exec(function(err, photos){
-//     console.log('sharespan save');
+    if (err) throw err;
     (photos || []).forEach(function(photo){
-      photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      photo.save();
+      photo.set('owners', _.uniq(_.union(photo.owners, span.receivers)));
+      /*photo.save(function(err){
+        if (!err){
+          console.log('updating photos')
+          span.photos.push(photo);
+        }
+      });*/
     });
     next();
   });

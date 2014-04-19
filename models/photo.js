@@ -25,7 +25,7 @@ if (!nconf.get('redis')) throw 'nconf not initialized';
 var PhotoSchema = new mongoose.Schema({
   path : { type: String},
   taken : { type: Date, index: true},
-  modified : { type: Date},
+  modified : { type: Date, index: true},
   source : { type: String},
   mimeType : { type: String, index: true},
   copies : {}, // [PhotoCopy],
@@ -41,6 +41,8 @@ var PhotoSchema = new mongoose.Schema({
 
   owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
 });
+
+PhotoSchema.index({ taken: -1, owners: -1 }, { unique: true })
 /*
 
 PhotoSchema.pre('save', function (next) {
@@ -64,7 +66,7 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.virtual('signedSrc').get(function () {
   var photo = this;
-  var url = photo.store && photo.store.thumbnail.url.split('phto.org').pop() || null;
+  var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url.split('phto.org').pop() || null;
   return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
 });
 
@@ -89,11 +91,11 @@ PhotoSchema.virtual('location').get(function(){
   return undefined;
 });
 
-PhotoSchema.methods.getMine = function (user) {
-  if (!user) throw 'User parameter is required';
+PhotoSchema.methods.getMine = function (userId) {
+  if (!userId) throw 'User parameter is required';
 
   var photo = this;
-  var mine = photo.copies && photo.copies[user._id] || {};
+  var mine = photo.copies && photo.copies[userId] || {};
   var vote = mine.vote || (mine.calculatedVote);
   return {
     _id : photo._id,
@@ -119,7 +121,7 @@ PhotoSchema.post('save', function () {
       var trigger = {
         action: 'save',
         type: 'photo',
-        item: { _id: photo._id, taken : photo.taken }
+        item: photo.getMine(userId)
       };
       try{
         client.publish(userId, JSON.stringify(trigger));
@@ -127,34 +129,37 @@ PhotoSchema.post('save', function () {
         console.log('Failed to save photo trigger to redis:'.red, err);
       }
     });
+    photo.updateShares();
   }
 });
 
-PhotoSchema.methods.updateShares = function (next) {
+PhotoSchema.pre('save', function (next) {
   var photo = this,
       _ = require('lodash'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
   if (!photo.taken && !photo.owners)
-    return next();
+    return;
 
   ShareSpan.find({
-    startDate: { $lte : photo.taken },
-    stopDate: { $gte : photo.taken },
-    members : { $in : photo.owners }
+    from: { $lte : photo.taken },
+    to: { $gte : photo.taken },
+    live: true,
+    sender : { $in : photo.owners }
   }, function(err, spans){
     if (err) throw err;
 
     if (spans.length) console.debug('found %d share spans for this photo', spans.length);
     
     (spans || []).forEach(function(span){
+      var mine = photo.copies && photo.copies[span.sender];
+      if (!mine || span.vote < mine.vote) return next();
 
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      //photo.save();
+      next();
     });
-    next();
   });
 
-};
+});
 
 module.exports = mongoose.model('Photo', PhotoSchema);
