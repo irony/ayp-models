@@ -24,7 +24,7 @@ UserSchema.methods.generateToken = function (done) {
   var user = this;
 
   // We are sending the profile inside the token
-  var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*24 });
+  var token = jwt.sign({_id: user._id, displayName : user.displayName}, jwt_secret, { expiresInMinutes: 60*24 });
   user.set('token', token);
   user.save(function(){
     done(token);
