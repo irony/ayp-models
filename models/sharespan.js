@@ -26,19 +26,25 @@ ShareSpanSchema.pre('save', function (next) {
     _ = require('lodash'),
     Photo = require('./photo');
 
-  Photo.find({}, '_id owners')
-  .where('owners').in(span.sender)
-  .where('copies.' + span.sender + '.vote').lte(span.vote || 9)
+  Photo.find({}, '_id owners copies.' + span.sender + '.rank')
+  .where('owners', span.sender)
+  //.where('copies.' + span.sender + '.vote').lte(span.vote || 9)
   .where('taken').gte(span.from).lte(span.to)
   //.or.where('photos').nin(span.photos) // TODO: make tests for updating existing
   .exec(function(err, photos){
     if (err) throw err;
     (photos || []).forEach(function(photo){
-      photo.set('owners', _.uniq(_.union(photo.owners, span.receivers)));
+      var mine = photo.getMine(span.sender);
+      if (mine.vote >= span.vote) return next();
+      var owners = _.uniq(_.union(photo.owners, span.receivers));
+      span.photos.push(photo);
+      Photo.update({_id: photo._id}, {$set:{
+        owners: owners,
+        photos: {$add: photo._id}
+      }});
       /*photo.save(function(err){
         if (!err){
           console.log('updating photos')
-          span.photos.push(photo);
         }
       });*/
     });

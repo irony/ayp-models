@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var GroupSchema = new mongoose.Schema({
-  value : { type: {}},
+  value : { type: Number},
   userId : { type: Schema.Types.ObjectId, ref: 'User' },
   photos : [{ type: Schema.Types.ObjectId, ref: 'Photo' }],
   from : { type: Date },

@@ -1,37 +1,27 @@
 var mongoose = require('mongoose');
 var nconf = require('nconf');
 
-nconf
-  .env() // both use environment and file
-  .file({file: 'config.json', dir:'../', search: true});
+
+var models = module.exports = require('require-dir')('./models');
+models.passport = require('./auth/passport');
+module.exports.init = function(_nconf){
+  if (_nconf) nconf = nconf;
+  if (this.initialized) return models;
+  if (!nconf.get('mongoUrl')) throw 'nconf not initialized';
+  try {
+    /*if (process.env.NODE_ENV !== 'production'){
+      mongoose.set('debug', true);
+    }*/
+
+    mongoose.connect(nconf.get('mongoUrl'));
+    mongoose.connection.on('connected', function(){
+      console.log('db connected to ' + nconf.get('mongoUrl'));
+    });
 
 
-var models = module.exports = {
-  group : require('./models/group'),
-  photo : require('./models/photo'),
-  photoCopy : require('./models/photoCopy'),
-  sharespan : require('./models/sharespan'),
-  user : require('./models/user'),
-  auth : require('./auth/auth'),
-  passport : require('./auth/passport'),
-  init : function(_nconf){
-    if (_nconf) nconf = nconf;
-    if (this.initialized) return models;
-    try {
-      /*if (process.env.NODE_ENV !== 'production'){
-        mongoose.set('debug', true);
-      }*/
-
-      mongoose.connect(nconf.get('mongoUrl'));
-      mongoose.connection.on('connected', function(){
-        console.log('db connected to ' + nconf.get('mongoUrl'));
-      });
-
-
-      this.initialized = true;
-      return models;
-    } catch (err) {
-      console.log(("Setting up failed to connect to " + nconf.get('mongoUrl')).red, err.message);
-    }
+    this.initialized = true;
+    return models;
+  } catch (err) {
+    console.log(('Setting up failed to connect to ' + nconf.get('mongoUrl')).red, err.message);
   }
 };

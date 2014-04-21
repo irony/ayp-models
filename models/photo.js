@@ -42,7 +42,9 @@ var PhotoSchema = new mongoose.Schema({
   owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
 });
 
-PhotoSchema.index({ taken: -1, owners: -1 }, { unique: true })
+PhotoSchema.index({ taken: -1, owners: -1 }, { });
+PhotoSchema.index({ 'store.original.stored': -1, owners: -1 }, { });
+PhotoSchema.index({ 'store.thumbnail.stored': -1, owners: -1 }, { });
 /*
 
 PhotoSchema.pre('save', function (next) {
@@ -145,7 +147,7 @@ PhotoSchema.pre('save', function (next) {
     from: { $lte : photo.taken },
     to: { $gte : photo.taken },
     live: true,
-    sender : { $in : photo.owners }
+    sender : { $in : photo.owners },
   }, function(err, spans){
     if (err) throw err;
 

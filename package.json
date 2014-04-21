@@ -28,7 +28,8 @@
     "passport-local": "*",
     "passport-local-mongoose": "*",
     "multiparty": "*",
-    "jsonwebtoken": "~0.2.0"
+    "jsonwebtoken": "~0.2.0",
+    "require-dir": "~0.1.0"
   },
   "devDependencies": {
     "should": "~3.1.3"
