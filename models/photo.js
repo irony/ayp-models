@@ -72,26 +72,31 @@ PhotoSchema.virtual('signedSrc').get(function () {
   return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
 });
 
-PhotoSchema.virtual('location').get(function(){
+PhotoSchema.methods.getLocation = function(){
   var photo = this;
   if (photo.exif && photo.exif.gps){
+
     if (photo.exif.gps.length){
       photo.exif.gps = photo.exif.gps.reduce(function(gps, tag){
         gps[tag.tagName] = tag.value;
         return gps;
       }, {});
     }
+    var parseGPS = function(degree,minute,second) {
+      return parseFloat(degree+(((minute*60)+(second))/3600), 10);
+    };
+
     var location = {};
     if (photo.exif.gps.GPSLatitude && photo.exif.gps.GPSLatitude.length){
-      location = {
-        lat: parseFloat(photo.exif.gps.GPSLatitude[0] + '.' + photo.exif.gps.GPSLatitude[1],10),
-        lng: parseFloat(photo.exif.gps.GPSLongitude[0] + '.' + photo.exif.gps.GPSLongitude[1],10)
-      };
+      location.lat = parseGPS(photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLatitude[1], photo.exif.gps.GPSLatitude[2]);
+      location.lng = parseGPS(photo.exif.gps.GPSLongitude[0], photo.exif.gps.GPSLongitude[1], photo.exif.gps.GPSLongitude[2]);
+    } else {
+      // console.log('could not extract gps');
     }
     return location;
   }
   return undefined;
-});
+};
 
 PhotoSchema.methods.getMine = function (userId) {
   if (!userId) throw 'User parameter is required';
