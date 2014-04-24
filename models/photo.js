@@ -136,7 +136,7 @@ PhotoSchema.post('save', function () {
         console.log('Failed to save photo trigger to redis:'.red, err);
       }
     });
-    photo.updateShares();
+    // photo.updateShares();
   }
 });
 
