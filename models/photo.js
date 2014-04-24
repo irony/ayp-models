@@ -120,10 +120,11 @@ PhotoSchema.methods.getMine = function (userId) {
 
 PhotoSchema.post('save', function () {
   var photo = this;
-  
+  console.log('send to redis?')
   // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
   // info on the import step but rather at the download step
   if(photo.store && photo.store.thumbnail){
+  console.log('yes')
     photo.owners.map(function(userId){
       var trigger = {
         action: 'save',
@@ -131,6 +132,7 @@ PhotoSchema.post('save', function () {
         item: photo.getMine(userId)
       };
       try{
+        console.log('sending...')
         client.publish(userId, JSON.stringify(trigger));
       } catch(err){
         console.log('Failed to save photo trigger to redis:'.red, err);
