@@ -148,7 +148,7 @@ PhotoSchema.pre('save', function (next) {
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
   if (!photo.taken && !photo.owners)
-    return;
+    return next();
 
   ShareSpan.find({
     from: { $lte : photo.taken },
