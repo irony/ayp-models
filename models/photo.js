@@ -120,11 +120,9 @@ PhotoSchema.methods.getMine = function (userId) {
 
 PhotoSchema.post('save', function () {
   var photo = this;
-  console.log('send to redis?')
   // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
   // info on the import step but rather at the download step
   if(photo.store && photo.store.thumbnail){
-  console.log('yes')
     photo.owners.map(function(userId){
       var trigger = {
         action: 'save',
@@ -132,7 +130,6 @@ PhotoSchema.post('save', function () {
         item: photo.getMine(userId)
       };
       try{
-        console.log('sending...')
         client.publish(userId, JSON.stringify(trigger));
       } catch(err){
         console.log('Failed to save photo trigger to redis:'.red, err);
@@ -147,8 +144,7 @@ PhotoSchema.pre('save', function (next) {
       _ = require('lodash'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
 
-  if (!photo.taken && !photo.owners)
-    return next();
+  if (!photo.taken && !photo.owners) return next();
 
   ShareSpan.find({
     from: { $lte : photo.taken },
@@ -162,11 +158,11 @@ PhotoSchema.pre('save', function (next) {
     
     (spans || []).forEach(function(span){
       var mine = photo.copies && photo.copies[span.sender];
-      if (!mine || span.vote < mine.vote) return next();
+      if (!mine || span.vote < mine.vote) return;
 
       photo.set('owners', _.uniq(_.union(photo.owners, span.members)));
-      next();
     });
+    next();
   });
 
 });
