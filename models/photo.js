@@ -130,6 +130,7 @@ PhotoSchema.post('save', function () {
         item: photo.getMine(userId)
       };
       try{
+        console.log('sending to redis');
         client.publish(userId, JSON.stringify(trigger));
       } catch(err){
         console.log('Failed to save photo trigger to redis:'.red, err);
