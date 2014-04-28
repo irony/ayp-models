@@ -68,8 +68,13 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.virtual('signedSrc').get(function () {
   var photo = this;
-  var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url.split('phto.org').pop() || null;
-  return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
+  var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url;
+  if (url && url.indexOf('phto.org') > -1) {
+    url = url.split('phto.org').pop() || null;
+    return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
+  } else {
+    return url;
+  }
 });
 
 PhotoSchema.methods.getLocation = function(){
