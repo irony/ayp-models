@@ -10,6 +10,7 @@ var GroupSchema = new mongoose.Schema({
   photos : [{ type: Schema.Types.ObjectId, ref: 'Photo' }],
   from : { type: Date },
   to : { type: Date },
+  centroids : {type: {}},
   modified : { type: Date, default: Date.now }
 });
 
