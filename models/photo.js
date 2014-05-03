@@ -95,6 +95,10 @@ PhotoSchema.methods.getLocation = function(){
     if (photo.exif.gps.GPSLatitude && photo.exif.gps.GPSLatitude.length){
       location.lat = parseGPS(photo.exif.gps.GPSLatitude[0], photo.exif.gps.GPSLatitude[1], photo.exif.gps.GPSLatitude[2]);
       location.lng = parseGPS(photo.exif.gps.GPSLongitude[0], photo.exif.gps.GPSLongitude[1], photo.exif.gps.GPSLongitude[2]);
+      
+      if (photo.exif.gps.GPSLatitudeRef === 'S') location.lat = -location.lat;
+      if (photo.exif.gps.GPSLongitudeRef === 'W') location.lng = -location.lng;
+
     } else {
       // console.log('could not extract gps');
     }
@@ -135,7 +139,7 @@ PhotoSchema.post('save', function () {
         item: photo.getMine(userId)
       };
       try{
-        console.log('sending to redis');
+        // console.log('sending to redis');
         client.publish(userId, JSON.stringify(trigger));
       } catch(err){
         console.log('Failed to save photo trigger to redis:'.red, err);
