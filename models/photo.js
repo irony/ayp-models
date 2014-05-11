@@ -68,8 +68,7 @@ PhotoSchema.virtual('src').get(function (done) {
 
 PhotoSchema.virtual('signedSrc').get(function () {
   var photo = this;
-  var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url;
-  console.log(url);
+  var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url || photo.store && photo.store.preview && photo.store.preview.url;
   if (url && url.indexOf('phto.org') > -1) {
     url = url.split('phto.org').pop() || null;
     return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
@@ -130,9 +129,7 @@ PhotoSchema.methods.getMine = function (userId) {
 
 PhotoSchema.post('save', function () {
   var photo = this;
-  // only send trigger to sockets once the thumbnail is downloaded. This means we will skip sending out
-  // info on the import step but rather at the download step
-  if(photo.store && photo.store.thumbnail){
+  if (photo.owners) {
     photo.owners.map(function(userId){
       var trigger = {
         action: 'save',
@@ -146,7 +143,6 @@ PhotoSchema.post('save', function () {
         console.log('Failed to save photo trigger to redis:'.red, err);
       }
     });
-    // photo.updateShares();
   }
 });
 
