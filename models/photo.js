@@ -113,6 +113,7 @@ PhotoSchema.methods.getMine = function (userId) {
   var photo = this;
   var mine = photo.copies && photo.copies[userId] || {};
   var vote = mine.vote || (mine.calculatedVote);
+  if (vote === null) vote = Math.floor(3+Math.random()*4);
   return {
     _id : photo._id,
     taken: photo.taken && photo.taken.getTime(),
