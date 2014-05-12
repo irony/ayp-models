@@ -128,6 +128,16 @@ PhotoSchema.methods.getMine = function (userId) {
   };
 };
 
+var sendQueue = {};
+var _delay;
+
+var send = function(){
+  Object.keys(sendQueue).forEach(function(userId){
+    if (sendQueue[userId].length) client.publish(userId, JSON.stringify(sendQueue));
+  });
+  sendQueue = {};
+};
+
 PhotoSchema.post('save', function () {
   var photo = this;
   if (photo.owners) {
@@ -137,13 +147,11 @@ PhotoSchema.post('save', function () {
         type: 'photo',
         item: photo.getMine(userId)
       };
-      try{
-        // console.log('sending to redis');
-        client.publish(userId, JSON.stringify(trigger));
-      } catch(err){
-        console.log('Failed to save photo trigger to redis:'.red, err);
-      }
+      sendQueue[userId] = sendQueue[userId] || [];
+      sendQueue[userId].push(trigger); 
     });
+    clearTimeout(_delay);
+    _delay = setTimeout(send, 300);
   }
 });
 
