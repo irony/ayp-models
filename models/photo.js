@@ -133,7 +133,7 @@ var _delay;
 
 var send = function(){
   Object.keys(sendQueue).forEach(function(userId){
-    if (sendQueue[userId].length) client.publish(userId, JSON.stringify(sendQueue));
+    if (sendQueue[userId].length) client.publish(userId, JSON.stringify(sendQueue[userId]));
   });
   sendQueue = {};
 };
