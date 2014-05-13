@@ -13,7 +13,7 @@ module.exports.init = function(_nconf){
       mongoose.set('debug', true);
     }*/
 
-    mongoose.connect(nconf.get('mongoUrl'));
+    mongoose.connect(nconf.get('mongoUrl'), { server: { auto_reconnect: false }}); // auto_reconnect forces db errors to propagate as errors instead of silent waits
     mongoose.connection.on('connected', function(){
       console.log('db connected to ' + nconf.get('mongoUrl'));
     });
