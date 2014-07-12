@@ -16,7 +16,8 @@ var s3 = knox.createClient(nconf.get('aws')),
     Schema = mongoose.Schema;
 
 var redis = require('redis');
-var client = redis.createClient(nconf.get('redis'));
+var conf = nconf.get('redis');
+var client = redis.createClient(conf.port, conf.host);
 
 
 if (!nconf.get('redis')) throw 'nconf not initialized';
