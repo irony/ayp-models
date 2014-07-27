@@ -1,4 +1,16 @@
-var Models = require('../').init();
+// run tests locally or with test collection
+var nconf = require('nconf');
+
+
+nconf.overrides({
+  mongoUrl : 'mongodb://localhost/ayp-test'
+});
+
+nconf
+  .env() // both use environment and file
+  .file({file: 'config.json', dir:'../../', search: true});
+
+var Models = require('../').init(nconf);
 var auth = Models.auth;
 var should = require('should');
 

@@ -10,7 +10,7 @@ nconf
   .env() // both use environment and file
   .file({file: 'config.json', dir:'../../', search: true});
 
-var Models = require('../').init();
+var Models = require('../').init(nconf);
 var User = Models.user;
 var Photo = Models.photo;
 var ShareSpan = Models.sharespan;
