@@ -3,7 +3,7 @@ var nconf = require('nconf');
 
 
 nconf.overrides({
-  mongoUrl : 'mongodb://localhost/ayp-test'
+  mongoUrl : 'mongodb://192.168.59.103/ayp-test'
 });
 
 nconf
