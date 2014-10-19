@@ -72,7 +72,7 @@ PhotoSchema.virtual('signedSrc').get(function () {
   var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url || photo.store && photo.store.preview && photo.store.preview.url;
   if (url && url.indexOf('phto.org') > -1) {
     url = url.split('phto.org').pop() || null;
-    return url && s3.signedUrl(url, moment().add('year', 1).startOf('year').toDate()) || null;
+    return url && s3.signedUrl(url, moment().add(1, 'year').startOf('year').toDate()) || null;
   } else {
     return url;
   }

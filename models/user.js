@@ -28,6 +28,7 @@ UserSchema.methods.generateToken = function (done) {
   user.save(function(){
     done(token);
   });
+  return token;
 };
 
 
