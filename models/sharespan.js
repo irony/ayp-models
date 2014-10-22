@@ -9,7 +9,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-var ShareSpanSchema = new mongoose.Schema({
+var ShareSpan = new mongoose.Schema({
   added : { type: Date, default: Date.now},
   from: {type : Date},
   to: {type : Date},
@@ -20,7 +20,7 @@ var ShareSpanSchema = new mongoose.Schema({
   receivers : [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
-ShareSpanSchema.pre('save', function (next) {
+ShareSpan.pre('save', function (next) {
   
   var span = this,
     _ = require('lodash'),
@@ -52,4 +52,5 @@ ShareSpanSchema.pre('save', function (next) {
   });
 });
 
-module.exports = mongoose.model('ShareSpan', ShareSpanSchema);
+
+module.exports = mongoose.models['ShareSpan'] || mongoose.model('ShareSpan', ShareSpan);

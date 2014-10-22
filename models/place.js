@@ -41,5 +41,4 @@ Place.methods.lookup = function(lng, lat, done){
   })
 }
 
-
-module.exports = mongoose.model('place', Place);
+module.exports = mongoose.models['place'] || mongoose.model('place', Place);

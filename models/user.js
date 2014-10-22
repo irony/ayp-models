@@ -6,7 +6,7 @@ var passportLocalMongoose = require('passport-local-mongoose');
 var jwt = require('jsonwebtoken');
 var jwt_secret = nconf.get('sessionSecret');
 
-var UserSchema = new mongoose.Schema({
+var User = new mongoose.Schema({
   id  :  { type: Schema.ObjectId},
   displayName : { type: String},
   username : { type: String},
@@ -20,7 +20,7 @@ var UserSchema = new mongoose.Schema({
 });
 
 
-UserSchema.methods.generateToken = function (done) {
+User.methods.generateToken = function (done) {
   var user = this;
   // We are sending the profile inside the token
   var token = jwt.sign({_id: user._id, displayName : user.displayName}, jwt_secret, { expiresInMinutes: 60*24 });
@@ -32,6 +32,6 @@ UserSchema.methods.generateToken = function (done) {
 };
 
 
-UserSchema.plugin(passportLocalMongoose);
+User.plugin(passportLocalMongoose);
 
-module.exports = mongoose.models['User'] || mongoose.model('User', UserSchema);
+module.exports = mongoose.models['User'] || mongoose.model('User', User);
