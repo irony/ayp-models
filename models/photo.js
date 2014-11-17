@@ -23,7 +23,7 @@ var client = redis.createClient(conf.port, conf.host);
 if (!nconf.get('redis')) throw 'nconf not initialized';
 
 
-var PhotoSchema = new mongoose.Schema({
+var Photo = new mongoose.Schema({
   path : { type: String},
   taken : { type: Date, index: true},
   modified : { type: Date, index: true},
@@ -43,12 +43,12 @@ var PhotoSchema = new mongoose.Schema({
   owners : [{ type: Schema.Types.ObjectId, ref: 'User', index: true }]
 });
 
-PhotoSchema.index({ taken: -1, owners: -1 }, { });
-PhotoSchema.index({ 'store.original.stored': -1, owners: -1 }, { });
-PhotoSchema.index({ 'store.thumbnail.stored': -1, owners: -1 }, { });
+Photo.index({ taken: -1, owners: -1 }, { });
+Photo.index({ 'store.original.stored': -1, owners: -1 }, { });
+Photo.index({ 'store.thumbnail.stored': -1, owners: -1 }, { });
 /*
 
-PhotoSchema.pre('save', function (next) {
+Photo.pre('save', function (next) {
   var photo = this;
   
   Photo.findOne({taken : photo.taken, bytes: photo.bytes}, function(err, existingPhoto){
@@ -58,7 +58,7 @@ PhotoSchema.pre('save', function (next) {
 });
 */
 
-PhotoSchema.virtual('src').get(function (done) {
+Photo.virtual('src').get(function (done) {
   var photo = this;
   if (photo.mimeType && photo.mimeType.split('/')[0] === 'video'){
     return '/img/novideo.jpg'; //photo.store && photo.store.original ? photo.store.original.url : '/img/novideo.mp4';
@@ -67,7 +67,7 @@ PhotoSchema.virtual('src').get(function (done) {
   }
 });
 
-PhotoSchema.virtual('signedSrc').get(function () {
+Photo.virtual('signedSrc').get(function () {
   var photo = this;
   var url = photo.store && photo.store.thumbnail && photo.store.thumbnail.url || photo.store && photo.store.preview && photo.store.preview.url;
   if (url && url.indexOf('phto.org') > -1) {
@@ -78,7 +78,7 @@ PhotoSchema.virtual('signedSrc').get(function () {
   }
 });
 
-PhotoSchema.methods.getLocation = function(){
+Photo.methods.getLocation = function(){
   var photo = this;
   if (photo.exif && photo.exif.gps){
 
@@ -108,7 +108,7 @@ PhotoSchema.methods.getLocation = function(){
   return undefined;
 };
 
-PhotoSchema.methods.getMine = function (userId) {
+Photo.methods.getMine = function (userId) {
   if (!userId) throw 'User parameter is required';
 
   var photo = this;
@@ -141,7 +141,7 @@ var send = function(){
   sendQueue = {};
 };
 
-PhotoSchema.post('save', function () {
+Photo.post('save', function () {
   var photo = this;
   if (photo.owners) {
     photo.owners.map(function(userId){
@@ -158,7 +158,7 @@ PhotoSchema.post('save', function () {
   }
 });
 
-PhotoSchema.pre('save', function (next) {
+Photo.pre('save', function (next) {
   var photo = this,
       _ = require('lodash'),
       ShareSpan = require('./sharespan'); //this needs to be in local scope
@@ -186,4 +186,4 @@ PhotoSchema.pre('save', function (next) {
 
 });
 
-module.exports = mongoose.model('Photo', PhotoSchema);
+module.exports = mongoose.models['Photo'] || mongoose.model('Photo', Photo);

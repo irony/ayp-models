@@ -11,5 +11,4 @@ var Cluster = new mongoose.Schema({
   modified : { type: Date, default: Date.now }
 });
 
-
-module.exports = mongoose.model('cluster', Cluster);
+module.exports = mongoose.models['cluster'] || mongoose.model('cluster', Cluster);
