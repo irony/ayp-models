@@ -14,23 +14,20 @@
     "nconf": "*"
   },
   "dependencies": {
-    "lodash": "*",
-    "knox": "*",
-    "moment": "*",
-    "mongoose": "*",
-    "redis": "*",
-    "passport": "*",
-    "passport-facebook": "*",
-    "passport-twitter": "*",
-    "passport-dropbox": "*",
-    "passport-flickr": "*",
-    "passport-instagram": "*",
-    "passport-local": "*",
+    "jsonwebtoken": "^0.2.0",
+    "knox": "^0.9.1",
+    "lodash": "^2.4.1",
+    "moment": "^2.8.3",
+    "mongoose": "^3.8.19",
+    "passport": "^0.2.1",
+    "passport-dropbox": "^0.1.2",
+    "passport-facebook": "^1.0.3",
+    "passport-local": "^1.0.0",
     "passport-local-mongoose": "*",
-    "multiparty": "*",
-    "jsonwebtoken": "~0.2.0",
-    "require-dir": "~0.1.0",
-    "request": "~2.34.0"
+    "passport-twitter": "^1.0.2",
+    "redis": "^0.12.1",
+    "request": "^2.34.0",
+    "require-dir": "~0.1.0"
   },
   "devDependencies": {
     "should": "~3.1.3"
