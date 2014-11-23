@@ -1,0 +1,88 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--save',
+1 verbose cli   'passport-instagram' ]
+2 info using npm@2.0.0
+3 info using node@v0.11.14
+4 verbose readDependencies using package.json deps
+5 verbose cache add [ 'passport-instagram@^1.0.3', null ]
+6 verbose cache add spec="passport-instagram@^1.0.3" args=["passport-instagram@^1.0.3",null]
+7 verbose parsed spec { raw: 'passport-instagram@^1.0.3',
+7 verbose parsed spec   scope: null,
+7 verbose parsed spec   name: 'passport-instagram',
+7 verbose parsed spec   rawSpec: '^1.0.3',
+7 verbose parsed spec   spec: '>=1.0.3 <2.0.0',
+7 verbose parsed spec   type: 'range' }
+8 verbose parsed spec { raw: 'passport-instagram@^1.0.3',
+8 verbose parsed spec   scope: null,
+8 verbose parsed spec   name: 'passport-instagram',
+8 verbose parsed spec   rawSpec: '^1.0.3',
+8 verbose parsed spec   spec: '>=1.0.3 <2.0.0',
+8 verbose parsed spec   type: 'range' }
+9 verbose addNamed [ 'passport-instagram', '>=1.0.3 <2.0.0' ]
+10 verbose addNamed [ null, '>=1.0.3 <2.0.0' ]
+11 silly lockFile 0bc84fa7-passport-instagram-1-0-3-2-0-0 passport-instagram@>=1.0.3 <2.0.0
+12 verbose lock passport-instagram@>=1.0.3 <2.0.0 /Users/cln/.npm/0bc84fa7-passport-instagram-1-0-3-2-0-0.lock
+13 silly addNameRange { name: 'passport-instagram',
+13 silly addNameRange   range: '>=1.0.3 <2.0.0',
+13 silly addNameRange   hasData: false }
+14 verbose mapToRegistry name passport-instagram
+15 verbose mapToRegistry uri https://registry.npmjs.org/passport-instagram
+16 verbose request on initialization, where is /passport-instagram
+17 verbose request after pass 1, where is /passport-instagram
+18 verbose request url raw /passport-instagram
+19 verbose request resolving registry [ 'https://registry.npmjs.org/', './passport-instagram' ]
+20 verbose request after pass 2, where is https://registry.npmjs.org/passport-instagram
+21 verbose request no auth needed
+22 info attempt registry request try #1 at 19:23:00
+23 verbose request id b3d410e5b30d4422
+24 verbose etag "9DIDO68R2H0RO287RB89W2LM6"
+25 http request GET https://registry.npmjs.org/passport-instagram
+26 http 304 https://registry.npmjs.org/passport-instagram
+27 silly registry.get cb [ 304,
+27 silly registry.get   { date: 'Sun, 23 Nov 2014 18:23:00 GMT',
+27 silly registry.get     server: 'Apache',
+27 silly registry.get     via: '1.1 varnish',
+27 silly registry.get     'last-modified': 'Sun, 23 Nov 2014 18:23:00 GMT',
+27 silly registry.get     'cache-control': 'max-age=60',
+27 silly registry.get     etag: '"9DIDO68R2H0RO287RB89W2LM6"',
+27 silly registry.get     age: '8',
+27 silly registry.get     'x-served-by': 'cache-fra1220-FRA',
+27 silly registry.get     'x-cache': 'HIT',
+27 silly registry.get     'x-cache-hits': '1',
+27 silly registry.get     'x-timer': 'S1416766980.573535,VS0,VE0',
+27 silly registry.get     vary: 'Accept',
+27 silly registry.get     'content-length': '0',
+27 silly registry.get     connection: 'close' } ]
+28 verbose etag https://registry.npmjs.org/passport-instagram from cache
+29 silly addNameRange number 2 { name: 'passport-instagram',
+29 silly addNameRange   range: '>=1.0.3 <2.0.0',
+29 silly addNameRange   hasData: true }
+30 silly addNameRange versions [ 'passport-instagram', [ '0.1.0', '0.1.1', '0.1.2' ] ]
+31 silly lockFile 0bc84fa7-passport-instagram-1-0-3-2-0-0 passport-instagram@>=1.0.3 <2.0.0
+32 silly lockFile 0bc84fa7-passport-instagram-1-0-3-2-0-0 passport-instagram@>=1.0.3 <2.0.0
+33 verbose stack Error: No compatible version found: passport-instagram@'>=1.0.3 <2.0.0'
+33 verbose stack Valid install targets:
+33 verbose stack ["0.1.0","0.1.1","0.1.2"]
+33 verbose stack
+33 verbose stack     at installTargetsError (/usr/local/lib/node_modules/npm/lib/cache/add-named.js:258:12)
+33 verbose stack     at next (/usr/local/lib/node_modules/npm/lib/cache/add-named.js:237:17)
+33 verbose stack     at setData (/usr/local/lib/node_modules/npm/lib/cache/add-named.js:214:5)
+33 verbose stack     at saved (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:167:7)
+33 verbose stack     at Object.oncomplete (fs.js:93:15)
+34 verbose cwd /Users/cln/src/pet/ayp/models
+35 error Darwin 14.0.0
+36 error argv "node" "/usr/local/bin/npm" "install" "--save" "passport-instagram"
+37 error node v0.11.14
+38 error npm  v2.0.0
+39 error code ETARGET
+40 error notarget No compatible version found: passport-instagram@'>=1.0.3 <2.0.0'
+40 error notarget Valid install targets:
+40 error notarget ["0.1.0","0.1.1","0.1.2"]
+40 error notarget
+40 error notarget This is most likely not a problem with npm itself.
+40 error notarget In most cases you or one of your dependencies are requesting
+40 error notarget a package version that doesn't exist.
+41 verbose exit [ 1, true ]
