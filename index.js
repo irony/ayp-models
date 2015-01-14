@@ -5,7 +5,7 @@ var nconf = require('nconf');
 var models = module.exports = require('require-dir')('./models');
 models.passport = require('./auth/passport');
 module.exports.init = function(_nconf){
-  if (_nconf) nconf = nconf;
+  if (_nconf) nconf = _nconf;
   if (this.initialized) return models;
   if (!nconf.get('mongoUrl')) throw 'nconf not initialized';
   try {
