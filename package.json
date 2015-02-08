@@ -1,6 +1,6 @@
 {
   "name": "ayp-models",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Models for the all your photos system, use npm install ../models to install",
   "main": "index.js",
   "scripts": {
