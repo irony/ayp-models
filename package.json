@@ -1,6 +1,6 @@
 {
   "name": "ayp-models",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Models for the all your photos system, use npm install ../models to install",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "knox": "^0.9.1",
     "lodash": "^2.4.1",
     "moment": "^2.8.3",
-    "mongoose": "^3.9.7",
+    "mongoose": "^4.0.2",
     "passport": "^0.2.1",
     "passport-dropbox": "^0.1.2",
     "passport-facebook": "^1.0.3",
