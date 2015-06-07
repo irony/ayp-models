@@ -9,7 +9,7 @@ var mongoose = require('mongoose'),
     moment = require('moment');
 
 if (!nconf.get('aws')) {
-  throw 'No aws config defined, please check nconf config';
+  throw new Error('No aws config defined, please check nconf config');
 }
 
 var s3 = knox.createClient(nconf.get('aws')),
