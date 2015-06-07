@@ -13,11 +13,11 @@
     "nconf": "*"
   },
   "dependencies": {
-    "jsonwebtoken": "^0.2.0",
+    "jsonwebtoken": "^5.0.1",
     "knox": "^0.9.1",
     "lodash": "^2.4.1",
     "moment": "^2.8.3",
-    "mongoose": "^3.8.19",
+    "mongoose": "^3.9.7",
     "passport": "^0.2.1",
     "passport-dropbox": "^0.1.2",
     "passport-facebook": "^1.0.3",
